@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+.modern-table {
+    --easy-table-border: 1px solid #e5e7eb;
+    --easy-table-header-font-size: 1rem;
+    --easy-table-header-height: 50px;
+    --easy-table-header-font-color: #1f2937;
+    --easy-table-header-background-color: #f9fafb;
+    --easy-table-body-row-font-size: 0.95rem;
+    --easy-table-body-row-height: 45px;
+    --easy-table-body-row-font-color: #374151;
+    --easy-table-body-row-hover-font-color: #2563eb;
+    --easy-table-body-row-hover-background-color: #f0f9ff;
+    --easy-table-footer-background-color: #f9fafb;
+    --easy-table-footer-font-color: #374151;
+    --easy-table-footer-font-size: 0.9rem;
+    --easy-table-footer-height: 50px;
+  }
+  
+  .styled-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .styled-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .styled-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .styled-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
