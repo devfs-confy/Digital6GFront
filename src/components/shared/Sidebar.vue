@@ -3,7 +3,7 @@
         'flex flex-col items-center h-screen bg-[#0D291C] transition-all duration-300 overflow-hidden gap-[10%]',
         'relative',
         isOpen ? 'w-[18%]' : 'w-[0%]',
-        'max-md:absolute max-md:z-1 max-md:top-0 max-md:left-0 ',
+        'max-md:absolute max-md:z-10 max-md:top-0 max-md:left-0 ',
         isOpen ? 'max-md:w-[65%]' : 'max-md:w-[0%]'
     ]">
 
@@ -37,6 +37,9 @@
 import { useRouter, useRoute } from 'vue-router'
 import iconaside2 from '@/assets/img/confylogo.svg?raw'
 import colapsenormal from '@/assets/img/colapsenormal.svg?raw'
+
+
+
 
 defineProps({
     menuItems: Array,

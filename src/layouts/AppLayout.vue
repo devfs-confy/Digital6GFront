@@ -1,12 +1,12 @@
 <!-- layouts/AppLayout.vue -->
 <template>
-    <div class="flex h-screen w-screen bg-[#F0F0F0] overflow-hidden">
+    <div class="flex h-screen w-full bg-[#F0F0F0] overflow-hidden">
 
         <div v-if="isOpen && isMobile" @click="isOpen = false" class="fixed inset-0 bg-black/50 z-40" />
 
         <Sidebar :menuItems="menuItems" :isOpen="isOpen" @toggle="isOpen = !isOpen" />
 
-        <div class="flex flex-col flex-1 h-screen">
+        <div class="flex flex-col flex-1 h-screen w-full">
             <Navbar :isOpen="isOpen" @toggle="isOpen = !isOpen" :titulo="titulo" />
             <main class="flex-1 overflow-auto p-6">
                 <router-view />

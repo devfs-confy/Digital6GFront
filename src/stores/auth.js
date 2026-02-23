@@ -12,23 +12,23 @@ const mockUsuarios = [
   {
     id: 2,
     nombre: "Admin User",
-    documento: "654321",
-    password: "1234",
+    documento: "123",
+    password: "123",
     role: "administrador",
   },
-  {
-    id: 3,
-    nombre: "Operador",
-    documento: "111111",
-    password: "1234",
-    role: "operador",
-  },
+  // {
+  //   id: 3,
+  //   nombre: "Operador",
+  //   documento: "111111",
+  //   password: "1234",
+  //   role: "operador",
+  // },
 ];
 
 const roleRedirects = {
   administrador: "/admin/dashboard",
   cliente: "/cliente/inicio",
-  operador: "/operador/inicio",
+  // operador: "/operador/inicio",
 };
 
 export const useAuthStore = defineStore(

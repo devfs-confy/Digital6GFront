@@ -7,15 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#0D291C", 
-        secondary: "#456685", 
-        complementary: "#b3c4d4", 
-        tercero:'#fdf8f5',
-        ultimate:'#0a0d10'
+        primary: "#0D291C",
+        secondary: "#232B3A",
+        complementary: "#7FD344",
+        tercero: "#299261",
+        ultimate: "#0a0d10",
       },
     },
   },
-  plugins: [
-    require('flowbite/plugin')
-  ],
-}
+  plugins: [require("flowbite/plugin")],
+};
