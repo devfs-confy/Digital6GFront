@@ -1,13 +1,11 @@
 <script setup>
-import Sidebar from './components/Sidebar.vue';
-import ClienteInicio from './views/cliente/ClienteInicio.vue';
+import { RouterLink, RouterView } from 'vue-router'
 
 </script>
 
 <template>
 
-  <sidebar />
-  <!-- <ClienteInicio /> -->
+  <RouterView></RouterView>
 
 </template>
 

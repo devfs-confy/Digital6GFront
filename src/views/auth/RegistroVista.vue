@@ -10,7 +10,7 @@
       lg:flex-row lg:w-[50%] lg:h-[75%] lg:gap-[7vw] lg:p-12 
       md:flex-row md:w-[85%] md:h-[75%] md:gap-[7vw] md:p-12
 
-      max-md:flex-row max-md:w-[60%] max-md:h-[95%] max-md:gap-[7vw] max-md:p-5
+      max-md:w-[60%] max-md:h-[95%] max-md:gap-[7vw] max-md:p-5
       max-md:flex-row max-sm:w-[75%]  max-sm:gap-[7vw] max-sm:p-5
       bg-white overflow-hidden rounded-2xl shadow-[2px_2px_18px_#299261]
       relative

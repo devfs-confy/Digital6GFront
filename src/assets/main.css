@@ -1128,6 +1128,10 @@ input[type="range"]::-ms-fill-lower {
   flex-wrap: wrap;
 }
 
+.text-start {
+  text-align: start;
+}
+
 .items-start {
   align-items: flex-start;
 }
@@ -1474,6 +1478,18 @@ input[type="range"]::-ms-fill-lower {
   .max-md\:px-0 {
     padding-left: 0px;
     padding-right: 0px;
+  }
+
+  .max-md\:w-\[65\%\] {
+    width: 65%;
+  }
+
+  .max-md\:z-1 {
+    z-index: 1;
+  }
+
+  .max-md\:absolute {
+    position: absolute;
   }
 }
 
