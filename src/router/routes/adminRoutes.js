@@ -43,7 +43,7 @@ export const adminMenuItems = [
 export const adminRoutes = {
   path: "/admin",
   component: () => import("@/layouts/AdminLayout.vue"),
-  meta: { requiresAuth: true, role: "administrador" },
+  meta: { requiresAuth: true, role: "admin" },
   children: [
     {
       path: "dashboard",

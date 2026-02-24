@@ -27,24 +27,38 @@
                     <label class="self-start font-bold text-sm md:text-base" for="document">Documento</label>
                     <input v-model="documento"
                         class="w-full border-2 border-[#299261] bg-[#ebebeb] rounded-lg md:rounded-[0.8vw] p-2 outline-none"
-                        type="text" id="document" />
+                        :class="{ 'border-red-400': auth.errorMsg }" type="text" id="document"
+                        placeholder="Número de documento" @keyup.enter="handleLogin" />
 
                     <label class="self-start font-bold text-sm md:text-base" for="password">Contraseña</label>
                     <input v-model="password"
                         class="w-full border-2 border-[#299261] bg-[#ebebeb] rounded-lg md:rounded-[0.8vw] p-2 outline-none"
-                        type="password" id="password" @keyup.enter="handleLogin" />
+                        :class="{ 'border-red-400': auth.errorMsg }" type="password" id="password"
+                        placeholder="••••••••" @keyup.enter="handleLogin" />
 
-                    <!-- mensaje de error -->
-                    <p v-if="error" class="text-red-500 text-sm text-center">{{ error }}</p>
+                    <!-- Error del store — viene directo del backend en español -->
+                    <Transition name="error">
+                        <div v-if="auth.errorMsg"
+                            class="flex items-center gap-2 w-full bg-red-50 border border-red-300 rounded-lg px-3 py-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#dc2626"
+                                viewBox="0 0 24 24" class="flex-shrink-0">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                            </svg>
+                            <p class="text-red-600 text-xs font-medium">{{ auth.errorMsg }}</p>
+                        </div>
+                    </Transition>
 
                     <p class="text-sm">
                         ¿No tienes cuenta?
                         <router-link to="/registro" class="text-[#299261] hover:underline">Regístrate</router-link>
                     </p>
 
-                    <button @click="handleLogin" :disabled="cargando"
-                        class="mt-4 bg-[#232B3A] text-white rounded-full py-2 px-6 w-[80%] md:w-[60%] hover:bg-[#299261] transition-colors disabled:opacity-50">
-                        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+                    <button @click="handleLogin" :disabled="auth.loading || !documento || !password"
+                        class="mt-4 bg-[#232B3A] text-white rounded-full py-2 px-6 w-[80%] md:w-[60%] hover:bg-[#299261] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        <!-- Spinner -->
+                        <span v-if="auth.loading" class="spinner" />
+                        <span>{{ auth.loading ? 'Ingresando...' : 'Ingresar' }}</span>
                     </button>
 
                 </div>
@@ -66,20 +80,49 @@ const auth = useAuthStore()
 
 const documento = ref('')
 const password = ref('')
-const error = ref('')
-const cargando = ref(false)
+
 
 async function handleLogin() {
-    error.value = ''
-    cargando.value = true
+    if (!documento.value || !password.value) return
 
-    try {
-        auth.login(documento.value, password.value)
-        router.push(auth.redirectTo)  // redirige según el rol
-    } catch (e) {
-        error.value = e.message       // muestra "Documento o contraseña incorrectos"
-    } finally {
-        cargando.value = false
-    }
+    const ruta = await auth.login(documento.value, password.value)
+
+    if (ruta) router.push(ruta)
 }
 </script>
+
+<style scoped>
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-enter-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.error-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.error-enter-from {
+    opacity: 0;
+    transform: translateY(-4px);
+}
+
+.error-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+}
+</style>

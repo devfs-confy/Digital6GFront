@@ -25,7 +25,7 @@ export const clienteRoutes = {
   children: [
     {
       path: "inicio",
-      component: () => import("../../views/cliente/ClienteInicio.vue"),
+      component: () => import("@/views/cliente/ClienteInicio.vue"),
     },
     {
       path: "mensualidad",

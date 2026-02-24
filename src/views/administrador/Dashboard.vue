@@ -1,5 +1,216 @@
 <template>
-    <div>
-        <h1 class="text-2xl font-bold">Mensualidad</h1>
+    <div class="dashboard-grid">
+
+        <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card" @click="router.push(opcion.route)">
+
+            <!-- Ícono -->
+            <div class="opcion-icon">
+                <span v-html="opcion.icon" />
+            </div>
+
+            <!-- Texto -->
+            <div class="opcion-text">
+                <h2 class="opcion-title">{{ opcion.titulo }}</h2>
+                <p class="opcion-sub">{{ opcion.sub }}</p>
+            </div>
+
+        </div>
+
     </div>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router'
+import clientes from '@/assets/img/account_box_green.svg?raw'
+import mensualidades from '@/assets/img/calendar_add_on_green.svg?raw'
+// import validar from '@/assets/img/?raw'
+import solicitudes from '@/assets/img/contract_green.svg?raw'
+import reportes from '@/assets/img/assignment_green.svg?raw'
+import sedes from '@/assets/img/emoji_transportation_green.svg?raw'
+import usuarios from '@/assets/img/manage_accounts_green.svg?raw'
+
+
+const router = useRouter()
+
+const opciones = [
+    {
+        id: 1,
+        icon: clientes,
+        titulo: 'Clientes',
+        sub: '128 registrados',
+        route: "/admin/clientes",
+    },
+    {
+        id: 2,
+        icon: mensualidades,
+        titulo: 'Mensualidades',
+        sub: 'Al día',
+        route: "/admin/mensualidades",
+    },
+    // {
+    //     id: 3,
+    //     icon: validar,
+    //     titulo: 'Validar mensualidades',
+    //     sub: '5 por validar',
+    // },
+    {
+        id: 3,
+        icon: solicitudes,
+        titulo: 'Solicitudes',
+        sub: '3 pendientes',
+        route: "/admin/solicitudes",
+    },
+    {
+        id: 4,
+        icon: reportes,
+        titulo: 'Reportes',
+        sub: 'Ver estadísticas',
+        route: "/admin/reportes",
+    },
+    {
+        id: 5,
+        icon: sedes,
+        titulo: 'Administrar sedes',
+        sub: '3 sedes activas',
+        route: "/admin/sedes",
+    },
+    {
+        id: 6,
+        icon: usuarios,
+        titulo: 'Usuarios',
+        sub: 'Gestionar accesos',
+        route: "/admin/usuarios",
+    },
+]
+</script>
+
+<style scoped>
+/* ── Grid principal ─────────────────────────────────────────────────
+   7 tarjetas: 3 en la primera fila, 4 en la segunda (auto-fill)
+   En tablet: 2 columnas. En mobile: 1 columna.
+   ──────────────────────────────────────────────────────────────── */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 24px;
+    align-content: start;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 12px;
+    }
+}
+
+/* ── Tarjeta ─────────────────────────────────────────────────────── */
+.opcion-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px 20px 20px 18px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(13, 41, 28, 0.06);
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
+    box-shadow: 0 4px 0 #e2ede7, 0 2px 12px rgba(13, 41, 28, 0.07);
+}
+
+.opcion-card:hover {
+    border-color: #299261;
+    box-shadow: 0 4px 0 #0D291C, 0 2px 16px rgba(13, 41, 28, 0.12);
+    transform: translateY(-2px);
+}
+
+.opcion-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0D291C, 0 1px 6px rgba(13, 41, 28, 0.1);
+}
+
+@media (max-width: 520px) {
+    .opcion-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+}
+
+/* ── Ícono ───────────────────────────────────────────────────────── */
+.opcion-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    background-color: #e8f5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.18s;
+}
+
+.opcion-card:hover .opcion-icon {
+    background-color: #0D291C;
+}
+
+/* SVG inyectado vía v-html */
+:deep(.opcion-icon svg) {
+    width: 40px;
+    height: 40px;
+    fill: #0D291C;
+    transition: fill 0.18s;
+    display: block;
+}
+
+.opcion-card:hover :deep(.opcion-icon svg) {
+    fill: #7FD344;
+}
+
+@media (max-width: 520px) {
+    .opcion-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
+    :deep(.opcion-icon svg) {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* ── Texto ───────────────────────────────────────────────────────── */
+.opcion-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.opcion-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0D291C;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.opcion-sub {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #299261;
+}
+</style>

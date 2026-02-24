@@ -4,6 +4,7 @@
 
         <div v-if="isOpen && isMobile" @click="isOpen = false" class="fixed inset-0 bg-black/50 z-40" />
 
+
         <Sidebar :menuItems="menuItems" :isOpen="isOpen" @toggle="isOpen = !isOpen" />
 
         <div class="flex flex-col flex-1 h-screen w-full">
@@ -26,11 +27,11 @@ defineProps({
     titulo: String
 })
 
-const isOpen = ref(window.innerWidth >= 768)
-const isMobile = ref(window.innerWidth < 768)
+const isOpen = ref(window.innerWidth >= 1024)
+const isMobile = ref(window.innerWidth < 1024)
 
 const checkMobile = () => {
-    isMobile.value = window.innerWidth < 768
+    isMobile.value = window.innerWidth < 1024
     if (isMobile.value) isOpen.value = false
 }
 

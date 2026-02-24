@@ -1,98 +1,182 @@
-<style scoped>
-.opciones h2 {
-    font-size: 1.3rem;
-}
-
-.opciones p {
-    font-size: 1rem;
-}
-</style>
-
 <template>
+    <div class="dashboard-grid">
 
-    <div class="
-        flex-wrap
-        flex
-        gap-[5%]
-        justify-center
-        w-full
-        p-6
-        h-screen       
-        align-start
-        row-gap-[0.5vw]
-        items-start
-        ">
+        <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card" @click="router.push(opcion.route)">
 
-        <div :class="[
-            'opciones rounded-xl flex flex-col p-[2vw] gap-4 text-[#232B3A] items-center  bg-white  cursor-pointer',
-            isOpen ? 'w-[30%]' : 'w-[25%]'
-        ]">
-            <span v-html="calendarmonth"></span>
-            <h2>Mis mensualidades
-                <br>
-                <p class="text-[#299261]">Al dia</p>
+            <!-- Ícono -->
+            <div class="opcion-icon">
+                <span v-html="opcion.icon" />
+            </div>
 
-            </h2>
-        </div>
-
-        <div :class="[
-            'opciones rounded-xl flex flex-col p-[2vw] gap-4 text-[#232B3A] items-center  bg-white  cursor-pointer',
-            isOpen ? 'w-[30%]' : 'w-[25%]'
-        ]">
-            <span v-html="parkingsign"></span>
-            <h2>Parqueos recientes
-                <br>
-                <p class="text-[#299261]">Ultimo: hoy 14:30</p>
-            </h2>
+            <!-- Texto -->
+            <div class="opcion-text">
+                <h2 class="opcion-title">{{ opcion.titulo }}</h2>
+                <p class="opcion-sub">{{ opcion.sub }}</p>
+            </div>
 
         </div>
-
-        <div :class="[
-            'opciones rounded-xl flex flex-col p-[2vw] gap-4 text-[#232B3A] items-center  bg-white  cursor-pointer',
-            isOpen ? 'w-[30%]' : 'w-[25%]'
-        ]">
-            <span v-html="stackedemail"></span>
-            <h2>Notificaciones pendientes
-                <br>
-                <p class="text-[#299261]">3 notificaciones</p>
-
-            </h2>
-        </div>
-
-
-        <div :class="[
-            'opciones rounded-xl flex flex-col p-[2vw] gap-4 text-[#232B3A] items-center  bg-white  cursor-pointer',
-            isOpen ? 'w-[30%]' : 'w-[25%]'
-        ]">
-            <span v-html="stackedemail"></span>
-            <h2>Notificaciones pendientes
-                <br>
-                <p class="text-[#299261]">3 notificaciones</p>
-
-            </h2>
-        </div>
-
 
     </div>
-
-
-
-
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import mensualidades from '@/assets/img/calendar_month.svg?raw'
+import peticiones from '@/assets/img/contract_green.svg?raw'
+import notificaciones from '@/assets/img/stacked_email.svg?raw'
 
-import parkingsign from '../../assets/img/parking_sign.svg?raw'
-import stackedemail from '../../assets/img/stacked_email.svg?raw'
-import calendarmonth from '../../assets/img/calendar_month.svg?raw'
 
+const router = useRouter()
 
-defineProps({
-    isOpen: {
-        type: Boolean,
-        default: true
-    }
-})
+const opciones = [
+    {
+        id: 1,
+        icon: mensualidades,
+        titulo: 'Mis Mensualidades',
+        sub: '',
+        route: "/cliente/mensualidad"
+    },
+    {
+        id: 2,
+        icon: notificaciones,
+        titulo: 'Notificaciones Pendientes',
+        sub: '3 nuevas sin leer',
+        route: "/cliente/notificaciones",
+    },
+    {
+        id: 3,
+        icon: peticiones,
+        titulo: 'Cambios y Peticiones',
+        sub: '',
+        route: "/cliente/peticiones",
 
+    },
+]
 </script>
+
+<style scoped>
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 24px;
+    align-content: start;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 12px;
+    }
+}
+
+/* ── Tarjeta ─────────────────────────────────────────────────────── */
+.opcion-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px 20px 20px 18px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(13, 41, 28, 0.06);
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
+    box-shadow: 0 4px 0 #e2ede7, 0 2px 12px rgba(13, 41, 28, 0.07);
+}
+
+.opcion-card:hover {
+    border-color: #299261;
+    box-shadow: 0 4px 0 #0D291C, 0 2px 16px rgba(13, 41, 28, 0.12);
+    transform: translateY(-2px);
+}
+
+.opcion-card:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0D291C, 0 1px 6px rgba(13, 41, 28, 0.1);
+}
+
+@media (max-width: 520px) {
+    .opcion-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+}
+
+/* ── Ícono ───────────────────────────────────────────────────────── */
+.opcion-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    background-color: #e8f5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.18s;
+}
+
+.opcion-card:hover .opcion-icon {
+    background-color: #0D291C;
+}
+
+/* SVG inyectado vía v-html */
+:deep(.opcion-icon svg) {
+    width: 40px;
+    height: 40px;
+    fill: #0D291C;
+    transition: fill 0.18s;
+    display: block;
+}
+
+.opcion-card:hover :deep(.opcion-icon svg) {
+    fill: #7FD344;
+}
+
+@media (max-width: 520px) {
+    .opcion-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
+    :deep(.opcion-icon svg) {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* ── Texto ───────────────────────────────────────────────────────── */
+.opcion-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.opcion-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0D291C;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.opcion-sub {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #299261;
+}
+</style>

@@ -1,21 +1,37 @@
+// src/router/guards/authGuards.js
 import { useAuthStore } from "@/stores/auth";
 
-const roleRedirects = {
-  administrador: "/admin/dashboard",
-  cliente: "/cliente/inicio",
-  operador: "/operador/inicio",
-};
+const rutasPublicas = ["/login", "/registro", "/unauthorized"];
 
-export function authGuard(to, from, next) {
+export async function authGuard(to, from, next) {
   const auth = useAuthStore();
 
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const requiredRole = to.matched.find((record) => record.meta.role)?.meta.role;
+  // ── 1. Ruta pública ───────────────────────────────────────────────
+  // Login y registro: si ya está autenticado lo mandamos a su dashboard
+  const esPublica = to.meta.public === true || rutasPublicas.includes(to.path);
+  if (esPublica) {
+    if (auth.isAuthenticated) return next(auth.redirectTo);
+    return next();
+  }
 
-  if (!requiresAuth) return next();
-  if (!auth.isLoggedIn) return next("/login");
-  if (requiredRole && auth.userRole !== requiredRole) {
-    return next(roleRedirects[auth.userRole]);
+  // ── 2. Sin token → login ──────────────────────────────────────────
+  if (!auth.isAuthenticated) {
+    return next("/login");
+  }
+
+  // ── 3. Token existe pero user se perdió (recarga de página) ───────
+  // Pinia restore el token del localStorage pero user puede ser null
+  // si el JWT venció. restoreSession() lo verifica y renueva si hace falta.
+  if (!auth.user) {
+    await auth.restoreSession();
+    if (!auth.isAuthenticated) return next("/login");
+  }
+
+  // ── 4. Verificación de rol ────────────────────────────────────────
+  // Las rutas usan meta.role (singular) — lo comparamos con auth.role
+  const rolRequerido = to.meta.role;
+  if (rolRequerido && auth.role !== rolRequerido) {
+    return next("/unauthorized"); // autenticado pero rol incorrecto
   }
 
   next();

@@ -5,8 +5,8 @@
         <div class="flex items-center justify-between relative bg-white rounded-full p-4">
             <div class="w-[80px]"></div>
             <h2 class="text-2xl font-bold text-[#232B3A]">Clientes</h2>
-            <div class="flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm px-4 py-2 rounded-full">
-                <button>Volver</button>
+            <div class="back-btn flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm px-4 py-2 rounded-full">
+                <button @click="$router.back()">Volver</button>
             </div>
         </div>
 
@@ -90,7 +90,7 @@
                                     <div class="flex flex-col items-start min-w-0">
                                         <span
                                             class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">{{
-                                            cliente.nombre }}</span>
+                                                cliente.nombre }}</span>
                                         <span class="text-[10px] text-gray-400 font-mono truncate max-w-[140px]">{{
                                             cliente.correo }}</span>
                                     </div>
@@ -98,7 +98,7 @@
                             </td>
 
                             <!-- Documento -->
-                            <td class="td-cell font-mono text-gray-500 tracking-wide">{{ cliente.documento }}</td>
+                            <td class="td-cell tracking-wide">{{ cliente.documento }}</td>
 
                             <!-- Sede -->
                             <td class="td-cell">
@@ -440,14 +440,25 @@ import person_edit from '@/assets/img/person_edit.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
 import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
 
+
+
 // --- ESTADOS ---
 const busqueda = ref('')
+const busquedaDebounced = ref('')
 const filtroSede = ref('')
 const filtroEstado = ref('')
 const paginaActual = ref(1)
 const itemsPorPagina = ref(10)
 const sedes = ['Norte', 'Sur', 'Centro']
 
+let debounceTimer = null
+watch(busqueda, (val) => {
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => {
+        busquedaDebounced.value = val
+        paginaActual.value = 1
+    }, 300)
+})
 // Control de Modales
 const modalEditar = ref(false)
 const modalMensualidad = ref(false)
@@ -473,7 +484,7 @@ const mockClientes = ref([
 // --- FILTROS Y PAGINACIÓN ---
 const clientesFiltrados = computed(() => {
     return mockClientes.value.filter(c => {
-        const q = busqueda.value.toLowerCase()
+        const q = busquedaDebounced.value.toLowerCase()
         const matchBusqueda = !q || c.nombre.toLowerCase().includes(q) || c.documento.includes(q)
         const matchSede = !filtroSede.value || c.sede === filtroSede.value
         const matchEstado = !filtroEstado.value || c.estado === filtroEstado.value
@@ -504,7 +515,7 @@ const cerrarModales = () => {
     clienteAccion.value = null
 }
 const limpiarFiltros = () => {
-    busqueda.value = ''; filtroSede.value = ''; filtroEstado.value = ''
+    busqueda.value = ''; busquedaDebounced.value = ''; filtroSede.value = ''; filtroEstado.value = ''
 }
 
 // --- HELPERS ---
@@ -536,7 +547,7 @@ const fechaClase = (e) => ({
     'vencido': 'fecha-pago--danger',
 })[e] || ''
 
-watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
+watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
 </script>
 
 
@@ -559,7 +570,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     min-width: 140px;
 }
 
-/* Búsqueda ocupa más espacio en desktop */
 .filter-field--search {
     flex: 2;
     min-width: 200px;
@@ -574,7 +584,11 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     padding-left: 4px;
 }
 
-/* En mobile todos los filtros van full width apilados */
+.back-btn {
+    border: 1px solid black;
+    box-shadow: #595858 0px 2px 0;
+}
+
 @media (max-width: 600px) {
     .filters-bar {
         flex-direction: column;
@@ -619,11 +633,9 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
    TABLA RESPONSIVE
    ══════════════════════════════════════════════════════════════════ */
 
-/* Wrapper: habilita scroll horizontal en el eje X */
 .table-scroll-wrapper {
     overflow-x: auto;
     flex: 1;
-    /* Scrollbar estilizada — visible para que el usuario sepa que puede deslizar */
     scrollbar-width: thin;
     scrollbar-color: #0D291C33 #f0f9f4;
 }
@@ -641,11 +653,9 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     border-radius: 99px;
 }
 
-/* La tabla NO usa width:100% — así puede crecer más que el contenedor y activar el scroll */
 .data-table {
     border-collapse: collapse;
     min-width: 700px;
-    /* ancho mínimo antes de activar el scroll horizontal */
     width: 100%;
 }
 
@@ -667,12 +677,10 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     text-align: center;
 }
 
-/* Columna nombre sticky a la izquierda */
 .th-cell--sticky {
     position: sticky;
     left: 0;
     z-index: 2;
-    /* Sombra derecha sutil para indicar que hay contenido detrás */
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.12);
 }
 
@@ -690,7 +698,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     background-color: #f0faf4;
 }
 
-/* Al hover la celda sticky también cambia */
 .table-row:hover .td-cell--sticky {
     background-color: #f0faf4;
 }
@@ -706,7 +713,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     white-space: nowrap;
 }
 
-/* Celda de nombre sticky — fondo blanco para tapar el contenido que pasa por debajo */
 .td-cell--sticky {
     position: sticky;
     left: 0;
@@ -720,7 +726,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     text-align: center;
 }
 
-/* Avatar de iniciales */
 .row-avatar {
     width: 36px;
     height: 36px;
@@ -736,7 +741,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     border: 2px solid #e8f5e9;
 }
 
-/* Badge de sede */
 .sede-badge {
     display: inline-block;
     padding: 3px 10px;
@@ -748,7 +752,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     border: 1px solid #c8e6c9;
 }
 
-/* Badge de estado */
 .estado-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -758,7 +761,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     white-space: nowrap;
 }
 
-/* Fecha de pago */
 .fecha-pago {
     font-size: 0.8rem;
     font-weight: 600;
@@ -833,7 +835,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     color: #0D291C;
 }
 
-/* Indicador "1 / 3" solo visible en mobile */
 .page-mobile-indicator {
     display: none;
     font-size: 0.8rem;
@@ -842,7 +843,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     padding: 0 8px;
 }
 
-/* Números de página solo en desktop */
 .page-btn--num {
     display: flex;
 }
@@ -852,17 +852,14 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
         display: none;
     }
 
-    /* contador se oculta en móvil */
     .page-mobile-indicator {
         display: block;
     }
 
-    /* aparece "1 / 3" */
     .page-btn--num {
         display: none;
     }
 
-    /* se ocultan los números individuales */
     .table-foot {
         padding: 10px 14px;
         justify-content: space-between;
@@ -899,7 +896,6 @@ watch([busqueda, filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     box-shadow: 0 2px 0 rgba(13, 41, 28, 0.3);
 }
 
-/* Inputs globales — se usan en filtros */
 input,
 select {
     border-radius: 999px !important;
@@ -944,7 +940,7 @@ select.paginator-select:focus {
    MODALES
    ══════════════════════════════════════════════════════════════════════ */
 
-/* Overlay */
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -964,13 +960,11 @@ select.paginator-select:focus {
     border: 2.5px solid #0D291C;
     border-radius: 40px;
     box-shadow: 0 7px 0 #0D291C;
-    /* sombra 3D coherente con .btn-modal-dark */
     width: 100%;
     max-width: 500px;
     max-height: 88vh;
     display: flex;
     flex-direction: column;
-    /* cabecera fija + body scroll + pie fijo */
     overflow: hidden;
 }
 
@@ -1098,7 +1092,6 @@ select.paginator-select:focus {
     border-radius: 99px;
 }
 
-/* Etiqueta de sección */
 .modal-section-label {
     font-size: 0.62rem;
     font-weight: 900;
@@ -1166,7 +1159,6 @@ select.paginator-select:focus {
     opacity: 1;
 }
 
-/* Override total del reset global para inputs dentro del modal */
 .field-input {
     background-color: white !important;
     border: 2px solid #0D291C !important;
