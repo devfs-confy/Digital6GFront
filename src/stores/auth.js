@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import api from "@/api/axios";
+import {api} from "@/api/axios"
 
 const roleRedirects = {
   administrador: "/admin/dashboard",
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore(
       errorMsg.value = null;
 
       try {
-        const { data } = await api.post("/api/auth/login", {
+        const { data } = await api.post("/auth/login", {
           Documento: documento,
           Password: password,
         });
@@ -55,6 +55,7 @@ export const useAuthStore = defineStore(
 
         return roleRedirects[role.value] ?? "/login";
       } catch (err) {
+        console.log(err);
         const status = err.response?.status;
         const mensaje = err.response?.data?.message;
 

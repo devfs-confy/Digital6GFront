@@ -27,7 +27,9 @@
                 <label class="filter-label">Sede</label>
                 <select v-model="filtroSede">
                     <option value="">Todas las sedes</option>
-                    <option v-for="sede in sedes" :key="sede" :value="sede">{{ sede }}</option>
+                    <option v-for="sede in sedes" :key="sede.IdEstacionamiento" :value="sede.IdEstacionamiento">
+                        {{ sede.Nombre }}
+                    </option>
                 </select>
             </div>
 
@@ -36,9 +38,8 @@
                 <label class="filter-label">Estado</label>
                 <select v-model="filtroEstado">
                     <option value="">Todos los estados</option>
-                    <option value="al dia">Al día</option>
-                    <option value="por vencer">Por vencer</option>
-                    <option value="vencido">Vencido</option>
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
                 </select>
             </div>
 
@@ -59,9 +60,9 @@
                             <!-- Columna nombre sticky — siempre visible al hacer scroll -->
                             <th class="th-cell th-cell--sticky">Cliente</th>
                             <th class="th-cell">Documento</th>
-                            <th class="th-cell">Sede</th>
+                            <th class="th-cell">Correo</th>
+                            <!-- <th class="th-cell">Sede</th> -->
                             <th class="th-cell">Estado membresía</th>
-                            <th class="th-cell">Próximo pago</th>
                             <th class="th-cell th-cell--actions">Opciones</th>
                         </tr>
                     </thead>
@@ -81,41 +82,40 @@
                         </tr>
 
                         <!-- Filas -->
-                        <tr v-for="(cliente, i) in clientesPaginados" :key="cliente.id" class="table-row">
+                        <tr v-for="(cliente, i) in clientesPaginados" :key="cliente.Documento" class="table-row">
 
                             <!-- Nombre sticky -->
                             <td class="td-cell td-cell--sticky">
                                 <div class="flex items-center gap-3">
-                                    <div class="row-avatar">{{ iniciales(cliente.nombre) }}</div>
+                                    <div class="row-avatar">{{ iniciales(cliente.Nombres) }}</div>
                                     <div class="flex flex-col items-start min-w-0">
                                         <span
                                             class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">{{
-                                                cliente.nombre }}</span>
-                                        <span class="text-[10px] text-gray-400 font-mono truncate max-w-[140px]">{{
-                                            cliente.correo }}</span>
+                                                cliente.Nombres }} {{ cliente.Apellidos }}</span>
+
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Documento -->
-                            <td class="td-cell tracking-wide">{{ cliente.documento }}</td>
+                            <td class="td-cell tracking-wide">{{ cliente.Documento }}</td>
 
                             <!-- Sede -->
-                            <td class="td-cell">
+                            <!-- <td class="td-cell">
                                 <span class="sede-badge">{{ cliente.sede }}</span>
+                            </td> -->
+
+                            <td class="td-cell">
+                                <span class="sede-badge">{{ cliente.Email }}</span>
                             </td>
 
                             <!-- Estado -->
                             <td class="td-cell">
-                                <span :class="['estado-badge', estadoClase(cliente.estado)]">
-                                    {{ estadoLabel(cliente.estado) }}
+                                <span v-if="cliente.Estado" class="estado-badge-activo">
+                                    Activo
                                 </span>
-                            </td>
-
-                            <!-- Próximo pago -->
-                            <td class="td-cell">
-                                <span :class="['fecha-pago', fechaClase(cliente.estado)]">
-                                    {{ formatFecha(cliente.proximoPago) }}
+                                <span v-else class="estado-badge-inactivo">
+                                    Inactivo
                                 </span>
                             </td>
 
@@ -125,9 +125,7 @@
                                     <button @click="editarCliente(cliente)" class="action-btn" title="Editar"
                                         v-html="person_edit">
                                     </button>
-                                    <button @click="verPagos(cliente)" class="action-btn" title="Mensualidad"
-                                        v-html="credit_card_gear">
-                                    </button>
+
                                     <button @click="darDeBaja(cliente)" class="action-btn action-btn--danger"
                                         title="Inhabilitar" v-html="account_circle_off">
                                     </button>
@@ -177,7 +175,7 @@
                     <select v-model.number="itemsPorPagina" @change="paginaActual = 1" class="paginator-select">
                         <option :value="5">5</option>
                         <option :value="10">10</option>
-                        <option :value="20">20</option>
+                        <option :value="15">15</option>
                     </select>
                 </div>
             </div>
@@ -194,9 +192,9 @@
                     <!-- Cabecera fija -->
                     <div class="modal-head">
                         <div class="modal-head__left">
-                            <div class="modal-avatar">{{ iniciales(clienteAccion?.nombre) }}</div>
+                            <div class="modal-avatar">{{ iniciales(clienteAccion?.Documento) }}</div>
                             <div>
-                                <p class="modal-head__name">{{ clienteAccion?.nombre }}</p>
+                                <p class="modal-head__name">{{ clienteAccion?.Nombres }}</p>
                                 <p class="modal-head__sub">Editando información</p>
                             </div>
                         </div>
@@ -210,27 +208,27 @@
                         <div class="modal-grid">
                             <div class="field-group">
                                 <label class="field-label">Nombre</label>
-                                <input v-model="clienteAccion.nombre" type="text" class="field-input"
+                                <input v-model="clienteAccion.Nombres" type="text" class="field-input"
                                     placeholder="Nombre" />
                             </div>
                             <div class="field-group">
                                 <label class="field-label">Apellido</label>
-                                <input v-model="clienteAccion.apellido" type="text" class="field-input"
+                                <input v-model="clienteAccion.Apellidos" type="text" class="field-input"
                                     placeholder="Apellido" />
                             </div>
                             <div class="field-group">
                                 <label class="field-label">Documento</label>
-                                <input v-model="clienteAccion.documento" type="text" class="field-input"
+                                <input v-model="clienteAccion.Documento" type="text" class="field-input"
                                     placeholder="Número de documento" />
                             </div>
                             <div class="field-group">
                                 <label class="field-label">Teléfono</label>
-                                <input v-model="clienteAccion.telefono" type="tel" class="field-input"
-                                    placeholder="3XX XXX XXXX" />
+                                <input v-model="clienteAccion.Telefono" type="text" @input="validarTelefono"
+                                    class="field-input" placeholder="3XX XXX XXXX" />
                             </div>
                             <div class="field-group field-group--full">
                                 <label class="field-label">Correo electrónico</label>
-                                <input v-model="clienteAccion.correo" type="email" class="field-input"
+                                <input v-model="clienteAccion.Email" type="email" class="field-input"
                                     placeholder="correo@ejemplo.com" />
                             </div>
                         </div>
@@ -243,22 +241,13 @@
                                     <option v-for="s in sedes" :key="s" :value="s">{{ s }}</option>
                                 </select>
                             </div>
-                            <div class="field-group">
-                                <label class="field-label">Plan</label>
-                                <select v-model="clienteAccion.plan" class="field-input">
-                                    <option>Mensual</option>
-                                    <option>Trimestral</option>
-                                    <option>Semestral</option>
-                                    <option>Anual</option>
-                                </select>
-                            </div>
                         </div>
 
                         <p class="modal-section-label">Vehículos</p>
                         <div class="modal-grid">
                             <div class="field-group">
                                 <label class="field-label">Placa 1</label>
-                                <input v-model="clienteAccion.placa1" type="text" class="field-input"
+                                <input v-model="clienteAccion.Placa1" type="text" class="field-input"
                                     placeholder="ABC-123" />
                             </div>
                             <div class="field-group">
@@ -287,87 +276,7 @@
 
 
         <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 2 — MENSUALIDAD                                  -->
-        <!-- ════════════════════════════════════════════════════════ -->
-        <Transition name="modal">
-            <div v-if="modalMensualidad" class="modal-overlay" @click.self="cerrarModales">
-                <div class="modal-card">
-
-                    <div class="modal-head">
-                        <div class="modal-head__left">
-                            <div class="modal-avatar">{{ iniciales(clienteAccion?.nombre) }}</div>
-                            <div>
-                                <p class="modal-head__name">{{ clienteAccion?.nombre }}</p>
-                                <p class="modal-head__sub">Gestión de mensualidad</p>
-                            </div>
-                        </div>
-                        <button @click="cerrarModales" class="modal-close">✕</button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <!-- Resumen estado actual -->
-                        <div class="plan-summary">
-                            <div class="plan-summary__item">
-                                <span class="plan-summary__label">Plan actual</span>
-                                <span class="plan-summary__value">{{ clienteAccion?.plan }}</span>
-                            </div>
-                            <div class="plan-summary__sep"></div>
-                            <div class="plan-summary__item">
-                                <span class="plan-summary__label">Próximo pago</span>
-                                <span class="plan-summary__value">{{ formatFecha(clienteAccion?.proximoPago) }}</span>
-                            </div>
-                            <div class="plan-summary__sep"></div>
-                            <div class="plan-summary__item">
-                                <span class="plan-summary__label">Estado</span>
-                                <span :class="['estado-badge', estadoClase(clienteAccion?.estado)]">
-                                    {{ estadoLabel(clienteAccion?.estado) }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Modificar plan</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Nuevo plan</label>
-                                <select class="field-input">
-                                    <option>Mensual</option>
-                                    <option>Trimestral</option>
-                                    <option>Semestral</option>
-                                    <option>Anual</option>
-                                </select>
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Nueva fecha de pago</label>
-                                <input type="date" class="field-input" />
-                            </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label">Observaciones</label>
-                                <textarea class="field-input field-input--textarea" rows="2"
-                                    placeholder="Ej: descuento aplicado, renovación anticipada..."></textarea>
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Acciones rápidas</p>
-                        <div class="quick-actions">
-                            <button class="quick-btn quick-btn--freeze">❄️ Congelar</button>
-                            <button class="quick-btn quick-btn--pause">⏸ Pausar acceso</button>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button class="btn-modal-dark">Guardar cambios</button>
-                    </div>
-
-                </div>
-            </div>
-        </Transition>
-
-
-        <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 3 — INHABILITAR                                  -->
+        <!-- MODAL 2 — INHABILITAR                                  -->
         <!-- ════════════════════════════════════════════════════════ -->
         <Transition name="modal">
             <div v-if="modalInhabilitar" class="modal-overlay" @click.self="cerrarModales">
@@ -376,10 +285,10 @@
                     <div class="modal-head modal-head--danger">
                         <div class="modal-head__left">
                             <div class="modal-avatar modal-avatar--danger">
-                                {{ iniciales(clienteAccion?.nombre) }}
+                                {{ iniciales(clienteAccion?.Nombres) }}
                             </div>
                             <div>
-                                <p class="modal-head__name modal-head__name--danger">{{ clienteAccion?.nombre }}</p>
+                                <p class="modal-head__name modal-head__name--danger">{{ clienteAccion?.Nombres }}</p>
                                 <p class="modal-head__sub modal-head__sub--danger">Inhabilitar cliente</p>
                             </div>
                         </div>
@@ -394,7 +303,7 @@
                                 <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                             </svg>
                             <p>
-                                Al inhabilitar a <strong>{{ clienteAccion?.nombre }}</strong>, no podrá
+                                Al inhabilitar a <strong>{{ clienteAccion?.Nombres }}</strong>, no podrá
                                 acceder al sistema ni renovar su membresía. Esta acción puede revertirse.
                             </p>
                         </div>
@@ -435,21 +344,39 @@
 
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import person_edit from '@/assets/img/person_edit.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
-import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
+import UsersService from '@/api/services/users.service'
+import sedesServices from '@/api/services/sedes.services'
 
 
 
 // --- ESTADOS ---
 const busqueda = ref('')
 const busquedaDebounced = ref('')
-const filtroSede = ref('')
-const filtroEstado = ref('')
+const filtroEstado = ref()
 const paginaActual = ref(1)
 const itemsPorPagina = ref(10)
-const sedes = ['Norte', 'Sur', 'Centro']
+
+const mockClientes = ref([])
+
+const sedes = ref([])
+
+onMounted(async () => {
+    try {
+
+        const response = await UsersService.getAllClients({ page: 1, limit: 15 })
+        mockClientes.value = response?.data || []
+
+        sedes.value = await sedesServices.getAll()
+    } catch (error) {
+        console.error("Error cargando datos:", error)
+    }
+})
+
+const filtroSede = ref('')
+
 
 let debounceTimer = null
 watch(busqueda, (val) => {
@@ -459,35 +386,24 @@ watch(busqueda, (val) => {
         paginaActual.value = 1
     }, 300)
 })
-// Control de Modales
+
 const modalEditar = ref(false)
-const modalMensualidad = ref(false)
 const modalInhabilitar = ref(false)
 const clienteAccion = ref(null)
-
-// --- MOCK DATA ---
-const mockClientes = ref([
-    { id: 1, nombre: 'Jean Carlos Pérez', documento: '123456789', sede: 'Norte', estado: 'al dia', proximoPago: '2026-03-05', plan: 'Mensual', correo: 'jean@ejemplo.com', telefono: '3001234567' },
-    { id: 2, nombre: 'Laura Martínez', documento: '987654321', sede: 'Sur', estado: 'por vencer', proximoPago: '2026-03-01', plan: 'Trimestral', correo: 'laura@ejemplo.com', telefono: '3009876543' },
-    { id: 3, nombre: 'Carlos Rodríguez', documento: '112233445', sede: 'Centro', estado: 'vencido', proximoPago: '2026-02-10', plan: 'Mensual', correo: 'carlos@ejemplo.com', telefono: '3011234567' },
-    { id: 4, nombre: 'María Gómez', documento: '556677889', sede: 'Norte', estado: 'al dia', proximoPago: '2026-04-01', plan: 'Semestral', correo: 'maria@ejemplo.com', telefono: '3021234567' },
-    { id: 5, nombre: 'Andrés Torres', documento: '998877665', sede: 'Sur', estado: 'al dia', proximoPago: '2026-03-20', plan: 'Mensual', correo: 'andres@ejemplo.com', telefono: '3031234567' },
-    { id: 6, nombre: 'Sandra López', documento: '334455667', sede: 'Centro', estado: 'por vencer', proximoPago: '2026-02-28', plan: 'Mensual', correo: 'sandra@ejemplo.com', telefono: '3041234567' },
-    { id: 7, nombre: 'Felipe Vargas', documento: '223344556', sede: 'Norte', estado: 'vencido', proximoPago: '2026-01-15', plan: 'Trimestral', correo: 'felipe@ejemplo.com', telefono: '3051234567' },
-    { id: 8, nombre: 'Camila Herrera', documento: '445566778', sede: 'Sur', estado: 'al dia', proximoPago: '2026-03-10', plan: 'Mensual', correo: 'camila@ejemplo.com', telefono: '3061234567' },
-    { id: 9, nombre: 'Julián Castro', documento: '667788990', sede: 'Centro', estado: 'al dia', proximoPago: '2026-03-15', plan: 'Semestral', correo: 'julian@ejemplo.com', telefono: '3071234567' },
-    { id: 10, nombre: 'Valentina Díaz', documento: '778899001', sede: 'Norte', estado: 'por vencer', proximoPago: '2026-03-02', plan: 'Mensual', correo: 'valentina@ejemplo.com', telefono: '3081234567' },
-    { id: 11, nombre: 'Rodrigo Medina', documento: '889900112', sede: 'Sur', estado: 'al dia', proximoPago: '2026-04-05', plan: 'Mensual', correo: 'rodrigo@ejemplo.com', telefono: '3091234567' },
-    { id: 12, nombre: 'Natalia Ruiz', documento: '900011223', sede: 'Centro', estado: 'vencido', proximoPago: '2026-01-30', plan: 'Trimestral', correo: 'natalia@ejemplo.com', telefono: '3101234567' },
-])
 
 // --- FILTROS Y PAGINACIÓN ---
 const clientesFiltrados = computed(() => {
     return mockClientes.value.filter(c => {
         const q = busquedaDebounced.value.toLowerCase()
-        const matchBusqueda = !q || c.nombre.toLowerCase().includes(q) || c.documento.includes(q)
+        const matchBusqueda = !q ||
+            (c.Nombres?.toLowerCase().includes(q)) ||
+            (c.Documento?.toString().includes(q))
+
         const matchSede = !filtroSede.value || c.sede === filtroSede.value
-        const matchEstado = !filtroEstado.value || c.estado === filtroEstado.value
+
+        const matchEstado = filtroEstado.value === '' || filtroEstado.value === undefined ||
+            c.Estado === (filtroEstado.value === 'true')
+
         return matchBusqueda && matchSede && matchEstado
     })
 })
@@ -502,59 +418,77 @@ const editarCliente = (cliente) => {
     clienteAccion.value = { ...cliente }
     modalEditar.value = true
 }
-const verPagos = (cliente) => {
-    clienteAccion.value = cliente
-    modalMensualidad.value = true
-}
+
 const darDeBaja = (cliente) => {
-    clienteAccion.value = cliente
+    clienteAccion.value = { ...cliente }
     modalInhabilitar.value = true
 }
+
 const cerrarModales = () => {
-    modalEditar.value = modalMensualidad.value = modalInhabilitar.value = false
+    modalEditar.value = false
+    modalInhabilitar.value = false
     clienteAccion.value = null
 }
+
+// const actualizarDatos = () => {
+//     console.log("Guardando...", clienteAccion.value)
+//     cerrarModales()
+// }
+
 const limpiarFiltros = () => {
-    busqueda.value = ''; busquedaDebounced.value = ''; filtroSede.value = ''; filtroEstado.value = ''
+    busqueda.value = ''
+    busquedaDebounced.value = ''
+    filtroSede.value = ''
+    filtroEstado.value = ''
 }
 
 // --- HELPERS ---
-const iniciales = (nombre = '') =>
-    nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
+const iniciales = (nombre = '') => {
+    if (!nombre) return '??'
+    return nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
+}
 
 const totalPaginas = computed(() => Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value)))
 const rangoInicio = computed(() => clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1)
 const rangoFin = computed(() => Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length))
 
-const formatFecha = (f) => {
-    if (!f) return ''
-    const [y, m, d] = f.split('-')
-    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-    return `${d} ${meses[parseInt(m) - 1]} ${y}`
+watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
+
+onMounted(async () => {
+    try {
+        const response = await UsersService.getAllClients({
+            page: 1,
+            limit: 15
+        })
+        mockClientes.value = response?.data || []
+    } catch (error) {
+        console.error("Error cargando clientes:", error)
+    }
+})
+
+
+const validarTelefono = (event) => {
+    const val = event.target.value.replace(/\D/g, '')
+    clienteAccion.value.Telefono = val
 }
 
-const estadoClase = (e) => ({
-    'al dia': 'bg-[#7FD344]/15 text-[#299261]',
-    'por vencer': 'bg-amber-100 text-amber-700',
-    'vencido': 'bg-red-100 text-red-600',
-})[e] || ''
-
-const estadoLabel = (e) => ({ 'al dia': 'Al día', 'por vencer': 'Por vencer', 'vencido': 'Vencido' }[e] || e)
-
-const fechaClase = (e) => ({
-    'al dia': '',
-    'por vencer': 'fecha-pago--warn',
-    'vencido': 'fecha-pago--danger',
-})[e] || ''
-
-watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
 </script>
-
 
 <style scoped>
 /* ══════════════════════════════════════════════════════════════════
    FILTROS RESPONSIVE
    ══════════════════════════════════════════════════════════════════ */
+
+.estado-badge-activo {
+    color: #299261;
+    font-weight: bold;
+}
+
+.estado-badge-inactivo {
+    color: #dc2626;
+    font-weight: bold;
+}
+
 .filters-bar {
     display: flex;
     flex-wrap: wrap;
@@ -761,21 +695,7 @@ watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
     white-space: nowrap;
 }
 
-.fecha-pago {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #6b7280;
-}
 
-.fecha-pago--warn {
-    color: #d97706;
-    font-weight: 700;
-}
-
-.fecha-pago--danger {
-    color: #dc2626;
-    font-weight: 700;
-}
 
 /* ── Botones de acción ─────────────────────────────────────────────── */
 .action-btn {

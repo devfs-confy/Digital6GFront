@@ -1,7 +1,8 @@
 <template>
     <div class="dashboard-grid">
 
-        <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card" @click="router.push(opcion.route)">
+        <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card card-animation"
+            @click="router.push(opcion.route)">
 
             <!-- Ícono -->
             <div class="opcion-icon">
@@ -55,6 +56,22 @@ const opciones = [
 </script>
 
 <style scoped>
+.card-animation {
+    animation: cardIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -92,6 +109,8 @@ const opciones = [
     box-shadow: 0 2px 8px rgba(13, 41, 28, 0.06);
     transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
     box-shadow: 0 4px 0 #e2ede7, 0 2px 12px rgba(13, 41, 28, 0.07);
+    transition: opacity 0.2s ease;
+
 }
 
 .opcion-card:hover {

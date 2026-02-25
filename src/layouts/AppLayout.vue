@@ -17,6 +17,8 @@
     </div>
 </template>
 
+<style></style>
+
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import Sidebar from '../components/shared/Sidebar.vue'
@@ -26,6 +28,8 @@ defineProps({
     menuItems: Array,
     titulo: String
 })
+
+// await new Promise(r => setTimeout(r, 2000))
 
 const isOpen = ref(window.innerWidth >= 1024)
 const isMobile = ref(window.innerWidth < 1024)
