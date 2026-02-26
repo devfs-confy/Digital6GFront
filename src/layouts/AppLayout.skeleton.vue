@@ -2,7 +2,7 @@
 <template>
     <div class="flex h-screen w-full bg-[#F0F0F0] overflow-hidden">
 
-        <div class="flex flex-col gap-3 p-4 bg-[#0D291C] h-screen w-[20%] flex-shrink-0 gap-4">
+        <div class="flex flex-col p-4 bg-[#0D291C] h-screen w-[20%] flex-shrink-0 gap-4">
 
             <div class="sk sk--rounded mb-4" style="height:48px" />
 

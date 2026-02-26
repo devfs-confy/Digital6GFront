@@ -1,4 +1,3 @@
-// src/router/guards/authGuards.js
 import { useAuthStore } from "@/stores/auth";
 
 const rutasPublicas = ["/login", "/registro", "/unauthorized"];
@@ -7,7 +6,6 @@ export async function authGuard(to, from, next) {
   const auth = useAuthStore();
 
   // ── 1. Ruta pública ───────────────────────────────────────────────
-  // Login y registro: si ya está autenticado lo mandamos a su dashboard
   const esPublica = to.meta.public === true || rutasPublicas.includes(to.path);
   if (esPublica) {
     if (auth.isAuthenticated) return next(auth.redirectTo);

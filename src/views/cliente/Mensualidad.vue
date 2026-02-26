@@ -411,7 +411,7 @@ const confirmarCongelar = () => {
 /* ── Grid de mensualidades ───────────────────────────────────────── */
 .mensualidades-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     align-content: start;
 }
@@ -505,7 +505,7 @@ const confirmarCongelar = () => {
     height: 44px;
     border-radius: 14px;
     background-color: #0D291C;
-    color: #7FD344;
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -708,7 +708,7 @@ const confirmarCongelar = () => {
 
 .btn-pagar {
     background-color: #0D291C;
-    color: #7FD344;
+    color: #ffffff;
     border-color: #0D291C;
     box-shadow: 0 3px 0 #051510;
 }

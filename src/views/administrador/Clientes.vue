@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex flex-col gap-6">
 
-        <!-- Header — mantenido igual, solo ajuste de centrado del título -->
+        <!-- Header -->
         <div class="flex items-center justify-between relative bg-white rounded-full p-4">
             <div class="w-[80px]"></div>
             <h2 class="text-2xl font-bold text-[#232B3A]">Clientes</h2>
@@ -12,8 +12,6 @@
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 filters-bar">
-
-            <!-- Búsqueda — ancho fijo en desktop, full en mobile -->
             <div class="filter-field filter-field--search">
                 <label class="filter-label">Buscar</label>
                 <div class="relative">
@@ -21,8 +19,6 @@
                         class="search-input w-full" />
                 </div>
             </div>
-
-            <!-- Sede -->
             <div class="filter-field">
                 <label class="filter-label">Sede</label>
                 <select v-model="filtroSede">
@@ -32,8 +28,6 @@
                     </option>
                 </select>
             </div>
-
-            <!-- Estado -->
             <div class="filter-field">
                 <label class="filter-label">Estado</label>
                 <select v-model="filtroEstado">
@@ -42,8 +36,6 @@
                     <option value="false">Inactivo</option>
                 </select>
             </div>
-
-            <!-- Limpiar filtros -->
             <button v-if="busqueda || filtroSede || filtroEstado" @click="limpiarFiltros" class="filter-clear-btn">
                 ✕ Limpiar
             </button>
@@ -51,23 +43,18 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-
-            <!-- Wrapper con scroll horizontal -->
             <div class="table-scroll-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <!-- Columna nombre sticky — siempre visible al hacer scroll -->
                             <th class="th-cell th-cell--sticky">Cliente</th>
                             <th class="th-cell">Documento</th>
                             <th class="th-cell">Correo</th>
-                            <!-- <th class="th-cell">Sede</th> -->
                             <th class="th-cell">Estado membresía</th>
                             <th class="th-cell th-cell--actions">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Sin resultados -->
                         <tr v-if="clientesPaginados.length === 0">
                             <td colspan="6" class="text-center py-20 text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
@@ -81,51 +68,30 @@
                             </td>
                         </tr>
 
-                        <!-- Filas -->
-                        <tr v-for="(cliente, i) in clientesPaginados" :key="cliente.Documento" class="table-row">
-
-                            <!-- Nombre sticky -->
+                        <tr v-for="cliente in clientesPaginados" :key="cliente.Documento" class="table-row">
                             <td class="td-cell td-cell--sticky">
                                 <div class="flex items-center gap-3">
                                     <div class="row-avatar">{{ iniciales(cliente.Nombres) }}</div>
                                     <div class="flex flex-col items-start min-w-0">
-                                        <span
-                                            class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">{{
-                                                cliente.Nombres }} {{ cliente.Apellidos }}</span>
-
+                                        <span class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">
+                                            {{ cliente.Nombres }} {{ cliente.Apellidos }}
+                                        </span>
                                     </div>
                                 </div>
                             </td>
-
-                            <!-- Documento -->
                             <td class="td-cell tracking-wide">{{ cliente.Documento }}</td>
-
-                            <!-- Sede -->
-                            <!-- <td class="td-cell">
-                                <span class="sede-badge">{{ cliente.sede }}</span>
-                            </td> -->
-
                             <td class="td-cell">
                                 <span class="sede-badge">{{ cliente.Email }}</span>
                             </td>
-
-                            <!-- Estado -->
                             <td class="td-cell">
-                                <span v-if="cliente.Estado" class="estado-badge-activo">
-                                    Activo
-                                </span>
-                                <span v-else class="estado-badge-inactivo">
-                                    Inactivo
-                                </span>
+                                <span v-if="cliente.Estado" class="estado-badge-activo">Activo</span>
+                                <span v-else class="estado-badge-inactivo">Inactivo</span>
                             </td>
-
-                            <!-- Opciones — también sticky a la derecha en mobile -->
                             <td class="td-cell td-cell--actions">
                                 <div class="flex items-center justify-center gap-1">
                                     <button @click="editarCliente(cliente)" class="action-btn" title="Editar"
                                         v-html="person_edit">
                                     </button>
-
                                     <button @click="darDeBaja(cliente)" class="action-btn action-btn--danger"
                                         title="Inhabilitar" v-html="account_circle_off">
                                     </button>
@@ -138,12 +104,9 @@
 
             <!-- Paginación -->
             <div class="table-foot">
-                <!-- Contador — se oculta en pantallas muy pequeñas -->
                 <span class="foot-counter">
                     <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ clientesFiltrados.length }}</strong>
                 </span>
-
-                <!-- Páginas -->
                 <div class="flex items-center gap-1">
                     <button @click="paginaActual--" :disabled="paginaActual === 1" class="page-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
@@ -151,8 +114,6 @@
                             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                         </svg>
                     </button>
-
-                    <!-- En mobile solo muestra página actual / total, en desktop los números -->
                     <span class="page-mobile-indicator">{{ paginaActual }} / {{ totalPaginas }}</span>
                     <template v-for="p in totalPaginas" :key="p">
                         <button @click="paginaActual = p"
@@ -160,7 +121,6 @@
                             {{ p }}
                         </button>
                     </template>
-
                     <button @click="paginaActual++" :disabled="paginaActual === totalPaginas" class="page-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                             viewBox="0 0 24 24">
@@ -168,8 +128,6 @@
                         </svg>
                     </button>
                 </div>
-
-                <!-- Filas por página -->
                 <div class="flex items-center gap-2 text-xs text-gray-400">
                     <span class="hidden sm:inline">Filas:</span>
                     <select v-model.number="itemsPorPagina" @change="paginaActual = 1" class="paginator-select">
@@ -182,162 +140,73 @@
         </div>
 
 
-        <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 1 — EDITAR CLIENTE                               -->
-        <!-- ════════════════════════════════════════════════════════ -->
-        <Transition name="modal">
-            <div v-if="modalEditar" class="modal-overlay" @click.self="cerrarModales">
-                <div class="modal-card modal-card--wide">
-
-                    <!-- Cabecera fija -->
-                    <div class="modal-head">
-                        <div class="modal-head__left">
-                            <div class="modal-avatar">{{ iniciales(clienteAccion?.Documento) }}</div>
-                            <div>
-                                <p class="modal-head__name">{{ clienteAccion?.Nombres }}</p>
-                                <p class="modal-head__sub">Editando información</p>
-                            </div>
-                        </div>
-                        <button @click="cerrarModales" class="modal-close">✕</button>
-                    </div>
-
-                    <!-- Cuerpo con scroll -->
-                    <div class="modal-body">
-
-                        <p class="modal-section-label">Datos personales</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Nombre</label>
-                                <input v-model="clienteAccion.Nombres" type="text" class="field-input"
-                                    placeholder="Nombre" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Apellido</label>
-                                <input v-model="clienteAccion.Apellidos" type="text" class="field-input"
-                                    placeholder="Apellido" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Documento</label>
-                                <input v-model="clienteAccion.Documento" type="text" class="field-input"
-                                    placeholder="Número de documento" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Teléfono</label>
-                                <input v-model="clienteAccion.Telefono" type="text" @input="validarTelefono"
-                                    class="field-input" placeholder="3XX XXX XXXX" />
-                            </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label">Correo electrónico</label>
-                                <input v-model="clienteAccion.Email" type="email" class="field-input"
-                                    placeholder="correo@ejemplo.com" />
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Membresía</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Sede</label>
-                                <select v-model="clienteAccion.sede" class="field-input">
-                                    <option v-for="s in sedes" :key="s" :value="s">{{ s }}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Vehículos</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Placa 1</label>
-                                <input v-model="clienteAccion.Placa1" type="text" class="field-input"
-                                    placeholder="ABC-123" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Placa 2</label>
-                                <input v-model="clienteAccion.placa2" type="text" class="field-input"
-                                    placeholder="DEF-456 (opcional)" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Placa 3</label>
-                                <input v-model="clienteAccion.placa3" type="text" class="field-input"
-                                    placeholder="GHI-789 (opcional)" />
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Pie fijo -->
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button class="btn-modal-dark">Actualizar datos</button>
-                    </div>
-
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- MODAL EDITAR                                      -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <ModalEditar v-model="modalEditar" :cliente="clienteAccion" @guardar="actualizarCliente">
+            <p class="modal-section-label">Datos personales</p>
+            <div class="modal-grid">
+                <div class="field-group">
+                    <label class="field-label">Nombre</label>
+                    <input v-model="clienteAccion.Nombres" type="text" class="field-input" placeholder="Nombre" />
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Apellido</label>
+                    <input v-model="clienteAccion.Apellidos" type="text" class="field-input" placeholder="Apellido" />
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Documento</label>
+                    <input v-model="clienteAccion.Documento" type="text" class="field-input"
+                        placeholder="Número de documento" />
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Teléfono</label>
+                    <input v-model="clienteAccion.Telefono" type="text" @input="validarTelefono" class="field-input"
+                        placeholder="3XX XXX XXXX" />
+                </div>
+                <div class="field-group field-group--full">
+                    <label class="field-label">Correo electrónico</label>
+                    <input v-model="clienteAccion.Email" type="email" class="field-input"
+                        placeholder="correo@ejemplo.com" />
                 </div>
             </div>
-        </Transition>
 
-
-        <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 2 — INHABILITAR                                  -->
-        <!-- ════════════════════════════════════════════════════════ -->
-        <Transition name="modal">
-            <div v-if="modalInhabilitar" class="modal-overlay" @click.self="cerrarModales">
-                <div class="modal-card modal-card--danger">
-
-                    <div class="modal-head modal-head--danger">
-                        <div class="modal-head__left">
-                            <div class="modal-avatar modal-avatar--danger">
-                                {{ iniciales(clienteAccion?.Nombres) }}
-                            </div>
-                            <div>
-                                <p class="modal-head__name modal-head__name--danger">{{ clienteAccion?.Nombres }}</p>
-                                <p class="modal-head__sub modal-head__sub--danger">Inhabilitar cliente</p>
-                            </div>
-                        </div>
-                        <button @click="cerrarModales" class="modal-close modal-close--danger">✕</button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <div class="danger-alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#b91c1c"
-                                viewBox="0 0 24 24" class="flex-shrink-0 mt-0.5">
-                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                            </svg>
-                            <p>
-                                Al inhabilitar a <strong>{{ clienteAccion?.Nombres }}</strong>, no podrá
-                                acceder al sistema ni renovar su membresía. Esta acción puede revertirse.
-                            </p>
-                        </div>
-
-                        <div class="modal-grid">
-                            <div class="field-group field-group--full">
-                                <label class="field-label field-label--danger">
-                                    Motivo <span class="text-red-500">*</span>
-                                </label>
-                                <select class="field-input field-input--danger">
-                                    <option value="">Selecciona un motivo...</option>
-                                    <option value="falta_pago">Falta de pago</option>
-                                    <option value="solicitud">Solicitud del cliente</option>
-                                    <option value="comportamiento">Comportamiento inapropiado</option>
-                                    <option value="otro">Otro</option>
-                                </select>
-                            </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label field-label--danger">Observaciones</label>
-                                <textarea class="field-input field-input--danger field-input--textarea" rows="2"
-                                    placeholder="Detalles adicionales..."></textarea>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-foot modal-foot--danger">
-                        <button @click="cerrarModales" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button class="btn-modal-dark btn-modal-dark--danger">Inhabilitar</button>
-                    </div>
-
+            <p class="modal-section-label">Membresía</p>
+            <div class="modal-grid">
+                <div class="field-group">
+                    <label class="field-label">Sede</label>
+                    <select v-model="clienteAccion.sede" class="field-input">
+                        <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">{{ s.Nombre
+                        }}
+                        </option>
+                    </select>
                 </div>
             </div>
-        </Transition>
+
+            <p class="modal-section-label">Vehículos</p>
+            <div class="modal-grid">
+                <div class="field-group">
+                    <label class="field-label">Placa 1</label>
+                    <input v-model="clienteAccion.Placa1" type="text" class="field-input" placeholder="ABC-123" />
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Placa 2</label>
+                    <input v-model="clienteAccion.placa2" type="text" class="field-input"
+                        placeholder="DEF-456 (opcional)" />
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Placa 3</label>
+                    <input v-model="clienteAccion.placa3" type="text" class="field-input"
+                        placeholder="GHI-789 (opcional)" />
+                </div>
+            </div>
+        </ModalEditar>
+
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- MODAL INHABILITAR                                 -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <ModalInhabilitar v-model="modalInhabilitar" :cliente="clienteAccion" @confirmar="inhabilitarCliente" />
 
     </div>
 </template>
@@ -345,39 +214,50 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import ModalEditar from '@/components/modals/ModalEditar.vue'
+import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
 import person_edit from '@/assets/img/person_edit.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
 import UsersService from '@/api/services/users.service'
 import sedesServices from '@/api/services/sedes.services'
 
-
-
-// --- ESTADOS ---
+// ── Estado ─────────────────────────────────────────────────────────
 const busqueda = ref('')
 const busquedaDebounced = ref('')
-const filtroEstado = ref()
+const filtroEstado = ref('')
+const filtroSede = ref('')
 const paginaActual = ref(1)
 const itemsPorPagina = ref(10)
-
 const mockClientes = ref([])
-
 const sedes = ref([])
 
+// ── Modales ────────────────────────────────────────────────────────
+const modalEditar = ref(false)
+const modalInhabilitar = ref(false)
+
+// clienteAccion con valor por defecto vacío para evitar errores de v-model
+// cuando el modal aún no tiene cliente asignado
+const clienteAccion = ref({
+    Nombres: '', Apellidos: '', Documento: '',
+    Telefono: '', Email: '', sede: '',
+    Placa1: '', placa2: '', placa3: '',
+})
+
+// ── Carga inicial ──────────────────────────────────────────────────
 onMounted(async () => {
     try {
-
-        const response = await UsersService.getAllClients({ page: 1, limit: 15 })
-        mockClientes.value = response?.data || []
-
-        sedes.value = await sedesServices.getAll()
+        const [responseClientes, responseSedes] = await Promise.all([
+            UsersService.getAllClients({ page: 1, limit: 15 }),
+            sedesServices.getAll(),
+        ])
+        mockClientes.value = responseClientes?.data || []
+        sedes.value = responseSedes || []
     } catch (error) {
-        console.error("Error cargando datos:", error)
+        console.error('Error cargando datos:', error)
     }
 })
 
-const filtroSede = ref('')
-
-
+// ── Debounce búsqueda ──────────────────────────────────────────────
 let debounceTimer = null
 watch(busqueda, (val) => {
     clearTimeout(debounceTimer)
@@ -386,34 +266,37 @@ watch(busqueda, (val) => {
         paginaActual.value = 1
     }, 300)
 })
+watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
 
-const modalEditar = ref(false)
-const modalInhabilitar = ref(false)
-const clienteAccion = ref(null)
-
-// --- FILTROS Y PAGINACIÓN ---
+// ── Filtros y paginación ───────────────────────────────────────────
 const clientesFiltrados = computed(() => {
     return mockClientes.value.filter(c => {
         const q = busquedaDebounced.value.toLowerCase()
         const matchBusqueda = !q ||
-            (c.Nombres?.toLowerCase().includes(q)) ||
-            (c.Documento?.toString().includes(q))
-
+            c.Nombres?.toLowerCase().includes(q) ||
+            c.Documento?.toString().includes(q)
         const matchSede = !filtroSede.value || c.sede === filtroSede.value
-
         const matchEstado = filtroEstado.value === '' || filtroEstado.value === undefined ||
             c.Estado === (filtroEstado.value === 'true')
-
         return matchBusqueda && matchSede && matchEstado
     })
 })
 
+const totalPaginas = computed(() =>
+    Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value))
+)
 const clientesPaginados = computed(() => {
     const inicio = (paginaActual.value - 1) * itemsPorPagina.value
     return clientesFiltrados.value.slice(inicio, inicio + itemsPorPagina.value)
 })
+const rangoInicio = computed(() =>
+    clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1
+)
+const rangoFin = computed(() =>
+    Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length)
+)
 
-// --- FUNCIONES DE ACCIÓN ---
+// ── Acciones ───────────────────────────────────────────────────────
 const editarCliente = (cliente) => {
     clienteAccion.value = { ...cliente }
     modalEditar.value = true
@@ -424,16 +307,28 @@ const darDeBaja = (cliente) => {
     modalInhabilitar.value = true
 }
 
-const cerrarModales = () => {
-    modalEditar.value = false
-    modalInhabilitar.value = false
-    clienteAccion.value = null
+const actualizarCliente = async () => {
+    try {
+        // await UsersService.update(clienteAccion.value)
+        console.log('Guardando:', clienteAccion.value)
+        modalEditar.value = false
+    } catch (error) {
+        console.error('Error actualizando:', error)
+    }
 }
 
-// const actualizarDatos = () => {
-//     console.log("Guardando...", clienteAccion.value)
-//     cerrarModales()
-// }
+const inhabilitarCliente = async ({ motivo, observaciones }) => {
+    try {
+        // await UsersService.disable(clienteAccion.value.Documento, { motivo, observaciones })
+        console.log('Inhabilitando:', clienteAccion.value.Documento, motivo, observaciones)
+        // Actualizar estado en la lista local
+        const idx = mockClientes.value.findIndex(c => c.Documento === clienteAccion.value.Documento)
+        if (idx !== -1) mockClientes.value[idx].Estado = false
+        modalInhabilitar.value = false
+    } catch (error) {
+        console.error('Error inhabilitando:', error)
+    }
+}
 
 const limpiarFiltros = () => {
     busqueda.value = ''
@@ -442,41 +337,20 @@ const limpiarFiltros = () => {
     filtroEstado.value = ''
 }
 
-// --- HELPERS ---
+const validarTelefono = (event) => {
+    clienteAccion.value.Telefono = event.target.value.replace(/\D/g, '')
+}
+
 const iniciales = (nombre = '') => {
     if (!nombre) return '??'
     return nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
 }
-
-const totalPaginas = computed(() => Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value)))
-const rangoInicio = computed(() => clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1)
-const rangoFin = computed(() => Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length))
-
-watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
-
-onMounted(async () => {
-    try {
-        const response = await UsersService.getAllClients({
-            page: 1,
-            limit: 15
-        })
-        mockClientes.value = response?.data || []
-    } catch (error) {
-        console.error("Error cargando clientes:", error)
-    }
-})
-
-
-const validarTelefono = (event) => {
-    const val = event.target.value.replace(/\D/g, '')
-    clienteAccion.value.Telefono = val
-}
-
 </script>
 
+
 <style scoped>
-/* ══════════════════════════════════════════════════════════════════
-   FILTROS RESPONSIVE
+/* ══ Estilos de la vista (tabla, filtros, etc.) ══════════════════════
+   Los estilos de los modales están en cada componente modal.
    ══════════════════════════════════════════════════════════════════ */
 
 .estado-badge-activo {
@@ -563,10 +437,6 @@ const validarTelefono = (event) => {
     }
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   TABLA RESPONSIVE
-   ══════════════════════════════════════════════════════════════════ */
-
 .table-scroll-wrapper {
     overflow-x: auto;
     flex: 1;
@@ -593,7 +463,6 @@ const validarTelefono = (event) => {
     width: 100%;
 }
 
-/* ── Cabeceras ─────────────────────────────────────────────────────── */
 .th-cell {
     padding: 13px 18px;
     text-align: left;
@@ -618,7 +487,6 @@ const validarTelefono = (event) => {
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.12);
 }
 
-/* ── Filas ─────────────────────────────────────────────────────────── */
 .table-row {
     border-bottom: 1px solid #e8f5e9;
     transition: background-color 0.15s;
@@ -636,7 +504,6 @@ const validarTelefono = (event) => {
     background-color: #f0faf4;
 }
 
-/* ── Celdas ─────────────────────────────────────────────────────────── */
 .td-cell {
     padding: 12px 18px;
     font-size: 0.82rem;
@@ -686,18 +553,6 @@ const validarTelefono = (event) => {
     border: 1px solid #c8e6c9;
 }
 
-.estado-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-
-
-/* ── Botones de acción ─────────────────────────────────────────────── */
 .action-btn {
     display: flex;
     align-items: center;
@@ -733,7 +588,6 @@ const validarTelefono = (event) => {
     fill: #dc2626;
 }
 
-/* ── Pie de tabla ──────────────────────────────────────────────────── */
 .table-foot {
     display: flex;
     align-items: center;
@@ -855,163 +709,7 @@ select.paginator-select:focus {
     box-shadow: none !important;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════════
-   MODALES
-   ══════════════════════════════════════════════════════════════════════ */
-
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background-color: rgba(13, 41, 28, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* ── Tarjeta base ──────────────────────────────────────────────────── */
-.modal-card {
-    background-color: #B8E19E;
-    border: 2.5px solid #0D291C;
-    border-radius: 40px;
-    box-shadow: 0 7px 0 #0D291C;
-    width: 100%;
-    max-width: 500px;
-    max-height: 88vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.modal-card--wide {
-    max-width: 660px;
-}
-
-.modal-card--danger {
-    background-color: #fde8e8;
-    border-color: #b91c1c;
-    box-shadow: 0 7px 0 #7f1d1d;
-    max-width: 440px;
-}
-
-/* ── Cabecera — siempre visible, no hace scroll ─────────────────── */
-.modal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 22px 26px 16px;
-    border-bottom: 2px solid rgba(13, 41, 28, 0.14);
-    flex-shrink: 0;
-}
-
-.modal-head--danger {
-    border-bottom-color: rgba(185, 28, 28, 0.2);
-}
-
-.modal-head__left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.modal-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-    border: 2px solid rgba(13, 41, 28, 0.4);
-}
-
-.modal-avatar--danger {
-    background-color: #b91c1c;
-    color: #fee2e2;
-    border-color: #7f1d1d;
-}
-
-.modal-head__name {
-    font-size: 1rem;
-    font-weight: 900;
-    color: #0D291C;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.modal-head__name--danger {
-    color: #7f1d1d;
-}
-
-.modal-head__sub {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #0D291C;
-    opacity: 0.45;
-    margin-top: 2px;
-}
-
-.modal-head__sub--danger {
-    color: #b91c1c;
-    opacity: 0.85;
-}
-
-.modal-close {
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: #0D291C;
-    opacity: 0.35;
-    transition: opacity 0.15s;
-    flex-shrink: 0;
-    line-height: 1;
-}
-
-.modal-close:hover {
-    opacity: 1;
-}
-
-.modal-close--danger {
-    color: #b91c1c;
-}
-
-/* ── Cuerpo scrolleable ─────────────────────────────────────────── */
-.modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 18px 26px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(13, 41, 28, 0.2) transparent;
-}
-
-.modal-body::-webkit-scrollbar {
-    width: 5px;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-    background: rgba(13, 41, 28, 0.25);
-    border-radius: 99px;
-}
-
+/* ── Estilos de campos del slot (heredados por el modal editar) ── */
 .modal-section-label {
     font-size: 0.62rem;
     font-weight: 900;
@@ -1024,44 +722,20 @@ select.paginator-select:focus {
     margin-top: 2px;
 }
 
-/* ── Grid 2 columnas → 1 en mobile ─────────────────────────────── */
 .modal-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 11px;
 }
 
-.field-group--full {
-    grid-column: 1 / -1;
-}
-
-@media (max-width: 500px) {
-    .modal-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-card {
-        border-radius: 26px;
-    }
-
-    .modal-head {
-        padding: 16px 18px 14px;
-    }
-
-    .modal-body {
-        padding: 14px 18px;
-    }
-
-    .modal-foot {
-        padding: 10px 18px 18px;
-    }
-}
-
-/* ── Campo ──────────────────────────────────────────────────────── */
 .field-group {
     display: flex;
     flex-direction: column;
     gap: 4px;
+}
+
+.field-group--full {
+    grid-column: 1 / -1;
 }
 
 .field-label {
@@ -1072,11 +746,6 @@ select.paginator-select:focus {
     color: #0D291C;
     opacity: 0.6;
     padding-left: 3px;
-}
-
-.field-label--danger {
-    color: #7f1d1d;
-    opacity: 1;
 }
 
 .field-input {
@@ -1097,206 +766,9 @@ select.paginator-select:focus {
     box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.2) !important;
 }
 
-.field-input--textarea {
-    border-radius: 14px !important;
-    resize: none;
-}
-
-.field-input--danger {
-    border-color: #b91c1c !important;
-}
-
-.field-input--danger:focus {
-    border-color: #b91c1c !important;
-    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15) !important;
-}
-
-/* ── Resumen plan (modal mensualidad) ───────────────────────────── */
-.plan-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 2px solid #0D291C;
-    border-radius: 22px;
-    padding: 14px 18px;
-}
-
-.plan-summary__item {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.plan-summary__label {
-    font-size: 0.58rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0D291C;
-    opacity: 0.5;
-}
-
-.plan-summary__value {
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: #0D291C;
-}
-
-.plan-summary__sep {
-    width: 1.5px;
-    height: 30px;
-    align-self: center;
-    background-color: rgba(13, 41, 28, 0.18);
-    border-radius: 99px;
-}
-
-/* ── Acciones rápidas (modal mensualidad) ───────────────────────── */
-.quick-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.quick-btn {
-    flex: 1;
-    min-width: 110px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border: 2px solid;
-    background-color: white;
-    cursor: pointer;
-    box-shadow: 0 3px 0;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.quick-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0;
-}
-
-.quick-btn--freeze {
-    color: #1d4ed8;
-    border-color: #1d4ed8;
-    box-shadow: 0 3px 0 #1e3a8a;
-}
-
-.quick-btn--pause {
-    color: #92400e;
-    border-color: #92400e;
-    box-shadow: 0 3px 0 #78350f;
-}
-
-/* ── Aviso rojo (modal inhabilitar) ────────────────────────────── */
-.danger-alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background-color: rgba(255, 255, 255, 0.65);
-    border: 2px solid #b91c1c;
-    border-radius: 18px;
-    padding: 14px 16px;
-    font-size: 0.82rem;
-    color: #7f1d1d;
-    line-height: 1.55;
-}
-
-/* ── Pie — siempre visible, no hace scroll ──────────────────────── */
-.modal-foot {
-    display: flex;
-    gap: 12px;
-    padding: 12px 26px 22px;
-    border-top: 2px solid rgba(13, 41, 28, 0.12);
-    flex-shrink: 0;
-}
-
-.modal-foot--danger {
-    border-top-color: rgba(185, 28, 28, 0.15);
-}
-
-/* Botones del pie — idénticos al .btn-modal-dark del proyecto */
-.btn-modal-dark {
-    flex: 1;
-    padding: 12px 20px;
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 2px solid #000;
-    box-shadow: 0 4px 0px #000;
-    background-color: #232B3A;
-    color: white;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.btn-modal-dark:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0px #000;
-}
-
-.btn-modal-dark--cancel {
-    background-color: white;
-    color: #232B3A;
-}
-
-.btn-modal-dark--danger {
-    background-color: #b91c1c;
-    color: white;
-    border-color: #7f1d1d;
-    box-shadow: 0 4px 0px #7f1d1d;
-}
-
-/* ── Animaciones ─────────────────────────────────────────────────── */
-.modal-enter-active {
-    transition: opacity 0.2s ease;
-}
-
-.modal-leave-active {
-    transition: opacity 0.15s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-    opacity: 0;
-}
-
-.modal-enter-active .modal-card {
-    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.modal-leave-active .modal-card {
-    animation: popOut 0.18s ease-in both;
-}
-
-@keyframes popIn {
-    from {
-        transform: scale(0.86) translateY(24px);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes popOut {
-    from {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-
-    to {
-        transform: scale(0.92) translateY(12px);
-        opacity: 0;
+@media (max-width: 500px) {
+    .modal-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import {api} from "@/api/axios"
+import { api } from "@/api/axios";
 
 const roleRedirects = {
   administrador: "/admin/dashboard",
@@ -69,7 +69,7 @@ export const useAuthStore = defineStore(
         else if (status === 404)
           errorMsg.value = mensaje ?? "Usuario no encontrado.";
         else if (status >= 500)
-          errorMsg.value = "Error en el servidor. Intenta de nuevo.";
+          errorMsg.value = "Petición fallida. Intenta de nuevo.";
         else if (!err.response)
           errorMsg.value = "Sin conexión con el servidor.";
         else errorMsg.value = mensaje ?? "Ocurrió un error inesperado.";
@@ -99,7 +99,7 @@ export const useAuthStore = defineStore(
         const exp = payload.exp * 1000;
 
         if (Date.now() > exp) {
-          // Token vencido — intentar renovar
+          
           const newToken = await refreshAccessToken();
           if (!newToken) return logout();
           return;

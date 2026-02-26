@@ -9,7 +9,7 @@
 
         <!-- Logo: se oculta cuando está cerrado -->
         <span v-html="icoconfynormal" ref="logoRef"
-            :class="['transition-opacity duration-300 mt-[10%] w-full ', isOpen ? 'opacity-100' : 'opacity-0']" />
+            :class="['transition-opacity duration-300  w-full ', isOpen ? 'opacity-100' : 'opacity-0']" />
 
         <!-- Botón cerrar: solo visible cuando está abierto -->
         <!-- <span class="cursor-pointer absolute right-[0.5%] top-[12%] transition-opacity duration-300"
@@ -78,7 +78,7 @@ const colorearSVG = (svgRaw, color) => {
 .selected {
     background-color: white;
     color: #232B3A;
-    border-radius: 25px;
+    border-radius: 10px;
     padding-left: 15px;
 }
 
