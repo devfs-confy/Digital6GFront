@@ -177,7 +177,7 @@
                     <label class="field-label">Sede</label>
                     <select v-model="clienteAccion.sede" class="field-input">
                         <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">{{ s.Nombre
-                        }}
+                            }}
                         </option>
                     </select>
                 </div>
@@ -243,22 +243,26 @@ const clienteAccion = ref({
     Placa1: '', placa2: '', placa3: '',
 })
 
-// ── Carga inicial ──────────────────────────────────────────────────
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
+
 onMounted(async () => {
     try {
+        // El usuario admin que está viendo la pantalla
+        console.log('Usuario activo:', auth.user)
+        console.log('Rol:', auth.role)
+        console.log('ID del admin:', auth.user?.id ?? auth.user?.IdUsuario)
+
         const [responseClientes, responseSedes] = await Promise.all([
             UsersService.getAllClients({ page: 1, limit: 15 }),
             sedesServices.getAll(),
         ])
-
-        console.log('Clientes:', responseClientes)
-        console.log('Sedes:', responseSedes)
-
         mockClientes.value = responseClientes?.data || []
         sedes.value = responseSedes || []
     } catch (error) {
         console.error('Error cargando datos:', error)
     }
+
 })
 
 // ── Debounce búsqueda ──────────────────────────────────────────────

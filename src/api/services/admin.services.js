@@ -8,8 +8,6 @@ class AdminServices {
     try {
       const response = await api.get(`${this.nameRoute}`, { params });
 
-      console.log("Hola", response);
-
       return response.data;
     } catch (error) {
       console.log(error);

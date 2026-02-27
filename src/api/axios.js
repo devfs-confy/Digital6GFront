@@ -12,7 +12,7 @@ api.interceptors.request.use(
     try {
       const stored = localStorage.getItem("auth");
       if (stored) {
-        const token = JSON.parse(stored)?.token; // 👈 "token" no "accessToken"
+        const token = JSON.parse(stored)?.token;
         if (token) config.headers.Authorization = `Bearer ${token}`;
       }
     } catch {}

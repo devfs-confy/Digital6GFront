@@ -1323,6 +1323,10 @@ input[type="range"]::-ms-fill-lower {
   gap: 1.75rem;
 }
 
+.gap-8 {
+  gap: 2rem;
+}
+
 .gap-x-10 {
   -moz-column-gap: 2.5rem;
        column-gap: 2.5rem;
@@ -1575,6 +1579,10 @@ input[type="range"]::-ms-fill-lower {
 
 .text-start {
   text-align: start;
+}
+
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .text-2xl {

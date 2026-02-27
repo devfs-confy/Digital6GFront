@@ -176,7 +176,8 @@
                             <input v-model="passForm.actual" :type="showPass.actual ? 'text' : 'password'"
                                 class="field-input" placeholder="Tu contraseña actual" />
                             <button @click="showPass.actual = !showPass.actual" class="field-edit-btn">
-                                {{ showPass.actual ? '🙈' : '👁️' }}
+                                <span v-if="showPass.actual" v-html="visibility"></span>
+                                <span v-else v-html="visibilityoff"></span>
                             </button>
                         </div>
                     </div>
@@ -187,7 +188,8 @@
                             <input v-model="passForm.nueva" :type="showPass.nueva ? 'text' : 'password'"
                                 class="field-input" placeholder="Mínimo 8 caracteres" />
                             <button @click="showPass.nueva = !showPass.nueva" class="field-edit-btn">
-                                {{ showPass.nueva ? '🙈' : '👁️' }}
+                                <span v-if="showPass.nueva" v-html="visibility"></span>
+                                <span v-else v-html="visibilityoff"></span>
                             </button>
                         </div>
                         <div v-if="passForm.nueva" class="pass-strength">
@@ -208,7 +210,8 @@
                             <input v-model="passForm.confirmar" :type="showPass.confirmar ? 'text' : 'password'"
                                 class="field-input" placeholder="Repite la nueva contraseña" />
                             <button @click="showPass.confirmar = !showPass.confirmar" class="field-edit-btn">
-                                {{ showPass.confirmar ? '🙈' : '👁️' }}
+                                <span v-if="showPass.confirmar" v-html="visibility"></span>
+                                <span v-else v-html="visibilityoff"></span>
                             </button>
                         </div>
                         <p v-if="passForm.confirmar && !passMatch" class="field-error">
@@ -248,6 +251,8 @@
 <script setup>
 import { ref, computed, reactive } from 'vue'
 import icoeditsquare from '@/assets/img/edit_square.svg?raw'
+import visibility from '@/assets/img/visibility.svg?raw'
+import visibilityoff from '@/assets/img/visibility_off.svg?raw'
 
 
 // ── Datos mock — reemplazar con useAuthStore() ────────────────────
