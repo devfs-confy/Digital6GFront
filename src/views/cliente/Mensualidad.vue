@@ -1,17 +1,22 @@
 <template>
-    <div class="h-full flex flex-col gap-6">
+    <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
         <!-- Header -->
-        <div class="flex items-center justify-between relative bg-white rounded-full p-4">
-            <div class="w-[80px]">
-                <button @click="$router.back()" class="add-btn">
-                    Volver
-                </button>
+        <div class="header-bar">
+            <!-- Desktop: botones a los lados, título centrado -->
+            <div class="header-bar__desktop">
+                <button @click="$router.back()" class="add-btn">Volver</button>
+                <h2 class="header-bar__title">Mis Mensualidades</h2>
+                <button @click="modalCodigo = true" class="add-btn">+ Añadir</button>
             </div>
-            <h2 class="text-2xl font-bold text-[#232B3A]">Mis Mensualidades</h2>
-            <button @click="modalCodigo = true" class="add-btn">
-                + Añadir
-            </button>
+            <!-- Mobile: título arriba, botones abajo -->
+            <div class="header-bar__mobile">
+                <h2 class="header-bar__title">Mis Mensualidades</h2>
+                <div class="header-bar__actions">
+                    <button @click="$router.back()" class="add-btn">← Volver</button>
+                    <button @click="modalCodigo = true" class="add-btn">+ Añadir</button>
+                </div>
+            </div>
         </div>
 
         <!-- Grid de tarjetas -->
@@ -166,7 +171,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close">✕</button>
@@ -187,7 +192,7 @@
                             <div class="pago-resumen__item">
                                 <span class="pago-resumen__label">Valor</span>
                                 <span class="pago-resumen__val pago-resumen__val--price">{{ mensualidadAccion?.valor
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                         <p class="field-hint mt-2">Al confirmar serás redirigido a la pasarela de pago de la sede.</p>
@@ -215,7 +220,7 @@
                     <div class="modal-head modal-head--warn">
                         <div class="modal-head__left">
                             <div class="modal-avatar-sm modal-avatar-sm--warn">{{ iniciales(mensualidadAccion?.nombre)
-                                }}</div>
+                            }}</div>
                             <div>
                                 <p class="modal-head__name modal-head__name--warn">Congelar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }}</p>
@@ -270,7 +275,9 @@ const codigoInput = ref('')
 const mensualidadAccion = ref(null)
 
 // ── Datos mock — reemplazar con llamada al API ─────────────────────
-
+// Estructura esperada del API:
+// { id, nombre, fechaInicio, fechaFin, sede, estado, valor }
+// estado: 'activa' | 'por_vencer' | 'vencida' | 'congelada'
 const mensualidades = ref([
     {
         id: 1,
@@ -288,15 +295,6 @@ const mensualidades = ref([
         fechaFin: '2026-03-31',
         sede: 'CSU',
         estado: 'activa',
-        valor: '$95.000',
-    },
-    {
-        id: 3,
-        nombre: 'Mensualidad CSU',
-        fechaInicio: '2025-11-01',
-        fechaFin: '2026-10-31',
-        sede: 'UCS',
-        estado: 'congelada',
         valor: '$95.000',
     },
 ])
@@ -353,16 +351,19 @@ const cerrarModales = () => {
 
 const confirmarCodigo = () => {
     if (!codigoInput.value.trim()) return
+    // TODO: llamar al API con el código
     console.log('Código ingresado:', codigoInput.value)
     cerrarModales()
 }
 
 const confirmarPago = () => {
+    // TODO: redirigir a pasarela de pago
     console.log('Pagar:', mensualidadAccion.value)
     cerrarModales()
 }
 
 const confirmarCongelar = () => {
+    // TODO: llamar al API para congelar
     console.log('Congelar:', mensualidadAccion.value)
     cerrarModales()
 }
@@ -370,21 +371,54 @@ const confirmarCongelar = () => {
 
 <style scoped>
 /* ── Header ──────────────────────────────────────────────────────── */
-.back-btn {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #6b7280;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 999px;
-    transition: background-color 0.15s, color 0.15s;
+/* ── Header responsive ───────────────────────────────────────────── */
+.header-bar {
+    background-color: white;
+    border-radius: 24px;
+    padding: 16px 20px;
 }
 
-.back-btn:hover {
-    background-color: #f3f4f6;
-    color: #0D291C;
+.header-bar__desktop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.header-bar__mobile {
+    display: none;
+}
+
+@media (max-width: 560px) {
+    .header-bar__desktop {
+        display: none;
+    }
+
+    .header-bar__mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .header-bar__actions {
+        display: flex;
+        gap: 12px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-bar__actions .add-btn {
+        flex: 1;
+        max-width: 160px;
+    }
+}
+
+.header-bar__title {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #232B3A;
+    text-align: center;
 }
 
 .add-btn {
@@ -409,7 +443,7 @@ const confirmarCongelar = () => {
 /* ── Grid de mensualidades ───────────────────────────────────────── */
 .mensualidades-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     align-content: start;
 }
@@ -466,6 +500,7 @@ const confirmarCongelar = () => {
     }
 }
 
+/* Banda de color según estado */
 .card-band {
     position: absolute;
     top: 0;
@@ -491,6 +526,7 @@ const confirmarCongelar = () => {
     background-color: #60a5fa;
 }
 
+/* Cabecera */
 .card-head {
     display: flex;
     align-items: center;
@@ -503,7 +539,7 @@ const confirmarCongelar = () => {
     height: 44px;
     border-radius: 14px;
     background-color: #0D291C;
-    color: #ffffff;
+    color: #7FD344;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -580,7 +616,6 @@ const confirmarCongelar = () => {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     opacity: 0.5;
-    color: #232B3A;
 }
 
 .card-dias--activa .card-dias__num {
@@ -599,6 +634,7 @@ const confirmarCongelar = () => {
     color: #3b82f6;
 }
 
+/* Datos */
 .card-data {
     display: flex;
     flex-direction: column;
@@ -677,6 +713,7 @@ const confirmarCongelar = () => {
     text-align: right;
 }
 
+/* Botones de acción */
 .card-actions {
     display: flex;
     gap: 10px;
@@ -706,7 +743,7 @@ const confirmarCongelar = () => {
 
 .btn-pagar {
     background-color: #0D291C;
-    color: #ffffff;
+    color: #7FD344;
     border-color: #0D291C;
     box-shadow: 0 3px 0 #051510;
 }

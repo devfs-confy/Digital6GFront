@@ -9,7 +9,7 @@
 
         <div class="flex flex-col flex-1 h-screen w-full">
             <Navbar :isOpen="isOpen" @toggle="isOpen = !isOpen" :titulo="titulo" />
-            <main class="flex-1 overflow-auto p-6">
+            <main class="flex-1 overflow-auto p-6 styled-scrollbar">
                 <router-view />
             </main>
         </div>

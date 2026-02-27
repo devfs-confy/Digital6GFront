@@ -1,9 +1,8 @@
 <template>
-    <div
-        class="flex justify-between items-center text-white bg-[#0D291C] mx-4 mt-4 px-4 rounded-xl p-[0.5%] h-[10%]">
+    <div class="flex justify-between items-center text-white bg-[#0D291C] mx-4 mt-4 px-4 rounded-xl p-[0.5%] h-[10%]">
 
         <!-- Izquierda: botón colapsar + título -->
-        <div class="flex items-center gap-3 min-w-0">
+        <div class="flex items-center gap-7 min-w-0">
             <span v-html="colapsenobg" @click="emit('toggle')" :class="[
                 'cursor-pointer transition-all duration-300 flex-shrink-0',
                 isOpen ? 'w-0 opacity-0 pointer-events-none hidden' : 'w-8 opacity-100'

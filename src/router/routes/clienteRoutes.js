@@ -10,11 +10,23 @@ export const clienteMenuItems = [
     label: "Notificaciones<br>Pendientes",
     icon: icoNotificacion,
     route: "/cliente/notificaciones",
+    activeFor: [
+      "/cliente/notificaciones",
+      "/cliente/solicitudes",
+      "/cliente/parqueos",
+      "/cliente/pagos",
+    ],
   },
   {
     label: "Cambios y<br>peticiones",
     icon: icoContrato,
     route: "/cliente/peticiones",
+    activeFor: [
+      "/cliente/peticiones",
+      "/cliente/informacion",
+      "/cliente/placa",
+      "/cliente/pqrs",
+    ],
   },
 ];
 
@@ -38,6 +50,31 @@ export const clienteRoutes = {
     {
       path: "peticiones",
       component: () => import("@/views/cliente/Peticiones.vue"),
+    },
+    {
+      path: "solicitudes",
+      component: () => import("@/views/cliente/Solicitudes.vue"),
+    },
+    {
+      path: "parqueos",
+      component: () => import("@/views/cliente/ParqueosReciente.vue"),
+    },
+    {
+      path: "pagos",
+      component: () => import("@/views/cliente/PagosRecientes.vue"),
+    },
+
+    {
+      path: "informacion",
+      component: () => import("@/views/cliente/EditarInformacion.vue"),
+    },
+    {
+      path: "placa",
+      component: () => import("@/views/cliente/CambioPlaca.vue"),
+    },
+    {
+      path: "pqrs",
+      component: () => import("@/views/cliente/PQRS.vue"),
     },
 
     { path: "", redirect: "inicio" }, // /cliente → /cliente/inicio
