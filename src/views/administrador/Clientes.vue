@@ -250,6 +250,10 @@ onMounted(async () => {
             UsersService.getAllClients({ page: 1, limit: 15 }),
             sedesServices.getAll(),
         ])
+
+        console.log('Clientes:', responseClientes)
+        console.log('Sedes:', responseSedes)
+
         mockClientes.value = responseClientes?.data || []
         sedes.value = responseSedes || []
     } catch (error) {
@@ -309,7 +313,7 @@ const darDeBaja = (cliente) => {
 
 const actualizarCliente = async () => {
     try {
-        // await UsersService.update(clienteAccion.value)
+
         console.log('Guardando:', clienteAccion.value)
         modalEditar.value = false
     } catch (error) {
@@ -319,9 +323,9 @@ const actualizarCliente = async () => {
 
 const inhabilitarCliente = async ({ motivo, observaciones }) => {
     try {
-        // await UsersService.disable(clienteAccion.value.Documento, { motivo, observaciones })
+
         console.log('Inhabilitando:', clienteAccion.value.Documento, motivo, observaciones)
-        // Actualizar estado en la lista local
+
         const idx = mockClientes.value.findIndex(c => c.Documento === clienteAccion.value.Documento)
         if (idx !== -1) mockClientes.value[idx].Estado = false
         modalInhabilitar.value = false

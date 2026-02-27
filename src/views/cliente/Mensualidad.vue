@@ -166,7 +166,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close">✕</button>
@@ -187,7 +187,7 @@
                             <div class="pago-resumen__item">
                                 <span class="pago-resumen__label">Valor</span>
                                 <span class="pago-resumen__val pago-resumen__val--price">{{ mensualidadAccion?.valor
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                         <p class="field-hint mt-2">Al confirmar serás redirigido a la pasarela de pago de la sede.</p>
@@ -215,7 +215,7 @@
                     <div class="modal-head modal-head--warn">
                         <div class="modal-head__left">
                             <div class="modal-avatar-sm modal-avatar-sm--warn">{{ iniciales(mensualidadAccion?.nombre)
-                            }}</div>
+                                }}</div>
                             <div>
                                 <p class="modal-head__name modal-head__name--warn">Congelar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }}</p>
@@ -270,9 +270,7 @@ const codigoInput = ref('')
 const mensualidadAccion = ref(null)
 
 // ── Datos mock — reemplazar con llamada al API ─────────────────────
-// Estructura esperada del API:
-// { id, nombre, fechaInicio, fechaFin, sede, estado, valor }
-// estado: 'activa' | 'por_vencer' | 'vencida' | 'congelada'
+
 const mensualidades = ref([
     {
         id: 1,
