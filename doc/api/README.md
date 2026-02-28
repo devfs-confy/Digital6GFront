@@ -7,6 +7,7 @@ Esta sección documenta la arquitectura y el funcionamiento de la capa de comuni
 - `src/api/axios.js`: Configuración central de Axios e interceptores.
 - `src/api/services/`: Directorio que contiene las clases de servicio para cada módulo del sistema.
   - `admin.services.js`: Servicios específicos para administración.
+  - `rol.services.js`: Gestión de roles y permisos.
   - `sedes.services.js`: Gestión de sedes.
   - `sedesdisponibilidad.service.js`: Consulta de disponibilidad en sedes.
   - `users.service.js`: Gestión de usuarios y clientes.

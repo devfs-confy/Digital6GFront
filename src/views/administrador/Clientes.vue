@@ -248,10 +248,6 @@ const auth = useAuthStore()
 
 onMounted(async () => {
     try {
-        // El usuario admin que está viendo la pantalla
-        console.log('Usuario activo:', auth.user)
-        console.log('Rol:', auth.role)
-        console.log('ID del admin:', auth.user?.id ?? auth.user?.IdUsuario)
 
         const [responseClientes, responseSedes] = await Promise.all([
             UsersService.getAllClients({ page: 1, limit: 15 }),

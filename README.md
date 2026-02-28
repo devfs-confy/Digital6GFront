@@ -72,6 +72,16 @@ Gracias a Tailwind CSS y Flowbite, la aplicación es totalmente compatible con d
 
 ---
 
+## 📖 Documentación del Sistema
+
+Para un mayor detalle sobre la arquitectura y el funcionamiento interno, consulta las siguientes guías:
+
+- 🚀 **[Capa de API](./doc/api/README.md)**: Configuración de Axios, interceptores y referencia de servicios.
+- 🚦 **[Enrutamiento](./doc/router/README.md)**: Definición de rutas, guardias de seguridad y RBAC.
+- 📦 **[Gestión de Estado](./doc/stores/README.md)**: Estructura de Pinia stores y persistencia de sesión.
+
+---
+
 ## 🚀 Instalación y Desarrollo
 
 1. **Clonar el repositorio**

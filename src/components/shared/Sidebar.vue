@@ -1,6 +1,6 @@
 <template>
     <aside :class="[
-        'flex flex-col items-center h-screen bg-[#0D291C] overflow-hidden gap-[10%]',
+        'flex flex-col items-center h-screen bg-[#0D291C] overflow-hidden ',
         'relative',
         isOpen ? 'w-[20%]' : 'w-[0%]',
         'max-lg:absolute max-lg:z-50 max-lg:top-0 max-lg:left-0',

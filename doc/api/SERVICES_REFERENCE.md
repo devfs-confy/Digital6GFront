@@ -26,6 +26,22 @@ Gestión y consulta de sedes físicas.
 
 ---
 
+## 🛡️ RolService
+`src/api/services/rol.services.js`
+
+Gestión de roles y permisos del sistema.
+
+| Método | Endpoint | Parámetros | Descripción |
+| :--- | :--- | :--- | :--- |
+| `getAll()` | `GET v1/roles` | Ninguno | Obtiene todos los roles registrados. |
+| `getOne(id)` | `GET v1/roles/:id` | `id`: Identificador del rol | Obtiene la información de un rol específico. |
+| `create(dto)` | `POST v1/roles` | `dto`: Datos del rol | Crea un nuevo rol en el sistema. |
+| `getAllPermisos()` | `GET v1/permisos` | Ninguno | Obtiene el listado completo de permisos disponibles. |
+| `getPermisosRol(idRol)`| `GET v1/rol-permiso/:idRol`| `idRol`: ID del rol | Obtiene los permisos asociados a un rol. |
+| `assignPermisos(dto)` | `PUT v1/rol-permiso` | `dto`: { id_rol, id_permiso } | Asigna o actualiza los permisos de un rol. |
+
+---
+
 ## 📅 SedesDisponibilidadService
 `src/api/services/sedesdisponibilidad.service.js`
 

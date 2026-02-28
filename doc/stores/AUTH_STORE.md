@@ -50,9 +50,12 @@ Pide un nuevo token al endpoint `/api/auth/refresh`.
 ---
 
 ## 💾 Persistencia (`localStorage`)
-El store está configurado para persistir solo las claves necesarias:
-- `token`
-- `role`
-- `user`
+El store está configurado para persistir solo el `token` de acceso.
 
-Esto permite que la aplicación mantenga la sesión activa sin necesidad de volver a loguearse tras cerrar la pestaña o recargar el navegador.
+```javascript
+persist: {
+  pick: ["token"],
+}
+```
+
+Esto permite que al recargar la página, el `authGuard` detecte que existe una sesión y ejecute `restoreSession()`, la cual decodifica el JWT y restaura el objeto `user` y el `role` del usuario de forma automática sin necesidad de almacenar datos redundantes o potencialmente desincronizados en el `localStorage`.

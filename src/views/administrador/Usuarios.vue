@@ -1,400 +1,551 @@
 <template>
-    <div class="h-full flex flex-col gap-6">
+    <div class="h-full flex flex-col gap-4">
 
         <!-- Header -->
-        <div class="flex items-center justify-between relative bg-white rounded-full p-4">
-            <div class="w-[80px]"></div>
-            <h2 class="text-2xl font-bold text-[#232B3A]">Usuarios</h2>
-            <div class="back-btn flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm px-4 py-2 rounded-full">
+        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
+            <div class="w-16 sm:w-20"></div>
+            <h2 class="text-lg sm:text-2xl font-bold text-[#232B3A]">Usuarios</h2>
+            <div
+                class="flex items-center bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-full border border-black shadow-[0_2px_0_#595858]">
                 <button @click="$router.back()">Volver</button>
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="bg-white rounded-2xl shadow-sm p-4 filters-bar">
-            <div class="filter-field filter-field--search">
-                <label class="filter-label">Buscar</label>
-                <div class="relative">
-                    <input v-model="busqueda" type="text" placeholder="Nombre o documento..."
-                        class="search-input w-full" />
+        <!-- Layout: en desktop split, en móvil columna única -->
+        <div class="flex flex-col lg:flex-row gap-3 flex-1 min-h-0">
+
+            <!-- ── Tabla ── -->
+            <div class="flex flex-col gap-3 flex-1 min-w-0" :class="usuarioSeleccionado ? 'lg:flex-1' : ''">
+
+                <!-- Buscador -->
+                <div class="bg-white rounded-2xl px-4 py-3 flex gap-2 items-center flex-shrink-0 shadow-sm">
+                    <input v-model="busqueda" type="text" placeholder="Buscar nombre o documento..."
+                        class="flex-1 min-w-0 bg-[#EAEAEA] border-2 border-[#299261] rounded-full px-4 py-2 text-sm text-[#232B3A] outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all" />
+                    <button v-if="busqueda" @click="busqueda = ''"
+                        class="text-xs font-bold text-gray-500 border border-gray-200 rounded-full px-3 py-2 hover:border-[#299261] hover:text-[#299261] transition-colors whitespace-nowrap flex-shrink-0">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Tabla + paginación -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
+                    <div class="overflow-x-auto flex-1 scrollbar-thin">
+                        <table class="w-full border-collapse" style="min-width:300px">
+                            <thead>
+                                <tr>
+                                    <th
+                                        class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344]">
+                                        Usuario
+                                    </th>
+                                    <th
+                                        class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] hidden sm:table-cell">
+                                        Documento
+                                    </th>
+                                    <th
+                                        class="px-3 sm:px-4 py-3 text-center text-[0.65rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344]">
+                                        Opciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loading -->
+                                <tr v-if="loading">
+                                    <td colspan="3" class="py-16 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="loader" />
+                                            <span class="text-sm text-gray-400 font-semibold">Cargando
+                                                usuarios...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Vacío -->
+                                <tr v-else-if="usuariosPaginados.length === 0">
+                                    <td colspan="3" class="py-16 text-center text-gray-300">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                                            </svg>
+                                            <span class="text-sm font-medium">No se encontraron usuarios</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Filas -->
+                                <tr v-for="u in usuariosPaginados" :key="u.Documento"
+                                    class="border-b border-[#e8f5e9] transition-colors last:border-0"
+                                    :class="usuarioSeleccionado?.Documento === u.Documento ? 'bg-[#f0faf4]' : 'hover:bg-[#f0faf4]'">
+
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap">
+                                        <div class="flex items-center gap-2 sm:gap-3">
+                                            <div
+                                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-xs border-2 border-[#e8f5e9] flex-shrink-0">
+                                                {{ iniciales(u.Nombres) }}
+                                            </div>
+                                            <div class="flex flex-col min-w-0">
+                                                <span
+                                                    class="font-semibold text-[#0D291C] truncate text-sm leading-tight">
+                                                    {{ u.Nombres }} {{ u.Apellidos }}
+                                                </span>
+                                                <!-- Documento visible solo en móvil debajo del nombre -->
+                                                <span class="text-xs text-start text-gray-400 font-mono sm:hidden">{{
+                                                    u.Documento
+                                                }}</span>
+                                                <span class="text-xs  text-gray-400 truncate hidden sm:block">{{ u.Email
+                                                    }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Documento — oculto en móvil (se muestra debajo del nombre) -->
+                                    <td
+                                        class="px-3 sm:px-4 py-3 text-sm  tracking-wide text-gray-600 whitespace-nowrap hidden sm:table-cell">
+                                        {{ u.Documento }}
+                                    </td>
+
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap">
+                                        <div class="flex items-center justify-center gap-1">
+                                            <button @click="seleccionarUsuario(u)"
+                                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all"
+                                                :class="usuarioSeleccionado?.Documento === u.Documento
+                                                    ? 'bg-[#0D291C]'
+                                                    : 'bg-transparent hover:bg-[#e8f5e9]'" title="Gestionar permisos"
+                                                v-html="dashboard_customize" />
+                                            <button @click="darDeBaja(u)"
+                                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all"
+                                                title="Inhabilitar" v-html="account_circle_off" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div
+                        class="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-t-2 border-[#f0f9f4] bg-[#fafffe] flex-shrink-0">
+                        <span class="text-[0.72rem] text-gray-400 hidden sm:block">
+                            <strong class="text-[#0D291C]">{{ rangoInicio }}–{{ rangoFin }}</strong>
+                            de <strong class="text-[#0D291C]">{{ usuariosFiltrados.length }}</strong>
+                        </span>
+                        <div class="flex items-center gap-1">
+                            <button @click="pagina--" :disabled="pagina === 1" class="page-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                                </svg>
+                            </button>
+                            <span class="text-xs font-bold text-[#0D291C] px-2">{{ pagina }} / {{ totalPaginas }}</span>
+                            <template v-for="p in totalPaginas" :key="p">
+                                <button @click="pagina = p" class="page-btn hidden md:flex"
+                                    :class="pagina === p ? 'bg-[#0D291C] text-[#7FD344]' : ''">
+                                    {{ p }}
+                                </button>
+                            </template>
+                            <button @click="pagina++" :disabled="pagina === totalPaginas" class="page-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <select v-model.number="porPagina" @change="pagina = 1"
+                            class="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 cursor-pointer">
+                            <option :value="5">5</option>
+                            <option :value="10">10</option>
+                            <option :value="15">15</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="filter-field">
-                <label class="filter-label">Sede</label>
-                <select v-model="filtroSede">
-                    <option value="">Todas las sedes</option>
-                    <option v-for="sede in sedes" :key="sede.IdEstacionamiento" :value="sede.IdEstacionamiento">
-                        {{ sede.Nombre }}
-                    </option>
-                </select>
-            </div>
-            <div class="filter-field">
-                <label class="filter-label">Estado</label>
-                <select v-model="filtroEstado">
-                    <option value="">Todos los estados</option>
-                    <option value="true">Activo</option>
-                    <option value="false">Inactivo</option>
-                </select>
-            </div>
-            <button v-if="busqueda || filtroSede || filtroEstado" @click="limpiarFiltros" class="filter-clear-btn">
-                ✕ Limpiar
-            </button>
-        </div>
 
-        <!-- Tabla -->
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-            <div class="table-scroll-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th class="th-cell th-cell--sticky">Cliente</th>
-                            <th class="th-cell">Documento</th>
-                            <th class="th-cell">Correo</th>
-                            <th class="th-cell">Permisos</th>
-                            <th class="th-cell th-cell--actions">Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="clientesPaginados.length === 0">
-                            <td colspan="5" class="text-center py-20 text-gray-300">
-                                <div class="flex flex-col items-center gap-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                                    </svg>
-                                    <span class="text-sm font-medium">No se encontraron clientes</span>
-                                </div>
-                            </td>
-                        </tr>
+            <!-- Overlay móvil -->
+            <Transition name="overlay">
+                <div v-if="usuarioSeleccionado" class="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    @click="usuarioSeleccionado = null" />
+            </Transition>
 
-                        <tr v-for="cliente in clientesPaginados" :key="cliente.Documento" class="table-row">
-                            <td class="td-cell td-cell--sticky">
-                                <div class="flex items-center gap-3">
-                                    <div class="row-avatar">{{ iniciales(cliente.Nombres) }}</div>
-                                    <div class="flex flex-col items-start min-w-0">
-                                        <span class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">
-                                            {{ cliente.Nombres }} {{ cliente.Apellidos }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="td-cell tracking-wide">{{ cliente.Documento }}</td>
-                            <td class="td-cell">
-                                <span class="sede-badge">{{ cliente.Email }}</span>
-                            </td>
-
-                            <!-- Permisos resumen -->
-                            <td class="td-cell">
-                                <div class="perm-summary">
-                                    <span class="perm-count-badge">
-                                        {{ (cliente.permisos ?? []).length }}
-                                    </span>
-                                    <span class="text-xs text-gray-400 font-semibold">permisos</span>
-                                    <div class="perm-preview">
-                                        <span v-for="p in (cliente.permisos ?? []).slice(0, 2)" :key="p"
-                                            class="perm-chip">
-                                            {{ p }}
-                                        </span>
-                                        <span v-if="(cliente.permisos ?? []).length > 2"
-                                            class="perm-chip perm-chip--more">
-                                            +{{ (cliente.permisos ?? []).length - 2 }}
-                                        </span>
-                                        <span v-if="!(cliente.permisos ?? []).length"
-                                            class="text-xs text-gray-300 font-semibold italic">
-                                            Sin permisos
-                                        </span>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td class="td-cell td-cell--actions">
-                                <div class="flex items-center justify-center gap-1">
-                                    <!-- Permisos -->
-                                    <button @click="abrirPermisos(cliente)" class="action-btn"
-                                        title="Gestionar permisos" v-html="dashboard_customize">
-                                    </button>
-                                    <!-- Editar -->
-                                    <button @click="editarCliente(cliente)" class="action-btn" title="Editar"
-                                        v-html="person_edit">
-                                    </button>
-                                    <!-- Inhabilitar -->
-                                    <button @click="darDeBaja(cliente)" class="action-btn action-btn--danger"
-                                        title="Inhabilitar" v-html="account_circle_off">
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Paginación -->
-            <div class="table-foot">
-                <span class="foot-counter">
-                    <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ clientesFiltrados.length }}</strong>
-                </span>
-                <div class="flex items-center gap-1">
-                    <button @click="paginaActual--" :disabled="paginaActual === 1" class="page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                        </svg>
-                    </button>
-                    <span class="page-mobile-indicator">{{ paginaActual }} / {{ totalPaginas }}</span>
-                    <template v-for="p in totalPaginas" :key="p">
-                        <button @click="paginaActual = p"
-                            :class="['page-btn page-btn--num', paginaActual === p ? 'page-btn--active' : '']">
-                            {{ p }}
+            <!-- Panel -->
+            <Transition name="panel">
+                <div v-if="usuarioSeleccionado" class="
+                        fixed bottom-0 left-0 right-0 z-50
+                        lg:static lg:z-auto
+                        lg:w-[400px] lg:flex-shrink-0
+                        bg-white
+                        rounded-t-3xl lg:rounded-3xl
+                        border-2 border-[#0D291C]
+                        flex flex-col overflow-hidden
+                        lg:max-h-full
+                        panel-mobile-height
+                    " style="box-shadow: 0 -4px 0 #000; --tw-shadow: none;"
+                    :style="{ boxShadow: 'var(--panel-shadow, 0 -4px 0 #000)' }">
+                    <!-- Cabecera -->
+                    <div class="flex items-center justify-between gap-3 px-4 py-3 bg-[#0D291C] flex-shrink-0">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex-shrink-0 bg-[#7FD344] text-[#0D291C] flex items-center justify-center font-black text-xs">
+                                {{ iniciales(usuarioSeleccionado.Nombres) }}
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-white truncate">
+                                    {{ usuarioSeleccionado.Nombres }} {{ usuarioSeleccionado.Apellidos }}
+                                </p>
+                                <p class="text-[0.6rem] text-white/50 font-semibold truncate mt-0.5">
+                                    {{ usuarioSeleccionado.T_UsuarioRol?.[0]?.T_Roles?.Nombre ?? 'Sin rol' }}
+                                    · {{ usuarioSeleccionado.Email }}
+                                </p>
+                            </div>
+                        </div>
+                        <button @click="usuarioSeleccionado = null"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center bg-white/10 border-none cursor-pointer text-white hover:bg-white/20 transition-colors flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                            </svg>
                         </button>
-                    </template>
-                    <button @click="paginaActual++" :disabled="paginaActual === totalPaginas" class="page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                        </svg>
-                    </button>
+                    </div>
+
+                    <!-- Toolbar: buscador + botones en una fila -->
+                    <div class="flex items-center gap-2 px-3 pt-3 pb-0 bg-[#f8faf9] flex-shrink-0">
+                        <div
+                            class="flex items-center gap-2 flex-1 min-w-0 bg-white border border-gray-200 rounded-full px-3 py-1.5 focus-within:border-[#299261] transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#9ca3af"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                            </svg>
+                            <input v-model="busquedaPerm" type="text" placeholder="Buscar permiso..."
+                                class="flex-1 min-w-0 text-xs text-gray-700 bg-transparent border-none outline-none" />
+                            <button v-if="busquedaPerm" @click="busquedaPerm = ''"
+                                class="text-[0.6rem] font-black text-gray-400 hover:text-red-500 bg-none border-none cursor-pointer">✕</button>
+                        </div>
+                        <button @click="selectAll"
+                            class="text-[0.65rem] font-black px-2.5 py-1.5 rounded-full border cursor-pointer bg-green-50 text-green-700 border-green-200 hover:bg-green-100 whitespace-nowrap flex-shrink-0">
+                            Todos
+                        </button>
+                        <button @click="clearAll"
+                            class="text-[0.65rem] font-black px-2.5 py-1.5 rounded-full border cursor-pointer bg-red-50 text-red-600 border-red-200 hover:bg-red-100 whitespace-nowrap flex-shrink-0">
+                            Ninguno
+                        </button>
+                    </div>
+
+                    <!-- Contador -->
+                    <div
+                        class="flex items-center gap-3 px-3 py-2 bg-[#f8faf9] border-b-2 border-gray-100 flex-shrink-0">
+                        <span
+                            class="text-[0.65rem] font-bold text-[#0D291C] bg-[#f0faf4] border border-[#c8e6c9] rounded-full px-3 py-0.5 whitespace-nowrap">
+                            <span class="font-black text-[#299261]">{{ seleccionados.size }}</span> / {{ totalPermisos
+                            }} activos
+                        </span>
+                        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-300"
+                                style="background: linear-gradient(90deg, #299261, #7FD344)"
+                                :style="{ width: `${(seleccionados.size / totalPermisos) * 100}%` }" />
+                        </div>
+                    </div>
+
+                    <!-- Grid de tarjetas: 1 col en móvil, 2 en desktop -->
+                    <div
+                        class="flex-1 overflow-y-auto p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 content-start bg-[#f8faf9] scrollbar-thin">
+
+                        <div v-if="loadingPermisos"
+                            class="col-span-full flex flex-col items-center justify-center py-10 gap-3">
+                            <div class="loader" />
+                            <span class="text-xs text-gray-400 font-semibold">Cargando permisos...</span>
+                        </div>
+
+                        <div v-else-if="gruposFiltrados.length === 0"
+                            class="col-span-full text-center py-8 text-gray-400 text-sm font-semibold">
+                            Sin resultados para "<strong>{{ busquedaPerm }}</strong>"
+                        </div>
+
+                        <template v-if="!loadingPermisos">
+                            <div v-for="grupo in gruposFiltrados" :key="grupo.label"
+                                class="bg-white rounded-2xl border-2 flex flex-col transition-all"
+                                :class="countActivos(grupo) > 0 ? 'border-[#c8e6c9] shadow-[0_1px_0_#a5d6a7]' : 'border-gray-100 shadow-[0_1px_0_#e8ede9]'">
+
+                                <!-- Cabecera tarjeta -->
+                                <div class="flex items-center justify-between gap-1 px-2.5 py-2 rounded-t-2xl border-b"
+                                    :class="countActivos(grupo) > 0 ? 'bg-[#f0faf4] border-[#d7eeda]' : 'bg-gray-50 border-gray-100'">
+                                    <span class="text-[0.72rem] font-black text-[#0D291C] truncate">{{ grupo.label
+                                        }}</span>
+                                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                                        <span class="text-[0.6rem] font-black rounded-full px-1.5 py-0.5"
+                                            :class="countActivos(grupo) > 0 ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-200 text-gray-400'">
+                                            {{ countActivos(grupo) }}/{{ grupo.permisos.length }}
+                                        </span>
+                                        <button @click="toggleGrupoPermisos(grupo)"
+                                            class="text-[0.6rem] font-black rounded-full px-2 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity"
+                                            :class="countActivos(grupo) === grupo.permisos.length
+                                                ? 'bg-red-50 text-red-600 border-red-200'
+                                                : 'bg-[#e8f5e9] text-[#299261] border-[#a5d6a7]'">
+                                            {{ countActivos(grupo) === grupo.permisos.length ? 'Quitar' : 'Todos' }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Permisos -->
+                                <div class="p-1.5 flex flex-col gap-0.5">
+                                    <div v-for="perm in grupo.permisos" :key="perm.value"
+                                        class="flex items-center gap-2 px-2 py-2 sm:py-1.5 rounded-lg cursor-pointer select-none transition-colors"
+                                        :class="isSelected(perm.value) ? 'bg-[#f0faf4]' : 'hover:bg-[#f0faf4]'"
+                                        @click="togglePerm(perm.value)">
+                                        <div class="w-4 h-4 rounded-[4px] flex-shrink-0 flex items-center justify-center border-2 transition-all"
+                                            :class="isSelected(perm.value) ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-white border-gray-300'">
+                                            <svg v-if="isSelected(perm.value)" xmlns="http://www.w3.org/2000/svg"
+                                                width="9" height="9" fill="white" viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-[0.75rem] flex-1"
+                                            :class="isSelected(perm.value) ? 'font-bold text-[#0D291C]' : 'font-semibold text-gray-500'">
+                                            {{ perm.label }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Pie -->
+                    <div class="flex gap-2 px-3 pb-4 pt-3 border-t-2 border-gray-100 bg-white flex-shrink-0">
+                        <button @click="usuarioSeleccionado = null"
+                            class="flex-1 py-3 rounded-full text-xs font-black uppercase tracking-wide cursor-pointer bg-white text-[#232B3A] border-2 border-black hover:bg-gray-50 transition-colors"
+                            style="box-shadow: 0 3px 0 #000">
+                            Cancelar
+                        </button>
+                        <button @click="guardarPermisos"
+                            class="flex-[2] py-3 rounded-full text-xs font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-white border-2 border-black flex items-center justify-center gap-2 hover:bg-[#132e21] transition-colors"
+                            style="box-shadow: 0 3px 0 #000">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+                            </svg>
+                            Guardar permisos
+                        </button>
+                    </div>
+
                 </div>
-                <div class="flex items-center gap-2 text-xs text-gray-400">
-                    <span class="hidden sm:inline">Filas:</span>
-                    <select v-model.number="itemsPorPagina" @change="paginaActual = 1" class="paginator-select">
-                        <option :value="5">5</option>
-                        <option :value="10">10</option>
-                        <option :value="15">15</option>
-                    </select>
-                </div>
-            </div>
+            </Transition>
         </div>
 
-        <!-- ══════════════════════════════════════════════════ -->
-        <!-- MODAL EDITAR                                      -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <ModalEditar v-model="modalEditar" :cliente="clienteAccion" @guardar="actualizarCliente">
-            <p class="modal-section-label">Datos personales</p>
-            <div class="modal-grid">
-                <div class="field-group">
-                    <label class="field-label">Nombre</label>
-                    <input v-model="clienteAccion.Nombres" type="text" class="field-input" placeholder="Nombre" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Apellido</label>
-                    <input v-model="clienteAccion.Apellidos" type="text" class="field-input" placeholder="Apellido" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Documento</label>
-                    <input v-model="clienteAccion.Documento" type="text" class="field-input"
-                        placeholder="Número de documento" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Teléfono</label>
-                    <input v-model="clienteAccion.Telefono" type="text" @input="validarTelefono" class="field-input"
-                        placeholder="3XX XXX XXXX" />
-                </div>
-                <div class="field-group field-group--full">
-                    <label class="field-label">Correo electrónico</label>
-                    <input v-model="clienteAccion.Email" type="email" class="field-input"
-                        placeholder="correo@ejemplo.com" />
-                </div>
-            </div>
-
-            <p class="modal-section-label">Membresía</p>
-            <div class="modal-grid">
-                <div class="field-group">
-                    <label class="field-label">Sede</label>
-                    <select v-model="clienteAccion.sede" class="field-input">
-                        <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">
-                            {{ s.Nombre }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <p class="modal-section-label">Vehículos</p>
-            <div class="modal-grid">
-                <div class="field-group">
-                    <label class="field-label">Placa 1</label>
-                    <input v-model="clienteAccion.Placa1" type="text" class="field-input" placeholder="ABC-123" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Placa 2</label>
-                    <input v-model="clienteAccion.placa2" type="text" class="field-input"
-                        placeholder="DEF-456 (opcional)" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Placa 3</label>
-                    <input v-model="clienteAccion.placa3" type="text" class="field-input"
-                        placeholder="GHI-789 (opcional)" />
-                </div>
-            </div>
-        </ModalEditar>
-
-        <!-- ══════════════════════════════════════════════════ -->
-        <!-- MODAL INHABILITAR                                 -->
-        <!-- ══════════════════════════════════════════════════ -->
+        <!-- Modal inhabilitar -->
         <ModalInhabilitar v-model="modalInhabilitar" :cliente="clienteAccion" @confirmar="inhabilitarCliente" />
-
-        <!-- ══════════════════════════════════════════════════ -->
-        <!-- MODAL PERMISOS                                    -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <ModalPermisos v-model="modalPermisos" :usuario="clienteAccion" @guardar="onGuardarPermisos" />
-
     </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import ModalEditar from '@/components/modals/ModalEditar.vue'
 import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
-import ModalPermisos from '@/components/modals/ModalEditarPermisos.vue'
-import person_edit from '@/assets/img/person_edit.svg?raw'
 import dashboard_customize from '@/assets/img/dashboard_customize.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
-import UsersService from '@/api/services/users.service'
-import sedesServices from '@/api/services/sedes.services'
+import adminServices from '@/api/services/admin.services'
+import RolService from '@/api/services/rol.services'
 
-// ── Estado ─────────────────────────────────────────────────────────
+const LABEL_MAP = {
+    'VER-USUARIOS': 'Ver usuarios',
+    'CREAR-USUARIOS': 'Crear usuarios',
+    'EDITAR-USUARIOS': 'Editar usuarios',
+    'INACTIVAR-USUARIOS': 'Inactivar usuarios',
+    'VER-ROLES': 'Ver roles',
+    'CREAR-ROLES': 'Crear roles',
+    'EDITAR-ROLES': 'Editar roles',
+    'VER-PERMISOS': 'Ver permisos',
+    'ASIGNAR-PERMISOS': 'Asignar permisos',
+    'INACTIVAR-PERMISOS': 'Inactivar permisos',
+    'VER-MENSUALIDADES': 'Ver mensualidades',
+    'CREAR-MENSUALIDADES': 'Crear mensualidades',
+    'EDITAR-MENSUALIDADES': 'Editar mensualidades',
+    'INACTIVAR-MENSUALIDADES': 'Inactivar mensualidades',
+    'VER-SEDES': 'Ver sedes',
+    'CREAR-SEDES': 'Crear sedes',
+    'EDITAR-SEDES': 'Editar sedes',
+    'INACTIVAR-SEDES': 'Inactivar sedes',
+    'CREAR-CODIGOS': 'Crear códigos',
+}
+
+const GRUPOS = [
+    { label: 'Usuarios', permisos: ['VER-USUARIOS', 'CREAR-USUARIOS', 'EDITAR-USUARIOS', 'INACTIVAR-USUARIOS'] },
+    { label: 'Roles', permisos: ['VER-ROLES', 'CREAR-ROLES', 'EDITAR-ROLES'] },
+    { label: 'Permisos', permisos: ['VER-PERMISOS', 'ASIGNAR-PERMISOS', 'INACTIVAR-PERMISOS'] },
+    { label: 'Mensualidades', permisos: ['VER-MENSUALIDADES', 'CREAR-MENSUALIDADES', 'EDITAR-MENSUALIDADES', 'INACTIVAR-MENSUALIDADES'] },
+    { label: 'Sedes', permisos: ['VER-SEDES', 'CREAR-SEDES', 'EDITAR-SEDES', 'INACTIVAR-SEDES'] },
+    { label: 'Códigos', permisos: ['CREAR-CODIGOS'] },
+].map(g => ({
+    ...g,
+    permisos: g.permisos.map(nombre => ({
+        value: nombre,
+        label: LABEL_MAP[nombre] ?? nombre,
+    }))
+}))
+
+const totalPermisos = GRUPOS.reduce((acc, g) => acc + g.permisos.length, 0)
+
+const loading = ref(false)
+const usuarios = ref([])
+const permisosDisponibles = ref([])
 const busqueda = ref('')
 const busquedaDebounced = ref('')
-const filtroEstado = ref('')
-const filtroSede = ref('')
-const paginaActual = ref(1)
-const itemsPorPagina = ref(10)
-const mockClientes = ref([])
-const sedes = ref([])
+const pagina = ref(1)
+const porPagina = ref(10)
 
-// ── Modales ────────────────────────────────────────────────────────
-const modalEditar = ref(false)
+const usuarioSeleccionado = ref(null)
+const busquedaPerm = ref('')
+const seleccionados = ref(new Set())
+const loadingPermisos = ref(false)
+
 const modalInhabilitar = ref(false)
-const modalPermisos = ref(false)
-
-const clienteAccion = ref({
-    Nombres: '', Apellidos: '', Documento: '',
-    Telefono: '', Email: '', sede: '',
-    Placa1: '', placa2: '', placa3: '',
-    permisos: [],
-})
-
-// ── Carga inicial ──────────────────────────────────────────────────
-import { useAuthStore } from '@/stores/auth'
-import adminServices from '@/api/services/admin.services'
-
-const auth = useAuthStore()
-const role = ref([])
-
+const clienteAccion = ref({})
 
 onMounted(async () => {
+    loading.value = true
     try {
-        // El usuario admin que está viendo la pantalla
-
-
-        const [responseClientes, responseSedes] = await Promise.all([
-            UsersService.getAllClients({ page: 1, limit: 15 }),
-            sedesServices.getAll(),
+        const [resUsuarios, resPermisos] = await Promise.all([
+            adminServices.getAllClients(),
+            RolService.getAllPermisos(),
         ])
-        adminServices.getAllClients()
-
-        role.value = auth.user || []
-        mockClientes.value = responseClientes?.data || []
-        sedes.value = responseSedes || []
-
-        console.log('Usuario activo:', role.value)
-    } catch (error) {
-        console.error('Error cargando datos:', error)
+        usuarios.value = resUsuarios?.data ?? resUsuarios ?? []
+        permisosDisponibles.value = resPermisos?.data ?? resPermisos ?? []
+    } catch (e) {
+        console.error('Error cargando datos:', e)
+    } finally {
+        loading.value = false
     }
-
 })
 
-
-// ── Debounce búsqueda ──────────────────────────────────────────────
 let debounceTimer = null
 watch(busqueda, (val) => {
     clearTimeout(debounceTimer)
     debounceTimer = setTimeout(() => {
         busquedaDebounced.value = val
-        paginaActual.value = 1
+        pagina.value = 1
     }, 300)
 })
-watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
 
-// ── Filtros y paginación ───────────────────────────────────────────
-const clientesFiltrados = computed(() => {
-    return mockClientes.value.filter(c => {
-        const q = busquedaDebounced.value.toLowerCase()
-        const matchBusqueda = !q ||
-            c.Nombres?.toLowerCase().includes(q) ||
-            c.Documento?.toString().includes(q)
-        const matchSede = !filtroSede.value || c.sede === filtroSede.value
-        const matchEstado = filtroEstado.value === '' || filtroEstado.value === undefined ||
-            c.Estado === (filtroEstado.value === 'true')
-        return matchBusqueda && matchSede && matchEstado
-    })
+const usuariosFiltrados = computed(() => {
+    const q = busquedaDebounced.value.toLowerCase()
+    if (!q) return usuarios.value
+    return usuarios.value.filter(u =>
+        u.Nombres?.toLowerCase().includes(q) ||
+        u.Apellidos?.toLowerCase().includes(q) ||
+        u.Documento?.toString().includes(q)
+    )
 })
-
 const totalPaginas = computed(() =>
-    Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value))
+    Math.max(1, Math.ceil(usuariosFiltrados.value.length / porPagina.value))
 )
-const clientesPaginados = computed(() => {
-    const inicio = (paginaActual.value - 1) * itemsPorPagina.value
-    return clientesFiltrados.value.slice(inicio, inicio + itemsPorPagina.value)
+const usuariosPaginados = computed(() => {
+    const ini = (pagina.value - 1) * porPagina.value
+    return usuariosFiltrados.value.slice(ini, ini + porPagina.value)
 })
 const rangoInicio = computed(() =>
-    clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1
+    usuariosFiltrados.value.length === 0 ? 0 : (pagina.value - 1) * porPagina.value + 1
 )
 const rangoFin = computed(() =>
-    Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length)
+    Math.min(pagina.value * porPagina.value, usuariosFiltrados.value.length)
 )
 
-// ── Acciones ───────────────────────────────────────────────────────
-const editarCliente = (cliente) => {
-    clienteAccion.value = { ...cliente, permisos: cliente.permisos ?? [] }
-    modalEditar.value = true
-}
+const seleccionadosArr = computed(() => [...seleccionados.value])
+const isSelected = (value) => seleccionadosArr.value.includes(value)
 
-const darDeBaja = (cliente) => {
-    clienteAccion.value = { ...cliente, permisos: cliente.permisos ?? [] }
-    modalInhabilitar.value = true
-}
+const seleccionarUsuario = async (u) => {
+    if (usuarioSeleccionado.value?.Documento === u.Documento) {
+        usuarioSeleccionado.value = null
+        return
+    }
+    usuarioSeleccionado.value = u
+    busquedaPerm.value = ''
+    seleccionados.value = new Set()
 
-const abrirPermisos = (cliente) => {
-    clienteAccion.value = { ...cliente, permisos: cliente.permisos ?? [] }
-    modalPermisos.value = true
-}
+    const idRol = u.T_UsuarioRol?.[0]?.IdRol
+    if (!idRol) {
+        console.warn('El usuario no tiene rol asignado')
+        return
+    }
 
-const actualizarCliente = async () => {
+    loadingPermisos.value = true
     try {
-        console.log('Guardando:', clienteAccion.value)
-        modalEditar.value = false
-    } catch (error) {
-        console.error('Error actualizando:', error)
+        const response = await RolService.getPermisosRol(idRol)
+        const data = response?.data ?? response ?? []
+        const nombresActivos = data
+            .map(p => p.T_PermisosAdmin?.Nombre)
+            .filter(Boolean)
+        seleccionados.value = new Set(nombresActivos)
+        console.log(`Permisos del rol ${idRol}:`, nombresActivos)
+    } catch (e) {
+        console.error('Error cargando permisos del rol:', e)
+    } finally {
+        loadingPermisos.value = false
     }
 }
 
+const gruposFiltrados = computed(() => {
+    const q = busquedaPerm.value.toLowerCase().trim()
+    if (!q) return GRUPOS
+    return GRUPOS.map(g => ({
+        ...g,
+        permisos: g.permisos.filter(p =>
+            p.label.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)
+        ),
+    })).filter(g => g.permisos.length > 0)
+})
+
+const countActivos = (grupo) =>
+    grupo.permisos.filter(p => seleccionadosArr.value.includes(p.value)).length
+
+const togglePerm = (value) => {
+    const s = new Set(seleccionados.value)
+    s.has(value) ? s.delete(value) : s.add(value)
+    seleccionados.value = new Set(s)
+}
+const toggleGrupoPermisos = (grupo) => {
+    const s = new Set(seleccionados.value)
+    const todosOn = grupo.permisos.every(p => s.has(p.value))
+    grupo.permisos.forEach(p => todosOn ? s.delete(p.value) : s.add(p.value))
+    seleccionados.value = new Set(s)
+}
+const selectAll = () => {
+    seleccionados.value = new Set(GRUPOS.flatMap(g => g.permisos.map(p => p.value)))
+}
+const clearAll = () => { seleccionados.value = new Set() }
+
+const guardarPermisos = async () => {
+    const idRol = usuarioSeleccionado.value?.T_UsuarioRol?.[0]?.IdRol
+    if (!idRol) { console.warn('Usuario sin rol asignado'); return }
+
+    const idsSeleccionados = [...seleccionados.value]
+        .map(nombre => {
+            const found = permisosDisponibles.value.find(p => p.Nombre === nombre)
+            return found?.Id ?? null
+        })
+        .filter(id => id !== null)
+
+    console.log('Guardando:', { IdRol: idRol, Permisos: idsSeleccionados })
+    try {
+        const response = await RolService.assignPermisos({
+            IdRol: parseInt(idRol),
+            Permisos: idsSeleccionados,
+        })
+        console.log('Guardado:', response?.message)
+        usuarioSeleccionado.value = null
+    } catch (e) {
+        console.error('Error guardando permisos:', e)
+    }
+}
+
+const darDeBaja = (u) => {
+    clienteAccion.value = { ...u }
+    modalInhabilitar.value = true
+}
 const inhabilitarCliente = async ({ motivo, observaciones }) => {
     try {
         console.log('Inhabilitando:', clienteAccion.value.Documento, motivo, observaciones)
-        const idx = mockClientes.value.findIndex(c => c.Documento === clienteAccion.value.Documento)
-        if (idx !== -1) mockClientes.value[idx].Estado = false
+        const idx = usuarios.value.findIndex(u => u.Documento === clienteAccion.value.Documento)
+        if (idx !== -1) usuarios.value[idx].Estado = false
         modalInhabilitar.value = false
-    } catch (error) {
-        console.error('Error inhabilitando:', error)
-    }
-}
-
-const onGuardarPermisos = (nuevosPermisos) => {
-    const idx = mockClientes.value.findIndex(c => c.Documento === clienteAccion.value.Documento)
-    if (idx !== -1) mockClientes.value[idx].permisos = nuevosPermisos
-    console.log('TODO: llamar API para guardar permisos', clienteAccion.value.Documento, nuevosPermisos)
-}
-
-const limpiarFiltros = () => {
-    busqueda.value = ''
-    busquedaDebounced.value = ''
-    filtroSede.value = ''
-    filtroEstado.value = ''
-}
-
-const validarTelefono = (event) => {
-    clienteAccion.value.Telefono = event.target.value.replace(/\D/g, '')
+    } catch (e) { console.error(e) }
 }
 
 const iniciales = (nombre = '') => {
@@ -404,351 +555,88 @@ const iniciales = (nombre = '') => {
 </script>
 
 <style scoped>
-.estado-badge-activo {
-    color: #299261;
-    font-weight: bold;
+.panel-mobile-height {
+    max-height: 82vh;
 }
 
-.estado-badge-inactivo {
-    color: #dc2626;
-    font-weight: bold;
-}
-
-.filters-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
-}
-
-.filter-field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    min-width: 140px;
-}
-
-.filter-field--search {
-    flex: 2;
-    min-width: 200px;
-}
-
-.filter-label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #232B3A;
-    padding-left: 4px;
-}
-
-.back-btn {
-    border: 1px solid black;
-    box-shadow: #595858 0px 2px 0;
-}
-
-@media (max-width: 600px) {
-    .filters-bar {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .filter-field,
-    .filter-field--search {
-        flex: none;
-        width: 100%;
-        min-width: unset;
+@media (min-width: 1024px) {
+    .panel-mobile-height {
+        max-height: 100%;
     }
 }
 
-.filter-clear-btn {
-    padding: 10px 18px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #6b7280;
-    background-color: #f9fafb;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-    white-space: nowrap;
-    align-self: flex-end;
-}
+@media (min-width: 1024px) {
+    .panel-enter-active {
+        transition: all 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
 
-.filter-clear-btn:hover {
-    border-color: #299261;
-    color: #299261;
-}
+    .panel-leave-active {
+        transition: all 0.18s ease-in;
+    }
 
-@media (max-width: 600px) {
-    .filter-clear-btn {
-        width: 100%;
-        text-align: center;
+    .panel-enter-from,
+    .panel-leave-to {
+        opacity: 0;
+        transform: translateX(40px);
     }
 }
 
-.table-scroll-wrapper {
-    overflow-x: auto;
-    flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: #0D291C33 #f0f9f4;
+@media (max-width: 1023px) {
+    .panel-enter-active {
+        transition: all 0.32s cubic-bezier(0.34, 1.1, 0.64, 1);
+    }
+
+    .panel-leave-active {
+        transition: all 0.2s ease-in;
+    }
+
+    .panel-enter-from,
+    .panel-leave-to {
+        opacity: 0;
+        transform: translateY(100%);
+    }
 }
 
-.table-scroll-wrapper::-webkit-scrollbar {
-    height: 5px;
+.overlay-enter-active {
+    transition: opacity 0.2s ease;
 }
 
-.table-scroll-wrapper::-webkit-scrollbar-track {
-    background: #f0f9f4;
+.overlay-leave-active {
+    transition: opacity 0.15s ease;
 }
 
-.table-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: #0D291C44;
-    border-radius: 99px;
+.overlay-enter-from,
+.overlay-leave-to {
+    opacity: 0;
 }
 
-.data-table {
-    border-collapse: collapse;
-    min-width: 700px;
-    width: 100%;
-}
-
-.th-cell {
-    padding: 13px 18px;
-    text-align: left;
-    font-size: 0.68rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    color: #7FD344;
-    background-color: #0D291C;
-    white-space: nowrap;
-    border-bottom: 3px solid #7FD344;
-}
-
-.th-cell--actions {
-    text-align: center;
-}
-
-.th-cell--sticky {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.12);
-}
-
-.table-row {
-    border-bottom: 1px solid #e8f5e9;
-    transition: background-color 0.15s;
-}
-
-.table-row:last-child {
-    border-bottom: none;
-}
-
-.table-row:hover {
-    background-color: #f0faf4;
-}
-
-.table-row:hover .td-cell--sticky {
-    background-color: #f0faf4;
-}
-
-.td-cell {
-    padding: 12px 18px;
-    font-size: 0.82rem;
-    color: #374151;
-    font-weight: 500;
-    vertical-align: middle;
-    text-align: left;
-    white-space: nowrap;
-}
-
-.td-cell--sticky {
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background-color: white;
-    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.07);
-    min-width: 200px;
-}
-
-.td-cell--actions {
-    text-align: center;
-}
-
-.row-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    border: 2px solid #e8f5e9;
-}
-
-.sede-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    background-color: #e8f5e9;
-    color: #1b5e20;
-    border: 1px solid #c8e6c9;
-}
-
-/* Permisos resumen */
-.perm-summary {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-.perm-count-badge {
-    font-size: 0.7rem;
-    font-weight: 900;
-    background-color: #0D291C;
-    color: #7FD344;
-    border-radius: 999px;
-    padding: 2px 8px;
-}
-
-.perm-preview {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-}
-
-.perm-chip {
-    font-size: 0.58rem;
-    font-weight: 700;
-    color: #374151;
-    background-color: #f3f4f6;
-    border-radius: 6px;
-    padding: 2px 6px;
-    border: 1px solid #e5e7eb;
-    font-family: monospace;
-}
-
-.perm-chip--more {
-    background-color: #e8f5e9;
-    color: #299261;
-    border-color: #c8e6c9;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    transition: background-color 0.15s;
-    flex-shrink: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-}
-
-.action-btn:hover {
-    background-color: #e8f5e9;
-}
-
-.action-btn--danger:hover {
-    background-color: #fee2e2;
-}
-
-:deep(.action-btn svg) {
-    width: 20px;
-    height: 20px;
-    fill: #6b7280;
-    transition: fill 0.15s;
+:deep(button[v-html] svg),
+:deep(.icon-btn svg) {
+    width: 19px;
+    height: 19px;
+    fill: #9ca3af;
+    transition: fill 0.12s;
     display: block;
 }
 
-.action-btn:hover :deep(svg) {
-    fill: #299261;
-}
-
-.action-btn--danger:hover :deep(svg) {
-    fill: #dc2626;
-}
-
-.table-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 20px;
-    border-top: 2px solid #f0f9f4;
-    background-color: #fafffe;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-}
-
-.foot-counter {
-    font-size: 0.75rem;
-    color: #9ca3af;
-}
-
-.foot-counter strong {
-    color: #0D291C;
-}
-
-.page-mobile-indicator {
-    display: none;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #0D291C;
-    padding: 0 8px;
-}
-
-.page-btn--num {
-    display: flex;
-}
-
-@media (max-width: 600px) {
-    .foot-counter {
-        display: none;
-    }
-
-    .page-mobile-indicator {
-        display: block;
-    }
-
-    .page-btn--num {
-        display: none;
-    }
-
-    .table-foot {
-        padding: 10px 14px;
-        justify-content: space-between;
-    }
+:deep(button.bg-\[\#0D291C\] svg) {
+    fill: #7FD344;
 }
 
 .page-btn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #6b7280;
-    transition: background-color 0.15s, color 0.15s;
-    flex-shrink: 0;
     border: none;
     background: none;
     cursor: pointer;
+    transition: background-color 0.12s;
 }
 
 .page-btn:hover:not(:disabled) {
@@ -761,111 +649,23 @@ const iniciales = (nombre = '') => {
     cursor: not-allowed;
 }
 
-.page-btn--active {
-    background-color: #0D291C;
-    color: #7FD344;
-    box-shadow: 0 2px 0 rgba(13, 41, 28, 0.3);
+.loader {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid #e8f5e9;
+    border-top-color: #0D291C;
+    animation: spin 0.7s linear infinite;
 }
 
-input,
-select {
-    border-radius: 999px !important;
-    background-color: #EAEAEA !important;
-    border: 2px solid #299261 !important;
-    padding: 10px 15px !important;
-    color: black !important;
-    box-shadow: none !important;
-    outline: none !important;
-}
-
-input:focus,
-select:focus {
-    border-color: #0D291C !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.18) !important;
-}
-
-input.search-input {
-    padding-right: 45px !important;
-    background-image: url(@/assets/img/search.svg);
-    background-size: 25px;
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-}
-
-select.paginator-select {
-    border-radius: 12px !important;
-    padding: 4px 28px 4px 10px !important;
-    font-size: 0.75rem !important;
-    border: 1px solid #d1d5db !important;
-    background-color: #f9fafb !important;
-    color: #4b5563 !important;
-}
-
-select.paginator-select:focus {
-    border-color: #299261 !important;
-    box-shadow: none !important;
-}
-
-/* Estilos del slot del modal editar */
-.modal-section-label {
-    font-size: 0.62rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #0D291C;
-    opacity: 0.45;
-    border-bottom: 1.5px solid rgba(13, 41, 28, 0.12);
-    padding-bottom: 5px;
-    margin-top: 2px;
-}
-
-.modal-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 11px;
-}
-
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.field-group--full {
-    grid-column: 1 / -1;
-}
-
-.field-label {
-    font-size: 0.63rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0D291C;
-    opacity: 0.6;
-    padding-left: 3px;
-}
-
-.field-input {
-    background-color: white !important;
-    border: 2px solid #0D291C !important;
-    border-radius: 14px !important;
-    padding: 9px 14px !important;
-    font-size: 0.875rem !important;
-    color: #0D291C !important;
-    outline: none !important;
-    box-shadow: none !important;
-    width: 100%;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.field-input:focus {
-    border-color: #299261 !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.2) !important;
-}
-
-@media (max-width: 500px) {
-    .modal-grid {
-        grid-template-columns: 1fr;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
+}
+
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #0D291C22 transparent;
 }
 </style>

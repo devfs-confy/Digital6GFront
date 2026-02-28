@@ -99,7 +99,6 @@ export const useAuthStore = defineStore(
         const exp = payload.exp * 1000;
 
         if (Date.now() > exp) {
-          
           const newToken = await refreshAccessToken();
           if (!newToken) return logout();
           return;
@@ -166,7 +165,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      pick: ["token", "role", "user"],
+      pick: ["token"],
     },
   },
 );
