@@ -2,7 +2,7 @@
     <div class="dashboard-grid">
 
         <!-- Analítica 1: Mensualidades vencidas -->
-        <div class="chart-card card-animation">
+        <div class="chart-card card-animation" v-permission="PERMS.USUARIOS_CREAR">
             <div class="chart-card__head">
                 <div class="chart-card__meta">
                     <span class="chart-card__tag chart-card__tag--danger">Urgente</span>
@@ -93,7 +93,8 @@
             </div>
         </div>
 
-        <!-- Tarjetas de acceso rápido -->
+
+
         <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card card-animation"
             @click="router.push(opcion.route)">
             <div class="opcion-icon">
@@ -109,6 +110,9 @@
 </template>
 
 <script setup>
+import { PERMS } from '@/constants/permisions'
+import { useAuth } from '@/composables/useAuth'
+
 // ── Todos los imports al principio ────────────────────────────────
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -131,7 +135,7 @@ const router = useRouter()
 const Usuarios = ref([])
 const Sedes = ref([])
 const Sedesdata = ref([])
-
+const { hasPermission } = useAuth()
 // ── Computed helpers ───────────────────────────────────────────────
 const usuariostotales = computed(() => Usuarios.value?.total ?? '—')
 const sedestotal = computed(() => Sedes.value.length)
@@ -225,15 +229,18 @@ const pct = (v) => {
 }
 
 // ── Menú rápido ───────────────────────────────────────────────────
-const opciones = computed(() => [
-    { id: 1, icon: clientes, titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes' },
-    { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: 'Al día', route: '/admin/mensualidades' },
-    { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '3 pendientes', route: '/admin/solicitudes' },
-    { id: 4, icon: reportes, titulo: 'Reportes', sub: 'Ver estadísticas', route: '/admin/reportes' },
-    { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes' },
-    { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios' },
-])
+const opciones = computed(() => {
+    const todosLosItems = [
+        { id: 1, icon: clientes, titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: PERMS.USUARIOS_VER },
+        { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: 'Al día', route: '/admin/mensualidades', permission: PERMS.MENSUALIDADES_VER },
+        { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '3 pendientes', route: '/admin/solicitudes', permission: PERMS.MENSUALIDADES_VER },
+        { id: 4, icon: reportes, titulo: 'Reportes', sub: 'Ver estadísticas', route: '/admin/reportes', permission: PERMS.USUARIOS_VER },
+        { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: PERMS.SEDES_VER },
+        { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: PERMS.ROLES_VER },
+    ]
 
+    return todosLosItems.filter(item => hasPermission(item.permission))
+})
 // ── Un solo onMounted con todas las llamadas ──────────────────────
 onMounted(async () => {
     try {

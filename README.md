@@ -79,6 +79,7 @@ Para un mayor detalle sobre la arquitectura y el funcionamiento interno, consult
 - 🚀 **[Capa de API](./doc/api/README.md)**: Configuración de Axios, interceptores y referencia de servicios.
 - 🚦 **[Enrutamiento](./doc/router/README.md)**: Definición de rutas, guardias de seguridad y RBAC.
 - 📦 **[Gestión de Estado](./doc/stores/README.md)**: Estructura de Pinia stores y persistencia de sesión.
+- 🛡️ **[Sistema de Permisos (V-Permission)](./doc/V_PERMISSION_IMPLEMENTATION.md)**: Guía completa sobre cómo funciona y cómo implementar la validación de permisos en el sistema.
 
 ---
 

@@ -90,9 +90,9 @@
                                                 <!-- Documento visible solo en móvil debajo del nombre -->
                                                 <span class="text-xs text-start text-gray-400 font-mono sm:hidden">{{
                                                     u.Documento
-                                                }}</span>
-                                                <span class="text-xs  text-gray-400 truncate hidden sm:block">{{ u.Email
                                                     }}</span>
+                                                <span class="text-xs  text-gray-400 truncate hidden sm:block">{{ u.Email
+                                                }}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -108,7 +108,7 @@
                                             <button @click="seleccionarUsuario(u)"
                                                 class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all"
                                                 :class="usuarioSeleccionado?.Documento === u.Documento
-                                                    ? 'bg-[#0D291C]'
+                                                    ? ''
                                                     : 'bg-transparent hover:bg-[#e8f5e9]'" title="Gestionar permisos"
                                                 v-html="dashboard_customize" />
                                             <button @click="darDeBaja(u)"
@@ -269,7 +269,7 @@
                                 <div class="flex items-center justify-between gap-1 px-2.5 py-2 rounded-t-2xl border-b"
                                     :class="countActivos(grupo) > 0 ? 'bg-[#f0faf4] border-[#d7eeda]' : 'bg-gray-50 border-gray-100'">
                                     <span class="text-[0.72rem] font-black text-[#0D291C] truncate">{{ grupo.label
-                                        }}</span>
+                                    }}</span>
                                     <div class="flex items-center gap-1.5 flex-shrink-0">
                                         <span class="text-[0.6rem] font-black rounded-full px-1.5 py-0.5"
                                             :class="countActivos(grupo) > 0 ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-200 text-gray-400'">
@@ -522,7 +522,7 @@ const guardarPermisos = async () => {
         })
         .filter(id => id !== null)
 
-    console.log('Guardando:', { IdRol: idRol, Permisos: idsSeleccionados })
+    // console.log('Guardando:', { IdRol: idRol, Permisos: idsSeleccionados })
     try {
         const response = await RolService.assignPermisos({
             IdRol: parseInt(idRol),

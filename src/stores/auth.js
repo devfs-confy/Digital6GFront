@@ -21,9 +21,14 @@ export const useAuthStore = defineStore(
     const isLoggedIn = computed(() => !!token.value);
     const isAuthenticated = computed(() => !!token.value); // alias para authGuard
     const redirectTo = computed(() => roleRedirects[role.value] ?? "/login");
-    const isAdmin = computed(
-      () => role.value === "administrador" || role.value === "admin",
-    );
+    const isAdmin = computed(() => {
+      const nombreRol = user.value?.rol?.nombre?.toUpperCase();
+      return (
+        nombreRol === "SUPER-ADMIN" ||
+        role.value === "admin" ||
+        role.value === "administrador"
+      );
+    });
     const isCliente = computed(() => role.value === "cliente");
 
     // ── Login ───────────────────────────────────────────────────────
@@ -51,6 +56,8 @@ export const useAuthStore = defineStore(
           apellidos: payload.apellidos,
           email: payload.email,
           documento: payload.documento,
+          permisos: payload.permisos ?? [],
+          rol: payload.rol,
         };
 
         return roleRedirects[role.value] ?? "/login";
@@ -165,7 +172,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      pick: ["token"],
+      pick: ["token", "role", "user"],
     },
   },
 );

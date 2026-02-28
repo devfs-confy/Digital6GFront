@@ -18,18 +18,28 @@ export async function authGuard(to, from, next) {
   }
 
   // ── 3. Token existe pero user se perdió (recarga de página) ───────
-  // Pinia restore el token del localStorage pero user puede ser null
-  // si el JWT venció. restoreSession() lo verifica y renueva si hace falta.
   if (!auth.user) {
     await auth.restoreSession();
     if (!auth.isAuthenticated) return next("/login");
   }
 
   // ── 4. Verificación de rol ────────────────────────────────────────
-  // Las rutas usan meta.role (singular) — lo comparamos con auth.role
   const rolRequerido = to.meta.role;
   if (rolRequerido && auth.role !== rolRequerido) {
-    return next("/unauthorized"); // autenticado pero rol incorrecto
+    return next("/unauthorized");
+  }
+
+  // ── 5. Verificación de Permiso Específico ──────────────────────────
+  // Si la ruta tiene un meta.permission, verificamos el array del usuario
+  const permisoRequerido = to.meta.permission;
+  if (permisoRequerido) {
+    const tienePermiso =
+      auth.isAdmin || auth.user?.permisos?.includes(permisoRequerido);
+
+    if (!tienePermiso) {
+      console.warn(`Acceso denegado: Falta permiso ${permisoRequerido}`);
+      return next("/unauthorized"); // O a auth.redirectTo
+    }
   }
 
   next();
