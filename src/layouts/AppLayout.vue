@@ -35,8 +35,11 @@ const isOpen = ref(window.innerWidth >= 1024)
 const isMobile = ref(window.innerWidth < 1024)
 
 const checkMobile = () => {
-    isMobile.value = window.innerWidth < 1024
-    if (isMobile.value) isOpen.value = false
+    const mobile = window.innerWidth < 1024
+    if (isMobile.value !== mobile) {
+        isMobile.value = mobile
+        isOpen.value = !mobile 
+    }
 }
 
 onMounted(() => window.addEventListener('resize', checkMobile))

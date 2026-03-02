@@ -2,7 +2,7 @@
     <div class="dashboard-grid">
 
         <!-- Analítica 1: Mensualidades vencidas -->
-        <div class="chart-card card-animation" v-permission="PERMS.USUARIOS_CREAR">
+        <div class="chart-card card-animation" v-if="hasPermission(PERMS.MENSUALIDADES_VER)">
             <div class="chart-card__head">
                 <div class="chart-card__meta">
                     <span class="chart-card__tag chart-card__tag--danger">Urgente</span>
@@ -20,7 +20,7 @@
         </div>
 
         <!-- Analítica 2: Ingresos últimos 6 meses -->
-        <div class="chart-card card-animation">
+        <div class="chart-card card-animation" v-if="hasPermission(PERMS.MENSUALIDADES_VER)">
             <div class="chart-card__head">
                 <div class="chart-card__meta">
                     <span class="chart-card__tag chart-card__tag--green">Finanzas</span>
@@ -38,7 +38,7 @@
         </div>
 
         <!-- Analítica 3: Disponibilidad por sede -->
-        <div class="chart-card card-animation">
+        <div v-if="hasPermission(PERMS.SEDES_VER)" class=" chart-card card-animation">
             <div class="chart-card__head">
                 <div class="chart-card__meta">
                     <span class="chart-card__tag chart-card__tag--blue">Disponibilidad</span>
@@ -119,13 +119,20 @@ import { useRouter } from 'vue-router'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import sedesServices from '@/api/services/sedes.services'
-import UsersService from '@/api/services/users.service'
+import UsersService from '@/api/services/client.service'
 import SedesDisponibilidadService from '@/api/services/sedesdisponibilidad.service'
 
 import clientes from '@/assets/img/account_box_green.svg?raw'
 import mensualidades from '@/assets/img/calendar_add_on_green.svg?raw'
 import solicitudes from '@/assets/img/contract_green.svg?raw'
 import reportes from '@/assets/img/assignment_green.svg?raw'
+import disponibilidad from '@/assets/img/event_available_green.svg?raw'
+import verificacion from '@/assets/img/verified_green.svg?raw'
+import tarifas from '@/assets/img/car_tag_green.svg?raw'
+import tarjetas from '@/assets/img/payment_card_green.svg?raw'
+
+
+
 import sedes from '@/assets/img/emoji_transportation_green.svg?raw'
 import usuarios from '@/assets/img/manage_accounts_green.svg?raw'
 
@@ -237,26 +244,53 @@ const opciones = computed(() => {
         { id: 4, icon: reportes, titulo: 'Reportes', sub: 'Ver estadísticas', route: '/admin/reportes', permission: PERMS.USUARIOS_VER },
         { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: PERMS.SEDES_VER },
         { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: PERMS.ROLES_VER },
+        { id: 7, icon: disponibilidad, titulo: 'Ver disponibilidad', sub: '', route: '/admin/disponibilidad', permission: PERMS.CODIGOS_CREAR },
+        { id: 8, icon: verificacion, titulo: 'Codigo verificacion', sub: '', route: '/admin/verificacion', permission: PERMS.CODIGOS_CREAR },
+        { id: 9, icon: tarifas, titulo: 'Ver tarifas', sub: ``, route: '/admin/tarifas', permission: PERMS.CODIGOS_CREAR },
+        { id: 10, icon: tarjetas, titulo: 'Tarjeta', sub: '', route: '/admin/tarjetas', permission: PERMS.CODIGOS_CREAR },
     ]
 
     return todosLosItems.filter(item => hasPermission(item.permission))
 })
+
 // ── Un solo onMounted con todas las llamadas ──────────────────────
 onMounted(async () => {
     try {
-        const [sedesRes, usuariosRes, dispRes] = await Promise.all([
-            sedesServices.getAll(),
-            UsersService.getAllClients(),
-            SedesDisponibilidadService.getDisponibilidadDetalle()
-        ])
+        const promises = []
+
+        if (hasPermission(PERMS.SEDES_VER) || hasPermission(PERMS.MENSUALIDADES_VER)) {
+            promises.push(sedesServices.getAll())
+        } else {
+            promises.push(Promise.resolve([]))
+        }
+
+        if (hasPermission(PERMS.USUARIOS_VER)) {
+            promises.push(UsersService.getAllClients())
+        } else {
+            promises.push(Promise.resolve([]))
+        }
+
+        if (hasPermission(PERMS.SEDES_VER)) {
+            promises.push(SedesDisponibilidadService.getDisponibilidadDetalle())
+        } else {
+            promises.push(Promise.resolve([]))
+        }
+
+
+
+        const [sedesRes, usuariosRes, dispRes] = await Promise.all(promises)
+
+        console.log('Promises:', dispRes, sedesRes)
+
+
 
         Sedes.value = sedesRes ?? []
         Usuarios.value = usuariosRes ?? []
 
-
         const rawDisp = Array.isArray(dispRes) ? dispRes : (dispRes?.data ?? [])
         Sedesdata.value = rawDisp
 
+        // Preseleccionar primera sede si hay datos
         if (sedesAgrupadas.value.length > 0) {
             sedeSeleccionada.value = sedesAgrupadas.value[0].IdEstacionamiento
         }

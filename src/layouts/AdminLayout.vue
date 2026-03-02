@@ -14,13 +14,22 @@ import { computed } from 'vue'
 import AppLayout from './AppLayout.vue'
 import AppLayoutSkeleton from './AppLayout.skeleton.vue'
 import { adminMenuItems } from '../router/routes/adminRoutes.js'
-import { useAuth } from '@/composables/useAuth'
+import { useAuthStore } from '@/stores/auth'
 
-const { hasPermission } = useAuth()
+const authStore = useAuthStore()
 
 const menuFiltrado = computed(() => {
     return adminMenuItems.filter(item => {
-        return !item.permission || hasPermission(item.permission)
+        // Sin permiso definido → visible para todos
+        if (!item.permission) return true
+
+        // SOLO bypass si es SUPER-ADMIN o ADMIN real (NO "administrador" genérico)
+        const nombreRol = authStore.user?.rol?.nombre?.toUpperCase()
+        const esSuperAdmin = nombreRol === 'SUPER-ADMIN' || nombreRol === 'ADMIN'
+        if (esSuperAdmin) return true
+
+        // Para todos los demás (EMPLEADO, GESTOR, etc.) → verificar permisos
+        return authStore.user?.permisos?.includes(item.permission) ?? false
     })
 })
 </script>

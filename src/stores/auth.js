@@ -23,11 +23,7 @@ export const useAuthStore = defineStore(
     const redirectTo = computed(() => roleRedirects[role.value] ?? "/login");
     const isAdmin = computed(() => {
       const nombreRol = user.value?.rol?.nombre?.toUpperCase();
-      return (
-        nombreRol === "SUPER-ADMIN" ||
-        role.value === "admin" ||
-        role.value === "administrador"
-      );
+      return nombreRol === "SUPER-ADMIN" || nombreRol === "ADMIN";
     });
     const isCliente = computed(() => role.value === "cliente");
 

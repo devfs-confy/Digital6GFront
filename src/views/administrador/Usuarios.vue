@@ -90,9 +90,11 @@
                                                 <!-- Documento visible solo en móvil debajo del nombre -->
                                                 <span class="text-xs text-start text-gray-400 font-mono sm:hidden">{{
                                                     u.Documento
-                                                    }}</span>
-                                                <span class="text-xs  text-gray-400 truncate hidden sm:block">{{ u.Email
                                                 }}</span>
+                                                <span
+                                                    class="text-xs text-start  text-gray-400 truncate hidden sm:block">{{
+                                                        u.Email
+                                                    }}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -190,7 +192,7 @@
                                 <p class="text-sm font-bold text-white truncate">
                                     {{ usuarioSeleccionado.Nombres }} {{ usuarioSeleccionado.Apellidos }}
                                 </p>
-                                <p class="text-[0.6rem] text-white/50 font-semibold truncate mt-0.5">
+                                <p class="text-[0.6rem]  text-white/50 font-semibold truncate mt-0.5">
                                     {{ usuarioSeleccionado.T_UsuarioRol?.[0]?.T_Roles?.Nombre ?? 'Sin rol' }}
                                     · {{ usuarioSeleccionado.Email }}
                                 </p>
@@ -269,7 +271,7 @@
                                 <div class="flex items-center justify-between gap-1 px-2.5 py-2 rounded-t-2xl border-b"
                                     :class="countActivos(grupo) > 0 ? 'bg-[#f0faf4] border-[#d7eeda]' : 'bg-gray-50 border-gray-100'">
                                     <span class="text-[0.72rem] font-black text-[#0D291C] truncate">{{ grupo.label
-                                    }}</span>
+                                        }}</span>
                                     <div class="flex items-center gap-1.5 flex-shrink-0">
                                         <span class="text-[0.6rem] font-black rounded-full px-1.5 py-0.5"
                                             :class="countActivos(grupo) > 0 ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-200 text-gray-400'">
@@ -343,36 +345,37 @@ import dashboard_customize from '@/assets/img/dashboard_customize.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
 import adminServices from '@/api/services/admin.services'
 import RolService from '@/api/services/rol.services'
+import { PERMS } from "@/constants/permisions"
 
 const LABEL_MAP = {
-    'VER-USUARIOS': 'Ver usuarios',
-    'CREAR-USUARIOS': 'Crear usuarios',
-    'EDITAR-USUARIOS': 'Editar usuarios',
-    'INACTIVAR-USUARIOS': 'Inactivar usuarios',
-    'VER-ROLES': 'Ver roles',
-    'CREAR-ROLES': 'Crear roles',
-    'EDITAR-ROLES': 'Editar roles',
-    'VER-PERMISOS': 'Ver permisos',
-    'ASIGNAR-PERMISOS': 'Asignar permisos',
-    'INACTIVAR-PERMISOS': 'Inactivar permisos',
-    'VER-MENSUALIDADES': 'Ver mensualidades',
-    'CREAR-MENSUALIDADES': 'Crear mensualidades',
-    'EDITAR-MENSUALIDADES': 'Editar mensualidades',
-    'INACTIVAR-MENSUALIDADES': 'Inactivar mensualidades',
-    'VER-SEDES': 'Ver sedes',
-    'CREAR-SEDES': 'Crear sedes',
-    'EDITAR-SEDES': 'Editar sedes',
-    'INACTIVAR-SEDES': 'Inactivar sedes',
-    'CREAR-CODIGOS': 'Crear códigos',
+    [PERMS.USUARIOS_VER]: 'Ver usuarios',
+    [PERMS.USUARIOS_CREAR]: 'Crear usuarios',
+    [PERMS.USUARIOS_EDITAR]: 'Editar usuarios',
+    [PERMS.USUARIOS_INACTIVAR]: 'Inactivar usuarios',
+    [PERMS.ROLES_VER]: 'Ver roles',
+    [PERMS.ROLES_CREAR]: 'Crear roles',
+    [PERMS.ROLES_EDITAR]: 'Editar roles',
+    [PERMS.PERMISOS_VER]: 'Ver permisos',
+    [PERMS.PERMISOS_ASIGNAR]: 'Asignar permisos',
+    [PERMS.PERMISOS_INACTIVAR]: 'Inactivar permisos',
+    [PERMS.MENSUALIDADES_VER]: 'Ver mensualidades',
+    [PERMS.MENSUALIDADES_CREAR]: 'Crear mensualidades',
+    [PERMS.MENSUALIDADES_EDITAR]: 'Editar mensualidades',
+    [PERMS.MENSUALIDADES_INACTIVAR]: 'Inactivar mensualidades',
+    [PERMS.SEDES_VER]: 'Ver sedes',
+    [PERMS.SEDES_CREAR]: 'Crear sedes',
+    [PERMS.SEDES_EDITAR]: 'Editar sedes',
+    [PERMS.SEDES_INACTIVAR]: 'Inactivar sedes',
+    [PERMS.CODIGOS_CREAR]: 'Crear códigos',
 }
 
 const GRUPOS = [
-    { label: 'Usuarios', permisos: ['VER-USUARIOS', 'CREAR-USUARIOS', 'EDITAR-USUARIOS', 'INACTIVAR-USUARIOS'] },
-    { label: 'Roles', permisos: ['VER-ROLES', 'CREAR-ROLES', 'EDITAR-ROLES'] },
-    { label: 'Permisos', permisos: ['VER-PERMISOS', 'ASIGNAR-PERMISOS', 'INACTIVAR-PERMISOS'] },
-    { label: 'Mensualidades', permisos: ['VER-MENSUALIDADES', 'CREAR-MENSUALIDADES', 'EDITAR-MENSUALIDADES', 'INACTIVAR-MENSUALIDADES'] },
-    { label: 'Sedes', permisos: ['VER-SEDES', 'CREAR-SEDES', 'EDITAR-SEDES', 'INACTIVAR-SEDES'] },
-    { label: 'Códigos', permisos: ['CREAR-CODIGOS'] },
+    { label: 'Usuarios', permisos: [PERMS.USUARIOS_VER, PERMS.USUARIOS_CREAR, PERMS.USUARIOS_EDITAR, PERMS.USUARIOS_INACTIVAR] },
+    { label: 'Roles', permisos: [PERMS.ROLES_VER, PERMS.ROLES_CREAR, PERMS.ROLES_EDITAR] },
+    { label: 'Permisos', permisos: [PERMS.PERMISOS_VER, PERMS.PERMISOS_ASIGNAR, PERMS.PERMISOS_INACTIVAR] },
+    { label: 'Mensualidades', permisos: [PERMS.MENSUALIDADES_VER, PERMS.MENSUALIDADES_CREAR, PERMS.MENSUALIDADES_EDITAR, PERMS.MENSUALIDADES_INACTIVAR] },
+    { label: 'Sedes', permisos: [PERMS.SEDES_VER, PERMS.SEDES_CREAR, PERMS.SEDES_EDITAR, PERMS.SEDES_INACTIVAR] },
+    { label: 'Códigos', permisos: [PERMS.CODIGOS_CREAR] },
 ].map(g => ({
     ...g,
     permisos: g.permisos.map(nombre => ({
@@ -382,20 +385,17 @@ const GRUPOS = [
 }))
 
 const totalPermisos = GRUPOS.reduce((acc, g) => acc + g.permisos.length, 0)
-
 const loading = ref(false)
 const usuarios = ref([])
 const permisosDisponibles = ref([])
+const usuarioSeleccionado = ref(null)
 const busqueda = ref('')
 const busquedaDebounced = ref('')
 const pagina = ref(1)
 const porPagina = ref(10)
-
-const usuarioSeleccionado = ref(null)
 const busquedaPerm = ref('')
 const seleccionados = ref(new Set())
 const loadingPermisos = ref(false)
-
 const modalInhabilitar = ref(false)
 const clienteAccion = ref({})
 
@@ -403,17 +403,87 @@ onMounted(async () => {
     loading.value = true
     try {
         const [resUsuarios, resPermisos] = await Promise.all([
-            adminServices.getAllClients(),
+            adminServices.getAllAdmins(),
             RolService.getAllPermisos(),
         ])
         usuarios.value = resUsuarios?.data ?? resUsuarios ?? []
         permisosDisponibles.value = resPermisos?.data ?? resPermisos ?? []
+
+
     } catch (e) {
-        console.error('Error cargando datos:', e)
+        console.error('Error cargando datos iniciales:', e)
     } finally {
         loading.value = false
     }
 })
+
+const seleccionarUsuario = async (u) => {
+    // Si volvemos a hacer clic en el mismo, cerramos el panel
+    if (usuarioSeleccionado.value?.Documento === u.Documento) {
+        usuarioSeleccionado.value = null
+        return
+    }
+
+    usuarioSeleccionado.value = u
+    busquedaPerm.value = ''
+
+    // CARGA DE PERMISOS:
+    // Aquí está la clave. Usamos directamente el array que mostraste en tu localstorage
+    if (u.permisos && Array.isArray(u.permisos)) {
+        seleccionados.value = new Set(u.permisos)
+        console.log(`Permisos individuales cargados para ${u.Nombres}:`, u.permisos)
+    } else {
+
+        const idRol = u.T_UsuarioRol?.[0]?.IdRol
+        if (idRol) {
+            loadingPermisos.value = true
+            try {
+                const response = await RolService.getPermisosRol(idRol)
+                const data = response?.data ?? response ?? []
+                const nombresActivos = data.map(p => p.T_PermisosAdmin?.Nombre).filter(Boolean)
+                seleccionados.value = new Set(nombresActivos)
+            } catch (e) {
+                console.log('Error al cargar permisos de respaldo:', e)
+            } finally {
+                loadingPermisos.value = false
+            }
+        }
+    }
+}
+
+
+const guardarPermisos = async () => {
+    // 1. Obtenemos el ID del rol del usuario seleccionado
+    const idRol = usuarioSeleccionado.value?.T_UsuarioRol?.[0]?.IdRol;
+    if (!idRol) {
+        console.error("El usuario no tiene un rol asignado");
+        return;
+    }
+
+    // 2. Mapeamos los nombres de los permisos seleccionados a sus IDs numéricos
+    const idsSeleccionados = [...seleccionados.value]
+        .map(nombre => permisosDisponibles.value.find(p => p.Nombre === nombre)?.Id)
+        .filter(id => id != null);
+
+    try {
+        loadingPermisos.value = true;
+
+        // 3. Llamamos al servicio de Roles (Edición Global)
+        // Enviamos el objeto con las llaves exactas que pide el DTO
+        await RolService.assignPermisos(idRol, idsSeleccionados);
+
+
+        // Cerramos el panel tras el éxito
+        usuarioSeleccionado.value = null;
+
+    } catch (e) {
+        const errorMsg = e.response?.data?.message || "Error al actualizar rol";
+        console.error('Error:', errorMsg);
+    } finally {
+        loadingPermisos.value = false;
+    }
+}
+
 
 let debounceTimer = null
 watch(busqueda, (val) => {
@@ -450,36 +520,7 @@ const rangoFin = computed(() =>
 const seleccionadosArr = computed(() => [...seleccionados.value])
 const isSelected = (value) => seleccionadosArr.value.includes(value)
 
-const seleccionarUsuario = async (u) => {
-    if (usuarioSeleccionado.value?.Documento === u.Documento) {
-        usuarioSeleccionado.value = null
-        return
-    }
-    usuarioSeleccionado.value = u
-    busquedaPerm.value = ''
-    seleccionados.value = new Set()
 
-    const idRol = u.T_UsuarioRol?.[0]?.IdRol
-    if (!idRol) {
-        console.warn('El usuario no tiene rol asignado')
-        return
-    }
-
-    loadingPermisos.value = true
-    try {
-        const response = await RolService.getPermisosRol(idRol)
-        const data = response?.data ?? response ?? []
-        const nombresActivos = data
-            .map(p => p.T_PermisosAdmin?.Nombre)
-            .filter(Boolean)
-        seleccionados.value = new Set(nombresActivos)
-        console.log(`Permisos del rol ${idRol}:`, nombresActivos)
-    } catch (e) {
-        console.error('Error cargando permisos del rol:', e)
-    } finally {
-        loadingPermisos.value = false
-    }
-}
 
 const gruposFiltrados = computed(() => {
     const q = busquedaPerm.value.toLowerCase().trim()
@@ -500,6 +541,7 @@ const togglePerm = (value) => {
     s.has(value) ? s.delete(value) : s.add(value)
     seleccionados.value = new Set(s)
 }
+
 const toggleGrupoPermisos = (grupo) => {
     const s = new Set(seleccionados.value)
     const todosOn = grupo.permisos.every(p => s.has(p.value))
@@ -510,30 +552,6 @@ const selectAll = () => {
     seleccionados.value = new Set(GRUPOS.flatMap(g => g.permisos.map(p => p.value)))
 }
 const clearAll = () => { seleccionados.value = new Set() }
-
-const guardarPermisos = async () => {
-    const idRol = usuarioSeleccionado.value?.T_UsuarioRol?.[0]?.IdRol
-    if (!idRol) { console.warn('Usuario sin rol asignado'); return }
-
-    const idsSeleccionados = [...seleccionados.value]
-        .map(nombre => {
-            const found = permisosDisponibles.value.find(p => p.Nombre === nombre)
-            return found?.Id ?? null
-        })
-        .filter(id => id !== null)
-
-    // console.log('Guardando:', { IdRol: idRol, Permisos: idsSeleccionados })
-    try {
-        const response = await RolService.assignPermisos({
-            IdRol: parseInt(idRol),
-            Permisos: idsSeleccionados,
-        })
-        console.log('Guardado:', response?.message)
-        usuarioSeleccionado.value = null
-    } catch (e) {
-        console.error('Error guardando permisos:', e)
-    }
-}
 
 const darDeBaja = (u) => {
     clienteAccion.value = { ...u }
@@ -547,6 +565,7 @@ const inhabilitarCliente = async ({ motivo, observaciones }) => {
         modalInhabilitar.value = false
     } catch (e) { console.error(e) }
 }
+
 
 const iniciales = (nombre = '') => {
     if (!nombre) return '??'

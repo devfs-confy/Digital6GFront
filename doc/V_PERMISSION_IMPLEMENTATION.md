@@ -1,22 +1,23 @@
-# Implementación de V-Permission en el Sistema
+# Implementación del Sistema de Permisos (RBAC)
 
-Este documento detalla el funcionamiento del sistema de permisos (RBAC avanzado) en Digital6G, desde la obtención de datos hasta la validación en la interfaz de usuario mediante directivas y guardias de navegación.
+Este documento detalla la arquitectura y el funcionamiento del sistema de control de acceso basado en roles (RBAC) y permisos específicos en el frontend de Digital6G.
 
 ---
 
 ## 1. Origen de los Permisos (JWT)
 
-Los permisos no se consultan en cada acción; se extraen directamente del **JSON Web Token (JWT)** proporcionado por el backend durante el login o el refresco de sesión.
+El sistema utiliza un esquema "stateless" donde los permisos se transportan directamente en el **JSON Web Token (JWT)** emitido por el backend tras un inicio de sesión exitoso.
 
-- **Payload del JWT**: El token contiene un array llamado `permisos`.
-- **Estructura**: `["VER-USUARIOS", "CREAR-SEDES", "EDITAR-TARIFAS", ...]`
-- **Procesamiento**: En `src/stores/auth.js`, la función `restoreSession()` y `login()` decodifican el payload y asignan el array al estado reactivo del usuario.
+- **Extracción**: En `src/stores/auth.js`, durante las funciones `login()` y `restoreSession()`, se decodifica el payload del token.
+- **Estructura del Payload**: El token contiene un array de strings llamado `permisos`.
+- **Almacenamiento**: Los permisos se guardan en el estado reactivo `user.permisos` del `authStore` de Pinia.
 
 ```javascript
-// src/stores/auth.js (Fragmento)
+// src/stores/auth.js
 user.value = {
-  // ... otros datos
-  permisos: payload.permisos ?? [], // Array de strings en mayúsculas
+  // ... datos del usuario
+  permisos: payload.permisos ?? [], // Ejemplo: ["VER-USUARIOS", "CREAR-SEDES"]
+  rol: payload.rol,
 };
 ```
 
@@ -24,17 +25,20 @@ user.value = {
 
 ## 2. Validación Centralizada: `useAuth`
 
-Para evitar duplicar la lógica de validación, se utiliza el composable `useAuth.js`. Este centraliza la regla de oro: **"Si eres Administrador, tienes todos los permisos; de lo contrario, debes tener el permiso específico en tu array"**.
+Para mantener la consistencia en todo el aplicativo, la lógica de validación reside en el composable `src/composables/useAuth.js`.
+
+### La Regla de Oro
+1. **Bypass de Administrador**: Si el usuario tiene el rol de `SUPER-ADMIN`, `ADMIN` o `ADMINISTRADOR` (según el computed `isAdmin`), tiene acceso total automáticamente.
+2. **Validación de Permiso**: Si no es administrador, se verifica si el permiso solicitado existe en el array `user.permisos`.
 
 ```javascript
 // src/composables/useAuth.js
-export function useAuth() {
-  const hasPermission = (permission) => {
-    if (isAdmin.value) return true; // Bypass para administradores
-    const userPermissions = user.value?.permisos || [];
-    return userPermissions.includes(permission.toUpperCase());
-  };
-}
+const hasPermission = (permission) => {
+  if (isAdmin.value) return true; // Bypass
+  const userPermissions = user.value?.permisos || [];
+  if (!permission) return true;
+  return userPermissions.includes(permission.toUpperCase());
+};
 ```
 
 ---
@@ -44,75 +48,86 @@ export function useAuth() {
 La directiva personalizada `v-permission` permite ocultar elementos del DOM de forma declarativa si el usuario no cuenta con la autorización necesaria.
 
 ### Registro
-Se registra globalmente en `src/main.js`:
-```javascript
-import { vPermission } from "./directives/v-permission";
-app.directive("permission", vPermission);
-```
+Se registra globalmente en `src/main.js` para que esté disponible en cualquier componente.
 
 ### Uso en Componentes
-Simplemente añade `v-permission="'NOMBRE-DEL-PERMISO'"` a cualquier elemento HTML o componente de Vue.
+Se recomienda usar las constantes `PERMS` para evitar errores de escritura.
 
 ```vue
-<!-- Solo se mostrará si el usuario tiene el permiso o es admin -->
-<button v-permission="'CREAR-USUARIOS'" @click="openModal">
-  Nuevo Usuario
-</button>
+<script setup>
+import { PERMS } from "@/constants/permisions";
+</script>
+
+<template>
+  <!-- El botón se eliminará del DOM si no hay permiso -->
+  <button v-permission="PERMS.USUARIOS_CREAR">
+    Nuevo Usuario
+  </button>
+</template>
 ```
 
-### Funcionamiento Interno
-Si la validación falla, la directiva remueve el elemento del árbol del DOM en el hook `mounted`:
-```javascript
-// src/directives/v-permission.js
-mounted(el, binding) {
-  if (!hasPermission(binding.value)) {
-    el.remove(); // El elemento desaparece por completo
-  }
-}
-```
+### Funcionamiento Interno (`src/directives/v-permission.js`)
+La directiva utiliza el hook `mounted` para evaluar el permiso. Si la validación falla, ejecuta `el.remove()`, eliminando físicamente el elemento del árbol del DOM.
 
 ---
 
-## 4. Protección de Rutas: `authGuard`
+## 4. Protección de Rutas: `permissionGuard`
 
-Además de la interfaz, el sistema protege el acceso a nivel de URL en `src/router/guards/authGuards.js`.
+A nivel de navegación, el archivo `src/router/guards/permission.guard.js` intercepta cada cambio de ruta para verificar el acceso.
 
-### Configuración de la Ruta
-En los archivos de rutas (ej: `adminRoutes.js`), se define el permiso requerido en el objeto `meta`:
+### Configuración en Rutas
+En los archivos de definición de rutas (ej. `adminRoutes.js`), se especifica el permiso requerido en el objeto `meta`:
 
 ```javascript
+// src/router/routes/adminRoutes.js
 {
-  path: "usuarios",
-  component: Usuarios,
+  path: "sedes",
+  component: Sedes,
   meta: { 
-    requiresAuth: true, 
-    role: "admin", 
-    permission: "VER-USUARIOS" // Permiso necesario
+    permission: "VER-SEDES" // Permiso requerido para entrar
   }
 }
 ```
 
-### Validación en el Guardia
-El `authGuard` verifica automáticamente esta propiedad antes de permitir la navegación:
+### Lógica del Guardia
+1. Si la ruta no define un `meta.permission`, se permite el acceso.
+2. Si el usuario es `isAdmin`, se permite el acceso.
+3. Se verifica si el permiso está en `authStore.user.permisos`.
+4. Si falla, se redirige al usuario a su ruta de inicio predeterminada (`redirectTo`).
+
+---
+
+## 5. Constantes de Permisos (`PERMS`)
+
+Para garantizar que los strings coincidan exactamente con lo que envía el backend, se utiliza el archivo `src/constants/permisions.js`. **Nunca uses strings literales en los componentes; usa siempre este objeto.**
 
 ```javascript
-// src/router/guards/authGuards.js
-const permisoRequerido = to.meta.permission;
-if (permisoRequerido) {
-  const tienePermiso = auth.isAdmin || auth.user?.permisos?.includes(permisoRequerido);
-  if (!tienePermiso) {
-    return next("/unauthorized"); // Redirección si no tiene permiso
-  }
-}
+// src/constants/permisions.js
+export const PERMS = {
+  USUARIOS_VER: "VER-USUARIOS",
+  SEDES_CREAR: "CREAR-SEDES",
+  // ...
+};
 ```
 
 ---
 
-## 5. Resumen de Flujo
+## 6. Gestión via API (`RolService`)
 
-1.  **Login**: El servidor entrega un JWT con la lista de permisos.
-2.  **Store**: Pinia guarda los permisos en `authStore.user.permisos`.
-3.  **UI**: `v-permission` oculta botones o secciones basándose en el array del store.
-4.  **Router**: El `authGuard` bloquea el acceso manual por URL si el permiso no está presente.
+El archivo `src/api/services/rol.services.js` proporciona los métodos necesarios para la administración de este sistema desde el panel de control:
 
-> 💡 **Nota**: Todos los permisos deben escribirse en **MAYÚSCULAS** y siguiendo el formato de kebab-case (ej: `ACCION-MODULO`) para mantener la consistencia con el backend.
+- `getAllPermisos()`: Lista todos los permisos disponibles en el sistema.
+- `getPermisosRol(idRol)`: Obtiene los permisos asignados a un rol específico.
+- `assignPermisos(dto)`: Actualiza la matriz de permisos de un rol.
+
+---
+
+## 7. Resumen de Flujo de Trabajo
+
+1.  **Backend**: Valida credenciales y genera un JWT incluyendo el array de permisos del rol del usuario.
+2.  **Frontend (AuthStore)**: Almacena el JWT y decodifica los permisos en el estado global.
+3.  **Frontend (Router)**: El `permissionGuard` bloquea el acceso a vistas completas.
+4.  **Frontend (UI)**: La directiva `v-permission` y el composable `useAuth` ocultan o muestran componentes y botones específicos.
+
+> [!IMPORTANT]
+> Todos los permisos en el código y en el backend deben manejarse en **MAYÚSCULAS** y seguir el formato `ACCION-MODULO` para mantener la integridad del sistema.

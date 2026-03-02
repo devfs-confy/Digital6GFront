@@ -177,7 +177,7 @@
                     <label class="field-label">Sede</label>
                     <select v-model="clienteAccion.sede" class="field-input">
                         <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">{{ s.Nombre
-                            }}
+                        }}
                         </option>
                     </select>
                 </div>
@@ -218,7 +218,7 @@ import ModalEditar from '@/components/modals/ModalEditar.vue'
 import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
 import person_edit from '@/assets/img/person_edit.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
-import UsersService from '@/api/services/users.service'
+import clientService from '@/api/services/client.service'
 import sedesServices from '@/api/services/sedes.services'
 
 // ── Estado ─────────────────────────────────────────────────────────
@@ -250,9 +250,13 @@ onMounted(async () => {
     try {
 
         const [responseClientes, responseSedes] = await Promise.all([
-            UsersService.getAllClients({ page: 1, limit: 15 }),
+            clientService.getAllClients({ page: 1, limit: 15 }),
             sedesServices.getAll(),
         ])
+
+        console.log('Clientes:', responseClientes)
+        console.log('Sedes:', responseSedes)
+
         mockClientes.value = responseClientes?.data || []
         sedes.value = responseSedes || []
     } catch (error) {

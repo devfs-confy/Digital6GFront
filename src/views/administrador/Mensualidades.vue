@@ -444,7 +444,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import person_edit from '@/assets/img/person_edit.svg?raw'
 import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
 import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
-import UsersService from '../../api/services/users.service'
+import UsersService from '@/api/services/client.service'
 
 
 

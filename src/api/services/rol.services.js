@@ -7,57 +7,38 @@ class RolService {
     this.rolPermisoRoute = "v1/rol-permiso";
   }
 
+  // Obtener todos los roles (1-8, etc.)
   async getAll() {
-    try {
-      const response = await api.get(this.rolesRoute);
-      return response.data;
-    } catch (error) {
-      console.error("RolService.getAll:", error);
-    }
+    const { data } = await api.get(this.rolesRoute);
+    return data;
   }
 
-  async getOne(id) {
-    try {
-      const response = await api.get(`${this.rolesRoute}/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error("RolService.getOne:", error);
-    }
-  }
-
-  async create(dto) {
-    try {
-      const response = await api.post(this.rolesRoute, dto);
-      return response.data;
-    } catch (error) {
-      console.error("RolService.create:", error);
-    }
-  }
-
+  // Obtener el catálogo completo de permisos disponibles
   async getAllPermisos() {
-    try {
-      const response = await api.get(this.permisosRoute);
-      return response.data;
-    } catch (error) {
-      console.error("RolService.getAllPermisos:", error);
-    }
+    const { data } = await api.get(this.permisosRoute);
+    return data;
   }
 
+  // Obtener permisos de la "plantilla" del rol
   async getPermisosRol(idRol) {
-    try {
-      const response = await api.get(`${this.rolPermisoRoute}/${idRol}`);
-      return response.data;
-    } catch (error) {
-      console.error("RolService.getPermisosRol:", error);
-    }
+    const { data } = await api.get(`${this.rolPermisoRoute}/${idRol}`);
+    return data;
   }
 
-  async assignPermisos(dto) {
+  // ASIGNAR A ROL: Solo usar si quieres cambiar el permiso globalmente
+  async assignPermisos(idRol, permisosIds) {
     try {
-      const response = await api.put(this.rolPermisoRoute, dto);
+      const response = await api.put(this.rolPermisoRoute, {
+        IdRol: parseInt(idRol),
+        Permisos: permisosIds,
+      });
       return response.data;
     } catch (error) {
-      console.error("RolService.assignPermisos:", error);
+      console.error(
+        "RolService.assignPermisos:",
+        error.response?.data || error.message,
+      );
+      throw error;
     }
   }
 }

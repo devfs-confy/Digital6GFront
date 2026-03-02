@@ -1,4 +1,4 @@
-// src/constants/permissions.js
+// src/constants/permisions.js
 
 export const PERMS = {
   // Módulo de Usuarios
