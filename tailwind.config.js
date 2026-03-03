@@ -2,16 +2,21 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx}", // Incluye todos los archivos Vue, JS, TS, etc.
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        primary: "#0D291C",
-        secondary: "#232B3A",
-        complementary: "#7FD344",
-        tercero: "#299261",
-        ultimate: "#0a0d10",
+        'd6g': {
+          dark:    '#0D291C',
+          green:   '#299261',
+          lime:    '#7FD344',
+          gray:    '#232B3A',
+          night:   '#0a0d10',
+          surface: '#f0faf4',
+          border:  '#e8f5e9',
+          muted:   '#EAEAEA',
+        },
       },
     },
   },

@@ -33,12 +33,12 @@ export const adminMenuItems = [
     route: "/admin/clientes",
     permission: PERMS.USUARIOS_VER,
   },
-  {
-    label: "Validar<br>Mensualidades",
-    icon: icoValidar,
-    route: "/admin/validar",
-    permission: PERMS.MENSUALIDADES_VER,
-  },
+  // {
+  //   label: "Validar<br>Mensualidades",
+  //   icon: icoValidar,
+  //   route: "/admin/validar",
+  //   permission: PERMS.MENSUALIDADES_VER,
+  // },
   {
     label: "Solicitudes",
     icon: icoSolicitudes,
@@ -119,11 +119,11 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/Clientes.vue"),
       meta: { permission: PERMS.USUARIOS_VER },
     },
-    {
-      path: "validar",
-      component: () => import("@/views/administrador/ValidarMensualidades.vue"),
-      meta: { permission: PERMS.MENSUALIDADES_VER },
-    },
+    // {
+    //   path: "validar",
+    //   component: () => import("@/views/administrador/ValidarMensualidades.vue"),
+    //   meta: { permission: PERMS.MENSUALIDADES_VER },
+    // },
     {
       path: "solicitudes",
       component: () => import("@/views/administrador/Solicitudes.vue"),

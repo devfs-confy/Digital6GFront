@@ -14,24 +14,21 @@
         <div class="bg-white rounded-2xl shadow-sm p-4 filters-bar">
             <div class="filter-field filter-field--search">
                 <label class="filter-label">Buscar</label>
-                <div class="relative">
-                    <input v-model="busqueda" type="text" placeholder="Nombre o documento..."
-                        class="search-input w-full" />
-                </div>
+                <input v-model="busqueda" type="text" placeholder="Nombre o documento..." class="search-input w-full" />
             </div>
             <div class="filter-field">
                 <label class="filter-label">Sede</label>
-                <select v-model="filtroSede">
+                <select v-model="filtroSede" @change="cargarClientes">
                     <option value="">Todas las sedes</option>
-                    <option v-for="sede in sedes" :key="sede.IdEstacionamiento" :value="sede.IdEstacionamiento">
-                        {{ sede.Nombre }}
+                    <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">
+                        {{ s.Nombre }}
                     </option>
                 </select>
             </div>
             <div class="filter-field">
                 <label class="filter-label">Estado</label>
                 <select v-model="filtroEstado">
-                    <option value="">Todos los estados</option>
+                    <option value="">Todos</option>
                     <option value="true">Activo</option>
                     <option value="false">Inactivo</option>
                 </select>
@@ -50,13 +47,25 @@
                             <th class="th-cell th-cell--sticky">Cliente</th>
                             <th class="th-cell">Documento</th>
                             <th class="th-cell">Correo</th>
-                            <th class="th-cell">Estado membresía</th>
+                            <th class="th-cell">Teléfono</th>
+                            <th class="th-cell">Placas</th>
+                            <th class="th-cell">Estado</th>
                             <th class="th-cell th-cell--actions">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="clientesPaginados.length === 0">
-                            <td colspan="6" class="text-center py-20 text-gray-300">
+                        <tr v-if="loading">
+                            <td colspan="7" class="text-center py-20 text-gray-300">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                    <span class="text-sm font-medium text-gray-400">Cargando clientes...</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr v-else-if="clientesPaginados.length === 0">
+                            <td colspan="7" class="text-center py-20 text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
                                         viewBox="0 0 24 24">
@@ -68,7 +77,8 @@
                             </td>
                         </tr>
 
-                        <tr v-for="cliente in clientesPaginados" :key="cliente.Documento" class="table-row">
+                        <tr v-else v-for="cliente in clientesPaginados" :key="cliente.Documento" class="table-row">
+
                             <td class="td-cell td-cell--sticky">
                                 <div class="flex items-center gap-3">
                                     <div class="row-avatar">{{ iniciales(cliente.Nombres) }}</div>
@@ -79,21 +89,41 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="td-cell tracking-wide">{{ cliente.Documento }}</td>
+
+                            <td class="td-cell font-mono tracking-wide">{{ cliente.Documento }}</td>
+
                             <td class="td-cell">
                                 <span class="sede-badge">{{ cliente.Email }}</span>
                             </td>
+
+                            <td class="td-cell">{{ cliente.Telefono ?? '—' }}</td>
+
                             <td class="td-cell">
-                                <span v-if="cliente.Estado" class="estado-badge-activo">Activo</span>
-                                <span v-else class="estado-badge-inactivo">Inactivo</span>
+                                <div class="flex gap-1 flex-wrap">
+                                    <span v-for="p in placasCliente(cliente)" :key="p"
+                                        class="inline-block text-[0.6rem] font-black tracking-widest bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-lg">
+                                        {{ p }}
+                                    </span>
+                                    <span v-if="!placasCliente(cliente).length" class="text-gray-300">—</span>
+                                </div>
                             </td>
+
+                            <td class="td-cell">
+                                <span v-if="cliente.Estado" class="estado-badge-activo">● Activo</span>
+                                <span v-else class="estado-badge-inactivo">● Inactivo</span>
+                            </td>
+
                             <td class="td-cell td-cell--actions">
                                 <div class="flex items-center justify-center gap-1">
-                                    <button @click="editarCliente(cliente)" class="action-btn" title="Editar"
-                                        v-html="person_edit">
+                                    <!-- Editar -->
+                                    <button @click="abrirEditar(cliente)" class="action-btn" title="Editar">
+                                        <p v-html="editarcliente"></p>
                                     </button>
-                                    <button @click="darDeBaja(cliente)" class="action-btn action-btn--danger"
-                                        title="Inhabilitar" v-html="account_circle_off">
+                                    <!-- Inhabilitar / Activar -->
+                                    <button @click="abrirCambioEstado(cliente)"
+                                        :class="['action-btn', cliente.Estado ? 'action-btn--danger' : 'action-btn--activate']"
+                                        :title="cliente.Estado ? 'Inhabilitar' : 'Activar'">
+                                        <p v-html="cliente.Estado ? inhabilitarSvg : activarSvg"></p>
                                     </button>
                                 </div>
                             </td>
@@ -140,237 +170,424 @@
         </div>
 
 
-        <!-- ══════════════════════════════════════════════════ -->
-        <!-- MODAL EDITAR                                      -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <ModalEditar v-model="modalEditar" :cliente="clienteAccion" @guardar="actualizarCliente">
+        <!-- ════════════════════════════════════════════════════════ -->
+        <!-- MODAL NUEVO CLIENTE                                      -->
+        <!-- ════════════════════════════════════════════════════════ -->
+        <Transition name="modal">
+            <div v-if="modalNuevo" class="modal-overlay" @click.self="modalNuevo = false">
+                <div class="modal-card modal-card--wide">
+                    <div class="modal-head">
+                        <div class="modal-head__left">
+                            <div class="modal-avatar">+</div>
+                            <div>
+                                <p class="modal-head__name">Nuevo cliente</p>
+                                <p class="modal-head__sub">Completa los datos de registro</p>
+                            </div>
+                        </div>
+                        <button @click="modalNuevo = false" class="modal-close">✕</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="modal-section-label">Datos personales</p>
+                        <div class="modal-grid">
+                            <div class="field-group">
+                                <label class="field-label">Documento *</label>
+                                <input v-model="fN.Documento" type="text" class="field-input"
+                                    placeholder="1098617878" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Sede *</label>
+                                <select v-model="fN.IdEstacionamiento" class="field-input">
+                                    <option value="">Seleccionar</option>
+                                    <option v-for="s in sedes" :key="s.IdEstacionamiento"
+                                        :value="Number(s.IdEstacionamiento)">
+                                        {{ s.Nombre }}</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Nombres *</label>
+                                <input v-model="fN.Nombres" type="text" class="field-input" placeholder="Juan Felipe" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Apellidos *</label>
+                                <input v-model="fN.Apellidos" type="text" class="field-input"
+                                    placeholder="García Ospina" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Teléfono *</label>
+                                <input v-model="fN.Telefono" type="text" class="field-input" placeholder="3001234567" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Email *</label>
+                                <input v-model="fN.Email" type="email" class="field-input"
+                                    placeholder="correo@ejemplo.com" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Contraseña *</label>
+                                <div class="relative">
+                                    <input v-model="fN.Password" :type="verPass ? 'text' : 'password'"
+                                        class="field-input pr-10" placeholder="••••••••" />
+                                    <button type="button" @click="verPass = !verPass"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 opacity-50 hover:opacity-100 transition-opacity">
+                                        <svg v-if="!verPass" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="#0D291C">
+                                            <path
+                                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="#0D291C">
+                                            <path
+                                                d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">ID Autorización</label>
+                                <input v-model.number="fN.IdAutorizacion" type="number" class="field-input"
+                                    placeholder="123" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Fecha inicio</label>
+                                <input v-model="fN.FechaInicio" type="date" class="field-input" />
+                            </div>
+                            <div class="field-group">
+                                <label class="field-label">Fecha fin</label>
+                                <input v-model="fN.FechaFin" type="date" class="field-input" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-x-5 gap-y-2 mt-1">
+                            <label class="check-label"><input type="checkbox" v-model="fN.Estado"
+                                    class="check" /><span>Activo</span></label>
+                            <label class="check-label"><input type="checkbox" v-model="fN.EstudianteUcc"
+                                    class="check" /><span>Estudiante UCC</span></label>
+                            <label class="check-label"><input type="checkbox" v-model="fN.Old"
+                                    class="check" /><span>Registro
+                                    antiguo</span></label>
+                            <label class="check-label"><input type="checkbox" v-model="fN.Sincronizacion"
+                                    class="check" /><span>Sincronizado</span></label>
+                        </div>
+
+                        <div v-if="fN.EstudianteUcc" class="field-group mt-2">
+                            <label class="field-label">Código estudiante UCC</label>
+                            <input v-model="fN.CodigoEstudianteUCC" type="text" class="field-input"
+                                placeholder="765432" />
+                        </div>
+
+                        <p class="modal-section-label">Vehículos</p>
+                        <div class="modal-grid">
+                            <div v-for="(_, idx) in fN.placas" :key="idx" class="field-group">
+                                <label class="field-label">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : '' }}</label>
+                                <div class="flex gap-2 items-center">
+                                    <input v-model="fN.placas[idx]" type="text" class="field-input placa-input flex-1"
+                                        :placeholder="`ABC${idx + 1}23`" maxlength="6" />
+                                    <button v-if="fN.placas.length > 1" type="button" @click="fN.placas.splice(idx, 1)"
+                                        class="w-8 h-8 rounded-xl bg-red-100 border-none flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all cursor-pointer flex-shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button v-if="fN.placas.length < 5" type="button" @click="fN.placas.push('')"
+                            class="self-start flex items-center gap-1.5 text-[0.75rem] font-bold text-[#0D291C] hover:text-[#299261] transition-colors border-none bg-transparent p-0 cursor-pointer mt-1">
+                            <span class="w-5 h-5 rounded-lg bg-[#0D291C] flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
+                                    fill="#7FD344">
+                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                </svg>
+                            </span>
+                            Agregar placa
+                        </button>
+
+                        <div v-if="errNuevo" class="err-box">⚠ {{ errNuevo }}</div>
+                    </div>
+
+                    <div class="modal-foot">
+                        <button @click="modalNuevo = false"
+                            class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                        <button @click="crearCliente" :disabled="guardandoN" class="btn-modal-dark">
+                            <span v-if="guardandoN"
+                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin mr-1" />
+                            {{ guardandoN ? 'Creando...' : 'Crear cliente' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
+
+        <!-- ════════════════════════════════════════ -->
+        <!-- MODAL EDITAR                             -->
+        <!-- ════════════════════════════════════════ -->
+        <ModalEditar v-model="modalEditar" :cliente="clienteAccion" @guardar="editarCliente">
             <p class="modal-section-label">Datos personales</p>
             <div class="modal-grid">
                 <div class="field-group">
-                    <label class="field-label">Nombre</label>
-                    <input v-model="clienteAccion.Nombres" type="text" class="field-input" placeholder="Nombre" />
+                    <label class="field-label">Nombres *</label>
+                    <input v-model="fE.Nombres" type="text" class="field-input" placeholder="Juan Felipe" />
                 </div>
                 <div class="field-group">
-                    <label class="field-label">Apellido</label>
-                    <input v-model="clienteAccion.Apellidos" type="text" class="field-input" placeholder="Apellido" />
+                    <label class="field-label">Apellidos *</label>
+                    <input v-model="fE.Apellidos" type="text" class="field-input" placeholder="García Ospina" />
                 </div>
                 <div class="field-group">
-                    <label class="field-label">Documento</label>
-                    <input v-model="clienteAccion.Documento" type="text" class="field-input"
-                        placeholder="Número de documento" />
+                    <label class="field-label">Correo electrónico *</label>
+                    <input v-model="fE.Email" type="email" class="field-input" placeholder="correo@ejemplo.com" />
                 </div>
                 <div class="field-group">
-                    <label class="field-label">Teléfono</label>
-                    <input v-model="clienteAccion.Telefono" type="text" @input="validarTelefono" class="field-input"
-                        placeholder="3XX XXX XXXX" />
-                </div>
-                <div class="field-group field-group--full">
-                    <label class="field-label">Correo electrónico</label>
-                    <input v-model="clienteAccion.Email" type="email" class="field-input"
-                        placeholder="correo@ejemplo.com" />
+                    <label class="field-label">Teléfono *</label>
+                    <input v-model="fE.Telefono" type="text" class="field-input" placeholder="3001234567"
+                        @input="fE.Telefono = $event.target.value.replace(/\D/g, '')" />
                 </div>
             </div>
-
-            <p class="modal-section-label">Membresía</p>
-            <div class="modal-grid">
-                <div class="field-group">
-                    <label class="field-label">Sede</label>
-                    <select v-model="clienteAccion.sede" class="field-input">
-                        <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">{{ s.Nombre
-                        }}
-                        </option>
-                    </select>
-                </div>
+            <div class="flex flex-wrap gap-x-5 gap-y-2">
+                <label class="check-label">
+                    <input type="checkbox" v-model="fE.Estado" class="check" />
+                    <span>Cliente activo</span>
+                </label>
             </div>
-
-            <p class="modal-section-label">Vehículos</p>
-            <div class="modal-grid">
-                <div class="field-group">
-                    <label class="field-label">Placa 1</label>
-                    <input v-model="clienteAccion.Placa1" type="text" class="field-input" placeholder="ABC-123" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Placa 2</label>
-                    <input v-model="clienteAccion.placa2" type="text" class="field-input"
-                        placeholder="DEF-456 (opcional)" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Placa 3</label>
-                    <input v-model="clienteAccion.placa3" type="text" class="field-input"
-                        placeholder="GHI-789 (opcional)" />
-                </div>
-            </div>
+            <div v-if="errEditar" class="err-box">⚠ {{ errEditar }}</div>
         </ModalEditar>
 
-
-        <!-- ══════════════════════════════════════════════════ -->
-        <!-- MODAL INHABILITAR                                 -->
-        <!-- ══════════════════════════════════════════════════ -->
-        <ModalInhabilitar v-model="modalInhabilitar" :cliente="clienteAccion" @confirmar="inhabilitarCliente" />
+        <!-- ════════════════════════════════════════ -->
+        <!-- MODAL INHABILITAR / ACTIVAR             -->
+        <!-- ════════════════════════════════════════ -->
+        <ModalInhabilitar v-model="modalEstado" :cliente="clienteAccion" @confirmar="cambiarEstado" />
 
     </div>
 </template>
 
-
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import editarcliente from '@/assets/img/person_edit.svg?raw'
+import inhabilitarSvg from '@/assets/img/account_circle_off.svg?raw'
+import activarSvg from '@/assets/img/how_to_reg.svg?raw'
+import ClientService from '@/api/services/client.service'
+import SedesService from '@/api/services/sedes.service'
 import ModalEditar from '@/components/modals/ModalEditar.vue'
 import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
-import person_edit from '@/assets/img/person_edit.svg?raw'
-import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
-import clientService from '@/api/services/client.service'
-import sedesServices from '@/api/services/sedes.services'
 
 // ── Estado ─────────────────────────────────────────────────────────
+const clientes = ref([])
+const sedes = ref([])
+const loading = ref(true)
 const busqueda = ref('')
 const busquedaDebounced = ref('')
-const filtroEstado = ref('')
 const filtroSede = ref('')
+const filtroEstado = ref('')
 const paginaActual = ref(1)
 const itemsPorPagina = ref(10)
-const mockClientes = ref([])
-const sedes = ref([])
 
-// ── Modales ────────────────────────────────────────────────────────
+// Modales
+const modalNuevo = ref(false)
 const modalEditar = ref(false)
-const modalInhabilitar = ref(false)
+const modalEstado = ref(false)
+const clienteAccion = ref(null)
+const verPass = ref(false)
 
-// clienteAccion con valor por defecto vacío para evitar errores de v-model
-// cuando el modal aún no tiene cliente asignado
-const clienteAccion = ref({
-    Nombres: '', Apellidos: '', Documento: '',
-    Telefono: '', Email: '', sede: '',
-    Placa1: '', placa2: '', placa3: '',
+// Guardado
+const guardandoN = ref(false)
+const guardandoE = ref(false)
+const guardandoEstado = ref(false)
+const errNuevo = ref('')
+const errEditar = ref('')
+const errEstado = ref('')
+
+// ── Formularios ────────────────────────────────────────────────────
+const fN = reactive({
+    Documento: '', IdEstacionamiento: '', Nombres: '', Apellidos: '',
+    Telefono: '', Email: '', Password: '', IdAutorizacion: null,
+    FechaInicio: '', FechaFin: '', Estado: true, EstudianteUcc: false,
+    CodigoEstudianteUCC: '', Old: false, Sincronizacion: false,
+    placas: [''],
 })
 
-import { useAuthStore } from '@/stores/auth'
-const auth = useAuthStore()
-
-onMounted(async () => {
-    try {
-
-        const [responseClientes, responseSedes] = await Promise.all([
-            clientService.getAllClients({ page: 1, limit: 15 }),
-            sedesServices.getAll(),
-        ])
-
-        console.log('Clientes:', responseClientes)
-        console.log('Sedes:', responseSedes)
-
-        mockClientes.value = responseClientes?.data || []
-        sedes.value = responseSedes || []
-    } catch (error) {
-        console.error('Error cargando datos:', error)
-    }
-
+// fE ahora incluye todos los campos editables del endpoint PUT /{doc}
+const fE = reactive({
+    Nombres: '', Apellidos: '', Email: '', Telefono: '', Estado: true,
 })
 
-// ── Debounce búsqueda ──────────────────────────────────────────────
-let debounceTimer = null
-watch(busqueda, (val) => {
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => {
-        busquedaDebounced.value = val
-        paginaActual.value = 1
-    }, 300)
-})
-watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
+// ── Computed ───────────────────────────────────────────────────────
+const listaClientes = computed(() =>
+    Array.isArray(clientes.value) ? clientes.value : (clientes.value?.data ?? [])
+)
 
-// ── Filtros y paginación ───────────────────────────────────────────
 const clientesFiltrados = computed(() => {
-    return mockClientes.value.filter(c => {
-        const q = busquedaDebounced.value.toLowerCase()
-        const matchBusqueda = !q ||
-            c.Nombres?.toLowerCase().includes(q) ||
-            c.Documento?.toString().includes(q)
-        const matchSede = !filtroSede.value || c.sede === filtroSede.value
-        const matchEstado = filtroEstado.value === '' || filtroEstado.value === undefined ||
-            c.Estado === (filtroEstado.value === 'true')
-        return matchBusqueda && matchSede && matchEstado
+    const q = busquedaDebounced.value.toLowerCase()
+    return listaClientes.value.filter(c => {
+        const nombre = `${c.Nombres ?? ''} ${c.Apellidos ?? ''}`.toLowerCase()
+        const doc = String(c.Documento ?? '').toLowerCase()
+        const matchQ = !q || nombre.includes(q) || doc.includes(q)
+        const matchE = filtroEstado.value === '' || String(c.Estado) === filtroEstado.value
+        return matchQ && matchE
     })
 })
 
-const totalPaginas = computed(() =>
-    Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value))
-)
+const totalPaginas = computed(() => Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value)))
 const clientesPaginados = computed(() => {
-    const inicio = (paginaActual.value - 1) * itemsPorPagina.value
-    return clientesFiltrados.value.slice(inicio, inicio + itemsPorPagina.value)
+    const ini = (paginaActual.value - 1) * itemsPorPagina.value
+    return clientesFiltrados.value.slice(ini, ini + itemsPorPagina.value)
 })
-const rangoInicio = computed(() =>
-    clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1
-)
-const rangoFin = computed(() =>
-    Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length)
-)
+const rangoInicio = computed(() => clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1)
+const rangoFin = computed(() => Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length))
 
-// ── Acciones ───────────────────────────────────────────────────────
-const editarCliente = (cliente) => {
-    clienteAccion.value = { ...cliente }
-    modalEditar.value = true
-}
+// ── Debounce ───────────────────────────────────────────────────────
+let debTimer = null
+watch(busqueda, val => {
+    clearTimeout(debTimer)
+    debTimer = setTimeout(() => { busquedaDebounced.value = val; paginaActual.value = 1 }, 300)
+})
+watch([filtroEstado], () => { paginaActual.value = 1 })
 
-const darDeBaja = (cliente) => {
-    clienteAccion.value = { ...cliente }
-    modalInhabilitar.value = true
-}
+// ── Helpers ────────────────────────────────────────────────────────
+const iniciales = (nombre = '') =>
+    nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
 
-const actualizarCliente = async () => {
+const placasCliente = (c) =>
+    ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
+        .map(k => c[k]).filter(Boolean)
+
+// ── Carga ──────────────────────────────────────────────────────────
+const cargarClientes = async () => {
+    loading.value = true
     try {
-
-        console.log('Guardando:', clienteAccion.value)
-        modalEditar.value = false
-    } catch (error) {
-        console.error('Error actualizando:', error)
+        const params = filtroSede.value ? { sede: filtroSede.value } : {}
+        clientes.value = await ClientService.getAllClients(params)
+    } catch (e) {
+        console.error('[Clientes]', e.response?.data ?? e.message)
+    } finally {
+        loading.value = false
     }
 }
 
-const inhabilitarCliente = async ({ motivo, observaciones }) => {
-    try {
+onMounted(async () => {
+    await Promise.all([
+        cargarClientes(),
+        SedesService.getAll().then(r => { sedes.value = Array.isArray(r) ? r : (r?.data ?? []) }),
+    ])
+})
 
-        console.log('Inhabilitando:', clienteAccion.value.Documento, motivo, observaciones)
-
-        const idx = mockClientes.value.findIndex(c => c.Documento === clienteAccion.value.Documento)
-        if (idx !== -1) mockClientes.value[idx].Estado = false
-        modalInhabilitar.value = false
-    } catch (error) {
-        console.error('Error inhabilitando:', error)
-    }
-}
-
+// ── Limpiar filtros ────────────────────────────────────────────────
 const limpiarFiltros = () => {
     busqueda.value = ''
     busquedaDebounced.value = ''
     filtroSede.value = ''
     filtroEstado.value = ''
+    paginaActual.value = 1
+    cargarClientes()
 }
 
-const validarTelefono = (event) => {
-    clienteAccion.value.Telefono = event.target.value.replace(/\D/g, '')
+// ── Modal Nuevo ────────────────────────────────────────────────────
+const abrirNuevo = () => {
+    errNuevo.value = ''
+    verPass.value = false
+    Object.assign(fN, {
+        Documento: '', IdEstacionamiento: '', Nombres: '', Apellidos: '',
+        Telefono: '', Email: '', Password: '', IdAutorizacion: null,
+        FechaInicio: '', FechaFin: '', Estado: true, EstudianteUcc: false,
+        CodigoEstudianteUCC: '', Old: false, Sincronizacion: false, placas: [''],
+    })
+    modalNuevo.value = true
 }
 
-const iniciales = (nombre = '') => {
-    if (!nombre) return '??'
-    return nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
+const crearCliente = async () => {
+    errNuevo.value = ''
+    if (!fN.Documento || !fN.Nombres || !fN.Apellidos || !fN.Email || !fN.Telefono || !fN.Password) {
+        errNuevo.value = 'Completa todos los campos obligatorios (*).'; return
+    }
+    guardandoN.value = true
+    try {
+        const { placas, ...rest } = fN
+        await ClientService.createClient({
+            ...rest,
+            IdEstacionamiento: Number(rest.IdEstacionamiento) || 0,
+            Placa1: placas[0] || null, Placa2: placas[1] || null,
+            Placa3: placas[2] || null, Placa4: placas[3] || null, Placa5: placas[4] || null,
+        })
+        await cargarClientes()
+        modalNuevo.value = false
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errNuevo.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al crear el cliente.')
+    } finally {
+        guardandoN.value = false
+    }
+}
+
+// ── Modal Editar ───────────────────────────────────────────────────
+const abrirEditar = (c) => {
+    clienteAccion.value = c
+    // Precarga todos los campos editables del endpoint PUT /{doc}
+    Object.assign(fE, {
+        Nombres: c.Nombres ?? '',
+        Apellidos: c.Apellidos ?? '',
+        Email: c.Email ?? '',
+        Telefono: String(c.Telefono ?? ''),  // ← forzar string
+        Estado: c.Estado ?? true,
+    })
+    errEditar.value = ''
+    modalEditar.value = true
+}
+
+const editarCliente = async () => {
+    errEditar.value = ''
+    if (!fE.Nombres || !fE.Apellidos || !fE.Email || !fE.Telefono) {
+        errEditar.value = 'Nombres, Apellidos, Email y Teléfono son obligatorios.'; return
+    }
+    guardandoE.value = true
+    try {
+        const doc = clienteAccion.value?.Documento
+        console.log('[editarCliente] Enviando datos:', { Documento: doc, ...fE })
+        const response = await ClientService.updateClientByDoc(doc, {
+            Nombres: fE.Nombres,
+            Apellidos: fE.Apellidos,
+            Email: fE.Email,
+            Telefono: fE.Telefono,
+            Estado: fE.Estado,
+        })
+
+        console.log({ response })
+        //console.log('[editarCliente] Cliente editado:', { Documento: doc, ...fE })
+        await cargarClientes()
+        // Actualizar lista local sin recargar
+        // const idx = listaClientes.value.findIndex(c => c.Documento === doc)
+        // if (idx !== -1) listaClientes.value[idx] = { ...listaClientes.value[idx], ...fE }
+        modalEditar.value = false
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errEditar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al editar el cliente.')
+    } finally {
+        guardandoE.value = false
+    }
+}
+
+// ── Modal Cambio de Estado ─────────────────────────────────────────
+const abrirCambioEstado = (c) => {
+    clienteAccion.value = c
+    errEstado.value = ''
+    modalEstado.value = true
+}
+
+const cambiarEstado = async ({ nuevoEstado }) => {
+    try {
+        const doc = clienteAccion.value?.Documento
+        await ClientService.updateClientEstado(doc, nuevoEstado)
+        const idx = listaClientes.value.findIndex(c => c.Documento === doc)
+        if (idx !== -1) listaClientes.value[idx].Estado = nuevoEstado
+        modalEstado.value = false
+    } catch (e) {
+        console.error('[cambiarEstado]', e.response?.data ?? e.message)
+    }
 }
 </script>
 
-
 <style scoped>
-/* ══ Estilos de la vista (tabla, filtros, etc.) ══════════════════════
-   Los estilos de los modales están en cada componente modal.
-   ══════════════════════════════════════════════════════════════════ */
-
-.estado-badge-activo {
-    color: #299261;
-    font-weight: bold;
-}
-
-.estado-badge-inactivo {
-    color: #dc2626;
-    font-weight: bold;
-}
-
+/* ══ Filtros ══════════════════════════════════════════════════════ */
 .filters-bar {
     display: flex;
     flex-wrap: wrap;
@@ -445,6 +662,7 @@ const iniciales = (nombre = '') => {
     }
 }
 
+/* ══ Tabla ════════════════════════════════════════════════════════ */
 .table-scroll-wrapper {
     overflow-x: auto;
     flex: 1;
@@ -518,7 +736,6 @@ const iniciales = (nombre = '') => {
     color: #374151;
     font-weight: 500;
     vertical-align: middle;
-    text-align: left;
     white-space: nowrap;
 }
 
@@ -561,6 +778,18 @@ const iniciales = (nombre = '') => {
     border: 1px solid #c8e6c9;
 }
 
+.estado-badge-activo {
+    color: #299261;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+.estado-badge-inactivo {
+    color: #dc2626;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
 .action-btn {
     display: flex;
     align-items: center;
@@ -568,34 +797,52 @@ const iniciales = (nombre = '') => {
     width: 36px;
     height: 36px;
     border-radius: 10px;
+    border: none;
+    background: transparent;
     transition: background-color 0.15s;
     flex-shrink: 0;
+    cursor: pointer;
+}
+
+.action-btn :deep(svg),
+.action-btn :deep(p) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn :deep(svg) {
+    fill: #6b7280;
+    transition: fill 0.15s;
+    width: 20px;
+    height: 20px;
 }
 
 .action-btn:hover {
     background-color: #e8f5e9;
 }
 
-.action-btn--danger:hover {
-    background-color: #fee2e2;
-}
-
-:deep(.action-btn svg) {
-    width: 20px;
-    height: 20px;
-    fill: #6b7280;
-    transition: fill 0.15s;
-    display: block;
-}
-
 .action-btn:hover :deep(svg) {
     fill: #299261;
+}
+
+.action-btn--danger:hover {
+    background-color: #fee2e2;
 }
 
 .action-btn--danger:hover :deep(svg) {
     fill: #dc2626;
 }
 
+.action-btn--activate:hover {
+    background-color: #dcfce7;
+}
+
+.action-btn--activate:hover :deep(svg) {
+    fill: #16a34a;
+}
+
+/* ══ Paginación ═══════════════════════════════════════════════════ */
 .table-foot {
     display: flex;
     align-items: center;
@@ -660,6 +907,9 @@ const iniciales = (nombre = '') => {
     color: #6b7280;
     transition: background-color 0.15s, color 0.15s;
     flex-shrink: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
 }
 
 .page-btn:hover:not(:disabled) {
@@ -678,6 +928,7 @@ const iniciales = (nombre = '') => {
     box-shadow: 0 2px 0 rgba(13, 41, 28, 0.3);
 }
 
+/* ══ Inputs globales (filtros + modal nuevo) ══════════════════════ */
 input,
 select {
     border-radius: 999px !important;
@@ -717,7 +968,136 @@ select.paginator-select:focus {
     box-shadow: none !important;
 }
 
-/* ── Estilos de campos del slot (heredados por el modal editar) ── */
+/* ══ Modal Nuevo (inline, aún no es componente) ═══════════════════ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: rgba(13, 41, 28, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.modal-card {
+    background-color: #B8E19E;
+    border: 2.5px solid #0D291C;
+    border-radius: 40px;
+    box-shadow: 0 7px 0 #0D291C;
+    width: 100%;
+    max-width: 500px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-card--wide {
+    max-width: 660px;
+}
+
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 22px 26px 16px;
+    border-bottom: 2px solid rgba(13, 41, 28, 0.14);
+    flex-shrink: 0;
+}
+
+.modal-head__left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.modal-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #0D291C;
+    color: #7FD344;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(13, 41, 28, 0.4);
+}
+
+.modal-head__name {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #0D291C;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-head__sub {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #0D291C;
+    opacity: 0.45;
+    margin-top: 2px;
+}
+
+.modal-close {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #0D291C;
+    opacity: 0.35;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(13, 41, 28, 0.2) transparent;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(13, 41, 28, 0.2);
+    border-radius: 99px;
+}
+
+.modal-foot {
+    padding: 16px 26px;
+    border-top: 2px solid rgba(13, 41, 28, 0.1);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
 .modal-section-label {
     font-size: 0.62rem;
     font-weight: 900;
@@ -736,14 +1116,16 @@ select.paginator-select:focus {
     gap: 11px;
 }
 
+@media (max-width: 500px) {
+    .modal-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .field-group {
     display: flex;
     flex-direction: column;
     gap: 4px;
-}
-
-.field-group--full {
-    grid-column: 1 / -1;
 }
 
 .field-label {
@@ -766,7 +1148,9 @@ select.paginator-select:focus {
     outline: none !important;
     box-shadow: none !important;
     width: 100%;
+    box-sizing: border-box;
     transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
 }
 
 .field-input:focus {
@@ -774,9 +1158,102 @@ select.paginator-select:focus {
     box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.2) !important;
 }
 
-@media (max-width: 500px) {
-    .modal-grid {
-        grid-template-columns: 1fr;
-    }
+.placa-input {
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    font-weight: 700 !important;
+}
+
+.check-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #0D291C;
+}
+
+.check {
+    accent-color: #0D291C;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    border-radius: 4px !important;
+    border: 1.5px solid #0D291C !important;
+    padding: 0 !important;
+}
+
+.btn-modal-dark {
+    flex: 1;
+    background-color: #0D291C;
+    color: #7FD344;
+    border: 2.5px solid #0D291C;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 0.88rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #050e09;
+    transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-modal-dark:hover:not(:disabled) {
+    background-color: #1a4a2e;
+}
+
+.btn-modal-dark:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #050e09;
+}
+
+.btn-modal-dark:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-modal-dark--cancel {
+    background-color: rgba(13, 41, 28, 0.12);
+    color: #0D291C;
+    box-shadow: 0 4px 0 rgba(13, 41, 28, 0.2);
+}
+
+.btn-modal-dark--cancel:hover {
+    background-color: rgba(13, 41, 28, 0.2);
+}
+
+.err-box {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: #fee2e2;
+    border: 1.5px solid #fca5a5;
+    color: #b91c1c;
+}
+
+/* ══ Transición modal nuevo ═══════════════════════════════════════ */
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-from .modal-card,
+.modal-leave-to .modal-card {
+    transform: scale(0.93) translateY(12px);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.2s;
+}
+
+.modal-enter-active .modal-card,
+.modal-leave-active .modal-card {
+    transition: transform 0.22s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 </style>

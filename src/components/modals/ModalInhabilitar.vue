@@ -12,7 +12,9 @@
                             </div>
                             <div>
                                 <p class="modal-head__name modal-head__name--danger">{{ cliente?.Nombres }}</p>
-                                <p class="modal-head__sub modal-head__sub--danger">Inhabilitar cliente</p>
+                                <p class="modal-head__sub modal-head__sub--danger">
+                                    {{ esInhabilitar ? 'Inhabilitar cliente' : 'Activar cliente' }}
+                                </p>
                             </div>
                         </div>
                         <button @click="emit('update:modelValue', false)"
@@ -22,37 +24,64 @@
                     <!-- Cuerpo -->
                     <div class="modal-body">
 
-                        <div class="danger-alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#b91c1c"
-                                viewBox="0 0 24 24" class="flex-shrink-0 mt-0.5">
+                        <div :class="['danger-alert', !esInhabilitar && 'danger-alert--activate']">
+                            <svg v-if="esInhabilitar" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                fill="#b91c1c" viewBox="0 0 24 24" class="flex-shrink-0 mt-0.5">
                                 <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                             </svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a"
+                                viewBox="0 0 24 24" class="flex-shrink-0 mt-0.5">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                            </svg>
                             <p>
-                                Al inhabilitar a <strong>{{ cliente?.Nombres }}</strong>, no podrá
-                                acceder al sistema ni renovar su membresía. Esta acción puede revertirse.
+                                <template v-if="esInhabilitar">
+                                    Al inhabilitar a <strong>{{ cliente?.Nombres }}</strong>, no podrá
+                                    acceder al sistema ni renovar su membresía. Esta acción puede revertirse.
+                                </template>
+                                <template v-else>
+                                    Al activar a <strong>{{ cliente?.Nombres }}</strong>, recuperará
+                                    el acceso completo al sistema y podrá renovar su membresía.
+                                </template>
                             </p>
                         </div>
 
-                        <div class="modal-grid">
-                            <div class="field-group field-group--full">
-                                <label class="field-label field-label--danger">
-                                    Motivo <span style="color:#ef4444">*</span>
-                                </label>
-                                <select v-model="motivoLocal" class="field-input field-input--danger">
-                                    <option value="">Selecciona un motivo...</option>
-                                    <option value="falta_pago">Falta de pago</option>
-                                    <option value="solicitud">Solicitud del cliente</option>
-                                    <option value="comportamiento">Comportamiento inapropiado</option>
-                                    <option value="otro">Otro</option>
-                                </select>
+                        <!-- Motivo y observaciones solo al inhabilitar -->
+                        <template v-if="esInhabilitar">
+                            <div class="modal-grid">
+                                <div class="field-group field-group--full">
+                                    <label class="field-label field-label--danger">
+                                        Motivo <span style="color:#ef4444">*</span>
+                                    </label>
+                                    <select v-model="motivoLocal" class="field-input field-input--danger">
+                                        <option value="">Selecciona un motivo...</option>
+                                        <option value="falta_pago">Falta de pago</option>
+                                        <option value="solicitud">Solicitud del cliente</option>
+                                        <option value="comportamiento">Comportamiento inapropiado</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="field-group field-group--full">
+                                    <label class="field-label field-label--danger">Observaciones</label>
+                                    <textarea v-model="observacionesLocal"
+                                        class="field-input field-input--danger field-input--textarea" rows="2"
+                                        placeholder="Detalles adicionales..."></textarea>
+                                </div>
                             </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label field-label--danger">Observaciones</label>
-                                <textarea v-model="observacionesLocal"
-                                    class="field-input field-input--danger field-input--textarea" rows="2"
-                                    placeholder="Detalles adicionales..."></textarea>
+                        </template>
+
+                        <!-- Al activar solo pide confirmación simple -->
+                        <template v-else>
+                            <div class="confirm-card">
+                                <div class="row-avatar">{{ iniciales(cliente?.Nombres) }}</div>
+                                <div>
+                                    <p class="font-bold text-[#0D291C] text-sm">{{ cliente?.Nombres }} {{
+                                        cliente?.Apellidos }}</p>
+                                    <p class="text-xs text-gray-500 font-mono">{{ cliente?.Documento }}</p>
+                                </div>
+                                <span class="estado-badge-inactivo ml-auto">● Inactivo</span>
                             </div>
-                        </div>
+                        </template>
 
                     </div>
 
@@ -61,9 +90,10 @@
                         <button @click="emit('update:modelValue', false)" class="btn-modal-dark btn-modal-dark--cancel">
                             Cancelar
                         </button>
-                        <button @click="confirmar" class="btn-modal-dark btn-modal-dark--danger"
-                            :disabled="!motivoLocal">
-                            Inhabilitar
+                        <button @click="confirmar"
+                            :class="['btn-modal-dark', esInhabilitar ? 'btn-modal-dark--danger' : 'btn-modal-dark--activate']"
+                            :disabled="esInhabilitar && !motivoLocal">
+                            {{ esInhabilitar ? 'Inhabilitar' : 'Activar cliente' }}
                         </button>
                     </div>
 
@@ -74,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
     modelValue: { type: Boolean, default: false },
@@ -83,9 +113,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'confirmar'])
 
-// Estado local del formulario — se resetea cada vez que se abre
 const motivoLocal = ref('')
 const observacionesLocal = ref('')
+
+// true = inhabilitar, false = activar
+const esInhabilitar = computed(() => !!props.cliente?.Estado)
 
 watch(() => props.modelValue, (open) => {
     if (open) {
@@ -95,17 +127,16 @@ watch(() => props.modelValue, (open) => {
 })
 
 const confirmar = () => {
-    if (!motivoLocal.value) return
+    if (esInhabilitar.value && !motivoLocal.value) return
     emit('confirmar', {
+        nuevoEstado: !props.cliente?.Estado,
         motivo: motivoLocal.value,
         observaciones: observacionesLocal.value,
     })
 }
 
-const iniciales = (nombre = '') => {
-    if (!nombre) return '??'
-    return nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
-}
+const iniciales = (nombre = '') =>
+    nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
 </script>
 
 <style scoped>
@@ -223,6 +254,9 @@ const iniciales = (nombre = '') => {
     transition: opacity 0.15s;
     flex-shrink: 0;
     line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .modal-close:hover {
@@ -329,6 +363,42 @@ const iniciales = (nombre = '') => {
     line-height: 1.55;
 }
 
+.danger-alert--activate {
+    border-color: #16a34a;
+    color: #14532d;
+}
+
+/* Tarjeta de confirmación para activar */
+.confirm-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    border: 1.5px solid rgba(22, 163, 74, 0.25);
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+
+.row-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #0D291C;
+    color: #7FD344;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.72rem;
+    flex-shrink: 0;
+}
+
+.estado-badge-inactivo {
+    color: #dc2626;
+    font-weight: 800;
+    font-size: 0.75rem;
+}
+
 .modal-foot {
     display: flex;
     gap: 12px;
@@ -383,6 +453,18 @@ const iniciales = (nombre = '') => {
     box-shadow: 0 1px 0px #7f1d1d;
 }
 
+.btn-modal-dark--activate {
+    background-color: #15803d;
+    color: white;
+    border-color: #14532d;
+    box-shadow: 0 4px 0px #14532d;
+}
+
+.btn-modal-dark--activate:active {
+    box-shadow: 0 1px 0px #14532d;
+}
+
+/* Animación */
 .modal-enter-active {
     transition: opacity 0.2s ease;
 }

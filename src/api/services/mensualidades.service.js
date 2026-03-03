@@ -1,4 +1,4 @@
-// src/api/services/mensualidades.services.js
+// src/api/services/mensualidades.service.js
 import { api } from "../axios";
 
 class MensualidadesService {
@@ -6,42 +6,49 @@ class MensualidadesService {
     this.nameRoute = "v1/mensualidades";
   }
 
-  // GET /v1/mensualidades
-  async getAll(params) {
+  // GET /v1/mensualidades?sede={id}  — admin, requiere sede obligatorio
+  async getAllBySede(sede) {
     try {
-      const response = await api.get(this.nameRoute, { params });
-      return response.data?.data ?? response.data ?? [];
+      const response = await api.get(this.nameRoute, { params: { sede } });
+      return response.data;
     } catch (error) {
-      console.error("MensualidadesService.getAll:", error);
+      console.error(
+        "MensualidadesService.getAllBySede:",
+        error.response?.data ?? error.message,
+      );
       throw error;
     }
   }
 
-  // GET /v1/mensualidades/detalle/{one}
-  async getDetalle(id) {
+  // GET /v1/mensualidades/detalle/{id}  — admin, detalle completo por ID
+  async getDetalleById(id) {
     try {
       const response = await api.get(`${this.nameRoute}/detalle/${id}`);
       return response.data;
     } catch (error) {
-      console.error("MensualidadesService.getDetalle:", error);
+      console.error(
+        "MensualidadesService.getDetalleById:",
+        error.response?.data ?? error.message,
+      );
       throw error;
     }
   }
 
-  // GET /v1/mensualidades/mis-mensualidades — mensualidades del usuario logueado
-  async getMisMensualidades(params) {
+  // GET /v1/mensualidades/mis-mensualidades  — usuario autenticado
+  async getMisMensualidades() {
     try {
-      const response = await api.get(`${this.nameRoute}/mis-mensualidades`, {
-        params,
-      });
-      return response.data?.data ?? response.data ?? [];
+      const response = await api.get(`${this.nameRoute}/mis-mensualidades`);
+      return response.data;
     } catch (error) {
-      console.error("MensualidadesService.getMisMensualidades:", error);
+      console.error(
+        "MensualidadesService.getMisMensualidades:",
+        error.response?.data ?? error.message,
+      );
       throw error;
     }
   }
 
-  // GET /v1/mensualidades/mis-mensualidades/{id}
+  // GET /v1/mensualidades/mis-mensualidades/{id}  — detalle de una mensualidad propia
   async getMiMensualidadById(id) {
     try {
       const response = await api.get(
@@ -49,7 +56,26 @@ class MensualidadesService {
       );
       return response.data;
     } catch (error) {
-      console.error("MensualidadesService.getMiMensualidadById:", error);
+      console.error(
+        "MensualidadesService.getMiMensualidadById:",
+        error.response?.data ?? error.message,
+      );
+      throw error;
+    }
+  }
+
+  // GET /v1/mensualidades/api-sede/{idsede}/{documento}  — consulta local en sede
+  async getDesdeApiSede(idsede, documento) {
+    try {
+      const response = await api.get(
+        `${this.nameRoute}/api-sede/${idsede}/${documento}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "MensualidadesService.getDesdeApiSede:",
+        error.response?.data ?? error.message,
+      );
       throw error;
     }
   }

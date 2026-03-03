@@ -118,7 +118,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import sedesServices from '@/api/services/sedes.services'
+import sedesServices from '@/api/services/sedes.service'
 import UsersService from '@/api/services/client.service'
 import SedesDisponibilidadService from '@/api/services/sedesdisponibilidad.service'
 
@@ -279,8 +279,6 @@ onMounted(async () => {
 
 
         const [sedesRes, usuariosRes, dispRes] = await Promise.all(promises)
-
-        console.log('Promises:', dispRes, sedesRes)
 
 
 

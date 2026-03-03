@@ -1,42 +1,100 @@
-// src/api/services/users.services.js
+// src/api/services/client.service.js
 import { api } from "../axios";
 
-class UsersService {
+class ClientService {
   constructor() {
     this.nameRoute = "v1/usuarios/clientes";
   }
 
+  // GET /v1/usuarios/clientes?sede={id} — admin, requiere VER-USUARIOS
   async getAllClients(params) {
     try {
       const response = await api.get(this.nameRoute, { params });
       return response.data;
     } catch (error) {
-      console.error("UsersService.getAllClients:", error);
+      console.error(
+        "ClientService.getAllClients:",
+        error.response?.data || error.message,
+      );
       throw error;
     }
   }
 
-  // POST /v1/usuarios/clientes — crear cliente
+  // POST /v1/usuarios/clientes — público, crear cliente
   async createClient(dto) {
     try {
       const response = await api.post(this.nameRoute, dto);
       return response.data;
     } catch (error) {
-      console.error("UsersService.createClient:", error);
+      console.error(
+        "ClientService.createClient:",
+        error.response?.data || error.message,
+      );
       throw error;
     }
   }
 
-  // POST /v1/usuarios/clientes/with-codigo — crear cliente con código de verificación
+  // POST /v1/usuarios/clientes/with-codigo — público, crear con código de validación
   async createClientWithCodigo(dto) {
     try {
       const response = await api.post(`${this.nameRoute}/with-codigo`, dto);
       return response.data;
     } catch (error) {
-      console.error("UsersService.createClientWithCodigo:", error);
+      console.error(
+        "ClientService.createClientWithCodigo:",
+        error.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  // PUT /v1/usuarios/clientes — cliente autenticado, actualiza su propio Email y Telefono
+  async updateOwnProfile(dto) {
+    try {
+      const response = await api.put(this.nameRoute, dto);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "ClientService.updateOwnProfile:",
+        error.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  // PUT /v1/usuarios/clientes/{doc} — admin, actualiza Nombres/Apellidos/Email/Telefono/Estado
+  async updateClientByDoc(doc, dto) {
+    try {
+      console.log("ClientService.updateClientByDoc: Enviando DTO:", {
+        doc,
+        ...dto,
+      });
+      const response = await api.put(`${this.nameRoute}/${doc}`, dto);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "ClientService.updateClientByDoc:",
+        error.response?.data || error.message,
+      );
+      throw error;
+    }
+  }
+
+  // PUT /v1/usuarios/clientes/{doc}/estado — admin, activa o inactiva, requiere INACTIVAR-USUARIOS
+  async updateClientEstado(doc, estado) {
+    try {
+      const response = await api.put(`${this.nameRoute}/${doc}/estado`, {
+        Estado: estado,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "ClientService.updateClientEstado:",
+        error.response?.data || error.message,
+      );
       throw error;
     }
   }
 }
 
-export default new UsersService();
+export default new ClientService();

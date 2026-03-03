@@ -40,7 +40,7 @@
                         <div>
                             <h2 class="text-base font-extrabold text-[#0D291C] leading-tight">{{ sede.Nombre }}</h2>
                             <span class="text-[0.68rem] text-gray-400 font-semibold">#{{ sede.IdEstacionamiento
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
                     <span :class="[
@@ -58,10 +58,10 @@
                     <div v-for="d in sede.T_Disponibilidades" :key="d.IdTipoVehiculo"
                         class="flex items-center gap-2 bg-gray-50 rounded-xl px-2.5 py-2 border border-gray-100">
                         <span class="text-base leading-none flex-shrink-0">{{ d.IdTipoVehiculo === '1' ? '🚗' : '🏍️'
-                            }}</span>
+                        }}</span>
                         <div class="flex-1 flex flex-col gap-1">
                             <span class="text-[0.72rem] font-bold text-gray-700">{{ d.Mensualidades }} / {{ d.Total
-                                }}</span>
+                            }}</span>
                             <div class="h-[5px] bg-gray-200 rounded-full overflow-hidden">
                                 <div class="h-full rounded-full transition-all duration-500" :class="pctClass(d)"
                                     :style="{ width: `${d.Total > 0 ? Math.round((d.Mensualidades / d.Total) * 100) : 0}%` }" />
@@ -278,7 +278,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { PERMS } from '@/constants/permisions'
-import SedesService from '@/api/services/sedes.services'
+import SedesService from '@/api/services/sedes.service'
 import SedesDisponibilidadService from '@/api/services/sedesdisponibilidad.service'
 
 // ── Estado ─────────────────────────────────────────────────────────
