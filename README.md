@@ -1,14 +1,14 @@
-# Digital6G Frontend 🚀
+# Digital6G Frontend
 
 Sistema de gestión para **Digital6G**, desarrollado con Vue 3 y Vite. Esta aplicación proporciona una interfaz robusta y reactiva para administradores, operadores y clientes, facilitando la gestión de sedes, mensualidades y servicios de transporte.
 
 ---
 
-## 🛠 Tecnologías Principales
+## Tecnologías Principales
 
 El proyecto utiliza un stack moderno y eficiente diseñado para la escalabilidad:
 
-- **[Vue 3](https://vuejs.org/) (v3.5.25)**: Framework progresivo para construir interfaces de usuario utilizando la Composition API.
+- **[Vue 3](https://vuejs.org/) (v3.5.25)**: Framework progresivo con Composition API y `<script setup>`.
 - **[Vite](https://vitejs.dev/) (v7.3.1)**: Herramienta de construcción ultra rápida para el desarrollo frontend moderno.
 - **[Tailwind CSS](https://tailwindcss.com/) (v3.4.17)**: Framework de CSS "utility-first" para un diseño rápido y personalizado.
 - **[Pinia](https://pinia.vuejs.org/) (v3.0.2)**: Almacén de estado intuitivo y tipado para Vue.
@@ -16,9 +16,7 @@ El proyecto utiliza un stack moderno y eficiente diseñado para la escalabilidad
 
 ---
 
-## 📦 Paquetes y Dependencias Clave
-
-A continuación se listan las dependencias más importantes instaladas en el proyecto:
+## Paquetes y Dependencias Clave
 
 | Paquete | Versión | Propósito |
 | :--- | :--- | :--- |
@@ -33,57 +31,75 @@ A continuación se listan las dependencias más importantes instaladas en el pro
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 El proyecto sigue una organización modular basada en responsabilidades:
 
 ```text
 src/
-├── api/             # Configuración de Axios y servicios de API por módulo.
-│   └── services/    # Clases para peticiones específicas (admin, sedes, etc).
-├── assets/          # Recursos estáticos (imágenes, SVGs) y estilos globales.
-├── components/      # Componentes reutilizables.
-│   ├── modals/      # Ventanas modales específicas del sistema.
-│   └── shared/      # Componentes comunes (Navbar, Sidebar).
-├── layouts/         # Envoltorios de diseño (Admin, Cliente, Operador).
-├── router/          # Configuración de rutas y guardias de navegación.
-├── stores/          # Estado global de la aplicación (Autenticación, etc).
-├── views/           # Vistas principales divididas por roles de usuario.
-│   ├── administrador/
-│   ├── auth/        # Login y Registro.
-│   └── cliente/
-└── App.vue          # Componente raíz de la aplicación.
+├── api/                  # Configuración de Axios y servicios de API por módulo.
+│   └── services/         # Clases de servicio (admin, clientes, roles, sedes, pagos, etc).
+├── assets/               # Recursos estáticos (imágenes, SVGs) y estilos globales.
+├── components/           # Componentes reutilizables.
+│   ├── modals/           # Ventanas modales específicas del sistema.
+│   └── shared/           # Componentes comunes (Navbar, Sidebar).
+├── composables/          # Lógica reutilizable con Composition API.
+│   └── useAuth.js        # Validación de permisos y acceso al estado de sesión.
+├── constants/            # Constantes centralizadas del sistema.
+│   └── permisions.js     # Objeto PERMS con todos los strings de permisos.
+├── directives/           # Directivas Vue personalizadas.
+│   └── v-permission.js   # Directiva para control de visibilidad por permiso.
+├── layouts/              # Envoltorios de diseño (Admin, Cliente, Operador).
+├── router/               # Configuración de rutas y guardias de navegación.
+│   ├── guards/           # authGuards.js con lógica RBAC de 5 pasos.
+│   └── routes/           # Rutas separadas por rol (auth, admin, cliente, operador).
+├── stores/               # Estado global de la aplicación (Autenticación).
+├── views/                # Vistas principales divididas por roles de usuario.
+│   ├── administrador/    # Vistas del panel de administración.
+│   ├── auth/             # Login, Registro y página de acceso no autorizado.
+│   └── cliente/          # Vistas del portal del cliente.
+└── App.vue               # Componente raíz de la aplicación.
 ```
 
 ---
 
-## 🔑 Puntos Importantes
+## Puntos Importantes
 
 ### 1. Gestión de API y Autenticación
+
 La capa de API (`src/api/`) cuenta con un sistema de **interceptores** que gestiona automáticamente el envío de tokens JWT y el **refresco de sesión** sin intervención manual del desarrollador.
 
-> 📄 Consulta la [Documentación de la API](./doc/api/README.md) para más detalles.
+> Consulta la [Documentación de la API](./doc/api/README.md) para más detalles.
 
-### 2. Sistema de Roles (RBAC)
-Las rutas están protegidas mediante guardias de navegación (`src/router/guards/`) que verifican los permisos del usuario antes de permitir el acceso a módulos de Administración, Operación o Cliente.
+### 2. Sistema de Roles y Permisos (RBAC)
+
+Las rutas están protegidas mediante un guardia de navegación de 5 pasos (`src/router/guards/authGuards.js`) que verifica autenticación, rol y permisos específicos antes de permitir el acceso a cualquier módulo.
+
+La aplicación implementa tres capas de control:
+- **Capa de Ruta**: El `authGuard` bloquea la navegación según `meta.role` y `meta.permission`.
+- **Capa de Componente**: El composable `useAuth` expone funciones de validación (`hasPermission`, `hasAllPermissions`).
+- **Capa de DOM**: La directiva `v-permission` elimina elementos del DOM si el usuario no tiene el permiso necesario.
+
+> Consulta la [Guía del Sistema de Permisos](./doc/V_PERMISSION_IMPLEMENTATION.md) para la implementación completa.
 
 ### 3. Diseño Responsivo
+
 Gracias a Tailwind CSS y Flowbite, la aplicación es totalmente compatible con dispositivos móviles y escritorio, adaptando los layouts según la resolución de pantalla.
 
 ---
 
-## 📖 Documentación del Sistema
+## Documentación del Sistema
 
 Para un mayor detalle sobre la arquitectura y el funcionamiento interno, consulta las siguientes guías:
 
-- 🚀 **[Capa de API](./doc/api/README.md)**: Configuración de Axios, interceptores y referencia de servicios.
-- 🚦 **[Enrutamiento](./doc/router/README.md)**: Definición de rutas, guardias de seguridad y RBAC.
-- 📦 **[Gestión de Estado](./doc/stores/README.md)**: Estructura de Pinia stores y persistencia de sesión.
-- 🛡️ **[Sistema de Permisos (V-Permission)](./doc/V_PERMISSION_IMPLEMENTATION.md)**: Guía completa sobre cómo funciona y cómo implementar la validación de permisos en el sistema.
+- **[Capa de API](./doc/api/README.md)**: Configuración de Axios, interceptores y referencia de servicios.
+- **[Enrutamiento](./doc/router/README.md)**: Definición de rutas, guardias de seguridad y RBAC.
+- **[Gestión de Estado](./doc/stores/README.md)**: Estructura de Pinia stores y persistencia de sesión.
+- **[Sistema de Permisos (V-Permission)](./doc/V_PERMISSION_IMPLEMENTATION.md)**: Guía completa sobre cómo funciona y cómo implementar la validación de permisos en el sistema.
 
 ---
 
-## 🚀 Instalación y Desarrollo
+## Instalación y Desarrollo
 
 1. **Clonar el repositorio**
 2. **Instalar dependencias**:
@@ -103,4 +119,4 @@ Para un mayor detalle sobre la arquitectura y el funcionamiento interno, consult
 
 ---
 
-*Digital6G - Desarrollado con ❤️ para la eficiencia en transporte y gestión.*
+*Digital6G - Desarrollado con dedicación para la eficiencia en transporte y gestión.*

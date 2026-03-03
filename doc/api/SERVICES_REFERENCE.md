@@ -1,88 +1,117 @@
 # Referencia de Servicios - API
 
-Esta sección contiene una lista detallada de los servicios disponibles en la aplicación y sus respectivos métodos.
+Esta sección contiene la lista actualizada de servicios disponibles en la aplicación, incluyendo los nuevos módulos de pagos, mensualidades y validación.
 
 ---
 
 ## 👤 AdminServices
 `src/api/services/admin.services.js`
 
-Servicios orientados a tareas administrativas.
+Gestión avanzada de administradores y operadores.
 
 | Método | Endpoint | Parámetros | Descripción |
 | :--- | :--- | :--- | :--- |
-| `getAllClients(params)` | `GET v1/usuarios/admin` | `params`: Objeto opcional (paginación, filtros) | Obtiene todos los clientes registrados desde la perspectiva administrativa. |
+| `getAllAdmins(params)` | `GET v1/usuarios/admin` | `params`: Paginación/Filtros | Lista todos los usuarios con rol administrativo. |
+| `updateAdminPermissions(doc, data)` | `PUT v1/usuarios/admin/:doc` | `doc`: Documento, `data`: Payload | Actualiza permisos o datos de un administrador específico. |
+| `createAdmin(dto)` | `POST v1/usuarios/admin` | `dto`: Datos del admin | Registra un nuevo administrador/operador. |
 
 ---
 
-## 🏢 SedesSerivce
-`src/api/services/sedes.services.js`
+## 👥 UsersService
+`src/api/services/users.service.js` o `src/api/services/client.service.js`
 
-Gestión y consulta de sedes físicas.
+Gestión de clientes y registros.
 
 | Método | Endpoint | Parámetros | Descripción |
 | :--- | :--- | :--- | :--- |
-| `getAll(params)` | `GET v1/sedes` | `params`: Objeto opcional | Recupera el listado completo de sedes registradas. |
+| `getAllClients(params)` | `GET v1/usuarios/clientes` | `params`: Filtros | Lista todos los clientes registrados. |
+| `createClient(dto)` | `POST v1/usuarios/clientes` | `dto`: Datos básicos | Crea un nuevo cliente. |
+| `createClientWithCodigo(dto)` | `POST v1/usuarios/clientes/with-codigo` | `dto`: Datos + Código | Crea un cliente validando un código previo. |
+
+---
+
+## 🏢 SedesService
+`src/api/services/sedes.services.js`
+
+Administración de sedes físicas.
+
+| Método | Endpoint | Parámetros | Descripción |
+| :--- | :--- | :--- | :--- |
+| `getAll(params)` | `GET v1/sedes` | `params`: Opcional | Lista todas las sedes. |
+| `getById(id)` | `GET v1/sedes/:id` | `id`: ID Sede | Obtiene detalle de una sede. |
+| `create(dto)` | `POST v1/sedes` | `dto`: Datos sede | Crea una nueva sede. |
+| `update(id, dto)` | `PUT v1/sedes/:id` | `id`, `dto` | Actualiza información de la sede. |
+| `delete(id)` | `DELETE v1/sedes/:id` | `id` | Elimina (o inhabilita) una sede. |
 
 ---
 
 ## 🛡️ RolService
 `src/api/services/rol.services.js`
 
-Gestión de roles y permisos del sistema.
+Gestión de la matriz de permisos y roles.
 
 | Método | Endpoint | Parámetros | Descripción |
 | :--- | :--- | :--- | :--- |
-| `getAll()` | `GET v1/roles` | Ninguno | Obtiene todos los roles registrados. |
-| `getOne(id)` | `GET v1/roles/:id` | `id`: Identificador del rol | Obtiene la información de un rol específico. |
-| `create(dto)` | `POST v1/roles` | `dto`: Datos del rol | Crea un nuevo rol en el sistema. |
-| `getAllPermisos()` | `GET v1/permisos` | Ninguno | Obtiene el listado completo de permisos disponibles. |
-| `getPermisosRol(idRol)`| `GET v1/rol-permiso/:idRol`| `idRol`: ID del rol | Obtiene los permisos asociados a un rol. |
-| `assignPermisos(dto)` | `PUT v1/rol-permiso` | `dto`: { id_rol, id_permiso } | Asigna o actualiza los permisos de un rol. |
+| `getAll()` | `GET v1/roles` | Ninguno | Lista roles (Administrador, Cliente, etc.). |
+| `getAllPermisos()` | `GET v1/permisos` | Ninguno | Catálogo completo de permisos del sistema. |
+| `getPermisosRol(idRol)` | `GET v1/rol-permiso/:idRol` | `idRol` | Permisos asignados a un rol específico. |
+| `assignPermisos(idRol, ids)` | `PUT v1/rol-permiso` | `idRol`, `permisosIds` | Actualiza masivamente los permisos de un rol. |
 
 ---
 
 ## 📅 SedesDisponibilidadService
 `src/api/services/sedesdisponibilidad.service.js`
 
-Consulta detallada de la disponibilidad de recursos en las sedes.
+Control de cupos y disponibilidad por tipo de vehículo.
 
 | Método | Endpoint | Parámetros | Descripción |
 | :--- | :--- | :--- | :--- |
-| `getDisponibilidadDetalle(params)` | `GET v1/sedes/disponibilidad/detalle` | `params`: Filtros obligatorios (fecha, sede) | Obtiene el detalle de disponibilidad para una sede en una fecha específica. |
+| `getDisponibilidadDetalle(params)` | `GET v1/sedes/disponibilidad/detalle` | `sede`, `fecha` | Detalle de ocupación actual. |
+| `updateDisponibilidad(idS, idV, dto)` | `PUT v1/sedes/disponibilidad/:idS/:idV` | IDs y nuevo cupo | Ajusta la disponibilidad de una sede. |
 
 ---
 
-## 👥 UsersService
-`src/api/services/users.service.js`
+## 💳 PaymentsService
+`src/api/services/payment.service.js`
 
-Gestión de usuarios y clientes del sistema.
+Procesamiento de pagos de mensualidades.
 
 | Método | Endpoint | Parámetros | Descripción |
 | :--- | :--- | :--- | :--- |
-| `getAllClients(params)` | `GET v1/usuarios/clientes` | `params`: Objeto opcional | Obtiene el listado de clientes registrados en el sistema. |
+| `getAll(params)` | `GET v1/payments/mensualidad` | `params` | Historial global de pagos (Admin). |
+| `create(dto)` | `POST v1/payments/mensualidad` | `dto`: Datos pago | Registra un nuevo pago de mensualidad. |
 
 ---
 
-## 🛠 Cómo Usar un Servicio
+## 🗓️ MensualidadesService
+`src/api/services/mensualidades.service.js`
 
-Para utilizar un servicio en un componente Vue, simplemente impórtalo y llama a sus métodos asíncronos:
+Gestión de contratos de mensualidad.
 
-```javascript
-import SedesSerivce from "@/api/services/sedes.services";
-
-async function fetchSedes() {
-  try {
-    const data = await SedesSerivce.getAll();
-    console.log("Sedes:", data);
-  } catch (error) {
-    console.error("Error al cargar sedes:", error);
-  }
-}
-```
+| Método | Endpoint | Parámetros | Descripción |
+| :--- | :--- | :--- | :--- |
+| `getAll(params)` | `GET v1/mensualidades` | `params` | Lista todas las mensualidades activas. |
+| `getDetalle(id)` | `GET v1/mensualidades/detalle/:id` | `id` | Información completa de una mensualidad. |
+| `getMisMensualidades(params)` | `GET v1/mensualidades/mis-mensualidades` | `params` | Mensualidades del usuario autenticado. |
+| `getMiMensualidadById(id)` | `GET v1/mensualidades/mis-mensualidades/:id` | `id` | Detalle de una mensualidad propia. |
 
 ---
 
-## 📝 Notas sobre Implementación
-- **Excepciones**: Algunos servicios retornan un arreglo vacío (`[]`) en caso de error, mientras que otros lanzan (`throw`) el error para ser manejado por el componente que hace la llamada. Se recomienda estandarizar este comportamiento en futuras versiones.
-- **Namespacing**: Las rutas base se definen en el `constructor()` de cada clase usando el atributo `this.nameRoute`.
+## 🔑 CodigoValidationService
+`src/api/services/codigovalidacion.service.js`
+
+Validación de códigos de seguridad/verificación.
+
+| Método | Endpoint | Parámetros | Descripción |
+| :--- | :--- | :--- | :--- |
+| `validate(dto)` | `POST v1/codigo-validation` | `dto`: { Codigo } | Verifica la validez de un código en el sistema. |
+
+---
+
+## 🛠 Estándares de Uso
+
+Todos los servicios extienden el comportamiento base de **Axios** configurado en `src/api/axios.js`. 
+
+1. **Manejo de Errores**: Los servicios lanzan (`throw`) el error original del backend para que el componente pueda mostrar mensajes específicos (ej. usando `SweetAlert` o `Toast`).
+2. **Estructura de Respuesta**: La mayoría de los métodos de "lectura" intentan normalizar la respuesta buscando la propiedad `.data` del payload del backend.
+3. **Persistencia**: Se recomienda usar estos servicios dentro de acciones de **Pinia** o directamente en componentes mediante `try/catch`.
