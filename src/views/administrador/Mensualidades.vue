@@ -1,1386 +1,672 @@
 <template>
     <div class="h-full flex flex-col gap-6">
 
-        <!-- Header — mantenido igual, solo ajuste de centrado del título -->
-        <div class="flex items-center justify-between relative bg-white rounded-full p-4">
-            <div class="w-[80px]"></div>
-            <h2 class="text-2xl font-bold text-[#232B3A]">Clientes</h2>
-            <div class="back-btn flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm px-4 py-2 rounded-full">
-                <button @click="$router.back()">Volver</button>
-            </div>
+        <!-- Header -->
+        <div class="flex items-center justify-between bg-white rounded-full p-4">
+            <div class="w-20"></div>
+            <h2 class="text-2xl font-bold text-[#232B3A]">Mensualidades</h2>
+            <button @click="$router.back()"
+                class="flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm font-semibold px-4 py-2 rounded-full border border-black"
+                style="box-shadow: #595858 0px 2px 0">
+                Volver
+            </button>
         </div>
 
         <!-- Filtros -->
-        <div class="bg-white rounded-2xl shadow-sm p-4 filters-bar">
+        <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
 
-            <!-- Búsqueda — ancho fijo en desktop, full en mobile -->
-            <div class="filter-field filter-field--search">
-                <label class="filter-label">Buscar</label>
+            <div class="flex flex-col gap-1 flex-[2] min-w-[200px]">
+                <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Buscar</label>
                 <div class="relative">
-                    <input v-model="busqueda" type="text" placeholder="Nombre o documento..."
-                        class="search-input w-full" />
+                    <input v-model="filtros.search" type="text" placeholder="Nombre, documento o placa..."
+                        class="w-full rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 pr-10 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all"
+                        @input="onFiltroChange" />
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+                        fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
                 </div>
             </div>
 
-            <!-- Sede -->
-            <div class="filter-field">
-                <label class="filter-label">Sede</label>
-                <select v-model="filtroSede">
-                    <option value="">Todas las sedes</option>
-                    <option v-for="sede in sedes" :key="sede" :value="sede">{{ sede }}</option>
+            <div class="flex flex-col gap-1 flex-1 min-w-[150px]">
+                <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Sede <span
+                        class="text-red-400">*</span></label>
+                <select v-model="filtros.sede" @change="onSedeChange"
+                    class="rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all cursor-pointer">
+                    <option value="">Seleccionar sede</option>
+                    <option v-for="s in sedes" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">
+                        {{ s.Nombre }}
+                    </option>
                 </select>
             </div>
 
-            <!-- Estado -->
-            <div class="filter-field">
-                <label class="filter-label">Estado</label>
-                <select v-model="filtroEstado">
-                    <option value="">Todos los estados</option>
-                    <option value="al dia">Al día</option>
-                    <option value="por vencer">Por vencer</option>
-                    <option value="vencido">Vencido</option>
+            <div class="flex flex-col gap-1 flex-1 min-w-[130px]">
+                <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Estado</label>
+                <select v-model="filtros.estado" @change="onFiltroChange"
+                    class="rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all cursor-pointer">
+                    <option value="">Todos</option>
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
                 </select>
             </div>
 
-            <!-- Limpiar filtros -->
-            <button v-if="busqueda || filtroSede || filtroEstado" @click="limpiarFiltros" class="filter-clear-btn">
-                ✕ Limpiar
-            </button>
         </div>
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-
-            <!-- Wrapper con scroll horizontal -->
-            <div class="table-scroll-wrapper">
-                <table class="data-table">
+            <div class="overflow-x-auto flex-1 table-scroll-wrapper">
+                <table class="border-collapse min-w-[700px] w-full">
                     <thead>
                         <tr>
-                            <!-- Columna nombre sticky — siempre visible al hacer scroll -->
-                            <th class="th-cell th-cell--sticky">Cliente</th>
-                            <th class="th-cell">Documento</th>
-                            <th class="th-cell">Correo</th>
-                            <!-- <th class="th-cell">Sede</th> -->
-                            <th class="th-cell">Estado membresía</th>
-                            <!-- <th class="th-cell">Próximo pago</th> -->
-                            <th class="th-cell th-cell--actions">Opciones</th>
+                            <th
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Titular</th>
+                            <th
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
+                                Documento</th>
+                            <th
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Sede
+                            </th>
+                            <th
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Placas</th>
+                            <th
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Vigencia</th>
+                            <th
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Estado</th>
+                            <th
+                                class="px-5 py-3.5 text-center text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Sin resultados -->
-                        <tr v-if="clientesPaginados.length === 0">
-                            <td colspan="6" class="text-center py-20 text-gray-300">
+
+
+
+                        <!-- Loading -->
+                        <tr v-if="loading">
+                            <td colspan="6" class="py-20 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin">
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-400">Cargando mensualidades...</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Vacío -->
+                        <tr v-else-if="mensualidades.length === 0">
+                            <td colspan="6" class="py-20 text-center text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
                                         viewBox="0 0 24 24">
                                         <path
                                             d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
                                     </svg>
-                                    <span class="text-sm font-medium">No se encontraron clientes</span>
+                                    <span class="text-sm font-medium">No se encontraron mensualidades</span>
                                 </div>
                             </td>
                         </tr>
 
                         <!-- Filas -->
-                        <tr v-for="(cliente, i) in clientesPaginados" :key="cliente.Documento" class="table-row">
+                        <tr v-else v-for="m in mensualidadesFiltradas" :key="m.IdPersonaAutorizada"
+                            class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors group">
 
-                            <!-- Nombre sticky -->
-                            <td class="td-cell td-cell--sticky">
+                            <!-- Titular -->
+                            <td class="px-5 py-3   shadow-[3px_0_8px_rgba(0,0,0,0.07)] transition-colors">
                                 <div class="flex items-center gap-3">
-                                    <div class="row-avatar">{{ iniciales(cliente.Nombres) }}</div>
-                                    <div class="flex flex-col items-start min-w-0">
-                                        <span
-                                            class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">{{
-                                                cliente.Nombres }}</span>
-                                        <span class="text-[10px] text-gray-400  truncate max-w-[140px]">{{
-                                            cliente.Apellidos }}</span>
+                                    <div
+                                        class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0">
+                                        {{ iniciales(m.NombreApellidos) }}
                                     </div>
+                                    <span
+                                        class="text-sm font-semibold text-[#0D291C] leading-tight max-w-[160px] truncate">
+                                        {{ m.NombreApellidos }}
+                                    </span>
                                 </div>
                             </td>
 
                             <!-- Documento -->
-                            <td class="td-cell tracking-wide">{{ cliente.Documento }}</td>
+                            <td
+                                class="sticky left-0 bg-white group-hover:bg-[#f0faf4] px-5 py-3 font-mono text-sm text-gray-600 whitespace-nowrap">
+                                {{ m.Documento }}
+                            </td>
 
-                            <!-- Sede -->
-                            <!-- <td class="td-cell">
-                                <span class="sede-badge">{{ cliente.sede }}</span>
-                            </td> -->
+                            <td class="px-5 py-3 whitespace-nowrap">
+                                <span
+                                    class="text-[0.72rem] font-bold text-[#299261] bg-[#f0faf4] border border-[#c8e6c9] px-2 py-0.5 rounded-full">
+                                    {{ m._sedeName || sedeNombre || '—' }}
+                                </span>
+                            </td>
+                            <!-- Placas -->
+                            <td class="px-5 py-3">
+                                <div class="flex gap-1 flex-wrap">
+                                    <span v-for="p in placas(m)" :key="p"
+                                        class="inline-block text-[0.6rem] font-black tracking-widest bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-lg">
+                                        {{ p }}
+                                    </span>
+                                    <span v-if="!placas(m).length" class="text-gray-300 text-sm">—</span>
+                                </div>
+                            </td>
 
-                            <td class="td-cell">
-                                <span class="sede-badge">{{ cliente.Email }}</span>
+
+
+                            <!-- Vigencia -->
+                            <td class="px-5 py-3 whitespace-nowrap">
+                                <div v-if="m.FechaInicio || m.FechaFin" class="flex flex-col gap-0.5">
+                                    <span class="text-[0.72rem] font-semibold text-gray-500">
+                                        {{ formatFecha(m.FechaInicio) }} → {{ formatFecha(m.FechaFin) }}
+                                    </span>
+                                    <span :class="['text-[0.65rem] font-bold', vigenciaClass(m)]">
+                                        {{ vigenciaLabel(m) }}
+                                    </span>
+                                </div>
+                                <span v-else class="text-gray-300 text-sm">Sin fechas</span>
                             </td>
 
                             <!-- Estado -->
-                            <td class="td-cell">
-                                <span :class="['estado-badge', estadoClase(cliente.Estado)]">
-                                    {{ estadoLabel(cliente.Estado) }}
-                                </span>
+                            <td class="px-5 py-3 whitespace-nowrap">
+                                <span v-if="m.Estado" class="text-[#299261] font-extrabold text-[0.8rem]">●
+                                    Activo</span>
+                                <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
 
-                            <!-- Próximo pago -->
-                            <!-- <td class="td-cell">
-                                <span :class="['fecha-pago', fechaClase(cliente.estado)]">
-                                    {{ formatFecha(cliente.proximoPago) }}
-                                </span>
-                            </td> -->
-
-                            <!-- Opciones — también sticky a la derecha en mobile -->
-                            <td class="td-cell td-cell--actions">
-                                <div class="flex items-center justify-center gap-1">
-                                    <button @click="editarCliente(cliente)" class="action-btn" title="Editar"
-                                        v-html="person_edit">
-                                    </button>
-                                    <button @click="verPagos(cliente)" class="action-btn" title="Mensualidad"
-                                        v-html="credit_card_gear">
-                                    </button>
-                                    <button @click="darDeBaja(cliente)" class="action-btn action-btn--danger"
-                                        title="Inhabilitar" v-html="account_circle_off">
-                                    </button>
-                                </div>
+                            <!-- Opciones -->
+                            <td class="px-5 py-3 text-center">
+                                <button @click="abrirDetalle(m)"
+                                    class="inline-flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-bold px-3 py-1.5 rounded-xl border-none cursor-pointer hover:bg-[#299261] hover:text-white transition-colors"
+                                    title="Ver / Editar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                    </svg>
+                                    Editar
+                                </button>
                             </td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>
 
             <!-- Paginación -->
-            <div class="table-foot">
-                <!-- Contador — se oculta en pantallas muy pequeñas -->
-                <span class="foot-counter">
-                    <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ clientesFiltrados.length }}</strong>
+            <div
+                class="flex items-center justify-between gap-3 px-5 py-3 border-t-2 border-[#f0f9f4] bg-[#fafffe] flex-wrap">
+                <span class="text-xs text-gray-400">
+                    Pág. <strong class="text-[#0D291C]">{{ paginaActual }}</strong> de
+                    <strong class="text-[#0D291C]">{{ totalPaginas }}</strong>
+                    · <strong class="text-[#0D291C]">{{ totalRegistros }}</strong> registros
                 </span>
-
-                <!-- Páginas -->
                 <div class="flex items-center gap-1">
-                    <button @click="paginaActual--" :disabled="paginaActual === 1" class="page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            viewBox="0 0 24 24">
+                    <button @click="irPagina(paginaActual - 1)" :disabled="paginaActual === 1"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                         </svg>
                     </button>
-
-                    <!-- En mobile solo muestra página actual / total, en desktop los números -->
-                    <span class="page-mobile-indicator">{{ paginaActual }} / {{ totalPaginas }}</span>
-                    <template v-for="p in totalPaginas" :key="p">
-                        <button @click="paginaActual = p"
-                            :class="['page-btn page-btn--num', paginaActual === p ? 'page-btn--active' : '']">
+                    <span class="sm:hidden text-sm font-bold text-[#0D291C] px-2">{{ paginaActual }} / {{ totalPaginas
+                    }}</span>
+                    <template v-for="p in paginasVisibles" :key="p">
+                        <button @click="irPagina(p)"
+                            :class="['hidden sm:flex w-8 h-8 items-center justify-center rounded-lg text-sm font-bold border-none cursor-pointer transition-colors',
+                                paginaActual === p ? 'bg-[#0D291C] text-[#7FD344] shadow-[0_2px_0_rgba(13,41,28,0.3)]' : 'bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C]']">
                             {{ p }}
                         </button>
                     </template>
-
-                    <button @click="paginaActual++" :disabled="paginaActual === totalPaginas" class="page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            viewBox="0 0 24 24">
+                    <button @click="irPagina(paginaActual + 1)" :disabled="paginaActual === totalPaginas"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
                     </button>
                 </div>
-
-                <!-- Filas por página -->
                 <div class="flex items-center gap-2 text-xs text-gray-400">
                     <span class="hidden sm:inline">Filas:</span>
-                    <select v-model.number="itemsPorPagina" @change="paginaActual = 1" class="paginator-select">
-                        <option :value="5">5</option>
+                    <select v-model.number="limit" @change="onLimitChange"
+                        class="rounded-xl bg-gray-50 border border-gray-200 px-2 py-1 text-xs text-gray-600 outline-none focus:border-[#299261] cursor-pointer">
                         <option :value="10">10</option>
                         <option :value="20">20</option>
+                        <option :value="50">50</option>
                     </select>
                 </div>
             </div>
         </div>
 
+        <!-- ── Overlay ───────────────────────────────────────────── -->
+        <!-- ── Panel mensualidad ─────────────────────────────────────────── -->
+        <AsideEditar v-model="panelAbierto" :titulo="detalle?.NombreApellidos ?? '—'"
+            :subtitulo="(detalle?.T_Estacionamiento?.Nombre ?? sedeNombre) + ' · Doc. ' + (detalle?.Documento ?? '')"
+            label-guardar="Guardar cambios" :loading="guardando || loadingDetalle" :error="errGuardar"
+            @guardar="guardar" @update:modelValue="cerrarPanel">
 
-        <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 1 — EDITAR CLIENTE                               -->
-        <!-- ════════════════════════════════════════════════════════ -->
-        <Transition name="modal">
-            <div v-if="modalEditar" class="modal-overlay" @click.self="cerrarModales">
-                <div class="modal-card modal-card--wide">
+            <!-- Loading skeleton mientras carga el detalle -->
+            <template v-if="loadingDetalle">
+                <div v-for="i in 5" :key="i" class="h-12 bg-gray-200 rounded-xl animate-pulse" />
+            </template>
 
-                    <!-- Cabecera fija -->
-                    <div class="modal-head">
-                        <div class="modal-head__left">
-                            <div class="modal-avatar">{{ iniciales(clienteAccion?.nombre) }}</div>
-                            <div>
-                                <p class="modal-head__name">{{ clienteAccion?.nombre }}</p>
-                                <p class="modal-head__sub">Editando información</p>
+            <template v-else>
+
+                <!-- Estado + CobroTarjeta -->
+                <div class="flex gap-3">
+                    <!-- Toggle Estado -->
+                    <label
+                        class="flex items-center gap-3 cursor-pointer select-none flex-1 p-3.5 bg-white rounded-xl border-2 transition-all"
+                        :class="form.Estado ? 'border-[#299261]' : 'border-red-300'">
+                        <div class="relative flex-shrink-0">
+                            <input type="checkbox" v-model="form.Estado" class="sr-only" />
+                            <div class="w-11 h-6 rounded-full transition-colors duration-200"
+                                :class="form.Estado ? 'bg-[#299261]' : 'bg-red-400'">
+                                <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                                    :class="form.Estado ? 'translate-x-5' : 'translate-x-0'" />
                             </div>
                         </div>
-                        <button @click="cerrarModales" class="modal-close">✕</button>
-                    </div>
-
-                    <!-- Cuerpo con scroll -->
-                    <div class="modal-body">
-
-                        <p class="modal-section-label">Datos personales</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Nombre</label>
-                                <input v-model="clienteAccion.nombre" type="text" class="field-input"
-                                    placeholder="Nombre" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Apellido</label>
-                                <input v-model="clienteAccion.apellido" type="text" class="field-input"
-                                    placeholder="Apellido" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Documento</label>
-                                <input v-model="clienteAccion.documento" type="text" class="field-input"
-                                    placeholder="Número de documento" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Teléfono</label>
-                                <input v-model="clienteAccion.telefono" type="tel" class="field-input"
-                                    placeholder="3XX XXX XXXX" />
-                            </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label">Correo electrónico</label>
-                                <input v-model="clienteAccion.correo" type="email" class="field-input"
-                                    placeholder="correo@ejemplo.com" />
-                            </div>
+                        <div class="flex flex-col">
+                            <span class="text-[0.78rem] font-black"
+                                :class="form.Estado ? 'text-[#299261]' : 'text-red-500'">
+                                {{ form.Estado ? '● Activo' : '● Inactivo' }}
+                            </span>
+                            <span class="text-[0.65rem] text-gray-400 font-medium">Estado mensualidad</span>
                         </div>
+                    </label>
 
-                        <p class="modal-section-label">Membresía</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Sede</label>
-                                <select v-model="clienteAccion.sede" class="field-input">
-                                    <option v-for="s in sedes" :key="s" :value="s">{{ s }}</option>
-                                </select>
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Plan</label>
-                                <select v-model="clienteAccion.plan" class="field-input">
-                                    <option>Mensual</option>
-                                    <option>Trimestral</option>
-                                    <option>Semestral</option>
-                                    <option>Anual</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Vehículos</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Placa 1</label>
-                                <input v-model="clienteAccion.placa1" type="text" class="field-input"
-                                    placeholder="ABC-123" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Placa 2</label>
-                                <input v-model="clienteAccion.placa2" type="text" class="field-input"
-                                    placeholder="DEF-456 (opcional)" />
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Placa 3</label>
-                                <input v-model="clienteAccion.placa3" type="text" class="field-input"
-                                    placeholder="GHI-789 (opcional)" />
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Pie fijo -->
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button class="btn-modal-dark">Actualizar datos</button>
-                    </div>
-
-                </div>
-            </div>
-        </Transition>
-
-
-        <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 2 — MENSUALIDAD                                  -->
-        <!-- ════════════════════════════════════════════════════════ -->
-        <Transition name="modal">
-            <div v-if="modalMensualidad" class="modal-overlay" @click.self="cerrarModales">
-                <div class="modal-card">
-
-                    <div class="modal-head">
-                        <div class="modal-head__left">
-                            <div class="modal-avatar">{{ iniciales(clienteAccion?.nombre) }}</div>
-                            <div>
-                                <p class="modal-head__name">{{ clienteAccion?.nombre }}</p>
-                                <p class="modal-head__sub">Gestión de mensualidad</p>
-                            </div>
-                        </div>
-                        <button @click="cerrarModales" class="modal-close">✕</button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <!-- Resumen estado actual -->
-                        <div class="plan-summary">
-                            <div class="plan-summary__item">
-                                <span class="plan-summary__label">Plan actual</span>
-                                <span class="plan-summary__value">{{ clienteAccion?.plan }}</span>
-                            </div>
-                            <div class="plan-summary__sep"></div>
-                            <div class="plan-summary__item">
-                                <span class="plan-summary__label">Próximo pago</span>
-                                <span class="plan-summary__value">{{ formatFecha(clienteAccion?.proximoPago) }}</span>
-                            </div>
-                            <div class="plan-summary__sep"></div>
-                            <div class="plan-summary__item">
-                                <span class="plan-summary__label">Estado</span>
-                                <span :class="['estado-badge', estadoClase(clienteAccion?.estado)]">
-                                    {{ estadoLabel(clienteAccion?.estado) }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Modificar plan</p>
-                        <div class="modal-grid">
-                            <div class="field-group">
-                                <label class="field-label">Nuevo plan</label>
-                                <select class="field-input">
-                                    <option>Mensual</option>
-                                    <option>Trimestral</option>
-                                    <option>Semestral</option>
-                                    <option>Anual</option>
-                                </select>
-                            </div>
-                            <div class="field-group">
-                                <label class="field-label">Nueva fecha de pago</label>
-                                <input type="date" class="field-input" />
-                            </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label">Observaciones</label>
-                                <textarea class="field-input field-input--textarea" rows="2"
-                                    placeholder="Ej: descuento aplicado, renovación anticipada..."></textarea>
-                            </div>
-                        </div>
-
-                        <p class="modal-section-label">Acciones rápidas</p>
-                        <div class="quick-actions">
-                            <button class="quick-btn quick-btn--freeze">❄️ Congelar</button>
-                            <button class="quick-btn quick-btn--pause">⏸ Pausar acceso</button>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button class="btn-modal-dark">Guardar cambios</button>
-                    </div>
-
-                </div>
-            </div>
-        </Transition>
-
-
-        <!-- ════════════════════════════════════════════════════════ -->
-        <!-- MODAL 3 — INHABILITAR                                  -->
-        <!-- ════════════════════════════════════════════════════════ -->
-        <Transition name="modal">
-            <div v-if="modalInhabilitar" class="modal-overlay" @click.self="cerrarModales">
-                <div class="modal-card modal-card--danger">
-
-                    <div class="modal-head modal-head--danger">
-                        <div class="modal-head__left">
-                            <div class="modal-avatar modal-avatar--danger">
-                                {{ iniciales(clienteAccion?.nombre) }}
-                            </div>
-                            <div>
-                                <p class="modal-head__name modal-head__name--danger">{{ clienteAccion?.nombre }}</p>
-                                <p class="modal-head__sub modal-head__sub--danger">Inhabilitar cliente</p>
-                            </div>
-                        </div>
-                        <button @click="cerrarModales" class="modal-close modal-close--danger">✕</button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <div class="danger-alert">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#b91c1c"
-                                viewBox="0 0 24 24" class="flex-shrink-0 mt-0.5">
-                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                    <!-- CobroTarjeta solo lectura -->
+                    <div class="flex items-center gap-2.5 flex-1 p-3.5 bg-white rounded-xl border-2 border-gray-200">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            :class="detalle?.CobroTarjeta ? 'bg-[#dcfce7]' : 'bg-gray-100'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                :class="detalle?.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'" viewBox="0 0 24 24">
+                                <path
+                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                             </svg>
-                            <p>
-                                Al inhabilitar a <strong>{{ clienteAccion?.nombre }}</strong>, no podrá
-                                acceder al sistema ni renovar su membresía. Esta acción puede revertirse.
-                            </p>
                         </div>
-
-                        <div class="modal-grid">
-                            <div class="field-group field-group--full">
-                                <label class="field-label field-label--danger">
-                                    Motivo <span class="text-red-500">*</span>
-                                </label>
-                                <select class="field-input field-input--danger">
-                                    <option value="">Selecciona un motivo...</option>
-                                    <option value="falta_pago">Falta de pago</option>
-                                    <option value="solicitud">Solicitud del cliente</option>
-                                    <option value="comportamiento">Comportamiento inapropiado</option>
-                                    <option value="otro">Otro</option>
-                                </select>
-                            </div>
-                            <div class="field-group field-group--full">
-                                <label class="field-label field-label--danger">Observaciones</label>
-                                <textarea class="field-input field-input--danger field-input--textarea" rows="2"
-                                    placeholder="Detalles adicionales..."></textarea>
-                            </div>
+                        <div class="flex flex-col">
+                            <span class="text-[0.78rem] font-black"
+                                :class="detalle?.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'">
+                                {{ detalle?.CobroTarjeta ? 'Con tarjeta' : 'Sin tarjeta' }}
+                            </span>
+                            <span class="text-[0.65rem] text-gray-400 font-medium">Cobro tarjeta</span>
                         </div>
-
                     </div>
-
-                    <div class="modal-foot modal-foot--danger">
-                        <button @click="cerrarModales" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button class="btn-modal-dark btn-modal-dark--danger">Inhabilitar</button>
-                    </div>
-
                 </div>
-            </div>
-        </Transition>
+
+                <!-- Nombre titular -->
+                <div class="flex flex-col gap-1.5">
+                    <label class="aside-field-label">Nombre completo</label>
+                    <input v-model="form.NombreApellidos" type="text" placeholder="JUAN CARLOS RODRÍGUEZ"
+                        class="aside-field-input" />
+                </div>
+
+                <!-- NIT + Empresa -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">NIT</label>
+                        <input v-model="form.Nit" type="text" placeholder="900123456" class="aside-field-input" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Empresa</label>
+                        <input v-model="form.NombreEmpresa" type="text" placeholder="Empresa SAS"
+                            class="aside-field-input" />
+                    </div>
+                </div>
+
+                <!-- Fechas -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Fecha inicio</label>
+                        <input v-model="form.FechaInicio" type="date" class="aside-field-input" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Fecha fin</label>
+                        <input v-model="form.FechaFin" type="date" class="aside-field-input" />
+                    </div>
+                </div>
+
+                <!-- Placas -->
+                <div class="flex flex-col gap-2">
+                    <label class="aside-field-label">Vehículos</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
+                            <label class="text-[0.62rem] font-bold text-gray-400 uppercase tracking-wider pl-1">
+                                Placa {{ idx + 1 }}
+                            </label>
+                            <input v-model="form.placas[idx]" type="text" maxlength="7"
+                                class="aside-field-input aside-field-mini uppercase tracking-widest font-bold text-center" />
+                        </div>
+                    </div>
+                </div>
+
+            </template>
+
+        </AsideEditar>
 
     </div>
 </template>
 
-
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import person_edit from '@/assets/img/person_edit.svg?raw'
-import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
-import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
-import UsersService from '@/api/services/client.service'
+import { ref, reactive, computed, onMounted } from 'vue'
+import MensualidadesService from '@/api/services/mensualidades.service'
+import SedesService from '@/api/services/sedes.service'
+import AsideEditar from '@/components/aside/AsideEditar.vue'
 
-
-
-// --- ESTADOS ---
-const busqueda = ref('')
-const busquedaDebounced = ref('')
-const filtroSede = ref('')
-const filtroEstado = ref('')
+// ── Estado ─────────────────────────────────────────────────────────
+const mensualidades = ref([])
+const sedes = ref([])
+const loading = ref(false)
 const paginaActual = ref(1)
-const itemsPorPagina = ref(10)
-const sedes = ['Norte', 'Sur', 'Centro']
+const totalPaginas = ref(1)
+const totalRegistros = ref(0)
+const limit = ref(10)
 
-let debounceTimer = null
-watch(busqueda, (val) => {
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => {
-        busquedaDebounced.value = val
-        paginaActual.value = 1
-    }, 300)
-})
-// Control de Modales
-const modalEditar = ref(false)
-const modalMensualidad = ref(false)
-const modalInhabilitar = ref(false)
-const clienteAccion = ref(null)
+// Panel
+const panelAbierto = ref(false)
+const loadingDetalle = ref(false)
+const guardando = ref(false)
+const errGuardar = ref('')
+const detalle = ref(null)
 
-// --- MOCK DATA ---
-const mockClientes = ref([])
+// Filtros
+const filtros = reactive({ search: '', sede: '', estado: '' })
 
-// --- FILTROS Y PAGINACIÓN ---
-const clientesFiltrados = computed(() => {
-    return mockClientes.value.filter(c => {
-        const q = busquedaDebounced.value.toLowerCase()
-        const matchBusqueda = !q || c.nombre.toLowerCase().includes(q) || c.documento.includes(q)
-        const matchSede = !filtroSede.value || c.sede === filtroSede.value
-        const matchEstado = !filtroEstado.value || c.estado === filtroEstado.value
-        return matchBusqueda && matchSede && matchEstado
-    })
+const form = reactive({
+    NombreApellidos: '',
+    Nit: '',
+    NombreEmpresa: '',
+    FechaInicio: '',
+    FechaFin: '',
+    Estado: true,
+    placas: ['', '', '', '', ''],
 })
 
-const clientesPaginados = computed(() => {
-    const inicio = (paginaActual.value - 1) * itemsPorPagina.value
-    return clientesFiltrados.value.slice(inicio, inicio + itemsPorPagina.value)
+// ── Computed ───────────────────────────────────────────────────────
+const sedeNombre = computed(() =>
+    sedes.value.find(s => String(s.IdEstacionamiento) === String(filtros.sede))?.Nombre ?? ''
+)
+
+const mensualidadesFiltradas = computed(() => {
+    if (!filtros.estado) return mensualidades.value
+    return mensualidades.value.filter(m => String(m.Estado) === filtros.estado)
 })
 
-// --- FUNCIONES DE ACCIÓN ---
-const editarCliente = (cliente) => {
-    clienteAccion.value = { ...cliente }
-    modalEditar.value = true
-}
-const verPagos = (cliente) => {
-    clienteAccion.value = cliente
-    modalMensualidad.value = true
-}
-const darDeBaja = (cliente) => {
-    clienteAccion.value = cliente
-    modalInhabilitar.value = true
-}
-const cerrarModales = () => {
-    modalEditar.value = modalMensualidad.value = modalInhabilitar.value = false
-    clienteAccion.value = null
-}
-const limpiarFiltros = () => {
-    busqueda.value = ''; busquedaDebounced.value = ''; filtroSede.value = ''; filtroEstado.value = ''
-}
+const paginasVisibles = computed(() => {
+    const total = totalPaginas.value
+    const actual = paginaActual.value
+    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
+    const start = Math.max(1, Math.min(actual - 2, total - 4))
+    return Array.from({ length: 5 }, (_, i) => start + i)
+})
 
-// --- HELPERS ---
+// ── Helpers ────────────────────────────────────────────────────────
 const iniciales = (nombre = '') =>
-    nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
+    nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
 
-const totalPaginas = computed(() => Math.max(1, Math.ceil(clientesFiltrados.value.length / itemsPorPagina.value)))
-const rangoInicio = computed(() => clientesFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1)
-const rangoFin = computed(() => Math.min(paginaActual.value * itemsPorPagina.value, clientesFiltrados.value.length))
+const placas = (m) =>
+    ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5'].map(k => m[k]).filter(Boolean)
 
 const formatFecha = (f) => {
-    if (!f) return ''
-    const [y, m, d] = f.split('-')
-    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-    return `${d} ${meses[parseInt(m) - 1]} ${y}`
+    if (!f) return '—'
+    return new Date(f).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
 
-const estadoClase = (e) => ({
-    'al dia': 'bg-[#7FD344]/15 text-[#299261]',
-    'por vencer': 'bg-amber-100 text-amber-700',
-    'vencido': 'bg-red-100 text-red-600',
-})[e] || ''
+const vigenciaClass = (m) => {
+    if (!m.FechaFin) return 'text-gray-400'
+    const diff = new Date(m.FechaFin) - new Date()
+    if (diff < 0) return 'text-red-500'
+    if (diff < 86400000 * 7) return 'text-amber-500'
+    return 'text-[#299261]'
+}
 
-const estadoLabel = (e) => ({ 'al dia': 'Al día', 'por vencer': 'Por vencer', 'vencido': 'Vencido' }[e] || e)
+const vigenciaLabel = (m) => {
+    if (!m.FechaFin) return ''
+    const diff = new Date(m.FechaFin) - new Date()
+    if (diff < 0) return 'Vencida'
+    if (diff < 86400000 * 7) return 'Por vencer'
+    return 'Vigente'
+}
+const cargarTodasLasMensualidades = async () => {
+    if (!sedes.value.length) return
+    loading.value = true
+    try {
+        const resultados = await Promise.all(
+            sedes.value.map(s =>
+                MensualidadesService.getAllBySede({
+                    sede: s.IdEstacionamiento,
+                    page: 1,
+                    limit: 999,
+                })
+            )
+        )
+        // Combina y agrega el nombre de sede a cada mensualidad
+        mensualidades.value = resultados.flatMap((res, idx) => {
+            const items = res?.data?.data ?? res?.data ?? []
+            return items.map(m => ({
+                ...m,
+                _sedeName: sedes.value[idx]?.Nombre ?? '',
+            }))
+        })
+        totalRegistros.value = mensualidades.value.length
+        totalPaginas.value = Math.max(1, Math.ceil(totalRegistros.value / limit.value))
+    } catch (e) {
+        console.error('[Mensualidades todas]', e.response?.data ?? e.message)
+        mensualidades.value = []
+    } finally {
+        loading.value = false
+    }
+}
 
-const fechaClase = (e) => ({
-    'al dia': '',
-    'por vencer': 'fecha-pago--warn',
-    'vencido': 'fecha-pago--danger',
-})[e] || ''
+// ── Carga ──────────────────────────────────────────────────────────
+const cargarMensualidades = async () => {
+    if (!filtros.sede) {
+        await cargarTodasLasMensualidades()
+        return
+    }
+    loading.value = true
+    try {
+        const res = await MensualidadesService.getAllBySede({
+            sede: filtros.sede,
+            page: paginaActual.value,
+            limit: limit.value,
+            search: filtros.search,
+        })
+        mensualidades.value = (res?.data?.data ?? res?.data ?? []).map(m => ({
+            ...m,
+            _sedeName: sedeNombre.value,
+        }))
+        totalRegistros.value = res?.data?.total ?? res?.total ?? mensualidades.value.length
+        totalPaginas.value = res?.data?.totalPages ?? res?.totalPages ??
+            Math.max(1, Math.ceil(totalRegistros.value / limit.value))
+    } catch (e) {
+        console.error('[Mensualidades]', e.response?.data ?? e.message)
+        mensualidades.value = []
+    } finally {
+        loading.value = false
+    }
+}
 
-watch([filtroSede, filtroEstado], () => { paginaActual.value = 1 })
+const irPagina = (p) => {
+    if (p < 1 || p > totalPaginas.value) return
+    paginaActual.value = p
+    cargarMensualidades()
+}
 
+const onLimitChange = () => {
+    paginaActual.value = 1
+    cargarMensualidades()
+}
+
+let debTimer = null
+const onFiltroChange = () => {
+    clearTimeout(debTimer)
+    debTimer = setTimeout(() => {
+        paginaActual.value = 1
+        cargarMensualidades()
+    }, 350)
+}
+
+const onSedeChange = () => {
+    paginaActual.value = 1
+    mensualidades.value = []
+    cargarMensualidades()
+}
 
 onMounted(async () => {
-    const clientes = await UsersService.getAllClients({
-        search: '1098820326',
-        sede: '1',
-        page: 1,
-        limit: 15
-    })
-    mockClientes.value = clientes?.data
+    sedes.value = await SedesService.getAll()
+    await cargarTodasLasMensualidades()
 })
+
+// ── Panel ──────────────────────────────────────────────────────────
+const abrirDetalle = async (m) => {
+    panelAbierto.value = true
+    loadingDetalle.value = true
+    errGuardar.value = ''
+    detalle.value = null
+
+    try {
+        const res = await MensualidadesService.getDetalleById(m.IdPersonaAutorizada)
+        detalle.value = res?.data ?? res
+
+        const d = detalle.value
+        Object.assign(form, {
+            NombreApellidos: d.NombreApellidos ?? '',
+            Nit: d.Nit ?? '',
+            NombreEmpresa: d.NombreEmpresa ?? '',
+            FechaInicio: d.FechaInicio ? d.FechaInicio.slice(0, 10) : '',
+            FechaFin: d.FechaFin ? d.FechaFin.slice(0, 10) : '',
+            Estado: d.Estado ?? true,
+            placas: [
+                d.Placa1 ?? '', d.Placa2 ?? '', d.Placa3 ?? '',
+                d.Placa4 ?? '', d.Placa5 ?? '',
+            ],
+        })
+    } catch (e) {
+        console.error('[Mensualidades detalle]', e.response?.data ?? e.message)
+    } finally {
+        loadingDetalle.value = false
+    }
+}
+
+const cerrarPanel = () => {
+    panelAbierto.value = false
+    detalle.value = null
+    errGuardar.value = ''
+    guardando.value = false
+}
+
+// ── Guardar ────────────────────────────────────────────────────────
+const guardar = async () => {
+    errGuardar.value = ''
+    guardando.value = true
+    try {
+        const id = detalle.value?.IdPersonaAutorizada
+        const dto = {
+            NombreApellidos: form.NombreApellidos || undefined,
+            Estado: form.Estado,
+            Placa1: form.placas[0] || null,
+            Placa2: form.placas[1] || null,
+            Placa3: form.placas[2] || null,
+            Placa4: form.placas[3] || null,
+            Placa5: form.placas[4] || null,
+            ...(form.Nit && { Nit: form.Nit }),
+            ...(form.NombreEmpresa && { NombreEmpresa: form.NombreEmpresa }),
+            ...(form.FechaInicio && { FechaInicio: form.FechaInicio }),
+            ...(form.FechaFin && { FechaFin: form.FechaFin }),
+        }
+
+        await MensualidadesService.updateById(id, dto)
+
+        // Actualizar fila en tabla localmente
+        const idx = mensualidades.value.findIndex(m => m.IdPersonaAutorizada === id)
+        if (idx !== -1) {
+            mensualidades.value[idx] = {
+                ...mensualidades.value[idx],
+                NombreApellidos: form.NombreApellidos,
+                Estado: form.Estado,
+                Placa1: form.placas[0] || null,
+                Placa2: form.placas[1] || null,
+                FechaInicio: form.FechaInicio || null,
+                FechaFin: form.FechaFin || null,
+            }
+        }
+        cerrarPanel()
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errGuardar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')
+        console.error('[Mensualidades guardar]', e.response?.data ?? e.message)
+    } finally {
+        guardando.value = false
+    }
+}
 </script>
 
-
 <style scoped>
-/* ══════════════════════════════════════════════════════════════════
-   FILTROS RESPONSIVE
-   ══════════════════════════════════════════════════════════════════ */
-.filters-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
-}
-
-.filter-field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    min-width: 140px;
-}
-
-.filter-field--search {
-    flex: 2;
-    min-width: 200px;
-}
-
-.filter-label {
-    font-size: 0.65rem;
+/* ── Field helpers para usar dentro del slot del AsideEditar ─────── */
+.aside-field-label {
+    font-size: 0.72rem;
     font-weight: 800;
+    color: #4b5563;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #232B3A;
-    padding-left: 4px;
+    letter-spacing: 0.05em;
+    padding-left: 2px;
 }
 
-.back-btn {
-    border: 1px solid black;
-    box-shadow: #595858 0px 2px 0;
-}
-
-@media (max-width: 600px) {
-    .filters-bar {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .filter-field,
-    .filter-field--search {
-        flex: none;
-        width: 100%;
-        min-width: unset;
-    }
-}
-
-.filter-clear-btn {
-    padding: 10px 18px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #6b7280;
-    background-color: #f9fafb;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-    white-space: nowrap;
-    align-self: flex-end;
-}
-
-.filter-clear-btn:hover {
-    border-color: #299261;
-    color: #299261;
-}
-
-@media (max-width: 600px) {
-    .filter-clear-btn {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   TABLA RESPONSIVE
-   ══════════════════════════════════════════════════════════════════ */
-
-.table-scroll-wrapper {
-    overflow-x: auto;
-    flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: #0D291C33 #f0f9f4;
-}
-
-.table-scroll-wrapper::-webkit-scrollbar {
-    height: 5px;
-}
-
-.table-scroll-wrapper::-webkit-scrollbar-track {
-    background: #f0f9f4;
-}
-
-.table-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: #0D291C44;
-    border-radius: 99px;
-}
-
-.data-table {
-    border-collapse: collapse;
-    min-width: 700px;
+.aside-field-input {
+    border: 2px solid #d1d5db;
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.88rem;
+    color: #0D291C;
+    outline: none;
     width: 100%;
-}
-
-/* ── Cabeceras ─────────────────────────────────────────────────────── */
-.th-cell {
-    padding: 13px 18px;
-    text-align: left;
-    font-size: 0.68rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    color: #7FD344;
-    background-color: #0D291C;
-    white-space: nowrap;
-    border-bottom: 3px solid #7FD344;
-}
-
-.th-cell--actions {
-    text-align: center;
-}
-
-.th-cell--sticky {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.12);
-}
-
-/* ── Filas ─────────────────────────────────────────────────────────── */
-.table-row {
-    border-bottom: 1px solid #e8f5e9;
-    transition: background-color 0.15s;
-}
-
-.table-row:last-child {
-    border-bottom: none;
-}
-
-.table-row:hover {
-    background-color: #f0faf4;
-}
-
-.table-row:hover .td-cell--sticky {
-    background-color: #f0faf4;
-}
-
-/* ── Celdas ─────────────────────────────────────────────────────────── */
-.td-cell {
-    padding: 12px 18px;
-    font-size: 0.82rem;
-    color: #374151;
-    font-weight: 500;
-    vertical-align: middle;
-    text-align: left;
-    white-space: nowrap;
-}
-
-.td-cell--sticky {
-    position: sticky;
-    left: 0;
-    z-index: 1;
+    box-sizing: border-box;
     background-color: white;
-    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.07);
-    min-width: 200px;
-}
-
-.td-cell--actions {
-    text-align: center;
-}
-
-.row-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    border: 2px solid #e8f5e9;
-}
-
-.sede-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    background-color: #e8f5e9;
-    color: #1b5e20;
-    border: 1px solid #c8e6c9;
-}
-
-.estado-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.fecha-pago {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #6b7280;
-}
-
-.fecha-pago--warn {
-    color: #d97706;
-    font-weight: 700;
-}
-
-.fecha-pago--danger {
-    color: #dc2626;
-    font-weight: 700;
-}
-
-/* ── Botones de acción ─────────────────────────────────────────────── */
-.action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    transition: background-color 0.15s;
-    flex-shrink: 0;
-}
-
-.action-btn:hover {
-    background-color: #e8f5e9;
-}
-
-.action-btn--danger:hover {
-    background-color: #fee2e2;
-}
-
-:deep(.action-btn svg) {
-    width: 20px;
-    height: 20px;
-    fill: #6b7280;
-    transition: fill 0.15s;
-    display: block;
-}
-
-.action-btn:hover :deep(svg) {
-    fill: #299261;
-}
-
-.action-btn--danger:hover :deep(svg) {
-    fill: #dc2626;
-}
-
-/* ── Pie de tabla ──────────────────────────────────────────────────── */
-.table-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 20px;
-    border-top: 2px solid #f0f9f4;
-    background-color: #fafffe;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-}
-
-.foot-counter {
-    font-size: 0.75rem;
-    color: #9ca3af;
-}
-
-.foot-counter strong {
-    color: #0D291C;
-}
-
-.page-mobile-indicator {
-    display: none;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #0D291C;
-    padding: 0 8px;
-}
-
-.page-btn--num {
-    display: flex;
-}
-
-@media (max-width: 600px) {
-    .foot-counter {
-        display: none;
-    }
-
-    .page-mobile-indicator {
-        display: block;
-    }
-
-    .page-btn--num {
-        display: none;
-    }
-
-    .table-foot {
-        padding: 10px 14px;
-        justify-content: space-between;
-    }
-}
-
-.page-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #6b7280;
-    transition: background-color 0.15s, color 0.15s;
-    flex-shrink: 0;
-}
-
-.page-btn:hover:not(:disabled) {
-    background-color: #e8f5e9;
-    color: #0D291C;
-}
-
-.page-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.page-btn--active {
-    background-color: #0D291C;
-    color: #7FD344;
-    box-shadow: 0 2px 0 rgba(13, 41, 28, 0.3);
-}
-
-input,
-select {
-    border-radius: 999px !important;
-    background-color: #EAEAEA !important;
-    border: 2px solid #299261 !important;
-    padding: 10px 15px !important;
-    color: black !important;
-    box-shadow: none !important;
-    outline: none !important;
-}
-
-input:focus,
-select:focus {
-    border-color: #0D291C !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.18) !important;
-}
-
-input.search-input {
-    padding-right: 45px !important;
-    background-image: url(@/assets/img/search.svg);
-    background-size: 25px;
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-}
-
-select.paginator-select {
-    border-radius: 12px !important;
-    padding: 4px 28px 4px 10px !important;
-    font-size: 0.75rem !important;
-    border: 1px solid #d1d5db !important;
-    background-color: #f9fafb !important;
-    color: #4b5563 !important;
-}
-
-select.paginator-select:focus {
-    border-color: #299261 !important;
-    box-shadow: none !important;
-}
-
-
-/* ══════════════════════════════════════════════════════════════════════
-   MODALES
-   ══════════════════════════════════════════════════════════════════════ */
-
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background-color: rgba(13, 41, 28, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* ── Tarjeta base ──────────────────────────────────────────────────── */
-.modal-card {
-    background-color: #B8E19E;
-    border: 2.5px solid #0D291C;
-    border-radius: 40px;
-    box-shadow: 0 7px 0 #0D291C;
-    width: 100%;
-    max-width: 500px;
-    max-height: 88vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.modal-card--wide {
-    max-width: 660px;
-}
-
-.modal-card--danger {
-    background-color: #fde8e8;
-    border-color: #b91c1c;
-    box-shadow: 0 7px 0 #7f1d1d;
-    max-width: 440px;
-}
-
-/* ── Cabecera — siempre visible, no hace scroll ─────────────────── */
-.modal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 22px 26px 16px;
-    border-bottom: 2px solid rgba(13, 41, 28, 0.14);
-    flex-shrink: 0;
-}
-
-.modal-head--danger {
-    border-bottom-color: rgba(185, 28, 28, 0.2);
-}
-
-.modal-head__left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.modal-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-    border: 2px solid rgba(13, 41, 28, 0.4);
-}
-
-.modal-avatar--danger {
-    background-color: #b91c1c;
-    color: #fee2e2;
-    border-color: #7f1d1d;
-}
-
-.modal-head__name {
-    font-size: 1rem;
-    font-weight: 900;
-    color: #0D291C;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.modal-head__name--danger {
-    color: #7f1d1d;
-}
-
-.modal-head__sub {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #0D291C;
-    opacity: 0.45;
-    margin-top: 2px;
-}
-
-.modal-head__sub--danger {
-    color: #b91c1c;
-    opacity: 0.85;
-}
-
-.modal-close {
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: #0D291C;
-    opacity: 0.35;
-    transition: opacity 0.15s;
-    flex-shrink: 0;
-    line-height: 1;
-}
-
-.modal-close:hover {
-    opacity: 1;
-}
-
-.modal-close--danger {
-    color: #b91c1c;
-}
-
-/* ── Cuerpo scrolleable ─────────────────────────────────────────── */
-.modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 18px 26px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(13, 41, 28, 0.2) transparent;
-}
-
-.modal-body::-webkit-scrollbar {
-    width: 5px;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-    background: rgba(13, 41, 28, 0.25);
-    border-radius: 99px;
-}
-
-.modal-section-label {
-    font-size: 0.62rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #0D291C;
-    opacity: 0.45;
-    border-bottom: 1.5px solid rgba(13, 41, 28, 0.12);
-    padding-bottom: 5px;
-    margin-top: 2px;
-}
-
-/* ── Grid 2 columnas → 1 en mobile ─────────────────────────────── */
-.modal-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 11px;
-}
-
-.field-group--full {
-    grid-column: 1 / -1;
-}
-
-@media (max-width: 500px) {
-    .modal-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-card {
-        border-radius: 26px;
-    }
-
-    .modal-head {
-        padding: 16px 18px 14px;
-    }
-
-    .modal-body {
-        padding: 14px 18px;
-    }
-
-    .modal-foot {
-        padding: 10px 18px 18px;
-    }
-}
-
-/* ── Campo ──────────────────────────────────────────────────────── */
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.field-label {
-    font-size: 0.63rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0D291C;
-    opacity: 0.6;
-    padding-left: 3px;
-}
-
-.field-label--danger {
-    color: #7f1d1d;
-    opacity: 1;
-}
-
-.field-input {
-    background-color: white !important;
-    border: 2px solid #0D291C !important;
-    border-radius: 14px !important;
-    padding: 9px 14px !important;
-    font-size: 0.875rem !important;
-    color: #0D291C !important;
-    outline: none !important;
-    box-shadow: none !important;
-    width: 100%;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.field-input:focus {
-    border-color: #299261 !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.2) !important;
+.aside-field-input:focus {
+    border-color: #299261;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.15);
 }
 
-.field-input--textarea {
-    border-radius: 14px !important;
-    resize: none;
-}
-
-.field-input--danger {
-    border-color: #b91c1c !important;
-}
-
-.field-input--danger:focus {
-    border-color: #b91c1c !important;
-    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15) !important;
-}
-
-/* ── Resumen plan (modal mensualidad) ───────────────────────────── */
-.plan-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 2px solid #0D291C;
-    border-radius: 22px;
-    padding: 14px 18px;
-}
-
-.plan-summary__item {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.plan-summary__label {
-    font-size: 0.58rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0D291C;
-    opacity: 0.5;
-}
-
-.plan-summary__value {
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: #0D291C;
-}
-
-.plan-summary__sep {
-    width: 1.5px;
-    height: 30px;
-    align-self: center;
-    background-color: rgba(13, 41, 28, 0.18);
-    border-radius: 99px;
-}
-
-/* ── Acciones rápidas (modal mensualidad) ───────────────────────── */
-.quick-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.quick-btn {
-    flex: 1;
-    min-width: 110px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border: 2px solid;
-    background-color: white;
-    cursor: pointer;
-    box-shadow: 0 3px 0;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.quick-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0;
-}
-
-.quick-btn--freeze {
-    color: #1d4ed8;
-    border-color: #1d4ed8;
-    box-shadow: 0 3px 0 #1e3a8a;
-}
-
-.quick-btn--pause {
-    color: #92400e;
-    border-color: #92400e;
-    box-shadow: 0 3px 0 #78350f;
-}
-
-/* ── Aviso rojo (modal inhabilitar) ────────────────────────────── */
-.danger-alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background-color: rgba(255, 255, 255, 0.65);
-    border: 2px solid #b91c1c;
-    border-radius: 18px;
-    padding: 14px 16px;
+.aside-field-mini {
+    padding-top: 7px;
+    padding-bottom: 7px;
     font-size: 0.82rem;
-    color: #7f1d1d;
-    line-height: 1.55;
 }
 
-/* ── Pie — siempre visible, no hace scroll ──────────────────────── */
-.modal-foot {
-    display: flex;
-    gap: 12px;
-    padding: 12px 26px 22px;
-    border-top: 2px solid rgba(13, 41, 28, 0.12);
-    flex-shrink: 0;
+/* ── Toggle switch ────────────────────────────────────────────────── */
+input[type="checkbox"].sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
 }
 
-.modal-foot--danger {
-    border-top-color: rgba(185, 28, 28, 0.15);
+/* ── Tabla mobile: max 5 filas visibles con scroll ────────────────── */
+@media (max-width: 640px) {
+    .table-scroll-wrapper {
+        max-height: calc(5 * 56px + 44px);
+        overflow-y: auto;
+    }
+
+    .td-nombre-truncate {
+        max-width: 100px !important;
+    }
 }
 
-/* Botones del pie — idénticos al .btn-modal-dark del proyecto */
-.btn-modal-dark {
-    flex: 1;
-    padding: 12px 20px;
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 2px solid #000;
-    box-shadow: 0 4px 0px #000;
-    background-color: #232B3A;
-    color: white;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.btn-modal-dark:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0px #000;
-}
-
-.btn-modal-dark--cancel {
-    background-color: white;
-    color: #232B3A;
-}
-
-.btn-modal-dark--danger {
-    background-color: #b91c1c;
-    color: white;
-    border-color: #7f1d1d;
-    box-shadow: 0 4px 0px #7f1d1d;
-}
-
-/* ── Animaciones ─────────────────────────────────────────────────── */
-.modal-enter-active {
-    transition: opacity 0.2s ease;
-}
-
-.modal-leave-active {
-    transition: opacity 0.15s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
+/* ── Transición overlay del aside (ya la maneja el componente) ────── */
+.overlay-enter-from,
+.overlay-leave-to {
     opacity: 0;
 }
 
-.modal-enter-active .modal-card {
-    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.modal-leave-active .modal-card {
-    animation: popOut 0.18s ease-in both;
-}
-
-@keyframes popIn {
-    from {
-        transform: scale(0.86) translateY(24px);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes popOut {
-    from {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-
-    to {
-        transform: scale(0.92) translateY(12px);
-        opacity: 0;
-    }
+.overlay-enter-active,
+.overlay-leave-active {
+    transition: opacity 0.25s;
 }
 </style>

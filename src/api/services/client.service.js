@@ -1,4 +1,5 @@
 // src/api/services/client.service.js
+import { handleError } from "../../utils/error.handler";
 import { api } from "../axios";
 
 class ClientService {
@@ -72,11 +73,7 @@ class ClientService {
       const response = await api.put(`${this.nameRoute}/${doc}`, dto);
       return response.data;
     } catch (error) {
-      console.error(
-        "ClientService.updateClientByDoc:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 

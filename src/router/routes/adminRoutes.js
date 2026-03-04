@@ -11,7 +11,6 @@ import icoSedes from "@/assets/img/emoji_transportation.svg?raw";
 import icoMensual2 from "@/assets/img/calendar_add_on.svg?raw";
 import icoUsuarios from "@/assets/img/manage_accounts.svg?raw";
 import icoDashboard from "@/assets/img/home.svg?raw";
-import icoInicio from "@/assets/img/home.svg?raw";
 import icoDisponibilidad from "@/assets/img/calendar_check.svg?raw";
 import IcoVerificacion from "@/assets/img/verified.svg?raw";
 import icoTarifas from "@/assets/img/car_tag.svg?raw";
@@ -57,6 +56,14 @@ export const adminMenuItems = [
     route: "/admin/sedes",
     permission: PERMS.SEDES_VER,
   },
+
+  {
+    label: "Administrar <br> Tarifas",
+    icon: icoTarifas,
+    route: "/admin/tarifas-admin",
+    permission: PERMS.CODIGOS_CREAR,
+  },
+
   {
     label: "Mensualidades",
     icon: icoMensual2,
@@ -143,6 +150,11 @@ export const adminRoutes = {
       path: "mensualidades",
       component: () => import("@/views/administrador/Mensualidades.vue"),
       meta: { permission: PERMS.MENSUALIDADES_VER },
+    },
+    {
+      path: "tarifas-admin",
+      component: () => import("@/views/administrador/AdministrarTarifas.vue"),
+      meta: { permission: PERMS.SEDES_VER },
     },
     {
       path: "usuarios",

@@ -27,28 +27,35 @@
         <!-- ── Grid de sedes ─────────────────────────────────────── -->
         <div v-else class="grid grid-cols-3 gap-[18px] max-[1024px]:grid-cols-2 max-[600px]:grid-cols-1">
             <div v-for="(sede, i) in sedes" :key="sede.IdEstacionamiento"
-                class="bg-white rounded-[20px] p-5 border-2 border-transparent flex flex-col gap-3.5 transition-all duration-200 hover:border-[#d1fae5] hover:-translate-y-0.5 card-in"
-                style="box-shadow: 0 4px 0 #e2ede7, 0 2px 12px rgba(13,41,28,0.07);"
+                class="rounded-[20px] p-5 flex flex-col gap-3.5 transition-all duration-200 hover:-translate-y-1 card-in cursor-default"
+                :class="sede.Estado ? 'bg-[#f0faf4] border-2 border-[#c8e6c9]' : 'bg-[#fafafa] border-2 border-gray-200'"
+                style="box-shadow: 0 5px 0 #b6d9c2, 0 2px 18px rgba(13,41,28,0.10);"
                 :style="{ animationDelay: `${i * 60}ms` }">
+
                 <!-- Card header -->
                 <div class="flex items-start justify-between gap-2.5">
                     <div class="flex items-center gap-2.5">
-                        <div
-                            class="w-[42px] h-[42px] rounded-xl bg-[#0D291C] text-[#7FD344] text-[1.1rem] font-black flex items-center justify-center flex-shrink-0">
+                        <div class="w-[44px] h-[44px] rounded-xl flex items-center justify-center flex-shrink-0 text-[1.1rem] font-black"
+                            :class="sede.Estado ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-300 text-white'">
                             {{ sede.Nombre?.charAt(0).toUpperCase() }}
                         </div>
                         <div>
-                            <h2 class="text-base font-extrabold text-[#0D291C] leading-tight">{{ sede.Nombre }}</h2>
-                            <span class="text-[0.68rem] text-gray-400 font-semibold">#{{ sede.IdEstacionamiento
-                            }}</span>
+                            <h2 class="text-base font-extrabold leading-tight"
+                                :class="sede.Estado ? 'text-[#0D291C]' : 'text-gray-400'">
+                                {{ sede.Nombre }}
+                            </h2>
+                            <span class="text-[0.68rem] font-semibold"
+                                :class="sede.Estado ? 'text-[#299261]' : 'text-gray-400'">
+                                #{{ sede.IdEstacionamiento }}
+                            </span>
                         </div>
                     </div>
                     <span :class="[
                         'inline-flex items-center gap-1.5 text-[0.65rem] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full flex-shrink-0',
-                        sede.Estado ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-gray-100 text-gray-400'
+                        sede.Estado ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-200 text-gray-400'
                     ]">
-                        <span
-                            :class="['w-1.5 h-1.5 rounded-full', sede.Estado ? 'bg-[#16a34a] badge-pulse' : 'bg-gray-400']" />
+                        <span :class="['w-1.5 h-1.5 rounded-full flex-shrink-0',
+                            sede.Estado ? 'bg-[#7FD344] badge-pulse' : 'bg-gray-400']" />
                         {{ sede.Estado ? 'Activa' : 'Inactiva' }}
                     </span>
                 </div>
@@ -56,52 +63,74 @@
                 <!-- Disponibilidades -->
                 <div v-if="sede.T_Disponibilidades?.length" class="flex flex-col gap-2">
                     <div v-for="d in sede.T_Disponibilidades" :key="d.IdTipoVehiculo"
-                        class="flex items-center gap-2 bg-gray-50 rounded-xl px-2.5 py-2 border border-gray-100">
-                        <span class="text-base leading-none flex-shrink-0">{{ d.IdTipoVehiculo === '1' ? '🚗' : '🏍️'
-                        }}</span>
+                        class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 border"
+                        :class="sede.Estado ? 'bg-white border-[#d1fae5]' : 'bg-gray-50 border-gray-200'">
+                        <span class="svg-icon-lg flex-shrink-0"
+                            :class="sede.Estado ? '[&>svg]:fill-[#0D291C]' : '[&>svg]:fill-gray-400'"
+                            v-html="d.IdTipoVehiculo === '1' ? car : motorbike" />
                         <div class="flex-1 flex flex-col gap-1">
-                            <span class="text-[0.72rem] font-bold text-gray-700">{{ d.Mensualidades }} / {{ d.Total
-                            }}</span>
-                            <div class="h-[5px] bg-gray-200 rounded-full overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[0.72rem] font-bold"
+                                    :class="sede.Estado ? 'text-[#0D291C]' : 'text-gray-400'">
+                                    {{ d.Mensualidades }} / {{ d.Total }}
+                                </span>
+                                <span class="text-[0.62rem] font-bold"
+                                    :class="sede.Estado ? 'text-[#299261]' : 'text-gray-400'">
+                                    {{ d.Total > 0 ? Math.round((d.Mensualidades / d.Total) * 100) : 0 }}%
+                                </span>
+                            </div>
+                            <div class="h-[5px] rounded-full overflow-hidden"
+                                :class="sede.Estado ? 'bg-[#d1fae5]' : 'bg-gray-200'">
                                 <div class="h-full rounded-full transition-all duration-500" :class="pctClass(d)"
                                     :style="{ width: `${d.Total > 0 ? Math.round((d.Mensualidades / d.Total) * 100) : 0}%` }" />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div v-else class="text-[0.72rem] text-gray-300 font-semibold text-center py-2">
+                <div v-else
+                    class="text-[0.72rem] text-gray-400 font-semibold text-center py-2 bg-white/60 rounded-xl border border-dashed border-gray-200">
                     Sin disponibilidades configuradas
                 </div>
 
                 <!-- Tarjetas requeridas -->
                 <div class="flex gap-1.5 flex-wrap">
-                    <span
-                        :class="['text-[0.65rem] font-bold px-2 py-1 rounded-full', sede.RequiereTarjetaCarro ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-gray-100 text-gray-400']">
-                        🚗 {{ sede.RequiereTarjetaCarro ? 'Con tarjeta' : 'Sin tarjeta' }}
+                    <span :class="['inline-flex items-center gap-1 text-[0.65rem] font-bold px-2.5 py-1 rounded-full border',
+                        sede.RequiereTarjetaCarro
+                            ? 'bg-white border-[#a7f3d0] text-[#065f46]'
+                            : 'bg-white border-gray-200 text-gray-400']">
+                        <span class="svg-icon" v-html="car" />
+                        {{ sede.RequiereTarjetaCarro ? 'Con tarjeta' : 'Sin tarjeta' }}
                     </span>
-                    <span
-                        :class="['text-[0.65rem] font-bold px-2 py-1 rounded-full', sede.RequiereTarjetaMoto ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-gray-100 text-gray-400']">
-                        🏍️ {{ sede.RequiereTarjetaMoto ? 'Con tarjeta' : 'Sin tarjeta' }}
+                    <span :class="['inline-flex items-center gap-1 text-[0.65rem] font-bold px-2.5 py-1 rounded-full border',
+                        sede.RequiereTarjetaMoto
+                            ? 'bg-white border-[#a7f3d0] text-[#065f46]'
+                            : 'bg-white border-gray-200 text-gray-400']">
+                        <span class="svg-icon" v-html="motorbike" />
+                        {{ sede.RequiereTarjetaMoto ? 'Con tarjeta' : 'Sin tarjeta' }}
                     </span>
                 </div>
 
                 <!-- Host -->
-                <div class="flex items-center gap-1.5 bg-gray-50 rounded-lg px-2.5 py-1.5 overflow-hidden">
-                    <svg class="flex-shrink-0 fill-gray-400" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                        viewBox="0 0 24 24">
+                <div class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 overflow-hidden border"
+                    :class="sede.Estado ? 'bg-white border-[#d1fae5]' : 'bg-gray-50 border-gray-200'">
+                    <svg class="flex-shrink-0" :class="sede.Estado ? 'fill-[#299261]' : 'fill-gray-400'"
+                        xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24">
                         <path
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
                     </svg>
-                    <span
-                        class="text-[0.65rem] text-gray-400 font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                    <span class="text-[0.65rem] font-semibold whitespace-nowrap overflow-hidden text-ellipsis"
+                        :class="sede.Estado ? 'text-[#299261]' : 'text-gray-400'">
                         {{ sede.AppHost ?? '—' }}
                     </span>
                 </div>
 
                 <!-- Acciones -->
-                <div class="flex gap-2 mt-auto">
+                <div class="flex gap-2 mt-auto pt-1">
                     <button v-permission="PERMS.SEDES_EDITAR" @click="abrirEdicion(sede)"
-                        class="flex-1 flex items-center justify-center gap-1.5 border border-[#299261] rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150 bg-[#299261] text-white hover:bg-[#0D291C] hover:border-[#0D291C]">
+                        class="flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150 border-2"
+                        :class="sede.Estado
+                            ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:bg-[#299261] hover:border-[#299261] hover:text-white'
+                            : 'bg-gray-200 text-gray-500 border-gray-200 hover:bg-gray-300'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                             fill="currentColor">
                             <path
@@ -110,7 +139,10 @@
                         Editar
                     </button>
                     <button v-permission="PERMS.SEDES_INACTIVAR" @click="toggleEstado(sede)"
-                        class="flex-1 flex items-center justify-center gap-1.5 border-none rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150 bg-gray-100 text-gray-500 hover:bg-[#fee2e2] hover:text-[#dc2626]">
+                        class="flex-1 flex items-center justify-center gap-1.5 border-2 rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150"
+                        :class="sede.Estado
+                            ? 'border-red-200 bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 hover:border-red-300'
+                            : 'border-[#c8e6c9] bg-[#f0faf4] text-[#299261] hover:bg-[#dcfce7]'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
                             fill="currentColor">
                             <path
@@ -133,6 +165,7 @@
             <div v-if="sedeEditando"
                 class="fixed top-0 right-0 w-[420px] h-dvh bg-white z-50 flex flex-col max-[500px]:w-full max-[500px]:top-auto max-[500px]:bottom-0 max-[500px]:h-[90dvh] max-[500px]:rounded-t-[24px]"
                 style="box-shadow: -8px 0 40px rgba(13,41,28,0.15);">
+
                 <!-- Panel header -->
                 <div class="flex items-start justify-between px-6 pt-6 pb-5 border-b border-gray-100 flex-shrink-0">
                     <div>
@@ -153,20 +186,23 @@
                 </div>
 
                 <!-- Panel body -->
-                <div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-[18px] first-letter:styled-scrollbar">
+                <div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-[18px]">
 
                     <!-- Nombre -->
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Nombre de la
-                            sede</label>
+                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
+                            Nombre de la sede <span class="text-red-400">*</span>
+                        </label>
                         <input v-model="form.Nombre" type="text" placeholder="Ej: Sede Norte" class="field-input" />
                     </div>
 
                     <!-- AppHost -->
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">App
-                            Host</label>
-                        <input v-model="form.AppHost" type="text" placeholder="http://..." class="field-input" />
+                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
+                            App Host <span class="text-red-400">*</span>
+                        </label>
+                        <input v-model="form.AppHost" type="text" placeholder="http://192.168.1.10:3000"
+                            class="field-input" />
                     </div>
 
                     <!-- ApiKey -->
@@ -175,7 +211,7 @@
                             Key</label>
                         <div class="relative flex items-center">
                             <input v-model="form.ApiKey" :type="mostrarApiKey ? 'text' : 'password'"
-                                placeholder="D6G-Secret-Key-..." class="field-input pr-10" />
+                                placeholder="sk-sede-..." class="field-input pr-10" />
                             <button type="button" @click="mostrarApiKey = !mostrarApiKey"
                                 class="absolute right-2.5 bg-transparent border-none cursor-pointer p-1 flex items-center [&>svg]:fill-gray-400 hover:[&>svg]:fill-[#299261]">
                                 <svg v-if="!mostrarApiKey" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -192,8 +228,105 @@
                         </div>
                     </div>
 
-                    <!-- RequiereTarjeta: solo lectura — el backend no acepta estos campos en PUT /v1/sedes -->
-                    <div class="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <!-- ── Solo nueva sede ──────────────────────────── -->
+                    <template v-if="esNueva">
+
+                        <!-- IdEstacionamiento + Dirección -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
+                                    ID Estacionamiento <span class="text-red-400">*</span>
+                                </label>
+                                <input v-model.number="form.IdEstacionamiento" type="number" min="1" placeholder="Ej: 5"
+                                    class="field-input field-input-mini" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
+                                    Dirección <span class="text-red-400">*</span>
+                                </label>
+                                <input v-model="form.Direccion" type="text" placeholder="Cra 45 # 12-34"
+                                    class="field-input field-input-mini" />
+                            </div>
+                        </div>
+
+                        <!-- Requiere tarjeta -->
+                        <!-- Requiere tarjeta -->
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
+                                Requiere tarjeta <span class="text-red-400">*</span>
+                            </label>
+                            <div class="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+
+                                <label :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
+                                    form.RequiereTarjetaCarro
+                                        ? 'bg-[#0D291C] border-[#0D291C]'
+                                        : 'bg-white border-gray-200 hover:border-gray-300']">
+                                    <input type="checkbox" v-model="form.RequiereTarjetaCarro" class="hidden" />
+                                    <span class="svg-icon flex-shrink-0"
+                                        :class="form.RequiereTarjetaCarro ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
+                                        v-html="car" />
+                                    <span :class="['text-[0.8rem] font-bold transition-colors',
+                                        form.RequiereTarjetaCarro ? 'text-[#7FD344]' : 'text-gray-500']">
+                                        Carros
+                                    </span>
+                                    <span v-if="form.RequiereTarjetaCarro"
+                                        class="ml-auto text-[#7FD344] text-[0.7rem] font-black">✓</span>
+                                </label>
+
+                                <label :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
+                                    form.RequiereTarjetaMoto
+                                        ? 'bg-[#0D291C] border-[#0D291C]'
+                                        : 'bg-white border-gray-200 hover:border-gray-300']">
+                                    <input type="checkbox" v-model="form.RequiereTarjetaMoto" class="hidden" />
+                                    <span class="svg-icon flex-shrink-0"
+                                        :class="form.RequiereTarjetaMoto ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
+                                        v-html="motorbike" />
+                                    <span :class="['text-[0.8rem] font-bold transition-colors',
+                                        form.RequiereTarjetaMoto ? 'text-[#7FD344]' : 'text-gray-500']">
+                                        Motos
+                                    </span>
+                                    <span v-if="form.RequiereTarjetaMoto"
+                                        class="ml-auto text-[#7FD344] text-[0.7rem] font-black">✓</span>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <!-- Opcionales -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex flex-col gap-1.5">
+                                <label
+                                    class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Teléfono</label>
+                                <input v-model="form.Telefono" type="text" placeholder="6042345678"
+                                    class="field-input field-input-mini" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label
+                                    class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Email</label>
+                                <input v-model="form.Email" type="email" placeholder="sede@parking.com"
+                                    class="field-input field-input-mini" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label
+                                    class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Persona
+                                    contacto</label>
+                                <input v-model="form.PersonaContacto" type="text" placeholder="Carlos Gómez"
+                                    class="field-input field-input-mini" />
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">App
+                                    Liquidador</label>
+                                <input v-model="form.AppLiquidador" type="text" placeholder="http://..."
+                                    class="field-input field-input-mini" />
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100" />
+
+                    </template>
+
+                    <!-- ── Solo edición: tarjeta solo lectura ───────── -->
+                    <div v-else class="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                         <svg class="flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                             viewBox="0 0 24 24" fill="#d97706">
                             <path
@@ -201,9 +334,16 @@
                         </svg>
                         <div>
                             <p class="text-[0.72rem] font-bold text-amber-700">Requiere tarjeta (solo lectura)</p>
-                            <p class="text-[0.68rem] text-amber-600 mt-0.5">
-                                🚗 Carros: {{ sedeEditando?.RequiereTarjetaCarro ? 'Sí' : 'No' }} &nbsp;·&nbsp;
-                                🏍️ Motos: {{ sedeEditando?.RequiereTarjetaMoto ? 'Sí' : 'No' }}
+                            <p class="text-[0.68rem] text-amber-600 mt-0.5 flex items-center gap-2 flex-wrap">
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="svg-icon" v-html="car" />
+                                    Carros: {{ sedeEditando?.RequiereTarjetaCarro ? 'Sí' : 'No' }}
+                                </span>
+                                <span class="opacity-40">·</span>
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="svg-icon" v-html="motorbike" />
+                                    Motos: {{ sedeEditando?.RequiereTarjetaMoto ? 'Sí' : 'No' }}
+                                </span>
                             </p>
                             <p class="text-[0.65rem] text-amber-500 mt-1">Configurable solo desde el backend.</p>
                         </div>
@@ -216,9 +356,8 @@
                         <div class="flex flex-col gap-2.5">
                             <div v-for="(d, idx) in form.T_Disponibilidades" :key="d.IdTipoVehiculo"
                                 class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex flex-col gap-2.5">
-                                <span class="text-[0.82rem] font-extrabold text-[#0D291C]">
-                                    {{ d.IdTipoVehiculo === '1' ? '🚗 Carros' : '🏍️ Motos' }}
-                                </span>
+                                <span class="text-base leading-none flex-shrink-0 svg-icon-lg"
+                                    v-html="d.IdTipoVehiculo === '1' ? car : motorbike" />
                                 <div class="grid grid-cols-2 gap-2.5">
                                     <div class="flex flex-col gap-1">
                                         <label
@@ -234,15 +373,11 @@
                                             class="field-input field-input-mini" />
                                     </div>
                                 </div>
-                                <!-- Barra preview en tiempo real -->
                                 <div class="flex items-center gap-2">
                                     <div class="flex-1 h-[5px] bg-gray-200 rounded-full overflow-hidden">
                                         <div class="h-full rounded-full transition-all duration-300"
-                                            :class="pctClass(d)" :style="{
-                                                width: d.Total > 0
-                                                    ? `${Math.min(Math.round((d.Mensualidades / d.Total) * 100), 100)}%`
-                                                    : '0%'
-                                            }" />
+                                            :class="pctClass(d)"
+                                            :style="{ width: d.Total > 0 ? `${Math.min(Math.round((d.Mensualidades / d.Total) * 100), 100)}%` : '0%' }" />
                                     </div>
                                     <span
                                         class="text-[0.62rem] font-bold text-gray-400 whitespace-nowrap min-w-[60px] text-right">
@@ -252,6 +387,17 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Error -->
+                    <div v-if="errGuardar"
+                        class="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                            fill="#dc2626" class="flex-shrink-0 mt-0.5">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                        </svg>
+                        <p class="text-[0.75rem] font-semibold text-red-700">{{ errGuardar }}</p>
                     </div>
 
                 </div>
@@ -265,7 +411,7 @@
                     <button @click="guardar" :disabled="guardando"
                         class="flex-[2] bg-[#0D291C] text-white border-none rounded-xl py-3 text-[0.85rem] font-bold cursor-pointer transition-colors flex items-center justify-center gap-2 hover:bg-[#299261] disabled:opacity-60 disabled:cursor-not-allowed">
                         <span v-if="guardando" class="btn-spinner" />
-                        {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+                        {{ guardando ? 'Guardando...' : esNueva ? 'Crear sede' : 'Guardar cambios' }}
                     </button>
                 </div>
 
@@ -279,23 +425,34 @@
 import { ref, reactive, onMounted } from 'vue'
 import { PERMS } from '@/constants/permisions'
 import SedesService from '@/api/services/sedes.service'
-import SedesDisponibilidadService from '@/api/services/sedesdisponibilidad.service'
+import car from '@/assets/img/car-side.svg?raw'
+import motorbike from '@/assets/img/two_wheeler.svg?raw'
+import AsideEditar from '@/components/aside/AsideEditar.vue'
 
 // ── Estado ─────────────────────────────────────────────────────────
 const sedes = ref([])
 const loading = ref(true)
 const guardando = ref(false)
+const errGuardar = ref('')
 const mostrarApiKey = ref(false)
 const sedeEditando = ref(null)
 const esNueva = ref(false)
 
 const form = reactive({
+    // Compartidos editar + nueva
     Nombre: '',
     AppHost: '',
     ApiKey: '',
     T_Disponibilidades: [],
-    // RequiereTarjetaCarro y RequiereTarjetaMoto no son editables via PUT /v1/sedes/{id}
-    // El backend los rechaza (whitelist estricta). Se muestran en la card como solo lectura.
+    // Solo nueva sede (POST)
+    IdEstacionamiento: null,
+    Direccion: '',
+    Telefono: '',
+    Email: '',
+    PersonaContacto: '',
+    AppLiquidador: '',
+    RequiereTarjetaCarro: false,
+    RequiereTarjetaMoto: false,
 })
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -308,20 +465,16 @@ const pctClass = (d) => {
 }
 
 const dispDefaults = (existente = []) => {
-    // String(x) === String(y) evita mismatch entre "1" (API) y 1 (número)
     const find = (id) => existente.find(d => String(d.IdTipoVehiculo) === String(id))
     return [
-        find('1')
-            ? { IdTipoVehiculo: '1', Total: Number(find('1').Total ?? 0), Mensualidades: Number(find('1').Mensualidades ?? 0) }
-            : { IdTipoVehiculo: '1', Total: 0, Mensualidades: 0 },
-        find('2')
-            ? { IdTipoVehiculo: '2', Total: Number(find('2').Total ?? 0), Mensualidades: Number(find('2').Mensualidades ?? 0) }
-            : { IdTipoVehiculo: '2', Total: 0, Mensualidades: 0 },
+        { IdTipoVehiculo: '1', Total: Number(find('1')?.Total ?? 0), Mensualidades: Number(find('1')?.Mensualidades ?? 0) },
+        { IdTipoVehiculo: '2', Total: Number(find('2')?.Total ?? 0), Mensualidades: Number(find('2')?.Mensualidades ?? 0) },
     ]
 }
 
-// ── Carga inicial ──────────────────────────────────────────────────
-onMounted(async () => {
+// ── Carga ──────────────────────────────────────────────────────────
+const cargarSedes = async () => {
+    loading.value = true
     try {
         sedes.value = await SedesService.getAll()
     } catch (e) {
@@ -329,13 +482,16 @@ onMounted(async () => {
     } finally {
         loading.value = false
     }
-})
+}
+
+onMounted(cargarSedes)
 
 // ── Panel ──────────────────────────────────────────────────────────
 const abrirEdicion = (sede) => {
     esNueva.value = false
     sedeEditando.value = sede
     mostrarApiKey.value = false
+    errGuardar.value = ''
     form.Nombre = sede.Nombre ?? ''
     form.AppHost = sede.AppHost ?? ''
     form.ApiKey = sede.ApiKey ?? ''
@@ -346,66 +502,105 @@ const abrirNueva = () => {
     esNueva.value = true
     sedeEditando.value = { IdEstacionamiento: null }
     mostrarApiKey.value = true
-    form.Nombre = ''
-    form.AppHost = ''
-    form.ApiKey = ''
-    form.T_Disponibilidades = dispDefaults()
+    errGuardar.value = ''
+    Object.assign(form, {
+        Nombre: '', AppHost: '', ApiKey: '',
+        T_Disponibilidades: dispDefaults(),
+        IdEstacionamiento: null,
+        Direccion: '',
+        Telefono: '',
+        Email: '',
+        PersonaContacto: '',
+        AppLiquidador: '',
+        RequiereTarjetaCarro: false,
+        RequiereTarjetaMoto: false,
+    })
 }
 
 const cerrarPanel = () => {
     sedeEditando.value = null
     guardando.value = false
+    errGuardar.value = ''
 }
 
 // ── Guardar ────────────────────────────────────────────────────────
 const guardar = async () => {
+    errGuardar.value = ''
+
+    // Validación mínima
+    if (!form.Nombre || !form.AppHost) {
+        errGuardar.value = 'Nombre y App Host son obligatorios.'
+        return
+    }
+    if (esNueva.value && (!form.IdEstacionamiento || !form.Direccion)) {
+        errGuardar.value = 'ID Estacionamiento y Dirección son obligatorios.'
+        return
+    }
+
     guardando.value = true
     try {
         const id = sedeEditando.value?.IdEstacionamiento
 
-        // ⚠️ Backend whitelist estricta: RequiereTarjetaCarro/Moto NO están en el DTO del PUT /v1/sedes
-        // Enviar esos campos causa 400. Solo Nombre, AppHost y ApiKey son editables por este endpoint.
-        const dtoSede = {
+        if (esNueva.value) {
+            const dtoNueva = {
+                IdEstacionamiento: Number(form.IdEstacionamiento),
+                Nombre: form.Nombre,
+                AppHost: form.AppHost,
+                Direccion: form.Direccion,
+                RequiereTarjetaCarro: form.RequiereTarjetaCarro,
+                RequiereTarjetaMoto: form.RequiereTarjetaMoto,
+                ...(form.ApiKey && { ApiKey: form.ApiKey }),
+                ...(form.AppLiquidador && { AppLiquidador: form.AppLiquidador }),
+                ...(form.Email && { Email: form.Email }),
+                ...(form.PersonaContacto && { PersonaContacto: form.PersonaContacto }),
+                ...(form.Telefono && { Telefono: form.Telefono }),
+            }
+            await SedesService.create(dtoNueva)
+
+            const newId = Number(form.IdEstacionamiento)
+            for (const d of form.T_Disponibilidades) {
+                await SedesService.updateDisponibilidad(newId, d.IdTipoVehiculo, {
+                    Total: Number(d.Total),
+                    Mensualidades: Number(d.Mensualidades),
+                })
+            }
+
+            await cargarSedes()
+            cerrarPanel()
+            return
+        }
+
+        // ── Edición ───────────────────────────────────────────────
+        await SedesService.update(id, {
             Nombre: form.Nombre,
             AppHost: form.AppHost,
             ApiKey: form.ApiKey,
+        })
+
+        for (const d of form.T_Disponibilidades) {
+            await SedesService.updateDisponibilidad(id, d.IdTipoVehiculo, {
+                Total: Number(d.Total),
+                Mensualidades: Number(d.Mensualidades),
+            })
         }
 
-        console.log('[Sedes] PUT /v1/sedes dto:', JSON.stringify(dtoSede))
-
-        if (esNueva.value) {
-            const nueva = await SedesService.create(dtoSede)
-            sedes.value.push(nueva?.data ?? nueva)
-        } else {
-            // PUT sede principal
-            await SedesService.update(id, dtoSede)
-
-            // PUT disponibilidades — separado del dto principal
-            for (const d of form.T_Disponibilidades) {
-                console.log(`[Sedes] PUT disponibilidad sede=${id} tipo=${d.IdTipoVehiculo}`, d)
-                await SedesDisponibilidadService.updateDisponibilidad(
-                    id,
-                    d.IdTipoVehiculo,
-                    { Total: Number(d.Total), Mensualidades: Number(d.Mensualidades) }
-                )
-            }
-
-            // Actualizar estado local sin recargar
-            const idx = sedes.value.findIndex(s => s.IdEstacionamiento === id)
-            if (idx !== -1) {
-                sedes.value[idx] = {
-                    ...sedes.value[idx],
-                    ...dtoSede,
-                    T_Disponibilidades: form.T_Disponibilidades.map(d => ({ ...d })),
-                }
+        // Actualización local optimista
+        const idx = sedes.value.findIndex(s => s.IdEstacionamiento === id)
+        if (idx !== -1) {
+            sedes.value[idx] = {
+                ...sedes.value[idx],
+                Nombre: form.Nombre,
+                AppHost: form.AppHost,
+                ApiKey: form.ApiKey,
+                T_Disponibilidades: form.T_Disponibilidades.map(d => ({ ...d })),
             }
         }
+
         cerrarPanel()
     } catch (e) {
-        const errData = e.response?.data
-        console.error('[Sedes] 400 message:', errData?.message)
-        console.error('[Sedes] 400 full response:', errData)
-        console.error('[Sedes] Status:', e.response?.status)
+        const msg = e.response?.data?.message
+        errGuardar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar. Revisa la consola.')
+        console.error('[Sedes] error:', e.response?.data ?? e.message)
     } finally {
         guardando.value = false
     }
@@ -423,9 +618,24 @@ const toggleEstado = async (sede) => {
 </script>
 
 <style scoped>
-/* ── Solo lo que Tailwind no puede hacer ─────────────────────────── */
+.svg-icon :deep(svg) {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    fill: currentColor;
+    flex-shrink: 0;
+}
 
-/* Input / Select base */
+.svg-icon-lg :deep(svg) {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
 .field-input {
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
@@ -450,16 +660,6 @@ const toggleEstado = async (sede) => {
     font-size: 0.82rem;
 }
 
-.field-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%239ca3af'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 32px;
-    cursor: pointer;
-}
-
-/* Skeleton shimmer */
 .skeleton-shimmer {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
@@ -476,7 +676,6 @@ const toggleEstado = async (sede) => {
     }
 }
 
-/* Card entrance */
 .card-in {
     animation: cardIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
 }
@@ -493,7 +692,6 @@ const toggleEstado = async (sede) => {
     }
 }
 
-/* Badge pulse activo */
 .badge-pulse {
     animation: pulseDot 1.5s infinite;
 }
@@ -510,7 +708,6 @@ const toggleEstado = async (sede) => {
     }
 }
 
-/* Spinner botón guardar */
 .btn-spinner {
     display: inline-block;
     width: 14px;
@@ -528,7 +725,6 @@ const toggleEstado = async (sede) => {
     }
 }
 
-/* Transiciones overlay y panel */
 .overlay-enter-from,
 .overlay-leave-to {
     opacity: 0;

@@ -194,7 +194,7 @@ if (permisoRequerido) {
 
 ## 6. Gestión via API (`RolService`)
 
-El archivo `src/api/services/rol.services.js` proporciona los métodos para administrar la matriz de permisos desde el panel de control:
+El archivo `src/api/services/rol.service.js` proporciona los métodos para administrar la matriz de permisos desde el panel de control:
 
 | Método | Descripción |
 | :--- | :--- |

@@ -4,12 +4,17 @@ import { api } from "../axios";
 class MensualidadesService {
   constructor() {
     this.nameRoute = "v1/mensualidades";
+    this.adminRoute = "v1/mensualidades/admin";
+    this.clientRoute = "v1/mensualidades/clientes/mis-mensualidades";
   }
 
-  // GET /v1/mensualidades?sede={id}  — admin, requiere sede obligatorio
-  async getAllBySede(sede) {
+  // ── ADMIN ──────────────────────────────────────────────────────────
+  // GET /v1/mensualidades/admin?sede={id}&page&limit&search
+  async getAllBySede({ sede, page = 1, limit = 10, search = "" } = {}) {
     try {
-      const response = await api.get(this.nameRoute, { params: { sede } });
+      const params = { sede, page, limit };
+      if (search) params.search = search;
+      const response = await api.get(this.adminRoute, { params });
       return response.data;
     } catch (error) {
       console.error(
@@ -20,10 +25,10 @@ class MensualidadesService {
     }
   }
 
-  // GET /v1/mensualidades/detalle/{id}  — admin, detalle completo por ID
+  // GET /v1/mensualidades/admin/detalle/{id}
   async getDetalleById(id) {
     try {
-      const response = await api.get(`${this.nameRoute}/detalle/${id}`);
+      const response = await api.get(`${this.adminRoute}/detalle/${id}`);
       return response.data;
     } catch (error) {
       console.error(
@@ -34,10 +39,42 @@ class MensualidadesService {
     }
   }
 
-  // GET /v1/mensualidades/mis-mensualidades  — usuario autenticado
+  // GET /v1/mensualidades/admin/api-sede/{idsede}/{documento}
+  async getDesdeApiSede(idsede, documento) {
+    try {
+      const response = await api.get(
+        `${this.adminRoute}/api-sede/${idsede}/${documento}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "MensualidadesService.getDesdeApiSede:",
+        error.response?.data ?? error.message,
+      );
+      throw error;
+    }
+  }
+
+  // PUT /v1/mensualidades/admin/{id}
+  async updateById(id, dto) {
+    try {
+      const response = await api.put(`${this.adminRoute}/${id}`, dto);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "MensualidadesService.updateById:",
+        error.response?.data ?? error.message,
+      );
+      throw error;
+    }
+  }
+
+  // ── USUARIO AUTENTICADO ────────────────────────────────────────────
+
+  // GET /v1/mensualidades/mis-mensualidades
   async getMisMensualidades() {
     try {
-      const response = await api.get(`${this.nameRoute}/mis-mensualidades`);
+      const response = await api.get(`${this.clientRoute}`);
       return response.data;
     } catch (error) {
       console.error(
@@ -48,32 +85,14 @@ class MensualidadesService {
     }
   }
 
-  // GET /v1/mensualidades/mis-mensualidades/{id}  — detalle de una mensualidad propia
+  // GET /v1/mensualidades/mis-mensualidades/{id}
   async getMiMensualidadById(id) {
     try {
-      const response = await api.get(
-        `${this.nameRoute}/mis-mensualidades/${id}`,
-      );
+      const response = await api.get(`${this.clientRoute}/${id}`);
       return response.data;
     } catch (error) {
       console.error(
         "MensualidadesService.getMiMensualidadById:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
-    }
-  }
-
-  // GET /v1/mensualidades/api-sede/{idsede}/{documento}  — consulta local en sede
-  async getDesdeApiSede(idsede, documento) {
-    try {
-      const response = await api.get(
-        `${this.nameRoute}/api-sede/${idsede}/${documento}`,
-      );
-      return response.data;
-    } catch (error) {
-      console.error(
-        "MensualidadesService.getDesdeApiSede:",
         error.response?.data ?? error.message,
       );
       throw error;

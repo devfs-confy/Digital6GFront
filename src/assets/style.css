@@ -4,58 +4,95 @@
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
 
 .modern-table {
-    --easy-table-border: 1px solid #e5e7eb;
-    --easy-table-header-font-size: 1rem;
-    --easy-table-header-height: 50px;
-    --easy-table-header-font-color: #1f2937;
-    --easy-table-header-background-color: #f9fafb;
-    --easy-table-body-row-font-size: 0.95rem;
-    --easy-table-body-row-height: 45px;
-    --easy-table-body-row-font-color: #374151;
-    --easy-table-body-row-hover-font-color: #2563eb;
-    --easy-table-body-row-hover-background-color: #f0f9ff;
-    --easy-table-footer-background-color: #f9fafb;
-    --easy-table-footer-font-color: #374151;
-    --easy-table-footer-font-size: 0.9rem;
-    --easy-table-footer-height: 50px;
-  }
-  
-  .styled-scrollbar::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .styled-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-  }
-  
-  .styled-scrollbar::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-  }
-  
-  .styled-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
+  --easy-table-border: 1px solid #e5e7eb;
+  --easy-table-header-font-size: 1rem;
+  --easy-table-header-height: 50px;
+  --easy-table-header-font-color: #1f2937;
+  --easy-table-header-background-color: #f9fafb;
+  --easy-table-body-row-font-size: 0.95rem;
+  --easy-table-body-row-height: 45px;
+  --easy-table-body-row-font-color: #374151;
+  --easy-table-body-row-hover-font-color: #2563eb;
+  --easy-table-body-row-hover-background-color: #f0f9ff;
+  --easy-table-footer-background-color: #f9fafb;
+  --easy-table-footer-font-color: #374151;
+  --easy-table-footer-font-size: 0.9rem;
+  --easy-table-footer-height: 50px;
+}
+
+.styled-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.table-scroll-wrapper {
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #0d291c33 #f0f9f4;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 5px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background: #f0f9f4;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #0d291c44;
+  border-radius: 99px;
+}
 
 /* ── D6G Shared Animations ────────────────────────────────────────── */
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(16px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 @keyframes pulseDot {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* ── D6G Utility Classes ──────────────────────────────────────────── */
@@ -85,19 +122,19 @@
   height: 32px;
   border-radius: 50%;
   border: 3px solid #e8f5e9;
-  border-top-color: #0D291C;
+  border-top-color: #0d291c;
   animation: spin 0.7s linear infinite;
 }
 .d6g-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #0D291C33 transparent;
+  scrollbar-color: #0d291c33 transparent;
 }
 .d6g-scrollbar::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 .d6g-scrollbar::-webkit-scrollbar-thumb {
-  background: #0D291C44;
+  background: #0d291c44;
   border-radius: 99px;
 }
 .d6g-scrollbar::-webkit-scrollbar-track {

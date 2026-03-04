@@ -551,12 +551,9 @@ const editarCliente = async () => {
             Estado: fE.Estado,
         })
 
-        console.log({ response })
-        //console.log('[editarCliente] Cliente editado:', { Documento: doc, ...fE })
-        await cargarClientes()
         // Actualizar lista local sin recargar
-        // const idx = listaClientes.value.findIndex(c => c.Documento === doc)
-        // if (idx !== -1) listaClientes.value[idx] = { ...listaClientes.value[idx], ...fE }
+        const idx = listaClientes.value.findIndex(c => c.Documento === doc)
+        if (idx !== -1) listaClientes.value[idx] = { ...listaClientes.value[idx], ...fE }
         modalEditar.value = false
     } catch (e) {
         const msg = e.response?.data?.message
@@ -663,25 +660,7 @@ const cambiarEstado = async ({ nuevoEstado }) => {
 }
 
 /* ══ Tabla ════════════════════════════════════════════════════════ */
-.table-scroll-wrapper {
-    overflow-x: auto;
-    flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: #0D291C33 #f0f9f4;
-}
 
-.table-scroll-wrapper::-webkit-scrollbar {
-    height: 5px;
-}
-
-.table-scroll-wrapper::-webkit-scrollbar-track {
-    background: #f0f9f4;
-}
-
-.table-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: #0D291C44;
-    border-radius: 99px;
-}
 
 .data-table {
     border-collapse: collapse;

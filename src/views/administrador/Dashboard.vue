@@ -59,8 +59,10 @@
                 <div v-for="v in sedeActual.vehiculos" :key="v.IdTipoVehiculo" class="disp-vehiculo">
                     <div class="disp-vehiculo__head">
                         <div class="disp-vehiculo__tipo">
-                            <span class="disp-vehiculo__icon">{{ v.TipoVehiculo === 'Moto' ? '🏍️' : '🚗' }}</span>
-                            <span class="disp-vehiculo__label">{{ v.TipoVehiculo }}s</span>
+                            <span class="disp-vehiculo__icon">
+                                <span v-if="v.TipoVehiculo === 'Moto'" v-html="motorbike" />
+                                <span v-else v-html="car" />
+                            </span>
                         </div>
                         <div class="disp-vehiculo__nums">
                             <span class="disp-num disp-num--activas">{{ v.MensualidadesOcupadas }} ocupadas</span>
@@ -130,6 +132,8 @@ import disponibilidad from '@/assets/img/event_available_green.svg?raw'
 import verificacion from '@/assets/img/verified_green.svg?raw'
 import tarifas from '@/assets/img/car_tag_green.svg?raw'
 import tarjetas from '@/assets/img/payment_card_green.svg?raw'
+import car from '@/assets/img/car-side.svg?raw'
+import motorbike from '@/assets/img/two_wheeler.svg?raw'
 
 
 
