@@ -11,8 +11,12 @@ Rutas públicas, accesibles sin autenticación.
 | Ruta | Componente | Descripción |
 | :--- | :--- | :--- |
 | `/login` | `LoginVista.vue` | Formulario de inicio de sesión. |
-| `/registro` | `RegistroVista.vue` | Registro de nuevos clientes. |
+| `/seleccionsede` | `SeleccionSede.vue` | Paso previo al registro: el usuario elige la sede donde tiene su mensualidad. |
+| `/registro` | `RegistroVista.vue` | Formulario de registro. Requiere query params `?sede` (ID) y `?sedeNombre` (nombre), inyectados por `SeleccionSede.vue`. |
 | `/unauthorized` | `Unauthorizedvista.vue` | Página de acceso denegado. |
+
+> **Flujo de registro:** `/seleccionsede` → seleccionar sede → navega a `/registro?sede=<id>&sedeNombre=<nombre>`.
+> El link "Regístrate" del `LoginVista.vue` apunta a `/seleccionsede`.
 
 ---
 

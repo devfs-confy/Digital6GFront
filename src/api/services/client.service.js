@@ -13,11 +13,7 @@ class ClientService {
       const response = await api.get(this.nameRoute, { params });
       return response.data;
     } catch (error) {
-      console.error(
-        "ClientService.getAllClients:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -27,11 +23,7 @@ class ClientService {
       const response = await api.post(this.nameRoute, dto);
       return response.data;
     } catch (error) {
-      console.error(
-        "ClientService.createClient:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -41,11 +33,7 @@ class ClientService {
       const response = await api.post(`${this.nameRoute}/with-codigo`, dto);
       return response.data;
     } catch (error) {
-      console.error(
-        "ClientService.createClientWithCodigo:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -55,21 +43,13 @@ class ClientService {
       const response = await api.put(this.nameRoute, dto);
       return response.data;
     } catch (error) {
-      console.error(
-        "ClientService.updateOwnProfile:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
   // PUT /v1/usuarios/clientes/{doc} — admin, actualiza Nombres/Apellidos/Email/Telefono/Estado
   async updateClientByDoc(doc, dto) {
     try {
-      console.log("ClientService.updateClientByDoc: Enviando DTO:", {
-        doc,
-        ...dto,
-      });
       const response = await api.put(`${this.nameRoute}/${doc}`, dto);
       return response.data;
     } catch (error) {
@@ -85,11 +65,7 @@ class ClientService {
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "ClientService.updateClientEstado:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 }

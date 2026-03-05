@@ -1,5 +1,5 @@
 <template>
-    <div class="p-7 w-full box-border relative">
+    <div class="w-full box-border relative">
 
         <!-- ── Header ───────────────────────────────────────────── -->
         <div class="flex items-end justify-between mb-7 gap-4 flex-wrap">
@@ -154,269 +154,193 @@
             </div>
         </div>
 
-        <!-- ── Overlay ───────────────────────────────────────────── -->
-        <Transition name="overlay">
-            <div v-if="sedeEditando" class="fixed inset-0 bg-[rgba(13,41,28,0.4)] backdrop-blur-[2px] z-40"
-                @click.self="cerrarPanel" />
-        </Transition>
+        <!-- ── Panel sede ───────────────────────────────────────── -->
+        <AsideEditar v-model="sedeEditando" :titulo="esNueva ? 'Nueva sede' : (sedeEditando?.Nombre ?? 'Sede')"
+            :subtitulo="esNueva ? 'Completa los datos requeridos' : `Editando #${sedeEditando?.IdEstacionamiento}`"
+            :label-guardar="esNueva ? 'Crear sede' : 'Guardar cambios'" :loading="guardando" :error="errGuardar"
+            @guardar="guardar" @update:modelValue="v => { if (!v) cerrarPanel() }">
 
-        <!-- ── Panel lateral ─────────────────────────────────────── -->
-        <Transition name="panel">
-            <div v-if="sedeEditando"
-                class="fixed top-0 right-0 w-[420px] h-dvh bg-white z-50 flex flex-col max-[500px]:w-full max-[500px]:top-auto max-[500px]:bottom-0 max-[500px]:h-[90dvh] max-[500px]:rounded-t-[24px]"
-                style="box-shadow: -8px 0 40px rgba(13,41,28,0.15);">
+            <!-- Nombre -->
+            <div class="flex flex-col gap-1.5">
+                <label class="aside-field-label">Nombre de la sede <span class="text-red-400">*</span></label>
+                <input v-model="form.Nombre" type="text" placeholder="Ej: Sede Norte" class="aside-field-input" />
+            </div>
 
-                <!-- Panel header -->
-                <div class="flex items-start justify-between px-6 pt-6 pb-5 border-b border-gray-100 flex-shrink-0">
-                    <div>
-                        <h2 class="text-[1.1rem] font-black text-[#0D291C]">{{ esNueva ? 'Nueva sede' : 'Editar sede' }}
-                        </h2>
-                        <p class="text-[0.75rem] text-gray-400 font-medium mt-0.5">
-                            {{ esNueva ? 'Completa los datos de la nueva sede' : `Editando: ${sedeEditando.Nombre}` }}
-                        </p>
-                    </div>
-                    <button @click="cerrarPanel"
-                        class="bg-gray-100 border-none rounded-xl w-9 h-9 flex items-center justify-center cursor-pointer flex-shrink-0 transition-colors hover:bg-[#fee2e2] [&>svg]:fill-gray-500 hover:[&>svg]:fill-[#dc2626]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            <!-- AppHost -->
+            <div class="flex flex-col gap-1.5">
+                <label class="aside-field-label">App Host <span class="text-red-400">*</span></label>
+                <input v-model="form.AppHost" type="text" placeholder="" class="aside-field-input" />
+            </div>
+
+            <!-- ApiKey -->
+            <div class="flex flex-col gap-1.5">
+                <label class="aside-field-label">API Key</label>
+                <div class="relative flex items-center">
+                    <input v-model="form.ApiKey" :type="mostrarApiKey ? 'text' : 'password'" placeholder=""
+                        class="aside-field-input pr-10" />
+                    <button type="button" @click="mostrarApiKey = !mostrarApiKey"
+                        class="absolute right-2.5 bg-transparent border-none cursor-pointer p-1 flex items-center [&>svg]:fill-gray-400 hover:[&>svg]:fill-[#299261]">
+                        <svg v-if="!mostrarApiKey" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                             fill="currentColor">
                             <path
-                                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78 3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" />
                         </svg>
                     </button>
                 </div>
-
-                <!-- Panel body -->
-                <div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-[18px]">
-
-                    <!-- Nombre -->
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
-                            Nombre de la sede <span class="text-red-400">*</span>
-                        </label>
-                        <input v-model="form.Nombre" type="text" placeholder="Ej: Sede Norte" class="field-input" />
-                    </div>
-
-                    <!-- AppHost -->
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
-                            App Host <span class="text-red-400">*</span>
-                        </label>
-                        <input v-model="form.AppHost" type="text" placeholder="http://192.168.1.10:3000"
-                            class="field-input" />
-                    </div>
-
-                    <!-- ApiKey -->
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">API
-                            Key</label>
-                        <div class="relative flex items-center">
-                            <input v-model="form.ApiKey" :type="mostrarApiKey ? 'text' : 'password'"
-                                placeholder="sk-sede-..." class="field-input pr-10" />
-                            <button type="button" @click="mostrarApiKey = !mostrarApiKey"
-                                class="absolute right-2.5 bg-transparent border-none cursor-pointer p-1 flex items-center [&>svg]:fill-gray-400 hover:[&>svg]:fill-[#299261]">
-                                <svg v-if="!mostrarApiKey" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                    viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                                </svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                    viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78 3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- ── Solo nueva sede ──────────────────────────── -->
-                    <template v-if="esNueva">
-
-                        <!-- IdEstacionamiento + Dirección -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
-                                    ID Estacionamiento <span class="text-red-400">*</span>
-                                </label>
-                                <input v-model.number="form.IdEstacionamiento" type="number" min="1" placeholder="Ej: 5"
-                                    class="field-input field-input-mini" />
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
-                                    Dirección <span class="text-red-400">*</span>
-                                </label>
-                                <input v-model="form.Direccion" type="text" placeholder="Cra 45 # 12-34"
-                                    class="field-input field-input-mini" />
-                            </div>
-                        </div>
-
-                        <!-- Requiere tarjeta -->
-                        <!-- Requiere tarjeta -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">
-                                Requiere tarjeta <span class="text-red-400">*</span>
-                            </label>
-                            <div class="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
-
-                                <label :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
-                                    form.RequiereTarjetaCarro
-                                        ? 'bg-[#0D291C] border-[#0D291C]'
-                                        : 'bg-white border-gray-200 hover:border-gray-300']">
-                                    <input type="checkbox" v-model="form.RequiereTarjetaCarro" class="hidden" />
-                                    <span class="svg-icon flex-shrink-0"
-                                        :class="form.RequiereTarjetaCarro ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
-                                        v-html="car" />
-                                    <span :class="['text-[0.8rem] font-bold transition-colors',
-                                        form.RequiereTarjetaCarro ? 'text-[#7FD344]' : 'text-gray-500']">
-                                        Carros
-                                    </span>
-                                    <span v-if="form.RequiereTarjetaCarro"
-                                        class="ml-auto text-[#7FD344] text-[0.7rem] font-black">✓</span>
-                                </label>
-
-                                <label :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
-                                    form.RequiereTarjetaMoto
-                                        ? 'bg-[#0D291C] border-[#0D291C]'
-                                        : 'bg-white border-gray-200 hover:border-gray-300']">
-                                    <input type="checkbox" v-model="form.RequiereTarjetaMoto" class="hidden" />
-                                    <span class="svg-icon flex-shrink-0"
-                                        :class="form.RequiereTarjetaMoto ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
-                                        v-html="motorbike" />
-                                    <span :class="['text-[0.8rem] font-bold transition-colors',
-                                        form.RequiereTarjetaMoto ? 'text-[#7FD344]' : 'text-gray-500']">
-                                        Motos
-                                    </span>
-                                    <span v-if="form.RequiereTarjetaMoto"
-                                        class="ml-auto text-[#7FD344] text-[0.7rem] font-black">✓</span>
-                                </label>
-
-                            </div>
-                        </div>
-
-                        <!-- Opcionales -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="flex flex-col gap-1.5">
-                                <label
-                                    class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Teléfono</label>
-                                <input v-model="form.Telefono" type="text" placeholder="6042345678"
-                                    class="field-input field-input-mini" />
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <label
-                                    class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Email</label>
-                                <input v-model="form.Email" type="email" placeholder="sede@parking.com"
-                                    class="field-input field-input-mini" />
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <label
-                                    class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Persona
-                                    contacto</label>
-                                <input v-model="form.PersonaContacto" type="text" placeholder="Carlos Gómez"
-                                    class="field-input field-input-mini" />
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">App
-                                    Liquidador</label>
-                                <input v-model="form.AppLiquidador" type="text" placeholder="http://..."
-                                    class="field-input field-input-mini" />
-                            </div>
-                        </div>
-
-                        <div class="border-t border-gray-100" />
-
-                    </template>
-
-                    <!-- ── Solo edición: tarjeta solo lectura ───────── -->
-                    <div v-else class="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                        <svg class="flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                            viewBox="0 0 24 24" fill="#d97706">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                        </svg>
-                        <div>
-                            <p class="text-[0.72rem] font-bold text-amber-700">Requiere tarjeta (solo lectura)</p>
-                            <p class="text-[0.68rem] text-amber-600 mt-0.5 flex items-center gap-2 flex-wrap">
-                                <span class="inline-flex items-center gap-1">
-                                    <span class="svg-icon" v-html="car" />
-                                    Carros: {{ sedeEditando?.RequiereTarjetaCarro ? 'Sí' : 'No' }}
-                                </span>
-                                <span class="opacity-40">·</span>
-                                <span class="inline-flex items-center gap-1">
-                                    <span class="svg-icon" v-html="motorbike" />
-                                    Motos: {{ sedeEditando?.RequiereTarjetaMoto ? 'Sí' : 'No' }}
-                                </span>
-                            </p>
-                            <p class="text-[0.65rem] text-amber-500 mt-1">Configurable solo desde el backend.</p>
-                        </div>
-                    </div>
-
-                    <!-- Disponibilidades -->
-                    <div class="flex flex-col gap-1.5">
-                        <label
-                            class="text-[0.75rem] font-extrabold text-gray-700 uppercase tracking-wider">Disponibilidades</label>
-                        <div class="flex flex-col gap-2.5">
-                            <div v-for="(d, idx) in form.T_Disponibilidades" :key="d.IdTipoVehiculo"
-                                class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex flex-col gap-2.5">
-                                <span class="text-base leading-none flex-shrink-0 svg-icon-lg"
-                                    v-html="d.IdTipoVehiculo === '1' ? car : motorbike" />
-                                <div class="grid grid-cols-2 gap-2.5">
-                                    <div class="flex flex-col gap-1">
-                                        <label
-                                            class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider">Total</label>
-                                        <input v-model.number="form.T_Disponibilidades[idx].Total" type="number" min="0"
-                                            class="field-input field-input-mini" />
-                                    </div>
-                                    <div class="flex flex-col gap-1">
-                                        <label
-                                            class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider">Mensualidades</label>
-                                        <input v-model.number="form.T_Disponibilidades[idx].Mensualidades" type="number"
-                                            min="0" :max="form.T_Disponibilidades[idx].Total"
-                                            class="field-input field-input-mini" />
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="flex-1 h-[5px] bg-gray-200 rounded-full overflow-hidden">
-                                        <div class="h-full rounded-full transition-all duration-300"
-                                            :class="pctClass(d)"
-                                            :style="{ width: d.Total > 0 ? `${Math.min(Math.round((d.Mensualidades / d.Total) * 100), 100)}%` : '0%' }" />
-                                    </div>
-                                    <span
-                                        class="text-[0.62rem] font-bold text-gray-400 whitespace-nowrap min-w-[60px] text-right">
-                                        {{ d.Total > 0 ? Math.min(Math.round((d.Mensualidades / d.Total) * 100), 100) :
-                                            0 }}% ocupado
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Error -->
-                    <div v-if="errGuardar"
-                        class="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                            fill="#dc2626" class="flex-shrink-0 mt-0.5">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                        </svg>
-                        <p class="text-[0.75rem] font-semibold text-red-700">{{ errGuardar }}</p>
-                    </div>
-
-                </div>
-
-                <!-- Panel footer -->
-                <div class="px-6 py-4 border-t border-gray-100 flex gap-2.5 flex-shrink-0">
-                    <button @click="cerrarPanel"
-                        class="flex-1 bg-gray-100 text-gray-500 border-none rounded-xl py-3 text-[0.85rem] font-bold cursor-pointer transition-colors hover:bg-gray-200">
-                        Cancelar
-                    </button>
-                    <button @click="guardar" :disabled="guardando"
-                        class="flex-[2] bg-[#0D291C] text-white border-none rounded-xl py-3 text-[0.85rem] font-bold cursor-pointer transition-colors flex items-center justify-center gap-2 hover:bg-[#299261] disabled:opacity-60 disabled:cursor-not-allowed">
-                        <span v-if="guardando" class="btn-spinner" />
-                        {{ guardando ? 'Guardando...' : esNueva ? 'Crear sede' : 'Guardar cambios' }}
-                    </button>
-                </div>
-
             </div>
-        </Transition>
+
+            <!-- ── Solo nueva sede ──────────────────────────────── -->
+            <template v-if="esNueva">
+
+                <!-- ID + Dirección -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">ID Estacionamiento <span class="text-red-400">*</span></label>
+                        <input v-model.number="form.IdEstacionamiento" type="number" min="1" placeholder=""
+                            class="aside-field-input" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Dirección <span class="text-red-400">*</span></label>
+                        <input v-model="form.Direccion" type="text" placeholder="" class="aside-field-input" />
+                    </div>
+                </div>
+
+                <!-- Requiere tarjeta -->
+                <div class="flex flex-col gap-2">
+                    <label class="aside-field-label">Requiere tarjeta <span class="text-red-400">*</span></label>
+                    <div class="flex gap-3 p-3 bg-white rounded-xl border-2 border-gray-200">
+                        <label
+                            :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
+                                form.RequiereTarjetaCarro ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-gray-50 border-gray-200 hover:border-gray-300']">
+                            <input type="checkbox" v-model="form.RequiereTarjetaCarro" class="hidden" />
+                            <span class="svg-icon flex-shrink-0"
+                                :class="form.RequiereTarjetaCarro ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
+                                v-html="car" />
+                            <span
+                                :class="['text-[0.8rem] font-bold', form.RequiereTarjetaCarro ? 'text-[#7FD344]' : 'text-gray-500']">
+                                Carros
+                            </span>
+                            <span v-if="form.RequiereTarjetaCarro"
+                                class="ml-auto text-[#7FD344] text-[0.7rem] font-black">✓</span>
+                        </label>
+                        <label
+                            :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
+                                form.RequiereTarjetaMoto ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-gray-50 border-gray-200 hover:border-gray-300']">
+                            <input type="checkbox" v-model="form.RequiereTarjetaMoto" class="hidden" />
+                            <span class="svg-icon flex-shrink-0"
+                                :class="form.RequiereTarjetaMoto ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
+                                v-html="motorbike" />
+                            <span
+                                :class="['text-[0.8rem] font-bold', form.RequiereTarjetaMoto ? 'text-[#7FD344]' : 'text-gray-500']">
+                                Motos
+                            </span>
+                            <span v-if="form.RequiereTarjetaMoto"
+                                class="ml-auto text-[#7FD344] text-[0.7rem] font-black">✓</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Opcionales -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Teléfono</label>
+                        <input v-model="form.Telefono" type="text" placeholder="" class="aside-field-input" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Email</label>
+                        <input v-model="form.Email" type="email" placeholder="" class="aside-field-input" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">Persona contacto</label>
+                        <input v-model="form.PersonaContacto" type="text" placeholder="" class="aside-field-input" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="aside-field-label">App Liquidador</label>
+                        <input v-model="form.AppLiquidador" type="text" placeholder="http://..."
+                            class="aside-field-input" />
+                    </div>
+                </div>
+
+                <div class="border-t-2 border-dashed border-gray-200" />
+
+            </template>
+
+            <!-- ── Solo edición: tarjeta solo lectura ──────────── -->
+            <div v-else class="flex gap-2.5 p-3.5 bg-amber-50 border-2 border-amber-200 rounded-xl">
+                <svg class="flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 24 24" fill="#d97706">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+                <div>
+                    <p class="text-[0.72rem] font-bold text-amber-700">Requiere tarjeta (solo lectura)</p>
+                    <p class="text-[0.68rem] text-amber-600 mt-1 flex items-center gap-2 flex-wrap">
+                        <span class="inline-flex items-center gap-1">
+                            <span class="svg-icon" v-html="car" />
+                            Carros: {{ sedeEditando?.RequiereTarjetaCarro ? 'Sí' : 'No' }}
+                        </span>
+                        <span class="opacity-40">·</span>
+                        <span class="inline-flex items-center gap-1">
+                            <span class="svg-icon" v-html="motorbike" />
+                            Motos: {{ sedeEditando?.RequiereTarjetaMoto ? 'Sí' : 'No' }}
+                        </span>
+                    </p>
+                    <p class="text-[0.65rem] text-amber-500 mt-1">Configurable solo desde el backend.</p>
+                </div>
+            </div>
+
+            <!-- Disponibilidades -->
+            <div class="flex flex-col gap-2">
+                <label class="aside-field-label">Disponibilidades</label>
+                <div class="flex flex-col gap-2.5">
+                    <div v-for="(d, idx) in form.T_Disponibilidades" :key="d.IdTipoVehiculo"
+                        class="bg-white border-2 border-gray-200 rounded-xl p-3.5 flex flex-col gap-2.5">
+
+                        <!-- Tipo vehículo -->
+                        <div class="flex items-center gap-2 pb-1 border-b border-gray-100">
+                            <span class="svg-icon-lg [&>svg]:fill-[#0D291C]"
+                                v-html="d.IdTipoVehiculo === '1' ? car : motorbike" />
+                            <span class="text-[0.78rem] font-black text-[#0D291C]">
+                                {{ d.IdTipoVehiculo === '1' ? 'Carros' : 'Motos' }}
+                            </span>
+                        </div>
+
+                        <!-- Inputs -->
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="flex flex-col gap-1">
+                                <label class="aside-field-label">Total</label>
+                                <input v-model.number="form.T_Disponibilidades[idx].Total" type="number" min="0"
+                                    class="aside-field-input" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="aside-field-label">Mensualidades</label>
+                                <input v-model.number="form.T_Disponibilidades[idx].Mensualidades" type="number" min="0"
+                                    :max="form.T_Disponibilidades[idx].Total" class="aside-field-input" />
+                            </div>
+                        </div>
+
+                        <!-- Barra progreso -->
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 h-[5px] bg-[#d1fae5] rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-300" :class="pctClass(d)"
+                                    :style="{ width: d.Total > 0 ? `${Math.min(Math.round((d.Mensualidades / d.Total) * 100), 100)}%` : '0%' }" />
+                            </div>
+                            <span
+                                class="text-[0.62rem] font-bold text-gray-400 whitespace-nowrap min-w-[60px] text-right">
+                                {{ d.Total > 0 ? Math.min(Math.round((d.Mensualidades / d.Total) * 100), 100) : 0 }}%
+                                ocupado
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </AsideEditar>
 
     </div>
 </template>
@@ -618,6 +542,33 @@ const toggleEstado = async (sede) => {
 </script>
 
 <style scoped>
+.aside-field-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-left: 2px;
+}
+
+.aside-field-input {
+    border: 2px solid #d1d5db;
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.88rem;
+    color: #0D291C;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.aside-field-input:focus {
+    border-color: #299261;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.15);
+}
+
 .svg-icon :deep(svg) {
     width: 14px;
     height: 14px;

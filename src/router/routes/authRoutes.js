@@ -9,4 +9,9 @@ export const authRoutes = [
     name: "registro",
     component: () => import("@/views/auth/RegistroVista.vue"),
   },
+  {
+    path: "/seleccionsede",
+    name: "seleccionsede",
+    component: () => import("@/views/auth/SeleccionSede.vue"),
+  },
 ];

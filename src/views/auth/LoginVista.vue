@@ -51,7 +51,7 @@
 
                     <p class="text-sm">
                         ¿No tienes cuenta?
-                        <router-link to="/registro" class="text-[#299261] hover:underline">Regístrate</router-link>
+                        <router-link to="/seleccionsede" class="text-[#299261] hover:underline">Regístrate</router-link>
                     </p>
 
                     <button @click="handleLogin" :disabled="auth.loading || !documento || !password"

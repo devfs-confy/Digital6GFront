@@ -8,7 +8,7 @@ El guardia es **asíncrono** y sigue un flujo de decisión estructurado de 5 pas
 
 ### Paso 1 — Rutas Públicas
 
-Si la ruta está en `rutasPublicas` (`/login`, `/registro`, `/unauthorized`) o tiene `meta.public: true`:
+Si la ruta está en `rutasPublicas` (`/login`, `/registro`, `/seleccionsede`, `/unauthorized`) o tiene `meta.public: true`:
 - Si el usuario ya está autenticado → Redirige automáticamente a su panel principal (`auth.redirectTo`).
 - Si no está autenticado → Permite el acceso normalmente.
 

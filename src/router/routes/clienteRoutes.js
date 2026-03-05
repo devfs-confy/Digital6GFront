@@ -5,7 +5,11 @@ import icoContrato from "@/assets/img/contract.svg?raw";
 
 export const clienteMenuItems = [
   { label: "Inicio", icon: icoInicio, route: "/cliente/inicio" },
-  { label: "Mensualidad", icon: icoMensualidad, route: "/cliente/mensualidad" },
+  {
+    label: "Mis Mensualidades",
+    icon: icoMensualidad,
+    route: "/cliente/mensualidad",
+  },
   {
     label: "Notificaciones<br>Pendientes",
     icon: icoNotificacion,

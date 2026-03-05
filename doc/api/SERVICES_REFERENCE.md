@@ -24,12 +24,37 @@ Gestión de clientes y registros.
 
 | Método | Endpoint | Parámetros | Descripción |
 | :--- | :--- | :--- | :--- |
-| `getAllClients(params)` | `GET v1/usuarios/clientes` | `params`: Filtros/Paginación | Lista todos los clientes. Requiere permiso `VER-USUARIOS`. |
-| `createClient(dto)` | `POST v1/usuarios/clientes` | `dto`: Datos básicos | Crea un nuevo cliente (público). |
+| `getAllClients(params)` | `GET v1/usuarios/clientes` | `params`: `{ sede? }` | Lista todos los clientes, filtrable por sede. Requiere permiso `VER-USUARIOS`. |
+| `createClient(dto)` | `POST v1/usuarios/clientes` | Ver payload completo abajo | Crea un nuevo cliente (público). Usado desde `RegistroVista.vue`. |
 | `createClientWithCodigo(dto)` | `POST v1/usuarios/clientes/with-codigo` | `dto`: Datos + Código | Crea un cliente validando un código previo (público). |
 | `updateOwnProfile(dto)` | `PUT v1/usuarios/clientes` | `dto`: `{ Email?, Telefono? }` | El cliente autenticado actualiza su propio Email y Teléfono. |
 | `updateClientByDoc(doc, dto)` | `PUT v1/usuarios/clientes/:doc` | `doc`: Documento, `dto`: Campos | Admin actualiza Nombres/Apellidos/Email/Teléfono/Estado de un cliente. Usa `handleError`. |
 | `updateClientEstado(doc, estado)` | `PUT v1/usuarios/clientes/:doc/estado` | `doc`: Documento, `estado`: Bool | Admin activa o inactiva un cliente. Requiere permiso `INACTIVAR-USUARIOS`. |
+
+**Payload completo de `createClient(dto)`** (construido en `RegistroVista.vue`):
+
+```js
+{
+  Documento: string,           // Número de documento del cliente
+  Nombres: string,
+  Apellidos: string,
+  Telefono: string,
+  Email: string,
+  Password: string,            // Mínimo 8 caracteres
+  IdEstacionamiento: number,   // ID de la sede seleccionada (viene de query ?sede)
+  Estado: true,
+  Sincronizacion: boolean,     // true si el cliente ya existía en la API de la sede
+  Old: boolean,                // true si se encontró mensualidad previa en la API externa
+  IdAutorizacion?: number,     // Solo si existe mensualidad previa (de la API de sede)
+  Placa1: string | null,
+  Placa2: string | null,       // Hasta 5 placas; null si no aplica
+  Placa3: string | null,
+  Placa4: string | null,
+  Placa5: string | null,
+  EstudianteUcc: boolean,      // true solo en sede ID=24 si el usuario confirmó ser estudiante
+  CodigoEstudianteUCC: string, // Código UCC; vacío si no aplica
+}
+```
 
 ---
 

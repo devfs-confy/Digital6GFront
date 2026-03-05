@@ -48,7 +48,7 @@
                             <th class="th-cell">Documento</th>
                             <th class="th-cell">Correo</th>
                             <th class="th-cell">Teléfono</th>
-                            <th class="th-cell">Placas</th>
+                            <!-- <th class="th-cell">placas</th> -->
                             <th class="th-cell">Estado</th>
                             <th class="th-cell th-cell--actions">Opciones</th>
                         </tr>
@@ -98,7 +98,7 @@
 
                             <td class="td-cell">{{ cliente.Telefono ?? '—' }}</td>
 
-                            <td class="td-cell">
+                            <!-- <td class="td-cell">
                                 <div class="flex gap-1 flex-wrap">
                                     <span v-for="p in placasCliente(cliente)" :key="p"
                                         class="inline-block text-[0.6rem] font-black tracking-widest bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-lg">
@@ -106,7 +106,7 @@
                                     </span>
                                     <span v-if="!placasCliente(cliente).length" class="text-gray-300">—</span>
                                 </div>
-                            </td>
+                            </td> -->
 
                             <td class="td-cell">
                                 <span v-if="cliente.Estado" class="estado-badge-activo">● Activo</span>
@@ -322,37 +322,58 @@
 
 
         <!-- ════════════════════════════════════════ -->
-        <!-- MODAL EDITAR                             -->
+        <!-- ASIDE EDITAR CLIENTE                     -->
         <!-- ════════════════════════════════════════ -->
-        <ModalEditar v-model="modalEditar" :cliente="clienteAccion" @guardar="editarCliente">
-            <p class="modal-section-label">Datos personales</p>
-            <div class="modal-grid">
-                <div class="field-group">
-                    <label class="field-label">Nombres *</label>
-                    <input v-model="fE.Nombres" type="text" class="field-input" placeholder="Juan Felipe" />
+        <AsideEditar v-model="modalEditar" :titulo="`${fE.Nombres} ${fE.Apellidos}`.trim() || 'Cliente'"
+            subtitulo="Editando información" label-guardar="Guardar cambios" :loading="guardandoE" :error="errEditar"
+            @guardar="editarCliente" @update:modelValue="v => { if (!v) { modalEditar = false; errEditar = '' } }">
+
+            <!-- Nombres + Apellidos -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1.5">
+                    <label class="aside-field-label">Nombres <span class="text-red-400">*</span></label>
+                    <input v-model="fE.Nombres" type="text" placeholder="Juan Felipe" class="aside-field-input" />
                 </div>
-                <div class="field-group">
-                    <label class="field-label">Apellidos *</label>
-                    <input v-model="fE.Apellidos" type="text" class="field-input" placeholder="García Ospina" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Correo electrónico *</label>
-                    <input v-model="fE.Email" type="email" class="field-input" placeholder="correo@ejemplo.com" />
-                </div>
-                <div class="field-group">
-                    <label class="field-label">Teléfono *</label>
-                    <input v-model="fE.Telefono" type="text" class="field-input" placeholder="3001234567"
-                        @input="fE.Telefono = $event.target.value.replace(/\D/g, '')" />
+                <div class="flex flex-col gap-1.5">
+                    <label class="aside-field-label">Apellidos <span class="text-red-400">*</span></label>
+                    <input v-model="fE.Apellidos" type="text" placeholder="García Ospina" class="aside-field-input" />
                 </div>
             </div>
-            <div class="flex flex-wrap gap-x-5 gap-y-2">
-                <label class="check-label">
-                    <input type="checkbox" v-model="fE.Estado" class="check" />
-                    <span>Cliente activo</span>
-                </label>
+
+            <!-- Email -->
+            <div class="flex flex-col gap-1.5">
+                <label class="aside-field-label">Correo electrónico <span class="text-red-400">*</span></label>
+                <input v-model="fE.Email" type="email" placeholder="correo@ejemplo.com" class="aside-field-input" />
             </div>
-            <div v-if="errEditar" class="err-box">⚠ {{ errEditar }}</div>
-        </ModalEditar>
+
+            <!-- Teléfono -->
+            <div class="flex flex-col gap-1.5">
+                <label class="aside-field-label">Teléfono <span class="text-red-400">*</span></label>
+                <input v-model="fE.Telefono" type="text" placeholder="3001234567" class="aside-field-input"
+                    @input="fE.Telefono = $event.target.value.replace(/\D/g, '')" />
+            </div>
+
+            <!-- Estado -->
+            <!-- <label
+                class="flex items-center gap-3 cursor-pointer select-none p-3.5 bg-white rounded-xl border-2 transition-all"
+                :class="fE.Estado ? 'border-[#299261]' : 'border-red-300'">
+                <div class="relative flex-shrink-0">
+                    <input type="checkbox" v-model="fE.Estado" class="sr-only" />
+                    <div class="w-11 h-6 rounded-full transition-colors duration-200"
+                        :class="fE.Estado ? 'bg-[#299261]' : 'bg-red-400'">
+                        <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                            :class="fE.Estado ? 'translate-x-5' : 'translate-x-0'" />
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[0.78rem] font-black" :class="fE.Estado ? 'text-[#299261]' : 'text-red-500'">
+                        {{ fE.Estado ? '● Activo' : '● Inactivo' }}
+                    </span>
+                    <span class="text-[0.65rem] text-gray-400 font-medium">Estado del cliente</span>
+                </div>
+            </label> -->
+
+        </AsideEditar>
 
         <!-- ════════════════════════════════════════ -->
         <!-- MODAL INHABILITAR / ACTIVAR             -->
@@ -369,7 +390,7 @@ import inhabilitarSvg from '@/assets/img/account_circle_off.svg?raw'
 import activarSvg from '@/assets/img/how_to_reg.svg?raw'
 import ClientService from '@/api/services/client.service'
 import SedesService from '@/api/services/sedes.service'
-import ModalEditar from '@/components/modals/ModalEditar.vue'
+import AsideEditar from '@/components/aside/AsideEditar.vue'
 import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
 
 // ── Estado ─────────────────────────────────────────────────────────
@@ -584,6 +605,42 @@ const cambiarEstado = async ({ nuevoEstado }) => {
 </script>
 
 <style scoped>
+/* ══ Aside editar cliente ═════════════════════════════════════════ */
+.aside-field-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-left: 2px;
+}
+
+.aside-field-input {
+    border: 2px solid #d1d5db !important;
+    border-radius: 0.75rem !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.88rem !important;
+    color: #0D291C !important;
+    outline: none !important;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white !important;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.aside-field-input:focus {
+    border-color: #299261 !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.15) !important;
+}
+
+input[type="checkbox"].sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
 /* ══ Filtros ══════════════════════════════════════════════════════ */
 .filters-bar {
     display: flex;

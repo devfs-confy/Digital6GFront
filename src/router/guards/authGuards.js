@@ -1,6 +1,11 @@
 import { useAuthStore } from "@/stores/auth";
 
-const rutasPublicas = ["/login", "/registro", "/unauthorized"];
+const rutasPublicas = [
+  "/login",
+  "/registro",
+  "/seleccionsede",
+  "/unauthorized",
+];
 
 export async function authGuard(to, from, next) {
   const auth = useAuthStore();

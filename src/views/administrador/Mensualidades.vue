@@ -179,14 +179,9 @@
                             <!-- Opciones -->
                             <td class="px-5 py-3 text-center">
                                 <button @click="abrirDetalle(m)"
-                                    class="inline-flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-bold px-3 py-1.5 rounded-xl border-none cursor-pointer hover:bg-[#299261] hover:text-white transition-colors"
+                                    class="inline-flex items-center gap-1.5 text-[#7FD344] text-[0.75rem] font-bold px-3 py-1.5 rounded-xl border-none cursor-pointer hover:text-white transition-colors"
                                     title="Ver / Editar">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                    </svg>
-                                    Editar
+                                    <span v-html="credit_card_gear"></span>
                                 </button>
                             </td>
                         </tr>
@@ -353,6 +348,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
+import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
 
 // ── Estado ─────────────────────────────────────────────────────────
 const mensualidades = ref([])

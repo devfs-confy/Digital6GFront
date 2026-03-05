@@ -113,7 +113,7 @@
                                     </td>
 
                                     <td class="px-3 sm:px-4 py-3 whitespace-nowrap">
-                                        <div class="flex items-center justify-center gap-1">
+                                        <div class="flex items-center justify-center gap-2">
                                             <!-- Editar info -->
                                             <button @click="abrirEditar(u)"
                                                 class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9]"
@@ -274,7 +274,7 @@
                                 <div class="flex items-center justify-between gap-1 px-2.5 py-2 rounded-t-2xl border-b"
                                     :class="countActivos(grupo) > 0 ? 'bg-[#f0faf4] border-[#d7eeda]' : 'bg-gray-50 border-gray-100'">
                                     <span class="text-[0.72rem] font-black text-[#0D291C] truncate">{{ grupo.label
-                                    }}</span>
+                                        }}</span>
                                     <div class="flex items-center gap-1.5 flex-shrink-0">
                                         <span class="text-[0.6rem] font-black rounded-full px-1.5 py-0.5"
                                             :class="countActivos(grupo) > 0 ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-200 text-gray-400'">
@@ -410,7 +410,7 @@
             </div>
 
             <!-- Estado (solo edición) -->
-            <div v-if="modoPanel === 'editar'">
+            <!-- <div v-if="modoPanel === 'editar'">
                 <label
                     class="flex items-center gap-3 cursor-pointer select-none p-3.5 bg-white rounded-xl border-2 transition-all"
                     :class="formUsuario.Estado ? 'border-[#299261]' : 'border-red-300'">
@@ -430,7 +430,7 @@
                         <span class="text-[0.65rem] text-gray-400 font-medium">Estado del usuario</span>
                     </div>
                 </label>
-            </div>
+            </div> -->
 
         </AsideEditar>
 
