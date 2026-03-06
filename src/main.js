@@ -7,6 +7,7 @@ import "./assets/main.css";
 import "./assets/base.css";
 import App from "./App.vue";
 import { vPermission } from "./directives/v-permission";
+import "@/assets/table-system.css";
 
 const app = createApp(App);
 const pinia = createPinia();

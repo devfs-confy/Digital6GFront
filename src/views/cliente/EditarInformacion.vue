@@ -237,11 +237,14 @@
                     <path
                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
-                Tienes cambios sin guardar
+                {{ errCambios || 'Tienes cambios sin guardar' }}
             </div>
             <div class="flex gap-3">
-                <button @click="descartarCambios" class="btn-cancel">Descartar</button>
-                <button @click="guardarCambios" class="btn-save">Guardar cambios</button>
+                <button @click="descartarCambios" class="btn-cancel" :disabled="guardandoCambios">Descartar</button>
+                <button @click="guardarCambios" class="btn-save" :disabled="guardandoCambios">
+                    <span v-if="guardandoCambios">Guardando...</span>
+                    <span v-else>Guardar cambios</span>
+                </button>
             </div>
         </div>
 
@@ -249,46 +252,106 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import icoeditsquare from '@/assets/img/edit_square.svg?raw'
 import visibility from '@/assets/img/visibility.svg?raw'
 import visibilityoff from '@/assets/img/visibility_off.svg?raw'
+import ClientService from '@/api/services/client.service'
+import { useAuthStore } from '@/stores/auth'
 
+const auth = useAuthStore()
 
-// ── Datos mock — reemplazar con useAuthStore() ────────────────────
+// ── Datos del usuario ──────────────────────────────────────────────
 const form = reactive({
-    nombre: 'Julio',
-    apellido: 'Ramírez',
+    nombre: '',
+    apellido: '',
     tipoDoc: 'CC',
-    documento: '1098765432',
-    correo: 'julio.ramirez@email.com',
-    telefono: '3001234567',
+    documento: '',
+    correo: '',
+    telefono: '',
 })
 
-// Snapshot original para detectar cambios y poder descartar
 const original = reactive({ ...form })
 
-// ── Edición campo a campo ─────────────────────────────────────────
+onMounted(() => {
+    const u = auth.user
+    if (!u) return
+    Object.assign(form, {
+        nombre: u.nombres ?? '',
+        apellido: u.apellidos ?? '',
+        tipoDoc: 'CC',
+        documento: u.documento ?? '',
+        correo: u.email ?? '',
+        telefono: u.telefono ?? '',
+    })
+    Object.assign(original, { ...form })
+})
+
+// ── Edición campo a campo ──────────────────────────────────────────
 const editing = reactive({
     nombre: false, apellido: false,
     tipoDoc: false, documento: false,
     correo: false, telefono: false,
 })
 
-const toggleEdit = (campo) => {
-    editing[campo] = !editing[campo]
-}
+const toggleEdit = (campo) => { editing[campo] = !editing[campo] }
 
-// ── Computed ──────────────────────────────────────────────────────
+// ── Computed ───────────────────────────────────────────────────────
 const iniciales = computed(() =>
     `${form.nombre?.[0] ?? ''}${form.apellido?.[0] ?? ''}`.toUpperCase()
 )
 
+// Solo correo y teléfono son editables vía API
 const hayCambios = computed(() =>
-    Object.keys(original).some(k => form[k] !== original[k])
+    form.correo !== original.correo || form.telefono !== original.telefono
 )
 
-// ── Contraseña ────────────────────────────────────────────────────
+// ── Guardar / descartar cambios ────────────────────────────────────
+const guardandoCambios = ref(false)
+const errCambios = ref('')
+
+const descartarCambios = () => {
+    form.correo = original.correo
+    form.telefono = original.telefono
+    editing.correo = false
+    editing.telefono = false
+    errCambios.value = ''
+}
+
+const guardarCambios = async () => {
+    errCambios.value = ''
+    guardandoCambios.value = true
+    try {
+        const dto = {
+            Email: form.correo,
+            Telefono: form.telefono,
+        }
+        const res = await ClientService.updateOwnProfile(dto)
+
+        if (res?.error === true || res?.success === false) {
+            const msg = res?.data?.message ?? res?.message ?? 'Error al guardar.'
+            errCambios.value = Array.isArray(msg) ? msg.join(', ') : msg
+            return
+        }
+
+        // Actualiza snapshot y store
+        original.correo = form.correo
+        original.telefono = form.telefono
+        if (auth.user) {
+            auth.user.Email = form.correo
+            auth.user.Telefono = form.telefono
+        }
+        editing.correo = false
+        editing.telefono = false
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errCambios.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')
+    } finally {
+        guardandoCambios.value = false
+    }
+}
+
+// ── Contraseña ─────────────────────────────────────────────────────
 const showPassForm = ref(false)
 const passForm = reactive({ actual: '', nueva: '', confirmar: '' })
 const showPass = reactive({ actual: false, nueva: false, confirmar: false })
@@ -325,24 +388,11 @@ const cancelarPass = () => {
     Object.assign(showPass, { actual: false, nueva: false, confirmar: false })
 }
 
-const guardarPass = () => {
+const guardarPass = async () => {
     if (!passValida.value) return
-    // TODO: llamar API para cambiar contraseña
+    // TODO: conectar endpoint de cambio de contraseña cuando esté disponible
     console.log('Cambiar contraseña:', passForm.actual, '→', passForm.nueva)
     cancelarPass()
-}
-
-// ── Guardar / descartar cambios ───────────────────────────────────
-const descartarCambios = () => {
-    Object.assign(form, original)
-    Object.keys(editing).forEach(k => editing[k] = false)
-}
-
-const guardarCambios = () => {
-
-    console.log('Guardar cambios:', { ...form })
-    Object.assign(original, form)
-    Object.keys(editing).forEach(k => editing[k] = false)
 }
 </script>
 

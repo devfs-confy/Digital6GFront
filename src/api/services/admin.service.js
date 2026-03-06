@@ -1,5 +1,6 @@
 // src/api/services/admin.service.js
 import { api } from "../axios";
+import { handleError } from "@/utils/error.handler";
 
 class AdminServices {
   constructor() {
@@ -15,11 +16,7 @@ class AdminServices {
       const response = await api.get(this.nameRoute, { params });
       return response.data;
     } catch (error) {
-      console.error(
-        "AdminServices.getAllAdmins:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -42,11 +39,7 @@ class AdminServices {
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "AdminServices.createAdmin:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -73,11 +66,7 @@ class AdminServices {
       );
       return response.data;
     } catch (error) {
-      console.error(
-        "AdminServices.updateAdmin:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 

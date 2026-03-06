@@ -73,25 +73,25 @@
                     <thead>
                         <tr>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
                                 #</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Sede</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Vehículo</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Tipo pago</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Autorización</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Valor</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Estado</th>
                         </tr>
                     </thead>
@@ -190,52 +190,9 @@
             </div>
 
             <!-- Paginación -->
-            <div
-                class="flex items-center justify-between gap-3 px-5 py-3 border-t-2 border-[#f0f9f4] bg-[#fafffe] flex-wrap">
-                <span class="text-xs text-gray-400">
-                    Pág. <strong class="text-[#0D291C]">{{ paginaActual }}</strong> de
-                    <strong class="text-[#0D291C]">{{ totalPaginas }}</strong>
-                    · <strong class="text-[#0D291C]">{{ totalRegistros }}</strong> registros
-                </span>
-
-                <div class="flex items-center gap-1">
-                    <button @click="irPagina(paginaActual - 1)" :disabled="paginaActual === 1"
-                        class="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                        </svg>
-                    </button>
-
-                    <span class="sm:hidden text-sm font-bold text-[#0D291C] px-2">{{ paginaActual }} / {{ totalPaginas
-                        }}</span>
-
-                    <template v-for="p in paginasVisibles" :key="p">
-                        <button @click="irPagina(p)" :class="['hidden sm:flex w-8 h-8 items-center justify-center rounded-lg text-sm font-bold border-none cursor-pointer transition-colors',
-                            paginaActual === p
-                                ? 'bg-[#0D291C] text-[#7FD344] shadow-[0_2px_0_rgba(13,41,28,0.3)]'
-                                : 'bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C]']">
-                            {{ p }}
-                        </button>
-                    </template>
-
-                    <button @click="irPagina(paginaActual + 1)" :disabled="paginaActual === totalPaginas"
-                        class="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-2 text-xs text-gray-400">
-                    <span class="hidden sm:inline">Filas:</span>
-                    <select v-model.number="limit" @change="onLimitChange"
-                        class="rounded-xl bg-gray-50 border border-gray-200 px-2 py-1 text-xs text-gray-600 outline-none focus:border-[#299261] cursor-pointer">
-                        <option :value="10">10</option>
-                        <option :value="20">20</option>
-                        <option :value="50">50</option>
-                    </select>
-                </div>
-            </div>
+            <!-- Paginación -->
+            <TablePagination :pagina-actual="paginaActual" :total-paginas="totalPaginas"
+                :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
     </div>
@@ -245,9 +202,10 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import TarifasService from '@/api/services/tarifas.service'
 import SedesService from '@/api/services/sedes.service'
+import TablePagination from '@/components/shared/Paginacion.vue'
 
-// ── Estado ─────────────────────────────────────────────────────────
 const tarifas = ref([])
+const todasLasTarifas = ref([])
 const loading = ref(true)
 const paginaActual = ref(1)
 const totalPaginas = ref(1)
@@ -255,17 +213,24 @@ const totalRegistros = ref(0)
 const limit = ref(10)
 const sedes = ref([])
 
-// ── Catálogos derivados de la data (se pueblan tras primera carga) ──
-const todasLasTarifas = ref([])
-
-// ── Catálogos derivados ────────────────────────────────────────────
 const catTiposVehiculo = ref([])
 const catTiposPago = ref([])
-const catAutorizaciones = ref([])  // todas
+const catAutorizaciones = ref([])
+
+const filtros = reactive({
+    idSede: null,
+    idTipoVehiculo: null,
+    idTipoPago: null,
+    idAutorizacion: null,
+})
+
+const hayFiltros = computed(() =>
+    filtros.idSede || filtros.idTipoVehiculo ||
+    filtros.idTipoPago || filtros.idAutorizacion
+)
+
 const catAutorizacionesFiltradas = computed(() => {
     if (!filtros.idSede) return catAutorizaciones.value
-
-    // Solo autorizaciones que aparecen en tarifas de la sede seleccionada
     const authMap = new Map()
     todasLasTarifas.value
         .filter(t => String(t.IdEstacionamiento) === String(filtros.idSede))
@@ -280,78 +245,54 @@ const catAutorizacionesFiltradas = computed(() => {
     return [...authMap.values()]
 })
 
-
-// ── Filtros ────────────────────────────────────────────────────────
-const filtros = reactive({
-    idSede: null,
-    idTipoVehiculo: null,
-    idTipoPago: null,
-    idAutorizacion: null,
-})
-
-const hayFiltros = computed(() =>
-    filtros.idSede || filtros.idTipoVehiculo ||
-    filtros.idTipoPago || filtros.idAutorizacion
-)
-
-// ── Páginas visibles (máx 5) ───────────────────────────────────────
-const paginasVisibles = computed(() => {
-    const total = totalPaginas.value
-    const actual = paginaActual.value
-    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
-    const start = Math.max(1, Math.min(actual - 2, total - 4))
-    return Array.from({ length: 5 }, (_, i) => start + i)
-})
-
 watch(() => filtros.idSede, () => {
     const sigueExistiendo = catAutorizacionesFiltradas.value
         .some(a => String(a.id) === String(filtros.idAutorizacion))
-
     if (!sigueExistiendo) filtros.idAutorizacion = null
-
     paginaActual.value = 1
     cargarTarifas()
 })
-// ── Derivar catálogos de la data recibida ──────────────────────────
-const derivarCatalogos = (data) => {
-    todasLasTarifas.value = data   // ← guarda copia completa
 
-    const vehiculosMap = new Map()
-    data.forEach(t => {
-        if (!vehiculosMap.has(t.IdTipoVehiculo)) {
-            vehiculosMap.set(t.IdTipoVehiculo, {
-                id: t.IdTipoVehiculo,
-                nombre: String(t.IdTipoVehiculo) === '1' ? 'Carro' : 'Moto',
-            })
-        }
-    })
-    catTiposVehiculo.value = [...vehiculosMap.values()]
+// Carga TODOS los registros una sola vez para poblar catálogos
+const cargarCatalogos = async () => {
+    try {
+        const res = await TarifasService.getAll({ limit: 500 })
+        const data = Array.isArray(res.data) ? res.data : (Array.isArray(res) ? res : [])
+        todasLasTarifas.value = data
 
-    const pagosMap = new Map()
-    data.forEach(t => {
-        if (!pagosMap.has(t.IdTipoPago)) {
-            pagosMap.set(t.IdTipoPago, {
-                id: t.IdTipoPago,
-                nombre: t.TipoCobro,
-            })
-        }
-    })
-    catTiposPago.value = [...pagosMap.values()]
+        const vehiculosMap = new Map()
+        const pagosMap = new Map()
+        const authMap = new Map()
 
-    const authMap = new Map()
-    data.forEach(t => {
-        if (t.IdAutorizacion && !authMap.has(t.IdAutorizacion)) {
-            authMap.set(t.IdAutorizacion, {
-                id: t.IdAutorizacion,
-                nombre: t.T_Autorizacion?.NombreAutorizacion ?? `Auth ${t.IdAutorizacion}`,
-            })
-        }
-    })
-    catAutorizaciones.value = [...authMap.values()]
+        data.forEach(t => {
+            if (!vehiculosMap.has(t.IdTipoVehiculo))
+                vehiculosMap.set(t.IdTipoVehiculo, {
+                    id: t.IdTipoVehiculo,
+                    nombre: String(t.IdTipoVehiculo) === '1' ? 'Carro' : 'Moto',
+                })
+
+            if (!pagosMap.has(t.IdTipoPago))
+                pagosMap.set(t.IdTipoPago, {
+                    id: t.IdTipoPago,
+                    nombre: t.TipoCobro,
+                })
+
+            if (t.IdAutorizacion && !authMap.has(t.IdAutorizacion))
+                authMap.set(t.IdAutorizacion, {
+                    id: t.IdAutorizacion,
+                    nombre: t.T_Autorizacion?.NombreAutorizacion ?? `Auth ${t.IdAutorizacion}`,
+                })
+        })
+
+        catTiposVehiculo.value = [...vehiculosMap.values()]
+        catTiposPago.value = [...pagosMap.values()]
+        catAutorizaciones.value = [...authMap.values()]
+    } catch (e) {
+        console.error('[cargarCatalogos]', e.response?.data ?? e.message)
+    }
 }
 
-// ── Carga ──────────────────────────────────────────────────────────
-const cargarTarifas = async (resetCatalogos = false) => {
+const cargarTarifas = async () => {
     loading.value = true
     try {
         const params = { page: paginaActual.value, limit: limit.value }
@@ -360,22 +301,13 @@ const cargarTarifas = async (resetCatalogos = false) => {
         if (filtros.idTipoPago) params.idTipoPago = filtros.idTipoPago
         if (filtros.idAutorizacion) params.idAutorizacion = filtros.idAutorizacion
 
-
-
         const res = await TarifasService.getAll(params)
-
-        const data = Array.isArray(res.data) ? res.data
-            : Array.isArray(res) ? res
-                : []
+        const data = Array.isArray(res.data) ? res.data : (Array.isArray(res) ? res : [])
 
         tarifas.value = data
         totalRegistros.value = res.total ?? res.count ?? data.length
         totalPaginas.value = res.totalPages ?? res.pages ??
             Math.max(1, Math.ceil(totalRegistros.value / limit.value))
-
-        // Solo derivar catálogos en la carga inicial (sin filtros activos)
-        if (resetCatalogos && data.length) derivarCatalogos(data)
-
     } catch (e) {
         console.error('[Tarifas]', e.response?.data ?? e.message)
         tarifas.value = []
@@ -384,7 +316,6 @@ const cargarTarifas = async (resetCatalogos = false) => {
     }
 }
 
-// ── Debounce filtros ───────────────────────────────────────────────
 let debTimer = null
 const onFiltroChange = () => {
     clearTimeout(debTimer)
@@ -394,14 +325,14 @@ const onFiltroChange = () => {
     }, 350)
 }
 
-
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
     paginaActual.value = p
     cargarTarifas()
 }
 
-const onLimitChange = () => {
+const onLimitChange = (val) => {
+    limit.value = val
     paginaActual.value = 1
     cargarTarifas()
 }
@@ -412,9 +343,10 @@ const limpiarFiltros = () => {
     cargarTarifas()
 }
 
-onMounted(async () => {
-    await Promise.all([
-        cargarTarifas(true),   // true = derivar catálogos de esta carga
+onMounted(() => {
+    Promise.all([
+        cargarCatalogos(),
+        cargarTarifas(),
         SedesService.getAll().then(r => { sedes.value = Array.isArray(r) ? r : (r?.data ?? []) }),
     ])
 })

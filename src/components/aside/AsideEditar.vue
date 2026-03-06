@@ -8,20 +8,30 @@
 
         <!-- Panel -->
         <Transition name="aside">
-            <div v-if="modelValue" class="aside-panel" @click.stop>
+            <div v-if="modelValue"
+                class="fixed top-0 right-0 w-[440px] h-dvh z-50 bg-white border-l-[2.5px] border-[#0D291C] flex flex-col overflow-hidden aside-panel"
+                @click.stop>
 
-                <!-- ── Cabecera ── -->
-                <div class="aside-head">
-                    <div class="aside-head__left">
-                        <div class="aside-avatar">
+                <!-- Cabecera -->
+                <div
+                    class="flex items-center justify-between gap-3 px-[26px] pt-[22px] pb-[18px] border-b-[2.5px] border-[#0D291C] flex-shrink-0 bg-white">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div
+                            class="w-11 h-11 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-[0.9rem] flex-shrink-0 border-2 border-[rgba(13,41,28,0.35)]">
                             {{ iniciales(titulo) }}
                         </div>
                         <div class="min-w-0">
-                            <p class="aside-head__name">{{ titulo }}</p>
-                            <p class="aside-head__sub">{{ subtitulo }}</p>
+                            <p
+                                class="text-[1rem] font-black text-[#0D291C] italic uppercase tracking-[-0.01em] truncate">
+                                {{ titulo }}</p>
+                            <p
+                                class="text-[0.65rem] font-bold uppercase tracking-[0.07em] text-[#0D291C] opacity-45 mt-0.5">
+                                {{ subtitulo }}</p>
                         </div>
                     </div>
-                    <button @click="emit('update:modelValue', false)" class="aside-close">
+                    <button @click="emit('update:modelValue', false)"
+                        class="w-[34px] h-[34px] rounded-[10px] border-2 border-[#0D291C] bg-white flex items-center justify-center cursor-pointer flex-shrink-0 text-[#0D291C] transition-all duration-150 aside-close"
+                        style="box-shadow: 0 3px 0 #0D291C;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -30,23 +40,25 @@
                     </button>
                 </div>
 
-                <!-- ── Cuerpo ── -->
-                <div class="aside-body">
+                <!-- Cuerpo -->
+                <div class="flex-1 overflow-y-auto px-[26px] py-[22px] flex flex-col gap-4 bg-[#f5f7f5] aside-body">
                     <slot />
                 </div>
 
-                <!-- ── Error slot ── -->
-                <div v-if="error" class="aside-error">
+                <!-- Error -->
+                <div v-if="error"
+                    class="flex items-start gap-2 mx-[26px] px-3.5 py-2.5 bg-red-50 border-2 border-red-200 rounded-[14px] flex-shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#dc2626"
                         class="flex-shrink-0 mt-0.5">
                         <path
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                     </svg>
-                    <p>{{ error }}</p>
+                    <p class="text-[0.75rem] font-bold text-red-600 m-0">{{ error }}</p>
                 </div>
 
-                <!-- ── Pie ── -->
-                <div class="aside-foot">
+                <!-- Pie -->
+                <div
+                    class="flex gap-3 px-[26px] pt-3.5 pb-[22px] border-t-[2.5px] border-[#0D291C] flex-shrink-0 bg-white">
                     <button @click="emit('update:modelValue', false)" class="aside-btn aside-btn--cancel">
                         Cancelar
                     </button>
@@ -80,92 +92,9 @@ const iniciales = (texto = '') => {
 </script>
 
 <style scoped>
-/* ── Panel ────────────────────────────────────────────────────────── */
+/* box-shadow con offset negativo y hover con cambio de color — no soportado en Tailwind puro */
 .aside-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 440px;
-    height: 100dvh;
-    z-index: 50;
-    background-color: white;
-    border-left: 2.5px solid #0D291C;
     box-shadow: -7px 0 0 #0D291C;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-/* ── Cabecera ─────────────────────────────────────────────────────── */
-.aside-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 22px 26px 18px;
-    border-bottom: 2.5px solid #0D291C;
-    flex-shrink: 0;
-    background-color: white;
-}
-
-.aside-head__left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.aside-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-    border: 2px solid rgba(13, 41, 28, 0.35);
-}
-
-.aside-head__name {
-    font-size: 1rem;
-    font-weight: 900;
-    color: #0D291C;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.aside-head__sub {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #0D291C;
-    opacity: 0.45;
-    margin-top: 2px;
-}
-
-.aside-close {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    border: 2px solid #0D291C;
-    box-shadow: 0 3px 0 #0D291C;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    color: #0D291C;
-    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
 }
 
 .aside-close:hover {
@@ -180,58 +109,7 @@ const iniciales = (texto = '') => {
     box-shadow: 0 1px 0 #dc2626;
 }
 
-/* ── Cuerpo ───────────────────────────────────────────────────────── */
-.aside-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 22px 26px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    background-color: #f5f7f5;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(13, 41, 28, 0.2) transparent;
-}
-
-.aside-body::-webkit-scrollbar {
-    width: 5px;
-}
-
-.aside-body::-webkit-scrollbar-thumb {
-    background: rgba(13, 41, 28, 0.25);
-    border-radius: 99px;
-}
-
-/* ── Error ────────────────────────────────────────────────────────── */
-.aside-error {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin: 0 26px;
-    padding: 10px 14px;
-    background-color: #fef2f2;
-    border: 2px solid #fecaca;
-    border-radius: 14px;
-    flex-shrink: 0;
-}
-
-.aside-error p {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #dc2626;
-    margin: 0;
-}
-
-/* ── Pie ──────────────────────────────────────────────────────────── */
-.aside-foot {
-    display: flex;
-    gap: 12px;
-    padding: 14px 26px 22px;
-    border-top: 2.5px solid #0D291C;
-    flex-shrink: 0;
-    background-color: white;
-}
-
+/* Botones del pie */
 .aside-btn {
     flex: 1;
     padding: 13px 20px;
@@ -258,7 +136,6 @@ const iniciales = (texto = '') => {
 .aside-btn--cancel {
     background-color: white;
     color: #232B3A;
-    flex: 1;
 }
 
 .aside-btn--cancel:hover {
@@ -280,7 +157,7 @@ const iniciales = (texto = '') => {
     cursor: not-allowed;
 }
 
-/* ── Spinner ──────────────────────────────────────────────────────── */
+/* Spinner */
 .aside-spinner {
     display: inline-block;
     width: 13px;
@@ -298,7 +175,22 @@ const iniciales = (texto = '') => {
     }
 }
 
-/* ── Transiciones ─────────────────────────────────────────────────── */
+/* Scrollbar cuerpo */
+.aside-body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(13, 41, 28, 0.2) transparent;
+}
+
+.aside-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.aside-body::-webkit-scrollbar-thumb {
+    background: rgba(13, 41, 28, 0.25);
+    border-radius: 99px;
+}
+
+/* Transiciones */
 .overlay-enter-active {
     transition: opacity 0.22s ease;
 }
@@ -326,7 +218,7 @@ const iniciales = (texto = '') => {
     opacity: 0;
 }
 
-/* ── Mobile: bottom sheet ─────────────────────────────────────────── */
+/* Mobile: bottom sheet */
 @media (max-width: 500px) {
     .aside-panel {
         top: auto;
@@ -347,7 +239,7 @@ const iniciales = (texto = '') => {
         opacity: 0;
     }
 
-    .aside-head {
+    .aside-panel .aside-head {
         padding: 18px 20px 14px;
     }
 
@@ -355,11 +247,11 @@ const iniciales = (texto = '') => {
         padding: 16px 20px;
     }
 
-    .aside-foot {
+    .aside-panel .aside-foot {
         padding: 12px 20px 20px;
     }
 
-    .aside-error {
+    .aside-panel .aside-error {
         margin: 0 20px;
     }
 }

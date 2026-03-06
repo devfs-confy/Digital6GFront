@@ -1,5 +1,6 @@
 // src/api/services/codigo-validation.services.js
 import { api } from "../axios";
+import { handleError } from "@/utils/error.handler";
 
 class CodigoValidationService {
   constructor() {
@@ -12,11 +13,7 @@ class CodigoValidationService {
       const response = await api.post(this.nameRoute, dto);
       return response.data;
     } catch (error) {
-      console.error(
-        "CodigoValidationService.validate:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 }

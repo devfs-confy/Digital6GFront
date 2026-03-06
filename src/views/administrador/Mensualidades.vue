@@ -60,26 +60,26 @@
                     <thead>
                         <tr>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Titular</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
                                 Documento</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Sede
                             </th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Placas</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Vigencia</th>
                             <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Estado</th>
                             <th
-                                class="px-5 py-3.5 text-center text-[0.68rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="px-5 py-3.5 text-center text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Opciones</th>
                         </tr>
                     </thead>
@@ -147,7 +147,7 @@
                             <td class="px-5 py-3">
                                 <div class="flex gap-1 flex-wrap">
                                     <span v-for="p in placas(m)" :key="p"
-                                        class="inline-block text-[0.6rem] font-black tracking-widest bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-lg">
+                                        class="inline-block text-[0.6rem] font-black tracking-widest bg-[#0D291C] text-[white] px-2 py-0.5 rounded-md">
                                         {{ p }}
                                     </span>
                                     <span v-if="!placas(m).length" class="text-gray-300 text-sm">—</span>
@@ -177,7 +177,7 @@
                             </td>
 
                             <!-- Opciones -->
-                            <td class="px-5 py-3 text-center">
+                            <td class=" text-center">
                                 <button @click="abrirDetalle(m)"
                                     class="inline-flex items-center gap-1.5 text-[#7FD344] text-[0.75rem] font-bold px-3 py-1.5 rounded-xl border-none cursor-pointer hover:text-white transition-colors"
                                     title="Ver / Editar">
@@ -191,46 +191,8 @@
             </div>
 
             <!-- Paginación -->
-            <div
-                class="flex items-center justify-between gap-3 px-5 py-3 border-t-2 border-[#f0f9f4] bg-[#fafffe] flex-wrap">
-                <span class="text-xs text-gray-400">
-                    Pág. <strong class="text-[#0D291C]">{{ paginaActual }}</strong> de
-                    <strong class="text-[#0D291C]">{{ totalPaginas }}</strong>
-                    · <strong class="text-[#0D291C]">{{ totalRegistros }}</strong> registros
-                </span>
-                <div class="flex items-center gap-1">
-                    <button @click="irPagina(paginaActual - 1)" :disabled="paginaActual === 1"
-                        class="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                        </svg>
-                    </button>
-                    <span class="sm:hidden text-sm font-bold text-[#0D291C] px-2">{{ paginaActual }} / {{ totalPaginas
-                    }}</span>
-                    <template v-for="p in paginasVisibles" :key="p">
-                        <button @click="irPagina(p)"
-                            :class="['hidden sm:flex w-8 h-8 items-center justify-center rounded-lg text-sm font-bold border-none cursor-pointer transition-colors',
-                                paginaActual === p ? 'bg-[#0D291C] text-[#7FD344] shadow-[0_2px_0_rgba(13,41,28,0.3)]' : 'bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C]']">
-                            {{ p }}
-                        </button>
-                    </template>
-                    <button @click="irPagina(paginaActual + 1)" :disabled="paginaActual === totalPaginas"
-                        class="w-8 h-8 flex items-center justify-center rounded-lg border-none bg-transparent text-gray-500 hover:bg-[#e8f5e9] hover:text-[#0D291C] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-400">
-                    <span class="hidden sm:inline">Filas:</span>
-                    <select v-model.number="limit" @change="onLimitChange"
-                        class="rounded-xl bg-gray-50 border border-gray-200 px-2 py-1 text-xs text-gray-600 outline-none focus:border-[#299261] cursor-pointer">
-                        <option :value="10">10</option>
-                        <option :value="20">20</option>
-                        <option :value="50">50</option>
-                    </select>
-                </div>
-            </div>
+            <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
+                :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
         <!-- ── Overlay ───────────────────────────────────────────── -->
@@ -349,6 +311,7 @@ import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
+import TablePaginacion from '@/components/shared/Paginacion.vue'
 
 // ── Estado ─────────────────────────────────────────────────────────
 const mensualidades = ref([])
@@ -384,17 +347,31 @@ const sedeNombre = computed(() =>
     sedes.value.find(s => String(s.IdEstacionamiento) === String(filtros.sede))?.Nombre ?? ''
 )
 
+// Reemplaza mensualidadesFiltradas
 const mensualidadesFiltradas = computed(() => {
-    if (!filtros.estado) return mensualidades.value
-    return mensualidades.value.filter(m => String(m.Estado) === filtros.estado)
-})
+    let lista = mensualidades.value
 
-const paginasVisibles = computed(() => {
-    const total = totalPaginas.value
-    const actual = paginaActual.value
-    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
-    const start = Math.max(1, Math.min(actual - 2, total - 4))
-    return Array.from({ length: 5 }, (_, i) => start + i)
+    // Filtro estado
+    if (filtros.estado)
+        lista = lista.filter(m => String(m.Estado) === filtros.estado)
+
+    // Filtro búsqueda local (solo cuando no hay sede, porque con sede lo hace el backend)
+    if (!filtros.sede && filtros.search) {
+        const q = filtros.search.toLowerCase()
+        lista = lista.filter(m =>
+            m.NombreApellidos?.toLowerCase().includes(q) ||
+            m.Documento?.toLowerCase().includes(q) ||
+            placas(m).some(p => p.toLowerCase().includes(q))
+        )
+    }
+
+    // Actualiza contadores reactivamente
+    totalRegistros.value = lista.length
+    totalPaginas.value = Math.max(1, Math.ceil(lista.length / limit.value))
+
+    // Paginar localmente
+    const desde = (paginaActual.value - 1) * limit.value
+    return lista.slice(desde, desde + limit.value)
 })
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -424,29 +401,21 @@ const vigenciaLabel = (m) => {
     if (diff < 86400000 * 7) return 'Por vencer'
     return 'Vigente'
 }
+
+// ── Carga todas las sedes (sin filtro activo) ──────────────────────
 const cargarTodasLasMensualidades = async () => {
     if (!sedes.value.length) return
     loading.value = true
     try {
         const resultados = await Promise.all(
             sedes.value.map(s =>
-                MensualidadesService.getAllBySede({
-                    sede: s.IdEstacionamiento,
-                    page: 1,
-                    limit: 999,
-                })
+                MensualidadesService.getAllBySede({ sede: s.IdEstacionamiento, page: 1, limit: 999 })
             )
         )
-        // Combina y agrega el nombre de sede a cada mensualidad
         mensualidades.value = resultados.flatMap((res, idx) => {
             const items = res?.data?.data ?? res?.data ?? []
-            return items.map(m => ({
-                ...m,
-                _sedeName: sedes.value[idx]?.Nombre ?? '',
-            }))
+            return items.map(m => ({ ...m, _sedeName: sedes.value[idx]?.Nombre ?? '' }))
         })
-        totalRegistros.value = mensualidades.value.length
-        totalPaginas.value = Math.max(1, Math.ceil(totalRegistros.value / limit.value))
     } catch (e) {
         console.error('[Mensualidades todas]', e.response?.data ?? e.message)
         mensualidades.value = []
@@ -455,24 +424,20 @@ const cargarTodasLasMensualidades = async () => {
     }
 }
 
-// ── Carga ──────────────────────────────────────────────────────────
+// ── Carga por sede seleccionada ────────────────────────────────────
 const cargarMensualidades = async () => {
-    if (!filtros.sede) {
-        await cargarTodasLasMensualidades()
-        return
-    }
+    if (!filtros.sede) { await cargarTodasLasMensualidades(); return }
+
     loading.value = true
     try {
         const res = await MensualidadesService.getAllBySede({
             sede: filtros.sede,
             page: paginaActual.value,
             limit: limit.value,
-            search: filtros.search,
+            search: filtros.search || undefined,
         })
-        mensualidades.value = (res?.data?.data ?? res?.data ?? []).map(m => ({
-            ...m,
-            _sedeName: sedeNombre.value,
-        }))
+        mensualidades.value = (res?.data?.data ?? res?.data ?? [])
+            .map(m => ({ ...m, _sedeName: sedeNombre.value }))
         totalRegistros.value = res?.data?.total ?? res?.total ?? mensualidades.value.length
         totalPaginas.value = res?.data?.totalPages ?? res?.totalPages ??
             Math.max(1, Math.ceil(totalRegistros.value / limit.value))
@@ -484,24 +449,23 @@ const cargarMensualidades = async () => {
     }
 }
 
+// ── Paginación ─────────────────────────────────────────────────────
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
     paginaActual.value = p
     cargarMensualidades()
 }
 
-const onLimitChange = () => {
+const onLimitChange = (val) => {
+    limit.value = Number(val)
     paginaActual.value = 1
-    cargarMensualidades()
 }
 
+// ── Filtros ────────────────────────────────────────────────────────
 let debTimer = null
 const onFiltroChange = () => {
     clearTimeout(debTimer)
-    debTimer = setTimeout(() => {
-        paginaActual.value = 1
-        cargarMensualidades()
-    }, 350)
+    debTimer = setTimeout(() => { paginaActual.value = 1; cargarMensualidades() }, 350)
 }
 
 const onSedeChange = () => {
@@ -510,12 +474,13 @@ const onSedeChange = () => {
     cargarMensualidades()
 }
 
+// ── Mount ──────────────────────────────────────────────────────────
 onMounted(async () => {
     sedes.value = await SedesService.getAll()
     await cargarTodasLasMensualidades()
 })
 
-// ── Panel ──────────────────────────────────────────────────────────
+// ── Panel detalle ──────────────────────────────────────────────────
 const abrirDetalle = async (m) => {
     panelAbierto.value = true
     loadingDetalle.value = true
@@ -524,9 +489,8 @@ const abrirDetalle = async (m) => {
 
     try {
         const res = await MensualidadesService.getDetalleById(m.IdPersonaAutorizada)
-        detalle.value = res?.data ?? res
-
-        const d = detalle.value
+        const d = res?.data ?? res
+        detalle.value = d
         Object.assign(form, {
             NombreApellidos: d.NombreApellidos ?? '',
             Nit: d.Nit ?? '',
@@ -534,10 +498,7 @@ const abrirDetalle = async (m) => {
             FechaInicio: d.FechaInicio ? d.FechaInicio.slice(0, 10) : '',
             FechaFin: d.FechaFin ? d.FechaFin.slice(0, 10) : '',
             Estado: d.Estado ?? true,
-            placas: [
-                d.Placa1 ?? '', d.Placa2 ?? '', d.Placa3 ?? '',
-                d.Placa4 ?? '', d.Placa5 ?? '',
-            ],
+            placas: [d.Placa1 ?? '', d.Placa2 ?? '', d.Placa3 ?? '', d.Placa4 ?? '', d.Placa5 ?? ''],
         })
     } catch (e) {
         console.error('[Mensualidades detalle]', e.response?.data ?? e.message)
@@ -572,27 +533,21 @@ const guardar = async () => {
             ...(form.FechaInicio && { FechaInicio: form.FechaInicio }),
             ...(form.FechaFin && { FechaFin: form.FechaFin }),
         }
-
         await MensualidadesService.updateById(id, dto)
 
-        // Actualizar fila en tabla localmente
         const idx = mensualidades.value.findIndex(m => m.IdPersonaAutorizada === id)
-        if (idx !== -1) {
-            mensualidades.value[idx] = {
-                ...mensualidades.value[idx],
-                NombreApellidos: form.NombreApellidos,
-                Estado: form.Estado,
-                Placa1: form.placas[0] || null,
-                Placa2: form.placas[1] || null,
-                FechaInicio: form.FechaInicio || null,
-                FechaFin: form.FechaFin || null,
-            }
-        }
+        if (idx !== -1) Object.assign(mensualidades.value[idx], {
+            NombreApellidos: form.NombreApellidos,
+            Estado: form.Estado,
+            Placa1: form.placas[0] || null,
+            Placa2: form.placas[1] || null,
+            FechaInicio: form.FechaInicio || null,
+            FechaFin: form.FechaFin || null,
+        })
         cerrarPanel()
     } catch (e) {
         const msg = e.response?.data?.message
         errGuardar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')
-        console.error('[Mensualidades guardar]', e.response?.data ?? e.message)
     } finally {
         guardando.value = false
     }

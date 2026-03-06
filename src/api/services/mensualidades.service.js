@@ -1,5 +1,6 @@
 // src/api/services/mensualidades.service.js
 import { api } from "../axios";
+import { handleError } from "@/utils/error.handler";
 
 class MensualidadesService {
   constructor() {
@@ -17,11 +18,7 @@ class MensualidadesService {
       const response = await api.get(this.adminRoute, { params });
       return response.data;
     } catch (error) {
-      console.error(
-        "MensualidadesService.getAllBySede:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -31,11 +28,7 @@ class MensualidadesService {
       const response = await api.get(`${this.adminRoute}/detalle/${id}`);
       return response.data;
     } catch (error) {
-      console.error(
-        "MensualidadesService.getDetalleById:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -47,11 +40,7 @@ class MensualidadesService {
       );
       return response.data;
     } catch (error) {
-      console.error(
-        "MensualidadesService.getDesdeApiSede:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -61,11 +50,7 @@ class MensualidadesService {
       const response = await api.put(`${this.adminRoute}/${id}`, dto);
       return response.data;
     } catch (error) {
-      console.error(
-        "MensualidadesService.updateById:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -77,11 +62,7 @@ class MensualidadesService {
       const response = await api.get(`${this.clientRoute}`);
       return response.data;
     } catch (error) {
-      console.error(
-        "MensualidadesService.getMisMensualidades:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 
@@ -91,11 +72,7 @@ class MensualidadesService {
       const response = await api.get(`${this.clientRoute}/${id}`);
       return response.data;
     } catch (error) {
-      console.error(
-        "MensualidadesService.getMiMensualidadById:",
-        error.response?.data ?? error.message,
-      );
-      throw error;
+      return handleError(error);
     }
   }
 }

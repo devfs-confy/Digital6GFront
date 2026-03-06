@@ -1,10 +1,7 @@
 <template>
 
     <!-- Loading -->
-    <div v-if="loading" class="mensualidades-grid">
-        <div v-for="n in 2" :key="n" class="h-[320px] rounded-[24px]"
-            style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite" />
-    </div>
+
 
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
@@ -26,6 +23,11 @@
 
         <!-- Grid de tarjetas -->
         <div class="mensualidades-grid">
+
+            <div v-if="loading" class="mensualidades-grid">
+                <div v-for="n in 2" :key="n" class="h-[320px] rounded-[24px]"
+                    style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite" />
+            </div>
 
             <div v-for="(m, i) in mensualidades" :key="m.id" class="mensualidad-card" :class="estadoClase(m)"
                 :style="{ animationDelay: `${i * 0.08}s` }">
@@ -181,7 +183,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close">✕</button>
@@ -201,7 +203,7 @@
                             <div class="pago-resumen__item">
                                 <span class="pago-resumen__label">Valor</span>
                                 <span class="pago-resumen__val pago-resumen__val--price">{{ mensualidadAccion?.valor
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                         <p class="field-hint" style="margin-top:8px">Al confirmar serás redirigido a la pasarela de

@@ -45,15 +45,15 @@
                             <thead>
                                 <tr>
                                     <th
-                                        class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344]">
+                                        class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344]">
                                         Usuario
                                     </th>
                                     <th
-                                        class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344] hidden sm:table-cell">
+                                        class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] hidden sm:table-cell">
                                         Documento
                                     </th>
                                     <th
-                                        class="px-3 sm:px-4 py-3 text-center text-[0.65rem] font-black uppercase tracking-widest text-[#7FD344] bg-[#0D291C] border-b-[3px] border-[#7FD344]">
+                                        class="px-3 sm:px-4 py-3 text-center text-[0.65rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344]">
                                         Opciones
                                     </th>
                                 </tr>
@@ -116,16 +116,16 @@
                                         <div class="flex items-center justify-center gap-2">
                                             <!-- Editar info -->
                                             <button @click="abrirEditar(u)"
-                                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9]"
+                                                class="w-8 h-8 sm:w-8 sm:h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9]"
                                                 title="Editar información" v-html="editarcliente" />
                                             <!-- Permisos -->
                                             <button @click="seleccionarUsuario(u)"
-                                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all"
+                                                class="w-8 h-8 sm:w-8 sm:h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all"
                                                 :class="usuarioSeleccionado?.Documento === u.Documento ? '' : 'bg-transparent hover:bg-[#e8f5e9]'"
                                                 title="Gestionar permisos" v-html="dashboard_customize" />
                                             <!-- Inhabilitar -->
                                             <button @click="darDeBaja(u)"
-                                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all"
+                                                class="w-8 h-8 sm:w-8 sm:h-8 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all"
                                                 title="Inhabilitar" v-html="account_circle_off" />
                                         </div>
                                     </td>
@@ -135,40 +135,8 @@
                     </div>
 
                     <!-- Paginación -->
-                    <div
-                        class="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-t-2 border-[#f0f9f4] bg-[#fafffe] flex-shrink-0">
-                        <span class="text-[0.72rem] text-gray-400 hidden sm:block">
-                            <strong class="text-[#0D291C]">{{ rangoInicio }}–{{ rangoFin }}</strong>
-                            de <strong class="text-[#0D291C]">{{ usuariosFiltrados.length }}</strong>
-                        </span>
-                        <div class="flex items-center gap-1">
-                            <button @click="pagina--" :disabled="pagina === 1" class="page-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                                </svg>
-                            </button>
-                            <span class="text-xs font-bold text-[#0D291C] px-2">{{ pagina }} / {{ totalPaginas }}</span>
-                            <template v-for="p in totalPaginas" :key="p">
-                                <button @click="pagina = p" class="page-btn hidden md:flex"
-                                    :class="pagina === p ? 'bg-[#0D291C] text-[#7FD344]' : ''">
-                                    {{ p }}
-                                </button>
-                            </template>
-                            <button @click="pagina++" :disabled="pagina === totalPaginas" class="page-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <select v-model.number="porPagina" @change="pagina = 1"
-                            class="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 cursor-pointer">
-                            <option :value="5">5</option>
-                            <option :value="10">10</option>
-                            <option :value="15">15</option>
-                        </select>
-                    </div>
+                    <TablePagination :pagina-actual="paginaActual" :total-paginas="totalPaginas"
+                        :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
                 </div>
             </div>
 
@@ -219,7 +187,7 @@
                     <!-- Toolbar permisos -->
                     <div class="flex items-center gap-2 px-3 pt-3 pb-0 bg-[#f8faf9] flex-shrink-0">
                         <div
-                            class="flex items-center gap-2 flex-1 min-w-0 bg-white border border-gray-200 rounded-full px-3 py-1.5 focus-within:border-[#299261] transition-colors">
+                            class="flex items-center gap-2 flex-    1 min-w-0 bg-white border border-gray-200 rounded-full px-3 py-1.5 focus-within:border-[#299261] transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#9ca3af"
                                 viewBox="0 0 24 24">
                                 <path
@@ -448,9 +416,10 @@ import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
 import editarcliente from '@/assets/img/person_edit.svg?raw'
 import adminServices from '@/api/services/admin.service'
 import RolService from '@/api/services/rol.service'
-import { PERMS } from "@/constants/permisions"
+import { PERMS } from '@/constants/permisions'
+import TablePagination from '@/components/shared/Paginacion.vue'
 
-// ── Permisos (sin cambios) ─────────────────────────────────────────
+// ── Catálogo de permisos ───────────────────────────────────────────
 const LABEL_MAP = {
     [PERMS.USUARIOS_VER]: 'Ver usuarios',
     [PERMS.USUARIOS_CREAR]: 'Crear usuarios',
@@ -471,6 +440,7 @@ const LABEL_MAP = {
     [PERMS.SEDES_EDITAR]: 'Editar sedes',
     [PERMS.SEDES_INACTIVAR]: 'Inactivar sedes',
     [PERMS.CODIGOS_CREAR]: 'Crear códigos',
+    [PERMS.AUTORIZACIONES_VER]: 'Ver autorizaciones',
 }
 
 const GRUPOS = [
@@ -479,7 +449,7 @@ const GRUPOS = [
     { label: 'Permisos', permisos: [PERMS.PERMISOS_VER, PERMS.PERMISOS_ASIGNAR, PERMS.PERMISOS_INACTIVAR] },
     { label: 'Mensualidades', permisos: [PERMS.MENSUALIDADES_VER, PERMS.MENSUALIDADES_CREAR, PERMS.MENSUALIDADES_EDITAR, PERMS.MENSUALIDADES_INACTIVAR] },
     { label: 'Sedes', permisos: [PERMS.SEDES_VER, PERMS.SEDES_CREAR, PERMS.SEDES_EDITAR, PERMS.SEDES_INACTIVAR] },
-    { label: 'Códigos', permisos: [PERMS.CODIGOS_CREAR] },
+    { label: 'Códigos', permisos: [PERMS.CODIGOS_CREAR, PERMS.AUTORIZACIONES_VER] },
 ].map(g => ({ ...g, permisos: g.permisos.map(n => ({ value: n, label: LABEL_MAP[n] ?? n })) }))
 
 const totalPermisos = GRUPOS.reduce((acc, g) => acc + g.permisos.length, 0)
@@ -489,53 +459,79 @@ const loading = ref(false)
 const usuarios = ref([])
 const roles = ref([])
 const permisosDisponibles = ref([])
-const usuarioSeleccionado = ref(null)
+
+// Tabla / paginación local
 const busqueda = ref('')
 const busquedaDebounced = ref('')
-const pagina = ref(1)
-const porPagina = ref(10)
+const paginaActual = ref(1)
+const limit = ref(10)
+
+// Panel permisos
+const usuarioSeleccionado = ref(null)
 const busquedaPerm = ref('')
 const seleccionados = ref(new Set())
 const loadingPermisos = ref(false)
-const modalInhabilitar = ref(false)
-const clienteAccion = ref({})
 
 // Panel crear/editar
 const panelUsuario = ref(false)
-const modoPanel = ref('crear')   // 'crear' | 'editar'
+const modoPanel = ref('crear')
 const guardandoUsuario = ref(false)
 const errPanelUsuario = ref('')
 const mostrarPassword = ref(false)
-
 const formUsuario = ref({
-    Documento: null,
-    Nombres: '',
-    Apellidos: '',
-    Email: '',
-    Telefono: '',
-    IdRol: '',
-    Password: '',
-    Estado: true,
+    Documento: null, Nombres: '', Apellidos: '',
+    Email: '', Telefono: '', IdRol: '', Password: '', Estado: true,
 })
 
-// ── Carga inicial ──────────────────────────────────────────────────
+// Modal inhabilitar
+const modalInhabilitar = ref(false)
+const clienteAccion = ref({})
+
+// ── Mount ──────────────────────────────────────────────────────────
 onMounted(async () => {
     loading.value = true
     try {
-        const [resUsuarios, resPermisos, resRoles] = await Promise.all([
+        const [resU, resP, resR] = await Promise.all([
             adminServices.getAllAdmins(),
             RolService.getAllPermisos(),
             RolService.getAll(),
         ])
-        usuarios.value = resUsuarios?.data ?? resUsuarios ?? []
-        permisosDisponibles.value = resPermisos?.data ?? resPermisos ?? []
-        roles.value = resRoles?.data ?? resRoles ?? []
+        usuarios.value = resU?.data ?? resU ?? []
+        permisosDisponibles.value = resP?.data ?? resP ?? []
+        roles.value = resR?.data ?? resR ?? []
     } catch (e) {
-        console.error('Error cargando datos iniciales:', e)
+        console.error('[Usuarios] mount:', e)
     } finally {
         loading.value = false
     }
 })
+
+// ── Tabla / paginación ─────────────────────────────────────────────
+let debounceTimer = null
+watch(busqueda, val => {
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => { busquedaDebounced.value = val; paginaActual.value = 1 }, 300)
+})
+
+const usuariosFiltrados = computed(() => {
+    const q = busquedaDebounced.value.toLowerCase()
+    if (!q) return usuarios.value
+    return usuarios.value.filter(u =>
+        u.Nombres?.toLowerCase().includes(q) ||
+        u.Apellidos?.toLowerCase().includes(q) ||
+        u.Documento?.toString().includes(q)
+    )
+})
+
+const totalPaginas = computed(() => Math.max(1, Math.ceil(usuariosFiltrados.value.length / limit.value)))
+const totalRegistros = computed(() => usuariosFiltrados.value.length)
+const usuariosPaginados = computed(() => {
+    const ini = (paginaActual.value - 1) * limit.value
+    return usuariosFiltrados.value.slice(ini, ini + limit.value)
+})
+
+const irPagina = p => { if (p >= 1 && p <= totalPaginas.value) paginaActual.value = p }
+const onLimitChange = val => { limit.value = Number(val); paginaActual.value = 1 }
 
 // ── Panel crear/editar ─────────────────────────────────────────────
 const abrirCrear = () => {
@@ -571,83 +567,54 @@ const cerrarPanelUsuario = () => {
 
 const guardarUsuario = async () => {
     errPanelUsuario.value = ''
-
-    // Validación
     const f = formUsuario.value
+
     if (!f.Nombres || !f.Apellidos || !f.Email || !f.Telefono || !f.IdRol) {
-        errPanelUsuario.value = 'Completa todos los campos obligatorios.'
-        return
+        errPanelUsuario.value = 'Completa todos los campos obligatorios.'; return
     }
     if (modoPanel.value === 'crear' && (!f.Documento || !f.Password)) {
-        errPanelUsuario.value = 'Documento y contraseña son obligatorios al crear.'
-        return
+        errPanelUsuario.value = 'Documento y contraseña son obligatorios al crear.'; return
     }
 
     guardandoUsuario.value = true
     try {
         if (modoPanel.value === 'crear') {
-            const nueva = await adminServices.createAdmin({
-                Documento: f.Documento,
-                Nombres: f.Nombres,
-                Apellidos: f.Apellidos,
-                Email: f.Email,
-                Telefono: f.Telefono,
-                IdRol: f.IdRol,
-                Password: f.Password,
-                Estado: f.Estado,
-            })
+            const nueva = await adminServices.createAdmin({ ...f })
             usuarios.value.unshift(nueva?.data ?? nueva)
         } else {
-            const dto = {
-                Nombres: f.Nombres,
-                Apellidos: f.Apellidos,
-                Email: f.Email,
-                Telefono: f.Telefono,
-                IdRol: f.IdRol,
-                Estado: f.Estado,
-            }
+            const dto = { Nombres: f.Nombres, Apellidos: f.Apellidos, Email: f.Email, Telefono: f.Telefono, IdRol: f.IdRol, Estado: f.Estado }
             if (f.Password) dto.Password = f.Password
-
             await adminServices.updateAdmin(f.Documento, dto)
-
-            // Actualizar local
             const idx = usuarios.value.findIndex(u => u.Documento === f.Documento)
-            if (idx !== -1) {
-                usuarios.value[idx] = { ...usuarios.value[idx], ...dto }
-            }
+            if (idx !== -1) usuarios.value[idx] = { ...usuarios.value[idx], ...dto }
         }
         cerrarPanelUsuario()
     } catch (e) {
         const msg = e.response?.data?.message
         errPanelUsuario.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')
-        console.error('[Usuarios]', e.response?.data ?? e.message)
     } finally {
         guardandoUsuario.value = false
     }
 }
 
-// ── Permisos (sin cambios) ─────────────────────────────────────────
+// ── Panel permisos ─────────────────────────────────────────────────
 const seleccionarUsuario = async (u) => {
-    if (usuarioSeleccionado.value?.Documento === u.Documento) {
-        usuarioSeleccionado.value = null
-        return
-    }
+    if (usuarioSeleccionado.value?.Documento === u.Documento) { usuarioSeleccionado.value = null; return }
     usuarioSeleccionado.value = u
     busquedaPerm.value = ''
 
-    if (u.permisos && Array.isArray(u.permisos)) {
-        seleccionados.value = new Set(u.permisos)
-    } else {
-        const idRol = u.T_UsuarioRol?.[0]?.IdRol
-        if (idRol) {
-            loadingPermisos.value = true
-            try {
-                const response = await RolService.getPermisosRol(idRol)
-                const data = response?.data ?? response ?? []
-                seleccionados.value = new Set(data.map(p => p.T_PermisosAdmin?.Nombre).filter(Boolean))
-            } catch (e) { console.log('Error cargando permisos:', e) }
-            finally { loadingPermisos.value = false }
-        }
+    const idRol = u.T_UsuarioRol?.[0]?.IdRol
+    if (!idRol) return
+
+    loadingPermisos.value = true
+    try {
+        const res = await RolService.getPermisosRol(idRol)
+        const data = res?.data ?? res ?? []
+        seleccionados.value = new Set(data.map(p => p.T_PermisosAdmin?.Nombre).filter(Boolean))
+    } catch (e) {
+        console.error('[Permisos] cargar:', e)
+    } finally {
+        loadingPermisos.value = false
     }
 }
 
@@ -655,72 +622,59 @@ const guardarPermisos = async () => {
     const idRol = usuarioSeleccionado.value?.T_UsuarioRol?.[0]?.IdRol
     if (!idRol) return
 
-    const idsSeleccionados = [...seleccionados.value]
+    const ids = [...seleccionados.value]
         .map(nombre => permisosDisponibles.value.find(p => p.Nombre === nombre)?.Id)
-        .filter(id => id != null)
+        .filter(Boolean)
 
     loadingPermisos.value = true
     try {
-        await RolService.assignPermisos(idRol, idsSeleccionados)
+        await RolService.assignPermisos(idRol, ids)
         usuarioSeleccionado.value = null
     } catch (e) {
-        console.error('Error guardando permisos:', e.response?.data?.message ?? e)
+        console.error('[Permisos] guardar:', e.response?.data?.message ?? e)
     } finally {
         loadingPermisos.value = false
     }
 }
 
-// ── Tabla helpers ──────────────────────────────────────────────────
-let debounceTimer = null
-watch(busqueda, (val) => {
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => { busquedaDebounced.value = val; pagina.value = 1 }, 300)
-})
-
-const usuariosFiltrados = computed(() => {
-    const q = busquedaDebounced.value.toLowerCase()
-    if (!q) return usuarios.value
-    return usuarios.value.filter(u =>
-        u.Nombres?.toLowerCase().includes(q) ||
-        u.Apellidos?.toLowerCase().includes(q) ||
-        u.Documento?.toString().includes(q)
-    )
-})
-const totalPaginas = computed(() => Math.max(1, Math.ceil(usuariosFiltrados.value.length / porPagina.value)))
-const usuariosPaginados = computed(() => {
-    const ini = (pagina.value - 1) * porPagina.value
-    return usuariosFiltrados.value.slice(ini, ini + porPagina.value)
-})
-const rangoInicio = computed(() => usuariosFiltrados.value.length === 0 ? 0 : (pagina.value - 1) * porPagina.value + 1)
-const rangoFin = computed(() => Math.min(pagina.value * porPagina.value, usuariosFiltrados.value.length))
+// ── Helpers permisos ───────────────────────────────────────────────
 const seleccionadosArr = computed(() => [...seleccionados.value])
-const isSelected = (value) => seleccionadosArr.value.includes(value)
+const isSelected = v => seleccionadosArr.value.includes(v)
+const countActivos = g => g.permisos.filter(p => isSelected(p.value)).length
 const gruposFiltrados = computed(() => {
     const q = busquedaPerm.value.toLowerCase().trim()
     if (!q) return GRUPOS
-    return GRUPOS.map(g => ({ ...g, permisos: g.permisos.filter(p => p.label.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)) }))
+    return GRUPOS
+        .map(g => ({ ...g, permisos: g.permisos.filter(p => p.label.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)) }))
         .filter(g => g.permisos.length > 0)
 })
-const countActivos = (grupo) => grupo.permisos.filter(p => seleccionadosArr.value.includes(p.value)).length
-const togglePerm = (value) => { const s = new Set(seleccionados.value); s.has(value) ? s.delete(value) : s.add(value); seleccionados.value = new Set(s) }
-const toggleGrupoPermisos = (grupo) => {
+const togglePerm = v => {
     const s = new Set(seleccionados.value)
-    const todosOn = grupo.permisos.every(p => s.has(p.value))
-    grupo.permisos.forEach(p => todosOn ? s.delete(p.value) : s.add(p.value))
-    seleccionados.value = new Set(s)
+    s.has(v) ? s.delete(v) : s.add(v)
+    seleccionados.value = s
+}
+const toggleGrupoPermisos = g => {
+    const s = new Set(seleccionados.value)
+    const todosOn = g.permisos.every(p => s.has(p.value))
+    g.permisos.forEach(p => todosOn ? s.delete(p.value) : s.add(p.value))
+    seleccionados.value = s
 }
 const selectAll = () => { seleccionados.value = new Set(GRUPOS.flatMap(g => g.permisos.map(p => p.value))) }
 const clearAll = () => { seleccionados.value = new Set() }
-const darDeBaja = (u) => { clienteAccion.value = { ...u }; modalInhabilitar.value = true }
-const inhabilitarCliente = async ({ motivo, observaciones }) => {
+
+// ── Inhabilitar ────────────────────────────────────────────────────
+const darDeBaja = u => { clienteAccion.value = { ...u }; modalInhabilitar.value = true }
+const inhabilitarCliente = async () => {
     try {
-        console.log('Inhabilitando:', clienteAccion.value.Documento, motivo, observaciones)
         const idx = usuarios.value.findIndex(u => u.Documento === clienteAccion.value.Documento)
         if (idx !== -1) usuarios.value[idx].Estado = false
         modalInhabilitar.value = false
     } catch (e) { console.error(e) }
 }
-const iniciales = (nombre = '') => nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
+
+// ── Util ───────────────────────────────────────────────────────────
+const iniciales = (nombre = '') =>
+    nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
 </script>
 
 <style scoped>
@@ -871,40 +825,6 @@ input[type="checkbox"].sr-only {
     fill: #7FD344;
 }
 
-.page-btn {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #6b7280;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: background-color 0.12s;
-}
-
-.page-btn:hover:not(:disabled) {
-    background-color: #e8f5e9;
-    color: #0D291C;
-}
-
-.page-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.loader {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 3px solid #e8f5e9;
-    border-top-color: #0D291C;
-    animation: spin 0.7s linear infinite;
-}
 
 .scrollbar-thin {
     scrollbar-width: thin;

@@ -31,4 +31,8 @@ export const PERMS = {
 
   // Módulo de Códigos
   CODIGOS_CREAR: "CREAR-CODIGOS",
+  ESTUDIANTES_SUBIR: "SUBIR-ESTUDIANTES",
+
+  // Módulo de autorizaciones
+  AUTORIZACIONES_VER: "VER-AUTORIZACIONES",
 };

@@ -52,6 +52,7 @@ export const useAuthStore = defineStore(
           apellidos: payload.apellidos,
           email: payload.email,
           documento: payload.documento,
+          telefono: payload.telefono,
           permisos: payload.permisos ?? [],
           rol: payload.rol,
         };

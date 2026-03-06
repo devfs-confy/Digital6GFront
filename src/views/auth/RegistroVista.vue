@@ -271,7 +271,7 @@
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                            }}</label>
+                                        }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
                                                 class="field-input placa-input flex-1" :placeholder="``"
@@ -361,11 +361,11 @@
                             </Transition>
 
                             <!-- Submit -->
-                            <button @click="submit" :disabled="guardando"
+                            <!-- Submit → abre modal código -->
+                            <button @click="abrirModalCodigo" :disabled="guardando"
                                 class="w-full py-3 bg-[#0D291C] text-[#7FD344] border-2 border-[#0D291C] rounded-xl text-[0.88rem] font-black cursor-pointer flex items-center justify-center gap-2 transition-all disabled:opacity-45 disabled:cursor-not-allowed hover:bg-[#1a4a2e] active:translate-y-[3px]"
                                 style="box-shadow:0 4px 0 #051510">
-                                <span v-if="guardando" class="spinner-sm spinner-sm--light" />
-                                {{ guardando ? 'Guardando...' : 'Crear cuenta' }}
+                                {{ 'Crear cuenta' }}
                             </button>
 
                             <p class="text-center text-xs font-semibold text-gray-400 -mt-2">
@@ -374,6 +374,93 @@
                                     sesión</router-link>
                             </p>
 
+                        </div>
+
+
+
+
+                    </Transition>
+
+                    <!-- ── MODAL CÓDIGO DE VALIDACIÓN ──────────────────────────── -->
+                    <Transition name="modal">
+                        <div v-if="modalCodigo" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                            style="background:rgba(0,0,0,0.6)" @click.self="modalCodigo = false">
+                            <div class="bg-[#B8E19E] border-2 border-[#0D291C] rounded-[28px] w-[200px] max-w-[400px] overflow-hidden"
+                                style="box-shadow:0 7px 0 #000">
+
+                                <!-- Head -->
+                                <div class="flex items-center justify-between gap-3 px-6 py-5 bg-[#0D291C]">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                            style="background:rgba(127,211,68,0.2)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                fill="#7FD344" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-[0.92rem] font-black text-white">Código de validación</p>
+                                            <p class="text-[0.63rem] font-semibold" style="color:rgba(255,255,255,0.5)">
+                                                Digita el código que te entregaron
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button @click="modalCodigo = false"
+                                        class="text-white opacity-40 hover:opacity-100 bg-transparent border-none cursor-pointer text-lg font-black transition-opacity">✕</button>
+                                </div>
+
+                                <!-- Body -->
+                                <div class="px-6 py-5 flex flex-col gap-4">
+                                    <p class="text-[0.78rem] font-semibold text-[#0D291C] leading-relaxed opacity-70">
+                                        Para completar tu registro necesitas el código de validación que te entregaron
+                                        personalmente en el parqueadero.
+                                    </p>
+
+                                    <div class="flex flex-col gap-1.5">
+                                        <label
+                                            class="text-[0.58rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50 pl-0.5">
+                                            Código <span class="text-red-500">*</span>
+                                        </label>
+                                        <input v-model="codigoValidacion" type="text"
+                                            class="w-full box-border border-2 border-[#0D291C] rounded-[14px] px-4 py-3 text-[1.1rem] font-black text-[#0D291C] text-center tracking-[0.18em] uppercase outline-none bg-white transition-all"
+                                            style="box-shadow:inset 0 2px 0 rgba(13,41,28,0.06)"
+                                            placeholder="Ej: XYZ-9876"
+                                            @input="codigoValidacion = $event.target.value.toUpperCase(); errCodigo = ''"
+                                            @keyup.enter="submitConCodigo" />
+                                    </div>
+
+                                    <!-- Error -->
+                                    <Transition name="fade">
+                                        <div v-if="errCodigo"
+                                            class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-700 border-2 border-red-300"
+                                            style="box-shadow:0 3px 0 #fca5a5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                fill="currentColor" viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                                <path
+                                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                            </svg>
+                                            {{ errCodigo }}
+                                        </div>
+                                    </Transition>
+                                </div>
+
+                                <!-- Foot -->
+                                <div class="flex gap-2.5 px-6 pb-6 pt-1">
+                                    <button @click="modalCodigo = false"
+                                        class="flex-1 py-3 rounded-full text-[0.78rem] font-black uppercase tracking-wide cursor-pointer bg-white text-[#232B3A] border-2 border-black transition-colors hover:bg-gray-50"
+                                        style="box-shadow:0 3px 0 #000">
+                                        Cancelar
+                                    </button>
+                                    <button @click="submitConCodigo" :disabled="guardando || !codigoValidacion.trim()"
+                                        class="flex-[2] py-3 rounded-full text-[0.78rem] font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-white border-2 border-black flex items-center justify-center gap-2 transition-colors hover:bg-[#1a4a2e] disabled:opacity-40 disabled:cursor-not-allowed"
+                                        style="box-shadow:0 3px 0 #000">
+                                        <span v-if="guardando" class="spinner-sm spinner-sm--light" />
+                                        {{ guardando ? 'Registrando...' : 'Confirmar registro' }}
+                                    </button>
+                                </div>
+
+                            </div>
                         </div>
                     </Transition>
 
@@ -405,6 +492,10 @@ const guardando = ref(false)
 const errSubmit = ref('')
 const msgDoc = ref('')
 const esEstudiante = ref(null)
+const modalCodigo = ref(false)
+const codigoValidacion = ref('')
+const errCodigo = ref('')
+
 
 // ── Anti-abuso ────────────────────────────────────────────────────
 const LIMITE_BUSQUEDAS = 4
@@ -458,7 +549,6 @@ const onDocumentoInput = () => {
 
 // ── Búsqueda ──────────────────────────────────────────────────────
 const buscarDocumento = async (doc) => {
-    // Anti-abuso: solo cuenta documentos distintos
     if (!documentosBuscados.value.has(doc)) {
         if (busquedasRealizadas.value >= LIMITE_BUSQUEDAS) {
             bloqueado.value = true
@@ -473,15 +563,12 @@ const buscarDocumento = async (doc) => {
     editandoDoc.value = false
 
     try {
-        console.group(`🔍 [buscarDocumento] doc=${doc} sede=${idSede.value} intento=${busquedasRealizadas.value}/${LIMITE_BUSQUEDAS}`)
-
         const res = await MensualidadesService.getDesdeApiSede(idSede.value, doc)
-        console.log('📦 Respuesta raw:', res)
 
-        // Sin mensualidad → usuario completamente nuevo
-        if (!res || res.success === false || res.statusCode === 404) {
-            console.log('ℹ️ Sin mensualidad → usuario nuevo')
-            console.groupEnd()
+        // handleError devuelve { error: true, status, data } en vez de lanzar
+        const esError = res?.error === true || res?.success === false || res?.statusCode >= 400
+
+        if (esError) {
             usuarioEncontrado.value = false
             mensualidadData.value = null
             limpiarCampos()
@@ -490,11 +577,23 @@ const buscarDocumento = async (doc) => {
             return
         }
 
-        // Tiene mensualidad → precarga datos
+        // Tiene mensualidad válida
+        // Tiene mensualidad válida
         const d = res.data ?? res
-        console.log('✅ Data:', d)
+        console.group('✅ [buscarDocumento] Mensualidad encontrada — OLD=true')
+        console.log('📦 Data completa:', d)
+        console.log('🔑 Campos clave:', {
+            documento: d.documento,
+            nombreApellidos: d.nombreApellidos,
+            idAutorizacion: d.idAutorizacion,
+            sincronizacion: d.sincronizacion,
+            placa1: d.placa1,
+            placa2: d.placa2,
+            placa3: d.placa3,
+            placa4: d.placa4,
+            placa5: d.placa5,
+        })
         console.groupEnd()
-
         mensualidadData.value = d
         usuarioEncontrado.value = true
 
@@ -506,8 +605,8 @@ const buscarDocumento = async (doc) => {
             Nombres: partes.slice(0, mitad).join(' '),
             Apellidos: partes.slice(mitad).join(' '),
             IdAutorizacion: d.idAutorizacion,
-            Telefono: '',
-            Email: '',
+            Telefono: d.telefono ?? '',
+            Email: d.email ?? '',
             Password: '',
             CodigoEstudianteUCC: '',
             EstudianteUcc: false,
@@ -519,21 +618,10 @@ const buscarDocumento = async (doc) => {
         formularioListo.value = true
 
     } catch (e) {
-        console.group('❌ [buscarDocumento] ERROR')
-        console.log('Status:', e.response?.status)
-        console.log('Data:', e.response?.data)
-        console.log('Message:', e.message)
-        console.groupEnd()
-
         mensualidadData.value = null
         usuarioEncontrado.value = false
         limpiarCampos()
-
-        if (e.response?.status === 404) {
-            msgDoc.value = 'No se encontró mensualidad — completa el formulario'
-        } else {
-            msgDoc.value = 'No se pudo verificar — completa el formulario manualmente'
-        }
+        msgDoc.value = 'No se pudo verificar — completa el formulario manualmente'
         formularioListo.value = true
     } finally {
         buscandoDoc.value = false
@@ -552,40 +640,44 @@ const limpiarCampos = () => {
 const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
 // ── Submit ─────────────────────────────────────────────────────────
-const submit = async () => {
+const abrirModalCodigo = () => {
+    // Valida el formulario primero
     errSubmit.value = ''
-
-    // Campos obligatorios base
     if (!form.Documento || !form.Nombres || !form.Apellidos) {
-        errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'
-        return
+        errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return
     }
     if (!form.Telefono || form.Telefono.length < 7) {
-        errSubmit.value = 'Ingresa un teléfono de contacto válido.'
-        return
+        errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return
     }
     if (!form.Email || !emailValido(form.Email)) {
-        errSubmit.value = 'Ingresa un correo electrónico válido.'
-        return
+        errSubmit.value = 'Ingresa un correo electrónico válido.'; return
     }
     if (!form.Password || form.Password.length < 8) {
-        errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'
-        return
+        errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return
     }
-    if (!form.placas[0] || !form.placas[0].trim()) {
-        errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'
-        return
+    if (!form.placas[0]?.trim()) {
+        errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return
     }
     if (esSede24.value && esEstudiante.value === null) {
-        errSubmit.value = 'Indica si eres estudiante UCC o no.'
-        return
+        errSubmit.value = 'Indica si eres estudiante UCC o no.'; return
     }
     if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) {
-        errSubmit.value = 'Ingresa tu código de estudiante UCC.'
-        return
+        errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return
+    }
+
+    codigoValidacion.value = ''
+    errCodigo.value = ''
+    modalCodigo.value = true
+}
+
+const submitConCodigo = async () => {
+    if (!codigoValidacion.value.trim()) {
+        errCodigo.value = 'Ingresa el código de validación.'; return
     }
 
     guardando.value = true
+    errCodigo.value = ''
+
     try {
         const m = mensualidadData.value
         const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
@@ -601,9 +693,7 @@ const submit = async () => {
             Estado: true,
             Sincronizacion: m?.sincronizacion ?? false,
             Old: !!m,
-
-            ...(!!m && m.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
-
+            ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
             Placa1: placas[0] || null,
             Placa2: placas[1] || null,
             Placa3: placas[2] || null,
@@ -611,47 +701,25 @@ const submit = async () => {
             Placa5: placas[4] || null,
             EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
             CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
+            Codigo: codigoValidacion.value.trim(),
         }
 
-        // console.group('📤 [submit] createClient')
-        // console.log('payload:', JSON.stringify(payload, null, 2))
-        // console.groupEnd()
+        const res = await ClientService.createClientWithCodigo(payload)
 
-        // const res = await ClientService.createClient(payload)
-        // console.log('📦 [POST response]', res)
-
-        // handleError devuelve objeto con error:true en vez de lanzar
-        // hay que detectarlo manualmente
-        if (res?.error || res?.success === false) {
+        if (res?.error === true || res?.success === false) {
             const status = res?.status ?? res?.data?.statusCode
             const message = res?.data?.message ?? res?.message ?? ''
-
-            // 409 → documento ya registrado
-            if (status === 409) {
-                errSubmit.value = '409'   // usamos código como flag para el template
-                return
-            }
-
-
-            errSubmit.value = Array.isArray(message) ? message.join(', ') : (message || 'Error al guardar.')
+            if (status === 409) { modalCodigo.value = false; errSubmit.value = '409'; return }
+            errCodigo.value = Array.isArray(message) ? message.join(', ') : (message || 'Código inválido o error al registrar.')
             return
         }
-
 
         router.push({ name: 'login', query: { registered: '1' } })
 
     } catch (e) {
-        console.group('❌ [submit] ERROR catch')
-        console.log('Status:', e.response?.status)
-        console.log('Data:', e.response?.data)
-        console.groupEnd()
-
-        if (e.response?.status === 409) {
-            errSubmit.value = '409'
-            return
-        }
+        if (e.response?.status === 409) { modalCodigo.value = false; errSubmit.value = '409'; return }
         const msg = e.response?.data?.message
-        errSubmit.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar. Intenta de nuevo.')
+        errCodigo.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al registrar. Intenta de nuevo.')
     } finally {
         guardando.value = false
     }
@@ -660,6 +728,52 @@ const submit = async () => {
 
 <style scoped>
 /* Solo lo que Tailwind no puede hacer inline */
+
+.modal-enter-active {
+    transition: opacity 0.2s ease;
+}
+
+.modal-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-active .bg-\[\#B8E19E\] {
+    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.modal-leave-active .bg-\[\#B8E19E\] {
+    animation: popOut 0.18s ease-in both;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.86) translateY(24px);
+        opacity: 0
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1
+    }
+}
+
+@keyframes popOut {
+    from {
+        transform: scale(1) translateY(0);
+        opacity: 1
+    }
+
+    to {
+        transform: scale(0.92) translateY(12px);
+        opacity: 0
+    }
+}
+
 
 .field-input {
     width: 100%;

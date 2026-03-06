@@ -175,7 +175,7 @@ export const adminRoutes = {
     },
     {
       path: "verificacion",
-      component: () => import("@/views/administrador/CodigoVerificacion.vue"),
+      component: () => import("@/views/administrador/Codigo.vue"),
       meta: { permission: PERMS.CODIGOS_CREAR },
     },
     {
