@@ -183,7 +183,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close">✕</button>
@@ -203,7 +203,7 @@
                             <div class="pago-resumen__item">
                                 <span class="pago-resumen__label">Valor</span>
                                 <span class="pago-resumen__val pago-resumen__val--price">{{ mensualidadAccion?.valor
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                         <p class="field-hint" style="margin-top:8px">Al confirmar serás redirigido a la pasarela de
@@ -1161,6 +1161,7 @@ const guardarPlaca = async () => {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     opacity: 0.5;
+    color: black;
 }
 
 .card-data {

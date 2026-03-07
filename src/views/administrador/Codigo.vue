@@ -4,14 +4,14 @@
         <!-- Header -->
         <div class="header-bar">
             <div class="header-bar__desktop">
-                <button @click="$router.back()" class="add-btn">← Volver</button>
+                <button @click="$router.back()" class="add-btn">Volver</button>
                 <h2 class="header-bar__title">Códigos de Validación</h2>
                 <div style="width:100px" />
             </div>
             <div class="header-bar__mobile">
                 <h2 class="header-bar__title">Códigos de Validación</h2>
                 <div class="header-bar__actions">
-                    <button @click="$router.back()" class="add-btn">← Volver</button>
+                    <button @click="$router.back()" class="add-btn">Volver</button>
                 </div>
             </div>
         </div>

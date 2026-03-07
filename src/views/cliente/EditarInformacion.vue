@@ -51,10 +51,10 @@
                         <div class="field-box" :class="{ 'field-box--editing': editing.nombre }">
                             <input v-model="form.nombre" :disabled="!editing.nombre" class="field-input"
                                 placeholder="Tu nombre" />
-                            <button @click="toggleEdit('nombre')" class="field-edit-btn">
+                            <!-- <button @click="toggleEdit('nombre')" class="field-edit-btn">
                                 <span v-if="!editing.nombre" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
-                            </button>
+                            </button> -->
                         </div>
                     </div>
 
@@ -63,10 +63,10 @@
                         <div class="field-box" :class="{ 'field-box--editing': editing.apellido }">
                             <input v-model="form.apellido" :disabled="!editing.apellido" class="field-input"
                                 placeholder="Tu apellido" />
-                            <button @click="toggleEdit('apellido')" class="field-edit-btn">
+                            <!-- <button @click="toggleEdit('apellido')" class="field-edit-btn">
                                 <span v-if="!editing.apellido" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
-                            </button>
+                            </button> -->
                         </div>
                     </div>
 

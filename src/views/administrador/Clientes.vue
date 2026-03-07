@@ -418,19 +418,34 @@ const cargarClientes = async () => {
             limit: limit.value,
             ...(filtroSede.value && { sede: filtroSede.value }),
             ...(busquedaDebounced.value && { search: busquedaDebounced.value }),
-            // ← estado NO se envía al backend
         }
+
+        // Si hay filtro de estado, traemos todo para filtrar localmente
+        if (filtroEstado.value !== '') {
+            const resAll = await ClientService.getAllClients({
+                ...params,
+                page: 1,
+                limit: 9999,
+            })
+            const todos = resAll?.data ?? (Array.isArray(resAll) ? resAll : [])
+            const filtrados = todos.filter(c => String(c.Estado) === filtroEstado.value)
+
+            totalRegistros.value = filtrados.length
+            totalPaginas.value = Math.max(1, Math.ceil(filtrados.length / limit.value))
+
+            const desde = (paginaActual.value - 1) * limit.value
+            clientes.value = filtrados.slice(desde, desde + limit.value)
+            return
+        }
+
+        // Sin filtro de estado → paginación normal del backend
         const res = await ClientService.getAllClients(params)
         const todos = res?.data ?? (Array.isArray(res) ? res : [])
-
-        // Filtro local por Estado
-        clientes.value = filtroEstado.value === ''
-            ? todos
-            : todos.filter(c => String(c.Estado) === filtroEstado.value)
-
-        totalRegistros.value = res?.total ?? res?.count ?? clientes.value.length
+        clientes.value = todos
+        totalRegistros.value = res?.total ?? res?.count ?? todos.length
         totalPaginas.value = res?.totalPages ?? res?.pages ??
             Math.max(1, Math.ceil(totalRegistros.value / limit.value))
+
     } catch (e) {
         console.error('[Clientes]', e.response?.data ?? e.message)
     } finally {

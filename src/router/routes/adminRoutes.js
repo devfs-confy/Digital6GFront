@@ -61,7 +61,7 @@ export const adminMenuItems = [
     label: "Administrar <br> Tarifas",
     icon: icoTarifas,
     route: "/admin/tarifas-admin",
-    permission: PERMS.CODIGOS_CREAR,
+    permission: PERMS.SEDES_VER,
   },
 
   {
