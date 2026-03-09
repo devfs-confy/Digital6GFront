@@ -1,61 +1,65 @@
 <template>
-    <div class="grid gap-[18px] p-6 content-start w-full box-border
-                grid-cols-3
-                max-[900px]:grid-cols-2 max-[900px]:p-4
-                max-[560px]:grid-cols-1 max-[560px]:p-3 max-[560px]:gap-3">
+    <div class="db-root">
 
-        <!-- Analítica 1: Mensualidades vencidas -->
+        <!-- ── Encabezado de página ─────────────────────── -->
+        <div class="col-span-full db-header card-animation">
+            <div class="db-header__text">
+                <span class="db-header__badge">Panel de control</span>
+                <h1>Dashboard</h1>
+                <p>Resumen operativo y accesos rápidos del sistema</p>
+            </div>
+        </div>
+
+        <!-- ── Gráfica 1: Mensualidades vencidas ────────── -->
         <div v-if="hasPermission(PERMS.MENSUALIDADES_VER)" class="chart-card card-animation">
-            <div class="flex items-start justify-between gap-2.5">
-                <div class="flex flex-col gap-[3px] min-w-0">
-                    <span
-                        class="inline-block text-[0.58rem] font-extrabold uppercase tracking-[0.08em] px-2 py-0.5 rounded-full w-fit bg-red-100 text-red-600">Urgente</span>
-                    <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] leading-tight">Mensualidades vencidas</h3>
-                    <p class="text-[0.68rem] text-gray-400 font-medium">Por sede · este mes</p>
+            <div class="chart-accent chart-accent--red" />
+            <div class="chart-head">
+                <div class="chart-meta">
+                    <span class="metric-badge metric-badge--red">Urgente</span>
+                    <h3>Mensualidades vencidas</h3>
+                    <p>Por sede · este mes</p>
                 </div>
-                <div class="flex flex-col items-end shrink-0">
-                    <span class="text-[1.5rem] font-black leading-none text-red-600">{{ totalVencidas }}</span>
-                    <span class="text-[0.6rem] font-semibold uppercase tracking-[0.06em] text-red-400">vencidas</span>
+                <div class="chart-kpi">
+                    <span class="chart-kpi__val text-red-600">{{ totalVencidas }}</span>
+                    <span class="chart-kpi__label text-red-400">vencidas</span>
                 </div>
             </div>
-            <div class="h-[180px] max-[560px]:h-[150px] relative">
+            <div class="chart-area">
                 <Bar :data="vencidasData" :options="optsVencidas" />
             </div>
         </div>
 
-        <!-- Analítica 2: Ingresos últimos 6 meses -->
+        <!-- ── Gráfica 2: Ingresos mensuales ────────────── -->
         <div v-if="hasPermission(PERMS.MENSUALIDADES_VER)" class="chart-card card-animation">
-            <div class="flex items-start justify-between gap-2.5">
-                <div class="flex flex-col gap-[3px] min-w-0">
-                    <span
-                        class="inline-block text-[0.58rem] font-extrabold uppercase tracking-[0.08em] px-2 py-0.5 rounded-full w-fit bg-green-100 text-green-700">Finanzas</span>
-                    <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] leading-tight">Ingresos mensuales</h3>
-                    <p class="text-[0.68rem] text-gray-400 font-medium">6 mejores sedes</p>
+            <div class="chart-accent chart-accent--green" />
+            <div class="chart-head">
+                <div class="chart-meta">
+                    <span class="metric-badge metric-badge--green">Finanzas</span>
+                    <h3>Ingresos mensuales</h3>
+                    <p>6 mejores sedes</p>
                 </div>
-                <div class="flex flex-col items-end shrink-0">
-                    <span class="text-[1.5rem] font-black leading-none text-[#299261]">{{ totalIngresos }}</span>
-                    <span
-                        class="text-[0.6rem] font-semibold uppercase tracking-[0.06em] text-[#299261] opacity-60">total</span>
+                <div class="chart-kpi">
+                    <span class="chart-kpi__val chart-kpi__val--sm text-[#299261]">{{ totalIngresos }}</span>
+                    <span class="chart-kpi__label text-[#299261] opacity-60">total</span>
                 </div>
             </div>
-            <div class="h-[180px] max-[560px]:h-[150px] relative">
+            <div class="chart-area">
                 <Bar :data="ingresosData" :options="optsIngresos" />
             </div>
         </div>
 
-        <!-- Analítica 3: Disponibilidad por sede -->
+        <!-- ── Gráfica 3: Disponibilidad por sede ───────── -->
         <div v-if="hasPermission(PERMS.SEDES_VER)" class="chart-card card-animation">
-            <div class="flex items-start justify-between gap-2.5">
-                <div class="flex flex-col gap-[3px]">
-                    <span
-                        class="inline-block text-[0.58rem] font-extrabold uppercase tracking-[0.08em] px-2 py-0.5 rounded-full w-fit bg-blue-100 text-blue-600">Disponibilidad</span>
-                    <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] leading-tight">Capacidad por sede</h3>
-                    <p class="text-[0.68rem] text-gray-400 font-medium">Mensualidades activas vs total</p>
+            <div class="chart-accent chart-accent--blue" />
+            <div class="chart-head">
+                <div class="chart-meta">
+                    <span class="metric-badge metric-badge--blue">Disponibilidad</span>
+                    <h3>Capacidad por sede</h3>
+                    <p>Mensualidades activas vs total</p>
                 </div>
             </div>
 
-            <select v-model="sedeSeleccionada"
-                class="w-full text-[0.72rem] px-2.5 py-[5px] rounded-[10px] border-[1.5px] border-gray-200 bg-gray-50 text-gray-700 cursor-pointer outline-none focus:border-[#299261]">
+            <select v-model="sedeSeleccionada" class="disp-select">
                 <option value="">Selecciona una sede...</option>
                 <option v-for="s in sedesAgrupadas" :key="s.IdEstacionamiento" :value="s.IdEstacionamiento">
                     {{ s.Nombre }}
@@ -63,15 +67,12 @@
             </select>
 
             <template v-if="sedeActual">
-                <div v-for="v in sedeActual.vehiculos" :key="v.IdTipoVehiculo"
-                    class="bg-gray-50 rounded-[14px] px-3.5 py-3 flex flex-col gap-2 border-[1.5px] border-gray-100 hover:border-[#e8f5e9] transition-colors">
+                <div v-for="v in sedeActual.vehiculos" :key="v.IdTipoVehiculo" class="disp-row">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[1.1rem] leading-none">
-                                <span v-if="v.TipoVehiculo === 'Moto'" v-html="motorbike" />
-                                <span v-else v-html="car" />
-                            </span>
-                        </div>
+                        <span class="text-[1.05rem] leading-none">
+                            <span v-if="v.TipoVehiculo === 'Moto'" v-html="motorbike" />
+                            <span v-else v-html="car" />
+                        </span>
                         <div class="flex items-center gap-1.5">
                             <span class="text-[0.7rem] font-bold text-[#299261]">{{ v.MensualidadesOcupadas }}
                                 ocupadas</span>
@@ -79,15 +80,15 @@
                             <span class="text-[0.7rem] font-bold text-gray-400">{{ v.Total }} total</span>
                         </div>
                     </div>
-                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div class="h-full rounded-full transition-all duration-500"
                             :class="pct(v) >= 90 ? 'bg-red-500' : pct(v) >= 70 ? 'bg-amber-400' : 'bg-[#7FD344]'"
                             :style="{ width: `${pct(v)}%` }" />
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-[0.62rem] font-bold text-gray-500">{{ v.MensualidadesDisponibles }}
+                        <span class="text-[0.62rem] font-semibold text-gray-400">{{ v.MensualidadesDisponibles }}
                             disponibles</span>
-                        <span class="text-[0.62rem] font-black tracking-[0.03em]"
+                        <span class="text-[0.62rem] font-black"
                             :class="pct(v) >= 90 ? 'text-red-500' : pct(v) >= 70 ? 'text-amber-500' : 'text-[#299261]'">
                             {{ pct(v) }}% ocupado
                         </span>
@@ -95,28 +96,31 @@
                 </div>
             </template>
 
-            <div v-else
-                class="flex flex-col items-center gap-2 py-5 text-gray-300 text-[0.72rem] font-semibold text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+            <div v-else class="disp-empty">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
+                    viewBox="0 0 24 24">
                     <path
                         d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>
-                <span>Selecciona una sede para ver su disponibilidad</span>
+                Selecciona una sede para ver su disponibilidad
             </div>
         </div>
 
-        <!-- Tarjetas acceso rápido -->
-        <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card card-animation flex flex-col items-center gap-3 bg-white rounded-[20px] p-5 cursor-pointer border-2 border-transparent
-                   hover:border-[#299261] hover:-translate-y-0.5 active:translate-y-0.5
-                   max-[560px]:flex-row max-[560px]:text-left max-[560px]:p-3.5 max-[560px]:gap-3.5"
-            style="box-shadow:0 4px 0 #e2ede7,0 2px 12px rgba(13,41,28,0.07)" @click="router.push(opcion.route)">
-            <div class="opcion-icon w-[60px] h-[60px] rounded-2xl bg-[#e8f5e9] flex items-center justify-center shrink-0 transition-colors
-                        max-[560px]:w-11 max-[560px]:h-11 max-[560px]:rounded-xl">
+        <!-- ── Accesos rápidos ───────────────────────────── -->
+        <div v-for="(opcion, i) in opciones" :key="opcion.id" class="opcion-card card-animation"
+            :style="{ animationDelay: `${i * 0.04}s` }" @click="router.push(opcion.route)">
+            <div class="opcion-icon">
                 <span v-html="opcion.icon" />
             </div>
-            <div class="flex flex-col gap-[3px] text-center max-[560px]:text-left">
-                <h2 class="text-[0.88rem] font-extrabold text-[#0D291C] leading-tight">{{ opcion.titulo }}</h2>
-                <p class="text-[0.75rem] font-semibold text-[#299261]">{{ opcion.sub }}</p>
+            <div class="opcion-body">
+                <h2>{{ opcion.titulo }}</h2>
+                <p v-if="opcion.sub">{{ opcion.sub }}</p>
+            </div>
+            <div class="opcion-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
             </div>
         </div>
 
@@ -164,12 +168,12 @@ const vencidasRaw = ref([18, 24, 31, 27, 35, 42])
 const totalVencidas = computed(() => vencidasRaw.value.reduce((a, b) => a + b, 0))
 const vencidasData = computed(() => ({
     labels: sedesLabels.value,
-    datasets: [{ label: 'Vencidas', data: vencidasRaw.value, backgroundColor: 'rgba(220,38,38,0.12)', borderColor: '#dc2626', borderWidth: 2, borderRadius: 6, borderSkipped: false }]
+    datasets: [{ label: 'Vencidas', data: vencidasRaw.value, backgroundColor: 'rgba(220,38,38,0.10)', borderColor: '#dc2626', borderWidth: 2, borderRadius: 6, borderSkipped: false }]
 }))
 const optsVencidas = {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1f2937', titleColor: '#f9fafb', bodyColor: '#fca5a5', callbacks: { label: (ctx) => ` ${ctx.parsed.y} vencidas` } } },
-    scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11 } } }, y: { grid: { color: '#f9fafb' }, ticks: { color: '#9ca3af', font: { size: 11 } } } }
+    scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11 } } }, y: { grid: { color: '#f8fafc' }, ticks: { color: '#9ca3af', font: { size: 11 } } } }
 }
 
 // ── Gráfica 2 ─────────────────────────────────────────────────────
@@ -180,12 +184,12 @@ const totalIngresos = computed(() => {
 })
 const ingresosData = computed(() => ({
     labels: sedesLabels.value,
-    datasets: [{ label: 'Ingresos', data: ingresosRaw.value, backgroundColor: 'rgba(41,146,97,0.12)', borderColor: '#299261', borderWidth: 2, borderRadius: 6, borderSkipped: false }]
+    datasets: [{ label: 'Ingresos', data: ingresosRaw.value, backgroundColor: 'rgba(41,146,97,0.10)', borderColor: '#299261', borderWidth: 2, borderRadius: 6, borderSkipped: false }]
 }))
 const optsIngresos = {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1f2937', titleColor: '#f9fafb', bodyColor: '#86efac', callbacks: { label: (ctx) => ` ${new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(ctx.parsed.y)}` } } },
-    scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11 } } }, y: { grid: { color: '#f9fafb' }, ticks: { color: '#9ca3af', font: { size: 10 }, callback: (v) => `$${(v / 1000000).toFixed(1)}M` } } }
+    scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11 } } }, y: { grid: { color: '#f8fafc' }, ticks: { color: '#9ca3af', font: { size: 10 }, callback: (v) => `$${(v / 1000000).toFixed(1)}M` } } }
 }
 
 // ── Disponibilidad ─────────────────────────────────────────────────
@@ -201,8 +205,6 @@ const sedesAgrupadas = computed(() => {
     })
     return Object.values(grupos)
 })
-
-
 
 const sedeActual = computed(() =>
     sedesAgrupadas.value.find(s => s.IdEstacionamiento === Number(sedeSeleccionada.value)) ?? null
@@ -258,24 +260,57 @@ onMounted(async () => {
 })
 </script>
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+</style>
+
 <style scoped>
-.card-animation {
-    animation: cardIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+/* ── Root grid ────────────────────────────────── */
+.db-root {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    align-content: start;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-@keyframes cardIn {
-    from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.97)
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1)
-    }
+/* ── Page header ──────────────────────────────── */
+.db-header {
+    grid-column: 1 / -1;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid #e8ecf0;
+    margin-bottom: 4px;
 }
 
-/* ── Chart card base (box-shadow no soportado en Tailwind sin config) ── */
+.db-header__badge {
+    display: inline-block;
+    font-size: 0.67rem;
+    font-weight: 700;
+    color: #299261;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.db-header h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0D291C;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin: 0 0 4px;
+}
+
+.db-header p {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* ── Chart card base ──────────────────────────── */
 .chart-card {
     background: white;
     border-radius: 20px;
@@ -283,45 +318,343 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    border: 2px solid transparent;
-    box-shadow: 0 4px 0 #e2ede7, 0 2px 12px rgba(13, 41, 28, 0.07);
-    transition: border-color 0.18s;
+    border: 1.5px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
 }
 
 .chart-card:hover {
-    border-color: #e8f5e9
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* ── Hover box-shadow opcion-card ── */
+/* ── Top accent ───────────────────────────────── */
+.chart-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.chart-accent--red {
+    background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+.chart-accent--green {
+    background: linear-gradient(90deg, #299261, #7FD344);
+}
+
+.chart-accent--blue {
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+}
+
+/* ── Chart head ───────────────────────────────── */
+.chart-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 5px;
+}
+
+.chart-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.chart-meta h3 {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0D291C;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.chart-meta p {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ── Metric badges ────────────────────────────── */
+.metric-badge {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 8px;
+    border-radius: 100px;
+    width: fit-content;
+    margin-bottom: 2px;
+}
+
+.metric-badge--red {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.metric-badge--green {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.metric-badge--blue {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* ── KPI value ────────────────────────────────── */
+.chart-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.chart-kpi__val {
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.chart-kpi__val--sm {
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-align: right;
+    line-height: 1.3;
+}
+
+.chart-kpi__label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-top: 3px;
+}
+
+/* ── Chart area ───────────────────────────────── */
+.chart-area {
+    height: 178px;
+    position: relative;
+}
+
+/* ── Disponibilidad select ────────────────────── */
+.disp-select {
+    width: 100%;
+    font-size: 0.72rem;
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: 1.5px solid #e8ecf0;
+    background: #f7f8fa;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: border-color 0.15s;
+}
+
+.disp-select:focus {
+    border-color: #299261;
+}
+
+/* ── Disponibilidad row ───────────────────────── */
+.disp-row {
+    background: #f7f8fa;
+    border-radius: 12px;
+    padding: 12px 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    border: 1.5px solid #f1f5f9;
+    transition: border-color 0.15s;
+}
+
+.disp-row:hover {
+    border-color: #d1fae5;
+}
+
+/* ── Disponibilidad empty ─────────────────────── */
+.disp-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #c4cdd8;
+    text-align: center;
+}
+
+/* ── Quick access card ────────────────────────── */
+.opcion-card {
+    background: white;
+    border-radius: 18px;
+    padding: 18px 16px;
+    cursor: pointer;
+    border: 1.5px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    transition: border-color 0.18s, background 0.18s, transform 0.15s, box-shadow 0.18s;
+    position: relative;
+}
+
 .opcion-card:hover {
-    box-shadow: 0 4px 0 #0D291C, 0 2px 16px rgba(13, 41, 28, 0.12) !important;
+    background: #0D291C;
+    border-color: #0D291C;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(13, 41, 28, 0.22);
 }
 
 .opcion-card:active {
-    box-shadow: 0 1px 0 #0D291C !important;
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(13, 41, 28, 0.15);
 }
 
-/* ── SVG icono dentro de opcion-card ── */
-.opcion-icon :deep(svg) {
-    width: 32px;
-    height: 32px;
-    fill: #0D291C;
-    transition: fill 0.18s;
-    display: block;
+/* ── Opcion icon ──────────────────────────────── */
+.opcion-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: #f0f9f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.18s;
 }
 
 .opcion-card:hover .opcion-icon {
-    background-color: #0D291C;
+    background: rgba(127, 211, 68, 0.15);
+}
+
+.opcion-icon :deep(svg) {
+    width: 24px;
+    height: 24px;
+    fill: #0D291C;
+    display: block;
+    transition: fill 0.18s;
 }
 
 .opcion-card:hover .opcion-icon :deep(svg) {
     fill: #7FD344;
 }
 
+/* ── Opcion text ──────────────────────────────── */
+.opcion-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.opcion-body h2 {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #0D291C;
+    line-height: 1.2;
+    margin: 0 0 3px;
+    transition: color 0.18s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.opcion-card:hover .opcion-body h2 {
+    color: white;
+}
+
+.opcion-body p {
+    font-size: 0.71rem;
+    font-weight: 600;
+    color: #299261;
+    margin: 0;
+    transition: color 0.18s;
+}
+
+.opcion-card:hover .opcion-body p {
+    color: rgba(127, 211, 68, 0.65);
+}
+
+/* ── Arrow ────────────────────────────────────── */
+.opcion-arrow {
+    color: #d1d5db;
+    flex-shrink: 0;
+    transition: color 0.18s, transform 0.2s ease;
+}
+
+.opcion-card:hover .opcion-arrow {
+    color: #7FD344;
+    transform: translateX(3px);
+}
+
+/* ── Animations ───────────────────────────────── */
+.card-animation {
+    animation: cardIn 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ── Reduced motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 900px) {
+    .db-root {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 560px) {
+    .db-root {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .chart-area {
+        height: 150px;
+    }
+
+    .opcion-card {
+        padding: 14px 12px;
+    }
+
+    .opcion-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+    }
+
     .opcion-icon :deep(svg) {
-        width: 22px;
-        height: 22px
+        width: 20px;
+        height: 20px;
     }
 }
 </style>
