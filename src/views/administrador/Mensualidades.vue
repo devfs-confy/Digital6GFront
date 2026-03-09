@@ -412,6 +412,7 @@ const cargarTodasLasMensualidades = async () => {
                 MensualidadesService.getAllBySede({ sede: s.IdEstacionamiento, page: 1, limit: 999 })
             )
         )
+       
         mensualidades.value = resultados.flatMap((res, idx) => {
             const items = res?.data?.data ?? res?.data ?? []
             return items.map(m => ({ ...m, _sedeName: sedes.value[idx]?.Nombre ?? '' }))
@@ -436,6 +437,9 @@ const cargarMensualidades = async () => {
             limit: limit.value,
             search: filtros.search || undefined,
         })
+
+        console.log(res)
+
         mensualidades.value = (res?.data?.data ?? res?.data ?? [])
             .map(m => ({ ...m, _sedeName: sedeNombre.value }))
         totalRegistros.value = res?.data?.total ?? res?.total ?? mensualidades.value.length
