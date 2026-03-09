@@ -1,52 +1,41 @@
 <template>
-    <div class="reg-root">
-        <div class="blob blob-1" />
-        <div class="blob blob-2" />
+    <!-- Root -->
+    <div class="relative min-h-screen w-full bg-[#0D291C] flex items-center justify-center max-[767px]:items-start
+                px-4 py-5 max-[767px]:p-3 box-border overflow-hidden font-[Plus_Jakarta_Sans,sans-serif]">
 
-        <div class="reg-card">
+        <!-- Blobs -->
+        <div class="fixed rounded-full pointer-events-none z-0 blur-[90px]
+                    w-[480px] h-[480px] -top-[140px] -left-[140px]"
+            style="background:radial-gradient(circle,rgba(41,146,97,0.22) 0%,transparent 70%)" />
+        <div class="fixed rounded-full pointer-events-none z-0 blur-[90px]
+                    w-[380px] h-[380px] -bottom-[100px] -right-[100px]"
+            style="background:radial-gradient(circle,rgba(127,211,68,0.15) 0%,transparent 70%)" />
 
-            <!-- ── Panel izquierdo ──────────────────────────────── -->
-            <div class="brand-side">
-                <div class="brand-inner">
-                    <img src="@/assets/img/confy-verde.png" alt="Logo" class="brand-logo"
-                        @error="$event.target.style.display = 'none'" />
-                    <div class="brand-copy">
-                        <h2>Bienvenido al<br />sistema</h2>
-                        <p>Gestiona tu mensualidad de parqueo de forma fácil y rápida.</p>
-                    </div>
-                </div>
+        <!-- Card -->
+        <div class="reg-card relative z-10 flex w-full max-w-[960px] rounded-[28px] max-[767px]:rounded-[20px]
+                    overflow-hidden min-h-[580px] max-[767px]:min-h-0" style="border:1.5px solid rgba(127,211,68,0.15);
+                   box-shadow:0 0 0 1px rgba(0,0,0,0.4),0 32px 80px rgba(0,0,0,0.55),0 0 60px rgba(127,211,68,0.05)">
 
-                <div class="sede-badge-wrap">
-                    <div class="sede-badge">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                        {{ sedeNombre }}
-                    </div>
-                    <p class="sede-hint">Selecciona tu sede para comenzar el registro</p>
-                </div>
+            <!-- ── Panel formulario ───────────────────────────── -->
+            <div class="flex-1 bg-white flex flex-col min-w-0 relative">
 
-                <div class="deco-circle deco-1" />
-                <div class="deco-circle deco-2" />
-                <div class="deco-circle deco-3" />
-            </div>
-
-            <!-- ── Panel formulario ─────────────────────────────── -->
-            <div class="form-side">
-                <div class="top-accent" />
+                <!-- Top accent -->
+                <div class="absolute top-0 left-0 right-0 h-[3px] z-[2]"
+                    style="background:linear-gradient(90deg,#299261,#7FD344 50%,#299261)" />
 
                 <!-- Header mobile -->
-                <div class="mobile-header">
-                    <button @click="$router.back()" class="back-btn">
+                <div class="flex items-center justify-between px-5 py-3.5 border-b-[1.5px] border-slate-100 mt-[3px]
+                            md:hidden">
+                    <button @click="$router.back()"
+                        class="flex items-center gap-1.5 text-[0.76rem] font-extrabold text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
                         </svg>
                         Volver
                     </button>
-                    <div class="mobile-sede-badge">
+                    <div
+                        class="inline-flex items-center gap-1 bg-[#0D291C] text-[#7FD344] text-[0.62rem] font-black px-2.5 py-[5px] rounded-full">
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#7FD344"
                             viewBox="0 0 24 24">
                             <path
@@ -57,11 +46,15 @@
                 </div>
 
                 <!-- Scroll -->
-                <div class="form-scroll">
+                <div class="flex-1 overflow-y-auto flex flex-col gap-5
+                            px-7 pt-6 pb-7
+                            md:px-10 md:pt-7 md:pb-10
+                            max-[767px]:px-[18px] max-[767px]:py-5">
 
                     <!-- Encabezado -->
-                    <div class="form-header">
-                        <div class="form-icon-wrap">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-[14px] bg-[#0D291C] flex items-center justify-center shrink-0"
+                            style="box-shadow:0 3px 0 #051510">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#7FD344"
                                 viewBox="0 0 24 24">
                                 <path
@@ -69,14 +62,18 @@
                             </svg>
                         </div>
                         <div>
-                            <h1>{{ usuarioEncontrado ? 'Completa tu registro' : 'Crea tu cuenta' }}</h1>
-                            <p>{{ usuarioEncontrado ? 'Encontramos tus datos — revísalos y crea tu contraseña.' :
-                                'Ingresa tu documento para comenzar.' }}</p>
+                            <h1 class="text-[1.2rem] font-black text-[#0D291C] leading-tight tracking-[-0.02em] mb-1">
+                                {{ usuarioEncontrado ? 'Completa tu registro' : 'Crea tu cuenta' }}
+                            </h1>
+                            <p class="text-[0.75rem] font-semibold text-gray-400 leading-snug m-0">
+                                {{ usuarioEncontrado ? 'Encontramos tus datos — revísalos y crea tu contraseña.' :
+                                    'Ingresa tu documento para comenzar.' }}
+                            </p>
                         </div>
                     </div>
 
-                    <!-- ── DOCUMENTO ──────────────────────────────── -->
-                    <div class="section-block">
+                    <!-- ── DOCUMENTO ── -->
+                    <div class="flex flex-col gap-2.5">
                         <p class="section-label">Identificación</p>
                         <div class="flex flex-col gap-1">
                             <label class="field-label-sm">Número de documento <span
@@ -85,8 +82,7 @@
                                 <input v-model="form.Documento" type="text" class="field-input"
                                     :class="{ 'field-input--active': buscandoDoc }" placeholder="Ej: 109..."
                                     @input="onDocumentoInput" :disabled="formularioListo && !editandoDoc" />
-                                <div v-if="buscandoDoc"
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 flex">
+                                <div v-if="buscandoDoc" class="absolute right-3 top-1/2 -translate-y-1/2 flex">
                                     <span class="spinner-sm" />
                                 </div>
                                 <div v-else-if="usuarioEncontrado"
@@ -102,11 +98,11 @@
                                 {{ msgDoc }}
                             </p>
 
-                            <!-- Editar documento -->
                             <Transition name="fade">
                                 <div v-if="formularioListo && !editandoDoc && !bloqueado"
                                     class="flex items-center justify-between flex-wrap gap-1.5 mt-1">
-                                    <button type="button" @click="habilitarEdicionDoc" class="edit-doc-btn">
+                                    <button type="button" @click="habilitarEdicionDoc"
+                                        class="inline-flex items-center gap-1.5 text-[0.67rem] font-extrabold text-gray-400 bg-transparent border-none cursor-pointer p-0 underline underline-offset-2 transition-colors hover:text-[#299261]">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path
@@ -114,17 +110,18 @@
                                         </svg>
                                         ¿Documento incorrecto? Corregir
                                     </button>
-                                    <span v-if="busquedasRealizadas > 1" class="attempts-badge">
+                                    <span v-if="busquedasRealizadas > 1"
+                                        class="text-[0.6rem] font-bold text-amber-800 bg-amber-50 border border-yellow-200 rounded-full px-2 py-0.5">
                                         {{ LIMITE_BUSQUEDAS - busquedasRealizadas }} intentos restantes
                                     </span>
                                 </div>
                             </Transition>
 
-                            <!-- Bloqueado -->
                             <Transition name="fade">
-                                <div v-if="bloqueado" class="alert-warn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                        fill="currentColor" viewBox="0 0 24 24">
+                                <div v-if="bloqueado"
+                                    class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-amber-50 text-amber-800 border-[1.5px] border-yellow-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path
                                             d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
                                     </svg>
@@ -134,10 +131,11 @@
                         </div>
                     </div>
 
-                    <!-- ── ALERTA ESTUDIANTE sede 24 ──────────────── -->
+                    <!-- ── ESTUDIANTE sede 24 ── -->
                     <Transition name="fade">
-                        <div v-if="esSede24 && formularioListo" class="student-card">
-                            <div class="student-card__title">
+                        <div v-if="mostrarBloqueUCC && formularioListo"
+                            class="bg-green-50 border-[1.5px] border-green-300 rounded-2xl p-4">
+                            <div class="flex items-center gap-2 text-[0.82rem] font-black text-[#0D291C]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#0D291C"
                                     viewBox="0 0 24 24">
                                     <path
@@ -150,8 +148,8 @@
                                     :class="{ 'est-btn--on': esEstudiante === true }">
                                     Sí, soy estudiante
                                 </button>
-                                <button @click="esEstudiante = false; form.CodigoEstudianteUCC = ''"
-                                    class="est-btn" :class="{ 'est-btn--on': esEstudiante === false }">
+                                <button @click="esEstudiante = false; form.CodigoEstudianteUCC = ''" class="est-btn"
+                                    :class="{ 'est-btn--on': esEstudiante === false }">
                                     No, continuar
                                 </button>
                             </div>
@@ -166,12 +164,12 @@
                         </div>
                     </Transition>
 
-                    <!-- ── FORMULARIO COMPLETO ────────────────────── -->
+                    <!-- ── FORMULARIO COMPLETO ── -->
                     <Transition name="reveal">
                         <div v-if="formularioListo" class="flex flex-col gap-5">
 
-                            <!-- Banner encontrado -->
-                            <div v-if="usuarioEncontrado" class="alert-success">
+                            <div v-if="usuarioEncontrado"
+                                class="flex items-start gap-2 bg-green-50 border-[1.5px] border-green-300 rounded-xl px-3 py-2.5 text-[0.77rem] font-semibold text-green-800 leading-snug">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#166534"
                                     viewBox="0 0 24 24" class="shrink-0 mt-0.5">
                                     <path
@@ -181,14 +179,13 @@
                             </div>
 
                             <!-- Datos personales -->
-                            <div class="section-block">
+                            <div class="flex flex-col gap-2.5">
                                 <p class="section-label">Datos personales</p>
                                 <div class="grid grid-cols-2 gap-2.5 max-[480px]:grid-cols-1">
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Nombres <span
                                                 class="text-red-400">*</span></label>
-                                        <input v-model="form.Nombres" type="text" class="field-input"
-                                            placeholder="" />
+                                        <input v-model="form.Nombres" type="text" class="field-input" placeholder="" />
                                     </div>
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Apellidos <span
@@ -199,33 +196,29 @@
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Teléfono <span
                                                 class="text-red-400">*</span></label>
-                                        <input v-model="form.Telefono" type="text" class="field-input"
-                                            placeholder=""
+                                        <input v-model="form.Telefono" type="text" class="field-input" placeholder=""
                                             @input="form.Telefono = $event.target.value.replace(/\D/g, '')" />
                                     </div>
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Correo electrónico <span
                                                 class="text-red-400">*</span></label>
-                                        <input v-model="form.Email" type="email" class="field-input"
-                                            placeholder="" />
+                                        <input v-model="form.Email" type="email" class="field-input" placeholder="" />
                                     </div>
                                     <div class="col-span-2 max-[480px]:col-span-1 flex flex-col gap-1">
                                         <label class="field-label-sm">Contraseña <span
                                                 class="text-red-400">*</span></label>
                                         <div class="relative">
-                                            <input v-model="form.Password"
-                                                :type="verPass ? 'text' : 'password'" class="field-input"
-                                                placeholder="Mínimo 8 caracteres" />
+                                            <input v-model="form.Password" :type="verPass ? 'text' : 'password'"
+                                                class="field-input" placeholder="Mínimo 8 caracteres" />
                                             <button type="button" @click="verPass = !verPass"
-                                                class="pass-toggle">
-                                                <svg v-if="!verPass" xmlns="http://www.w3.org/2000/svg"
-                                                    width="15" height="15" fill="currentColor"
-                                                    viewBox="0 0 24 24">
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400 p-0 flex transition-colors hover:text-[#0D291C]">
+                                                <svg v-if="!verPass" xmlns="http://www.w3.org/2000/svg" width="15"
+                                                    height="15" fill="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
                                                 </svg>
-                                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="15"
-                                                    height="15" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                                    fill="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
                                                 </svg>
@@ -236,20 +229,17 @@
                             </div>
 
                             <!-- Vehículos -->
-                            <div class="section-block">
+                            <div class="flex flex-col gap-2.5">
                                 <p class="section-label">Vehículos</p>
                                 <div class="flex flex-col gap-2.5">
-                                    <div v-for="(_, idx) in form.placas" :key="idx"
-                                        class="flex flex-col gap-1">
-                                        <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *'
-                                            : '' }}</label>
+                                    <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
+                                        <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
+                                            }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
-                                                class="field-input placa-input flex-1" :placeholder="``"
-                                                maxlength="7" />
-                                            <button v-if="idx > 0" type="button"
-                                                @click="form.placas.splice(idx, 1)"
-                                                class="remove-placa-btn">
+                                                class="field-input placa-input flex-1" placeholder="" maxlength="7" />
+                                            <button v-if="idx > 0" type="button" @click="form.placas.splice(idx, 1)"
+                                                class="w-8 h-8 rounded-[10px] shrink-0 flex items-center justify-center bg-red-100 text-red-600 border-none cursor-pointer transition-all hover:bg-red-600 hover:text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
                                                     fill="currentColor" viewBox="0 0 24 24">
                                                     <path
@@ -258,9 +248,11 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <button v-if="form.placas.length < 2" type="button"
-                                        @click="form.placas.push('')" class="add-placa-btn">
-                                        <span class="add-placa-icon">
+                                    <button v-if="form.placas.length < 2" type="button" @click="form.placas.push('')"
+                                        class="flex items-center gap-1.5 w-fit text-[0.72rem] font-black text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261]">
+                                        <span
+                                            class="w-5 h-5 rounded-lg bg-[#0D291C] flex items-center justify-center shrink-0"
+                                            style="box-shadow:0 2px 0 #051510">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
                                                 fill="#7FD344" viewBox="0 0 24 24">
                                                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -273,25 +265,28 @@
 
                             <!-- Error 409 -->
                             <Transition name="fade">
-                                <div v-if="errSubmit === '409'" class="alert-409">
+                                <div v-if="errSubmit === '409'"
+                                    class="px-4 py-3.5 rounded-[14px] bg-amber-50 border-[1.5px] border-yellow-200"
+                                    style="box-shadow:0 3px 0 #fcd34d">
                                     <div class="flex items-start gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="#92400e" viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#92400e"
+                                            viewBox="0 0 24 24" class="shrink-0 mt-0.5">
                                             <path
                                                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                                         </svg>
                                         <div>
-                                            <p class="text-[0.8rem] font-black text-amber-800 leading-tight">
-                                                Este documento ya tiene una cuenta
-                                            </p>
+                                            <p class="text-[0.8rem] font-black text-amber-800 leading-tight">Este
+                                                documento ya tiene una cuenta</p>
                                             <p class="text-[0.72rem] font-semibold text-amber-700 mt-0.5 leading-snug">
-                                                El documento <strong>{{ form.Documento }}</strong> ya está
-                                                registrado en el sistema.
+                                                El documento <strong>{{ form.Documento }}</strong> ya está registrado en
+                                                el sistema.
                                             </p>
                                         </div>
                                     </div>
                                     <div class="flex gap-2 mt-3">
-                                        <router-link to="/login" class="btn-go-login">
+                                        <router-link to="/login"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-[#7FD344] bg-[#0D291C] border-none cursor-pointer no-underline transition-colors hover:bg-[#1a4a2e]"
+                                            style="box-shadow:0 3px 0 #051510">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                 fill="currentColor" viewBox="0 0 24 24">
                                                 <path
@@ -300,7 +295,7 @@
                                             Iniciar sesión
                                         </router-link>
                                         <button type="button" @click="habilitarEdicionDoc"
-                                            class="btn-fix-doc">
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-amber-800 bg-white border-[1.5px] border-yellow-200 cursor-pointer transition-colors hover:border-amber-400">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                 fill="currentColor" viewBox="0 0 24 24">
                                                 <path
@@ -314,9 +309,10 @@
 
                             <!-- Error genérico -->
                             <Transition name="fade">
-                                <div v-if="errSubmit && errSubmit !== '409'" class="alert-error">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                        fill="currentColor" viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                <div v-if="errSubmit && errSubmit !== '409'"
+                                    class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-600 border-[1.5px] border-red-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                        viewBox="0 0 24 24" class="shrink-0 mt-0.5">
                                         <path
                                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                                     </svg>
@@ -328,51 +324,51 @@
                             <button @click="submit" :disabled="guardando" class="submit-btn">
                                 <span v-if="guardando" class="spinner-sm spinner-sm--light" />
                                 {{ guardando ? 'Registrando...' : 'Crear cuenta' }}
-                                <svg v-if="!guardando" xmlns="http://www.w3.org/2000/svg" width="15"
-                                    height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5" class="btn-arrow">
+                                <svg v-if="!guardando" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    class="btn-arrow transition-transform">
                                     <path d="M5 12h14M12 5l7 7-7 7" />
                                 </svg>
                             </button>
 
                             <p class="text-center text-xs font-semibold text-gray-400">
                                 ¿Ya tienes cuenta?
-                                <router-link to="/login"
-                                    class="font-bold text-[#299261] hover:underline">Inicia
+                                <router-link to="/login" class="font-bold text-[#299261] hover:underline">Inicia
                                     sesión</router-link>
                             </p>
-
                         </div>
                     </Transition>
 
-                    <!-- ── MODAL ÉXITO ──────────────────────────────────────────── -->
+                    <!-- ── MODAL ÉXITO ── -->
                     <Transition name="modal">
-                        <div v-if="modalExito"
-                            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        <div v-if="modalExito" class="fixed inset-0 z-50 flex items-center justify-center p-4"
                             style="background:rgba(0,0,0,0.65)">
-                            <div class="success-modal">
-                                <div class="success-modal__head">
-                                    <div class="success-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
-                                            fill="#0D291C" viewBox="0 0 24 24">
+                            <div class="bg-white border-2 border-[#0D291C] rounded-[28px] w-full max-w-[380px] overflow-hidden"
+                                style="box-shadow:0 7px 0 #000">
+                                <div class="bg-[#0D291C] px-6 py-7 flex flex-col items-center gap-3.5">
+                                    <div class="w-14 h-14 rounded-[18px] bg-[#7FD344] flex items-center justify-center"
+                                        style="box-shadow:0 4px 0 #4a8a1e">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#0D291C"
+                                            viewBox="0 0 24 24">
                                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                                         </svg>
                                     </div>
                                     <div class="text-center">
                                         <p class="text-[1rem] font-black text-white">¡Registro exitoso!</p>
-                                        <p class="text-[0.68rem] font-semibold mt-1 text-white/50">
-                                            Tu cuenta ha sido creada correctamente
-                                        </p>
+                                        <p class="text-[0.68rem] font-semibold mt-1 text-white/50">Tu cuenta ha sido
+                                            creada correctamente</p>
                                     </div>
                                 </div>
-                                <div class="success-modal__body">
-                                    <p class="text-[0.82rem] font-semibold text-[#374151] text-center leading-relaxed">
+                                <div class="px-6 py-5">
+                                    <p class="text-[0.82rem] font-semibold text-gray-700 text-center leading-relaxed">
                                         Ya puedes iniciar sesión con tu documento y contraseña en la sede
                                         <strong class="text-[#0D291C]">{{ sedeNombre }}</strong>.
                                     </p>
                                 </div>
-                                <div class="success-modal__foot">
-                                    <button @click="router.push({ name: 'login' })" class="modal-cta-btn">
+                                <div class="px-6 pb-6">
+                                    <button @click="router.push({ name: 'login' })"
+                                        class="w-full py-3 rounded-full text-[0.82rem] font-black uppercase tracking-[0.06em] cursor-pointer bg-[#0D291C] text-[#7FD344] border-2 border-black transition-colors hover:bg-[#1a4a2e]"
+                                        style="box-shadow:0 4px 0 #000">
                                         Ir al inicio de sesión
                                     </button>
                                 </div>
@@ -380,85 +376,79 @@
                         </div>
                     </Transition>
 
-                    <!-- ── MODAL CÓDIGO DE VALIDACIÓN (comentado) ──────────────── -->
-                    <!-- <Transition name="modal">
-                        <div v-if="modalCodigo" class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                            style="background:rgba(0,0,0,0.6)" @click.self="modalCodigo = false">
-                            <div class="bg-[#B8E19E] border-2 border-[#0D291C] rounded-[28px] w-[30vw] max-w-[400px] overflow-hidden"
-                                style="box-shadow:0 7px 0 #000">
-
-                                <div class="flex items-center justify-between gap-3 px-6 py-5 bg-[#0D291C]">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                                            style="background:rgba(127,211,68,0.2)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                fill="#7FD344" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="text-[0.92rem] font-black text-white">Código de validación</p>
-                                            <p class="text-[0.63rem] font-semibold" style="color:rgba(255,255,255,0.5)">
-                                                Digita el código que te entregaron
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <button @click="modalCodigo = false"
-                                        class="text-white opacity-40 hover:opacity-100 bg-transparent border-none cursor-pointer text-lg font-black transition-opacity">✕</button>
-                                </div>
-
-                                <div class="px-6 py-5 flex flex-col gap-4">
-                                    <p class="text-[0.78rem] font-semibold text-[#0D291C] leading-relaxed opacity-70">
-                                        Para completar tu registro necesitas el código de validación que te entregaron
-                                        personalmente en el parqueadero.
-                                    </p>
-                                    <div class="flex flex-col gap-1.5">
-                                        <label
-                                            class="text-[0.58rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50 pl-0.5">
-                                            Código <span class="text-red-500">*</span>
-                                        </label>
-                                        <input v-model="codigoValidacion" type="text"
-                                            class="w-full box-border border-2 border-[#0D291C] rounded-[14px] px-4 py-3 text-[1.1rem] font-black text-[#0D291C] text-center tracking-[0.18em] uppercase outline-none bg-white transition-all"
-                                            style="box-shadow:inset 0 2px 0 rgba(13,41,28,0.06)"
-                                            placeholder="Ej: XYZ-9876"
-                                            @input="codigoValidacion = $event.target.value.toUpperCase(); errCodigo = ''"
-                                            @keyup.enter="submitConCodigo" />
-                                    </div>
-                                    <Transition name="fade">
-                                        <div v-if="errCodigo"
-                                            class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-700 border-2 border-red-300"
-                                            style="box-shadow:0 3px 0 #fca5a5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                fill="currentColor" viewBox="0 0 24 24" class="shrink-0 mt-0.5">
-                                                <path
-                                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                                            </svg>
-                                            {{ errCodigo }}
-                                        </div>
-                                    </Transition>
-                                </div>
-
-                                <div class="flex gap-2.5 px-6 pb-6 pt-1">
-                                    <button @click="modalCodigo = false"
-                                        class="flex-1 py-3 rounded-full text-[0.78rem] font-black uppercase tracking-wide cursor-pointer bg-white text-[#232B3A] border-2 border-black transition-colors hover:bg-gray-50"
-                                        style="box-shadow:0 3px 0 #000">
-                                        Cancelar
-                                    </button>
-                                    <button @click="submitConCodigo" :disabled="guardando || !codigoValidacion.trim()"
-                                        class="flex-[2] py-3 rounded-full text-[0.78rem] font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-white border-2 border-black flex items-center justify-center gap-2 transition-colors hover:bg-[#1a4a2e] disabled:opacity-40 disabled:cursor-not-allowed"
-                                        style="box-shadow:0 3px 0 #000">
-                                        <span v-if="guardando" class="spinner-sm spinner-sm--light" />
-                                        {{ guardando ? 'Registrando...' : 'Confirmar registro' }}
-                                    </button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </Transition> -->
-
                 </div>
             </div>
+
+            <!-- ── Panel visual (derecha) ── -->
+            <div class="brand-side hidden md:flex flex-col items-center justify-between
+                        px-8 pt-10 pb-11 w-[42%] shrink-0 relative overflow-hidden" style="background:linear-gradient(160deg,#183d26 0%,#0D291C 45%,#071810 100%);
+                       border-left:1px solid rgba(255,255,255,0.05)">
+
+                <!-- Logo -->
+                <div class="w-full flex items-center justify-between relative z-[2]">
+                    <img src="@/assets/img/confy-blanco.png" alt="Logo"
+                        class="max-h-[52px] max-w-[130px] object-contain"
+                        @error="$event.target.style.display = 'none'" />
+                    <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.14em] px-2.5 py-1 rounded-full"
+                        style="color:rgba(127,211,68,0.6);background:rgba(127,211,68,0.08);border:1px solid rgba(127,211,68,0.2)">
+                        Registro
+                    </span>
+                </div>
+
+                <!-- Focal -->
+                <div class="relative w-[180px] h-[180px] flex items-center justify-center z-[2]">
+                    <div class="focal-ring absolute rounded-full w-[180px] h-[180px] focal-ring--outer"
+                        style="border:1.5px solid rgba(127,211,68,0.15)" />
+                    <div class="focal-ring absolute rounded-full w-[130px] h-[130px] focal-ring--mid"
+                        style="border:1.5px solid rgba(127,211,68,0.22)" />
+                    <div class="absolute rounded-full w-[88px] h-[88px]"
+                        style="border:1.5px solid rgba(127,211,68,0.3);background:rgba(127,211,68,0.04)" />
+                    <div class="w-[68px] h-[68px] rounded-[22px] flex items-center justify-center relative z-[2]"
+                        style="background:linear-gradient(135deg,#1a5c36,#0a2516);border:1.5px solid rgba(127,211,68,0.3);box-shadow:0 0 0 4px rgba(127,211,68,0.07),0 8px 28px rgba(0,0,0,0.3)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#7FD344"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Copy -->
+                <div class="text-center relative z-[2]">
+                    <h2 class="text-[1.55rem] font-extrabold text-white leading-[1.18] tracking-[-0.03em] mb-2.5">
+                        Tu parqueo,<br />tu control
+                    </h2>
+                    <p class="text-[0.76rem] font-medium leading-relaxed max-w-[220px] mx-auto"
+                        style="color:rgba(255,255,255,0.38)">
+                        Gestiona tu mensualidad de forma fácil, rápida y segura desde cualquier lugar.
+                    </p>
+                </div>
+
+                <!-- Sede pill -->
+                <div class="flex flex-col items-center gap-1.5 relative z-[2]">
+                    <div class="inline-flex items-center gap-1.5 text-[#7FD344] text-[0.72rem] font-extrabold px-3.5 py-[7px] rounded-full"
+                        style="background:rgba(127,211,68,0.12);border:1px solid rgba(127,211,68,0.28)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                        {{ sedeNombre }}
+                    </div>
+                    <p class="text-[0.6rem] font-medium text-center" style="color:rgba(255,255,255,0.25)">
+                        Sede seleccionada para este registro
+                    </p>
+                </div>
+
+                <!-- Decorativos -->
+                <div class="absolute rounded-full w-[300px] h-[300px] -top-20 -right-20 pointer-events-none"
+                    style="background:radial-gradient(circle,rgba(127,211,68,0.12) 0%,transparent 70%)" />
+                <div class="absolute rounded-full w-[200px] h-[200px] -bottom-10 -left-[50px] pointer-events-none"
+                    style="background:radial-gradient(circle,rgba(127,211,68,0.12) 0%,transparent 70%)" />
+                <div class="absolute bottom-0 left-0 right-0 h-[160px] pointer-events-none"
+                    style="background:linear-gradient(to top,rgba(127,211,68,0.04),transparent)" />
+            </div>
+
         </div>
     </div>
 </template>
@@ -474,7 +464,9 @@ const router = useRouter()
 
 const idSede = computed(() => Number(route.query.sede))
 const sedeNombre = computed(() => route.query.sedeNombre ?? 'Sede')
-const esSede24 = computed(() => idSede.value === 24)
+// Después — solo activo si es sede 24 Y el usuario NO fue encontrado (nuevo)
+const mostrarBloqueUCC = computed(() => idSede.value === 24 && !usuarioEncontrado.value)
+
 
 const buscandoDoc = ref(false)
 const formularioListo = ref(false)
@@ -487,12 +479,10 @@ const msgDoc = ref('')
 const esEstudiante = ref(null)
 const modalExito = ref(false)
 
-// ── Anti-abuso ─────────────────────────────────────────────────────
 const LIMITE_BUSQUEDAS = 4
 const busquedasRealizadas = ref(0)
 const documentosBuscados = ref(new Set())
 const bloqueado = ref(false)
-
 const mensualidadData = ref(null)
 
 const form = reactive({
@@ -502,18 +492,14 @@ const form = reactive({
     placas: [''],
 })
 
-// ── Tipo de vehículo por placa (Colombia) ──────────────────────────
-// Carro:  ABC123  → 3L + 3N
-// Moto:   ABC12D  → 3L + 2N + 1L
 const detectarTipoVehiculo = (placa) => {
     if (!placa) return null
     const p = placa.trim().toUpperCase()
-    if (/^[A-Z]{3}[0-9]{3}$/.test(p)) return 1  // Carro
-    if (/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(p)) return 2  // Moto
+    if (/^[A-Z]{3}[0-9]{3}$/.test(p)) return 1
+    if (/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(p)) return 2
     return null
 }
 
-// ── Editar documento ───────────────────────────────────────────────
 const habilitarEdicionDoc = () => {
     if (bloqueado.value) return
     formularioListo.value = false
@@ -522,16 +508,11 @@ const habilitarEdicionDoc = () => {
     msgDoc.value = ''
     errSubmit.value = ''
     mensualidadData.value = null
-    Object.assign(form, {
-        Nombres: '', Apellidos: '', Telefono: '', Email: '',
-        Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''],
-    })
+    Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
 }
 
-// ── Input documento ────────────────────────────────────────────────
 let docTimer = null
-
 const onDocumentoInput = () => {
     if (bloqueado.value) return
     clearTimeout(docTimer)
@@ -541,12 +522,9 @@ const onDocumentoInput = () => {
     errSubmit.value = ''
     const doc = form.Documento.replace(/\D/g, '')
     form.Documento = doc
-    if (doc.length >= 6) {
-        docTimer = setTimeout(() => buscarDocumento(doc), 700)
-    }
+    if (doc.length >= 6) docTimer = setTimeout(() => buscarDocumento(doc), 700)
 }
 
-// ── Búsqueda ───────────────────────────────────────────────────────
 const buscarDocumento = async (doc) => {
     if (!documentosBuscados.value.has(doc)) {
         if (busquedasRealizadas.value >= LIMITE_BUSQUEDAS) {
@@ -557,14 +535,11 @@ const buscarDocumento = async (doc) => {
         busquedasRealizadas.value++
         documentosBuscados.value.add(doc)
     }
-
     buscandoDoc.value = true
     editandoDoc.value = false
-
     try {
         const res = await MensualidadesService.getDesdeApiSede(idSede.value, doc)
         const esError = res?.error === true || res?.success === false || res?.statusCode >= 400
-
         if (esError) {
             usuarioEncontrado.value = false
             mensualidadData.value = null
@@ -573,14 +548,11 @@ const buscarDocumento = async (doc) => {
             formularioListo.value = true
             return
         }
-
         const d = res.data ?? res
         mensualidadData.value = d
         usuarioEncontrado.value = true
-
         const partes = (d.nombreApellidos ?? '').trim().split(/\s+/)
         const mitad = Math.ceil(partes.length / 2)
-
         Object.assign(form, {
             Documento: String(d.documento ?? doc),
             Nombres: partes.slice(0, mitad).join(' '),
@@ -594,10 +566,8 @@ const buscarDocumento = async (doc) => {
             placas: [d.placa1, d.placa2, d.placa3, d.placa4, d.placa5].filter(Boolean),
         })
         if (form.placas.length === 0) form.placas = ['']
-
         msgDoc.value = '✓ Mensualidad encontrada — completa los datos faltantes'
         formularioListo.value = true
-
     } catch {
         mensualidadData.value = null
         usuarioEncontrado.value = false
@@ -610,109 +580,63 @@ const buscarDocumento = async (doc) => {
 }
 
 const limpiarCampos = () => {
-    Object.assign(form, {
-        Nombres: '', Apellidos: '', Telefono: '', Email: '',
-        Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''],
-    })
+    Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
 }
 
 const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
-// ── Validaciones comunes ───────────────────────────────────────────
 const validarFormulario = () => {
     errSubmit.value = ''
-    if (!form.Documento || !form.Nombres || !form.Apellidos) {
-        errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return false
-    }
-    if (!form.Telefono || form.Telefono.length < 7) {
-        errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return false
-    }
-    if (!form.Email || !emailValido(form.Email)) {
-        errSubmit.value = 'Ingresa un correo electrónico válido.'; return false
-    }
-    if (!form.Password || form.Password.length < 8) {
-        errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false
-    }
-    if (!form.placas[0]?.trim()) {
-        errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false
-    }
-    if (detectarTipoVehiculo(form.placas[0]) === null) {
-        errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false
-    }
-    if (esSede24.value && esEstudiante.value === null) {
-        errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false
-    }
-    if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) {
-        errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false
-    }
+    if (!form.Documento || !form.Nombres || !form.Apellidos) { errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return false }
+    if (!form.Telefono || form.Telefono.length < 7) { errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return false }
+    if (!form.Email || !emailValido(form.Email)) { errSubmit.value = 'Ingresa un correo electrónico válido.'; return false }
+    if (!form.Password || form.Password.length < 8) { errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false }
+    if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
+    if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
+    if (mostrarBloqueUCC.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
+    if (mostrarBloqueUCC.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
     return true
 }
 
-// ── Construir payload ──────────────────────────────────────────────
 const buildPayload = (esOld) => {
     const m = mensualidadData.value
     const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
-
     return {
-        Documento: rest.Documento,
-        Nombres: rest.Nombres,
-        Apellidos: rest.Apellidos,
-        Telefono: rest.Telefono,
-        Email: rest.Email,
-        Password: rest.Password,
-        IdEstacionamiento: idSede.value,
-        Estado: true,
-        Sincronizacion: m?.sincronizacion ?? false,
-        Old: esOld,
+        Documento: rest.Documento, Nombres: rest.Nombres, Apellidos: rest.Apellidos,
+        Telefono: rest.Telefono, Email: rest.Email, Password: rest.Password,
+        IdEstacionamiento: idSede.value, Estado: true,
+        Sincronizacion: m?.sincronizacion ?? false, Old: esOld,
         ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
         ...(esOld && m?.fechaInicio ? { FechaInicio: m.fechaInicio } : {}),
         ...(esOld && m?.fechaFin ? { FechaFin: m.fechaFin } : {}),
-        Placa1: placas[0] || null,
-        Placa2: placas[1] || null,
-        Placa3: placas[2] || null,
-        Placa4: placas[3] || null,
-        Placa5: placas[4] || null,
-        EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
-        CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
+        Placa1: placas[0] || null, Placa2: placas[1] || null,
+        Placa3: placas[2] || null, Placa4: placas[3] || null, Placa5: placas[4] || null,
+        EstudianteUcc: mostrarBloqueUCC.value ? (esEstudiante.value === true) : false,
+        CodigoEstudianteUCC: mostrarBloqueUCC.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
     }
 }
 
-// ── Manejar respuesta ──────────────────────────────────────────────
-const manejarRespuesta = (res, esModal = false) => {
+const manejarRespuesta = (res) => {
     if (res?.error === true || res?.success === false) {
         const status = res?.status ?? res?.data?.statusCode
         const message = res?.data?.message ?? res?.message ?? ''
         const msg = Array.isArray(message) ? message.join(', ') : (message || 'Error al registrar.')
-        if (status === 409) errSubmit.value = '409'
-        else if (esModal) errSubmit.value = msg
-        else errSubmit.value = msg
+        errSubmit.value = status === 409 ? '409' : msg
         return false
     }
     return true
 }
 
-// ── Submit principal ───────────────────────────────────────────────
 const submit = async () => {
     if (!validarFormulario()) return
-
     guardando.value = true
     errSubmit.value = ''
-
     try {
         const esOld = !!mensualidadData.value
-        const payload = buildPayload(esOld)
-
-        console.group(`📤 [submit] Old=${esOld}`)
-        console.log('Payload:', JSON.stringify(payload, null, 2))
-        console.groupEnd()
-
-        const res = await ClientService.createClient(payload)
-
+        const res = await ClientService.createClient(buildPayload(esOld))
         if (!manejarRespuesta(res)) return
-
         modalExito.value = true
-
     } catch (e) {
         if (e.response?.status === 409) { errSubmit.value = '409'; return }
         const msg = e.response?.data?.message
@@ -723,402 +647,52 @@ const submit = async () => {
 }
 </script>
 
-<script>
-
-// ── Submit (código comentado) ───────────────────────────────────────────────────────
-// const abrirModalCodigo = async () => {
-//     errSubmit.value = ''
-//     if (!form.Documento || !form.Nombres || !form.Apellidos) {
-//         errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return
-//     }
-//     if (!form.Telefono || form.Telefono.length < 7) {
-//         errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return
-//     }
-//     if (!form.Email || !emailValido(form.Email)) {
-//         errSubmit.value = 'Ingresa un correo electrónico válido.'; return
-//     }
-//     if (!form.Password || form.Password.length < 8) {
-//         errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return
-//     }
-//     if (!form.placas[0]?.trim()) {
-//         errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return
-//     }
-//     if (esSede24.value && esEstudiante.value === null) {
-//         errSubmit.value = 'Indica si eres estudiante UCC o no.'; return
-//     }
-//     if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) {
-//         errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return
-//     }
-
-//     if (mensualidadData.value) {
-//         guardando.value = true
-//         await submitSinCodigo()
-//         return
-//     }
-
-//     codigoValidacion.value = ''
-//     errCodigo.value = ''
-//     modalCodigo.value = true
-// }
-
-
-// const submitConCodigo = async () => {
-//     if (!codigoValidacion.value.trim()) {
-//         errCodigo.value = 'Ingresa el código de validación.'; return
-//     }
-
-//     guardando.value = true
-//     errCodigo.value = ''
-
-//     try {
-//         const m = mensualidadData.value
-//         const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
-
-//         const payload = {
-//             Documento: rest.Documento,
-//             Nombres: rest.Nombres,
-//             Apellidos: rest.Apellidos,
-//             Telefono: rest.Telefono,
-//             Email: rest.Email,
-//             Password: rest.Password,
-//             IdEstacionamiento: idSede.value,
-//             Estado: true,
-//             Sincronizacion: m?.sincronizacion ?? false,
-//             Old: !!m,
-//             ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
-//             Placa1: placas[0] || null,
-//             Placa2: placas[1] || null,
-//             Placa3: placas[2] || null,
-//             Placa4: placas[3] || null,
-//             Placa5: placas[4] || null,
-//             EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
-//             CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
-//             Codigo: codigoValidacion.value.trim(),
-//         }
-
-//         const res = await ClientService.createClientWithCodigo(payload)
-
-//         if (res?.error === true || res?.success === false) {
-//             const status = res?.status ?? res?.data?.statusCode
-//             const message = res?.data?.message ?? res?.message ?? ''
-//             if (status === 409) { modalCodigo.value = false; errSubmit.value = '409'; return }
-//             errCodigo.value = Array.isArray(message) ? message.join(', ') : (message || 'Código inválido o error al registrar.')
-//             return
-//         }
-
-//         router.push({ name: 'login', query: { registered: '1' } })
-
-//     } catch (e) {
-//         if (e.response?.status === 409) { modalCodigo.value = false; errSubmit.value = '409'; return }
-//         const msg = e.response?.data?.message
-//         errCodigo.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al registrar. Intenta de nuevo.')
-//     } finally {
-//         guardando.value = false
-//     }
-// }
-</script>
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap');
 </style>
 
 <style scoped>
-/* ── Root ─────────────────────────────────────── */
-.reg-root {
-    min-height: 100vh;
-    width: 100%;
-    background-color: #0D291C;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 16px;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
-/* ── Background blobs ─────────────────────────── */
-.blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(90px);
-    z-index: 0;
-    pointer-events: none;
-}
-
-.blob-1 {
-    width: 480px;
-    height: 480px;
-    background: radial-gradient(circle, rgba(41, 146, 97, 0.22) 0%, transparent 70%);
-    top: -140px;
-    left: -140px;
-}
-
-.blob-2 {
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(127, 211, 68, 0.15) 0%, transparent 70%);
-    bottom: -100px;
-    right: -100px;
-}
-
-/* ── Card ─────────────────────────────────────── */
+/* ── Animación card entrada ── */
 .reg-card {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    width: 100%;
-    max-width: 900px;
-    border-radius: 28px;
-    overflow: hidden;
-    border: 1.5px solid rgba(127, 211, 68, 0.2);
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.45),
-        0 32px 64px rgba(0, 0, 0, 0.5),
-        0 0 60px rgba(127, 211, 68, 0.06);
-    min-height: 580px;
-    animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards
 }
 
 @keyframes cardIn {
     from {
         opacity: 0;
-        transform: translateY(26px) scale(0.97);
+        transform: translateY(26px) scale(0.97)
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0) scale(1)
     }
 }
 
-/* ── Brand side ───────────────────────────────── */
-.brand-side {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 40px 28px;
-    background: linear-gradient(155deg, #1b4e32 0%, #0D291C 100%);
-    width: 220px;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-    border-right: 1px solid rgba(255, 255, 255, 0.04);
+/* ── Anillos del focal con animación ── */
+.focal-ring--outer {
+    animation: ringPulse 3.5s ease-in-out infinite
 }
 
-.brand-inner {
-    position: relative;
-    z-index: 2;
+.focal-ring--mid {
+    animation: ringPulse 3.5s ease-in-out 0.5s infinite
 }
 
-.brand-logo {
-    max-height: 68px;
-    max-width: 100%;
-    object-fit: contain;
-    margin-bottom: 24px;
+@keyframes ringPulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1)
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.02)
+    }
 }
 
-.brand-copy h2 {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-    margin-bottom: 8px;
-}
-
-.brand-copy p {
-    font-size: 0.76rem;
-    font-weight: 500;
-    color: rgba(127, 211, 68, 0.6);
-    line-height: 1.55;
-}
-
-.sede-badge-wrap {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.sede-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(127, 211, 68, 0.12);
-    color: #7FD344;
-    font-size: 0.67rem;
-    font-weight: 700;
-    padding: 6px 11px;
-    border-radius: 100px;
-    width: fit-content;
-    border: 1px solid rgba(127, 211, 68, 0.25);
-}
-
-.sede-hint {
-    font-size: 0.61rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.3);
-    padding-left: 2px;
-}
-
-.deco-circle {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(41, 146, 97, 0.2);
-    background: transparent;
-}
-
-.deco-1 {
-    width: 190px;
-    height: 190px;
-    top: -70px;
-    right: -60px;
-}
-
-.deco-2 {
-    width: 100px;
-    height: 100px;
-    bottom: 55px;
-    right: -30px;
-}
-
-.deco-3 {
-    width: 55px;
-    height: 55px;
-    bottom: 20px;
-    right: 48px;
-}
-
-/* ── Form side ────────────────────────────────── */
-.form-side {
-    flex: 1;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    position: relative;
-}
-
-.top-accent {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #299261, #7FD344 50%, #299261);
-    z-index: 2;
-}
-
-/* ── Mobile header ────────────────────────────── */
-.mobile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    border-bottom: 1.5px solid #f1f5f9;
-    margin-top: 3px;
-}
-
-.back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.76rem;
-    font-weight: 800;
-    color: #0D291C;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: color 0.2s;
-}
-
-.back-btn:hover {
-    color: #299261;
-}
-
-.mobile-sede-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: #0D291C;
-    color: #7FD344;
-    font-size: 0.62rem;
-    font-weight: 900;
-    padding: 5px 10px;
-    border-radius: 100px;
-}
-
-/* ── Form scroll area ─────────────────────────── */
-.form-scroll {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 24px 28px 28px;
-}
-
-/* ── Form header ──────────────────────────────── */
-.form-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.form-icon-wrap {
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
-    background: #0D291C;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 3px 0 #051510;
-}
-
-.form-header h1 {
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: #0D291C;
-    line-height: 1.2;
-    margin: 0 0 4px;
-    letter-spacing: -0.02em;
-}
-
-.form-header p {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #9ca3af;
-    line-height: 1.4;
-    margin: 0;
-}
-
-/* ── Section blocks ───────────────────────────── */
-.section-block {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.section-label {
-    font-size: 0.56rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #0D291C;
-    opacity: 0.32;
-    border-bottom: 1px solid rgba(13, 41, 28, 0.08);
-    padding-bottom: 5px;
-    margin: 0;
-}
-
-/* ── Inputs ───────────────────────────────────── */
+/* ── Inputs (múltiples !important para pisar estilos globales) ── */
 .field-input {
     width: 100%;
     box-sizing: border-box;
@@ -1137,17 +711,17 @@ const submit = async () => {
 .field-input:focus {
     border-color: #299261 !important;
     background: white !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.1) !important
 }
 
 .field-input:disabled {
     background: #f3f4f6 !important;
     color: #9ca3af !important;
-    cursor: not-allowed;
+    cursor: not-allowed
 }
 
 .field-input--active {
-    border-color: #299261 !important;
+    border-color: #299261 !important
 }
 
 .field-label-sm {
@@ -1163,174 +737,23 @@ const submit = async () => {
 .placa-input {
     text-transform: uppercase !important;
     letter-spacing: 0.12em !important;
-    font-weight: 800 !important;
+    font-weight: 800 !important
 }
 
-/* ── Password toggle ──────────────────────────── */
-.pass-toggle {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: #9ca3af;
-    padding: 0;
-    display: flex;
-    transition: color 0.2s;
-}
-
-.pass-toggle:hover {
+/* ── Section label ── */
+.section-label {
+    font-size: 0.56rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
     color: #0D291C;
+    opacity: 0.32;
+    border-bottom: 1px solid rgba(13, 41, 28, 0.08);
+    padding-bottom: 5px;
+    margin: 0;
 }
 
-/* ── Edit doc button ──────────────────────────── */
-.edit-doc-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.67rem;
-    font-weight: 800;
-    color: #9ca3af;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color 0.2s;
-}
-
-.edit-doc-btn:hover {
-    color: #299261;
-}
-
-.attempts-badge {
-    font-size: 0.6rem;
-    font-weight: 700;
-    color: #92400e;
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-radius: 100px;
-    padding: 2px 8px;
-}
-
-/* ── Alerts ───────────────────────────────────── */
-.alert-warn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-size: 0.77rem;
-    font-weight: 700;
-    background: #fffbeb;
-    color: #92400e;
-    border: 1.5px solid #fde68a;
-}
-
-.alert-success {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    background: #f0fdf4;
-    border: 1.5px solid #86efac;
-    border-radius: 12px;
-    padding: 10px 12px;
-    font-size: 0.77rem;
-    font-weight: 600;
-    color: #166534;
-    line-height: 1.45;
-}
-
-.alert-error {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-size: 0.77rem;
-    font-weight: 700;
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1.5px solid #fecaca;
-}
-
-/* ── Alert 409 ────────────────────────────────── */
-.alert-409 {
-    padding: 14px 16px;
-    border-radius: 14px;
-    background: #fffbeb;
-    border: 1.5px solid #fde68a;
-    box-shadow: 0 3px 0 #fcd34d;
-}
-
-.btn-go-login {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 9px 12px;
-    border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 900;
-    color: #7FD344;
-    background: #0D291C;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: background 0.2s;
-    box-shadow: 0 3px 0 #051510;
-}
-
-.btn-go-login:hover {
-    background: #1a4a2e;
-}
-
-.btn-fix-doc {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 9px 12px;
-    border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 900;
-    color: #92400e;
-    background: white;
-    border: 1.5px solid #fde68a;
-    cursor: pointer;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: border-color 0.2s;
-}
-
-.btn-fix-doc:hover {
-    border-color: #f59e0b;
-}
-
-/* ── Student card ─────────────────────────────── */
-.student-card {
-    background: #f0fdf4;
-    border: 1.5px solid #86efac;
-    border-radius: 16px;
-    padding: 16px;
-}
-
-.student-card__title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.82rem;
-    font-weight: 900;
-    color: #0D291C;
-}
-
-/* ── Est buttons ──────────────────────────────── */
+/* ── Est buttons ── */
 .est-btn {
     flex: 1;
     padding: 8px 10px;
@@ -1347,70 +770,17 @@ const submit = async () => {
 
 .est-btn:hover {
     border-color: #299261;
-    color: #299261;
+    color: #299261
 }
 
 .est-btn--on {
     background: #0D291C !important;
     color: #7FD344 !important;
     border-color: #0D291C !important;
-    box-shadow: 0 3px 0 #051510;
+    box-shadow: 0 3px 0 #051510
 }
 
-/* ── Vehicle buttons ──────────────────────────── */
-.remove-placa-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fee2e2;
-    color: #dc2626;
-    border: none;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.remove-placa-btn:hover {
-    background: #dc2626;
-    color: white;
-}
-
-.add-placa-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: fit-content;
-    font-size: 0.72rem;
-    font-weight: 900;
-    color: #0D291C;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: color 0.2s;
-}
-
-.add-placa-btn:hover {
-    color: #299261;
-}
-
-.add-placa-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 8px;
-    background: #0D291C;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 2px 0 #051510;
-}
-
-/* ── Submit button ────────────────────────────── */
+/* ── Submit ── */
 .submit-btn {
     width: 100%;
     padding: 13px 20px;
@@ -1426,230 +796,134 @@ const submit = async () => {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
     box-shadow: 0 4px 0 #051510;
 }
 
 .submit-btn:hover:not(:disabled) {
     background: #1a4a2e;
     box-shadow: 0 6px 20px rgba(13, 41, 28, 0.4);
-    transform: translateY(-1px);
+    transform: translateY(-1px)
 }
 
 .submit-btn:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 2px 0 #051510;
+    box-shadow: 0 2px 0 #051510
 }
 
 .submit-btn:disabled {
     opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.btn-arrow {
-    transition: transform 0.2s ease;
+    cursor: not-allowed
 }
 
 .submit-btn:hover:not(:disabled) .btn-arrow {
-    transform: translateX(4px);
+    transform: translateX(4px)
 }
 
-/* ── Spinners ─────────────────────────────────── */
+/* ── Spinner ── */
 .spinner-sm {
     display: inline-block;
     width: 14px;
     height: 14px;
+    flex-shrink: 0;
     border: 2px solid rgba(41, 146, 97, 0.3);
     border-top-color: #299261;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
-    flex-shrink: 0;
 }
 
 .spinner-sm--light {
     border-color: rgba(127, 211, 68, 0.3);
-    border-top-color: #7FD344;
+    border-top-color: #7FD344
 }
 
 @keyframes spin {
     to {
-        transform: rotate(360deg);
+        transform: rotate(360deg)
     }
 }
 
-/* ── Success modal ────────────────────────────── */
-.success-modal {
-    background: white;
-    border: 2px solid #0D291C;
-    border-radius: 28px;
-    width: 100%;
-    max-width: 380px;
-    overflow: hidden;
-    box-shadow: 0 7px 0 #000;
-}
-
-.success-modal__head {
-    background: #0D291C;
-    padding: 28px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-}
-
-.success-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-    background: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 0 #4a8a1e;
-}
-
-.success-modal__body {
-    padding: 20px 24px;
-}
-
-.success-modal__foot {
-    padding: 0 24px 24px;
-}
-
-.modal-cta-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 100px;
-    font-size: 0.82rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    background: #0D291C;
-    color: #7FD344;
-    border: 2px solid black;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: background 0.2s;
-    box-shadow: 0 4px 0 #000;
-}
-
-.modal-cta-btn:hover {
-    background: #1a4a2e;
-}
-
-/* ── Transitions ──────────────────────────────── */
+/* ── Vue Transitions ── */
 .modal-enter-active {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease
 }
 
 .modal-leave-active {
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease
 }
 
 .modal-enter-from,
 .modal-leave-to {
-    opacity: 0;
+    opacity: 0
 }
 
 .modal-enter-active .success-modal {
-    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both
 }
 
 .modal-leave-active .success-modal {
-    animation: popOut 0.18s ease-in both;
+    animation: popOut 0.18s ease-in both
 }
 
 @keyframes popIn {
     from {
         transform: scale(0.86) translateY(24px);
-        opacity: 0;
+        opacity: 0
     }
 
     to {
         transform: scale(1) translateY(0);
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes popOut {
     from {
         transform: scale(1) translateY(0);
-        opacity: 1;
+        opacity: 1
     }
 
     to {
         transform: scale(0.92) translateY(12px);
-        opacity: 0;
+        opacity: 0
     }
 }
 
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s, transform 0.2s
 }
 
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-5px)
 }
 
 .reveal-enter-active {
-    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)
 }
 
 .reveal-leave-active {
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease
 }
 
 .reveal-enter-from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(10px)
 }
 
 .reveal-leave-to {
-    opacity: 0;
+    opacity: 0
 }
 
-/* ── Reduced motion ───────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion:reduce) {
 
     *,
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* ── Responsive ───────────────────────────────── */
-@media (min-width: 768px) {
-    .brand-side {
-        display: flex;
-    }
-
-    .mobile-header {
-        display: none;
-    }
-
-    .form-scroll {
-        padding: 28px 44px 40px;
-    }
-}
-
-@media (max-width: 767px) {
-    .reg-root {
-        align-items: flex-start;
-        padding: 12px;
-    }
-
-    .reg-card {
-        min-height: auto;
-        border-radius: 20px;
-    }
-
-    .form-scroll {
-        padding: 20px 18px 24px;
+        transition-duration: 0.01ms !important
     }
 }
 </style>

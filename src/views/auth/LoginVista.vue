@@ -7,7 +7,7 @@
             <!-- Panel izquierdo: Marca -->
             <div class="brand-side">
                 <div class="brand-inner">
-                    <img src="@/assets/img/confy-verde.png" alt="Confy" class="brand-logo" />
+                    <img src="@/assets/img/confy-blanco.png" alt="Confy" class="brand-logo" />
                     <div class="brand-copy">
                         <h2>Bienvenido<br />de vuelta</h2>
                         <p>Plataforma de gestión<br />Digital 6G</p>
@@ -23,7 +23,7 @@
                 <div class="top-accent" />
 
                 <!-- Logo móvil -->
-                <img src="@/assets/img/confy-verde.png" alt="Confy" class="mobile-logo" />
+                <img src="@/assets/img/confy.png" alt="Confy" class="mobile-logo" />
 
                 <div class="form-inner">
                     <div class="form-header">
@@ -43,9 +43,8 @@
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
-                                <input v-model="documento" id="document" type="text"
-                                    placeholder="Número de documento" @keyup.enter="handleLogin"
-                                    autocomplete="username" />
+                                <input v-model="documento" id="document" type="text" placeholder="Número de documento"
+                                    @keyup.enter="handleLogin" autocomplete="username" />
                             </div>
                         </div>
 

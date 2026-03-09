@@ -1,14 +1,6 @@
 <template>
     <div class="db-root">
 
-        <!-- ── Encabezado de página ─────────────────────── -->
-        <div class="col-span-full db-header card-animation">
-            <div class="db-header__text">
-                <span class="db-header__badge">Panel de control</span>
-                <h1>Dashboard</h1>
-                <p>Resumen operativo y accesos rápidos del sistema</p>
-            </div>
-        </div>
 
         <!-- ── Gráfica 1: Mensualidades vencidas ────────── -->
         <div v-if="hasPermission(PERMS.MENSUALIDADES_VER)" class="chart-card card-animation">
@@ -97,8 +89,7 @@
             </template>
 
             <div v-else class="disp-empty">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
-                    viewBox="0 0 24 24">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>

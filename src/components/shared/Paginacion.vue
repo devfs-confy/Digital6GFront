@@ -19,7 +19,7 @@
             </span>
             <template v-for="p in paginasVisibles" :key="p">
                 <button @click="$emit('pagina', p)"
-                    :class="['page-btn max-[600px]:hidden', paginaActual === p ? 'bg-[#0D291C] !text-[#7FD344] shadow-[0_2px_0_rgba(13,41,28,0.3)]' : '']">
+                    :class="['page-btn max-[600px]:hidden', paginaActual === p ? 'bg-[#0D291C] !text-[#0D291C] shadow-[0_2px_0_rgba(13,41,28,0.3)]' : '']">
                     {{ p }}
                 </button>
             </template>
