@@ -19,7 +19,6 @@
 
         <!-- Grid de tarjetas -->
         <div class="mensualidades-grid">
-
             <div v-if="loading" class="mensualidades-grid">
                 <div v-for="n in 2" :key="n" class="h-[320px] rounded-[24px]"
                     style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite" />
@@ -27,24 +26,19 @@
 
             <div v-for="(m, i) in mensualidades" :key="m.id" class="mensualidad-card" :class="estadoClase(m)"
                 :style="{ animationDelay: `${i * 0.08}s` }">
-
                 <div class="card-band" :class="`card-band--${m.estado}`" />
-
                 <div class="card-head">
                     <div class="card-avatar">{{ iniciales(m.nombre) }}</div>
                     <div class="card-head__info">
                         <h3 class="card-nombre">{{ m.sede }}</h3>
                         <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.nombre }}</p>
-                        <span class="card-estado-badge" :class="`badge--${m.estado}`">
-                            {{ estadoLabel(m.estado) }}
-                        </span>
+                        <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado) }}</span>
                     </div>
                     <div class="card-dias" :class="`card-dias--${m.estado}`">
                         <span class="card-dias__num">{{ diasRestantes(m.fechaFin) }}</span>
                         <span class="card-dias__label">días</span>
                     </div>
                 </div>
-
                 <template v-if="m.fechaInicio && m.fechaFin">
                     <div class="card-data">
                         <div class="card-data__item">
@@ -74,18 +68,16 @@
                         <span class="card-progress-label">{{ porcentajeVigencia(m) }}% del periodo</span>
                     </div>
                 </template>
-
                 <div v-else class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706" viewBox="0 0 24 24"
                         class="shrink-0">
                         <path
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                     </svg>
-                    <span class="text-[0.72rem] font-bold text-amber-700 leading-snug">
-                        Pago pendiente — sin fechas de vigencia aún
-                    </span>
+                    <span class="text-[0.72rem] font-bold text-amber-700 leading-snug">Pago pendiente — sin fechas de
+                        vigencia
+                        aún</span>
                 </div>
-
                 <div class="card-actions">
                     <button @click="abrirPago(m)" class="btn-pagar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
@@ -150,9 +142,7 @@
                     <div class="modal-foot">
                         <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
                         <button @click="confirmarCodigo" class="btn-modal btn-modal--confirm"
-                            :disabled="!codigoInput.trim()">
-                            Aceptar
-                        </button>
+                            :disabled="!codigoInput.trim()">Aceptar</button>
                     </div>
                 </div>
             </div>
@@ -240,161 +230,269 @@
                         <button @click="modalDetalle = false" class="modal-close-btn modal-close-btn--light">✕</button>
                     </div>
 
-                    <div class="modal-body det-body">
+                    <!-- Loading detalle -->
+                    <div v-if="loadingDetalle" class="flex flex-col items-center justify-center gap-3 py-14">
+                        <div class="det-loader" />
+                        <span class="text-xs text-gray-400 font-semibold">Cargando información...</span>
+                    </div>
 
-                        <!-- Estado -->
-                        <div class="modal-section">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="card-estado-badge" :class="`badge--${mensualidadAccion?.estado}`">
-                                    {{ estadoLabel(mensualidadAccion?.estado) }}
-                                </span>
-                                <span class="text-xs font-semibold text-gray-400">
-                                    <strong class="font-black text-[#0D291C]">{{
-                                        diasRestantes(mensualidadAccion?.fechaFin)
-                                        }}</strong> días restantes
-                                </span>
-                            </div>
-                        </div>
+                    <template v-else>
+                        <div class="modal-body det-body">
 
-                        <!-- Datos personales -->
-                        <div class="modal-section">
-                            <p class="modal-section__title">Datos personales</p>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="det-field">
-                                    <span class="det-label">Documento</span>
-                                    <span class="det-val font-mono">{{ mensualidadAccion?._raw?.Documento ?? '—'
-                                        }}</span>
-                                </div>
-                                <div class="det-field">
-                                    <span class="det-label">Nombre</span>
-                                    <span class="det-val" style="font-size:0.78rem">{{
-                                        mensualidadAccion?._raw?.NombreApellidos
-                                        ?? '—' }}</span>
+                            <!-- Estado -->
+                            <div class="modal-section">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="card-estado-badge" :class="`badge--${mensualidadAccion?.estado}`">
+                                        {{ estadoLabel(mensualidadAccion?.estado) }}
+                                    </span>
+                                    <span class="text-xs font-semibold text-gray-400">
+                                        <strong class="font-black text-[#0D291C]">{{
+                                            diasRestantes(mensualidadAccion?.fechaFin) }}</strong> días restantes
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Vigencia -->
-                        <div class="modal-section">
-                            <p class="modal-section__title">Vigencia</p>
-                            <div class="grid grid-cols-2 gap-3 mb-3">
-                                <div class="det-field">
-                                    <span class="det-label">Inicio</span>
-                                    <span class="det-val">{{ formatFecha(mensualidadAccion?.fechaInicio) }}</span>
-                                </div>
-                                <div class="det-field">
-                                    <span class="det-label">Fin</span>
-                                    <span class="det-val">{{ formatFecha(mensualidadAccion?.fechaFin) }}</span>
+                            <!-- Datos personales -->
+                            <div class="modal-section">
+                                <p class="modal-section__title">Datos personales</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="det-field">
+                                        <span class="det-label">Documento</span>
+                                        <span class="det-val font-mono">{{ detalleCompleto?.Documento ??
+                                            mensualidadAccion?._raw?.Documento ?? '—' }}</span>
+                                    </div>
+                                    <div class="det-field">
+                                        <span class="det-label">Nombre</span>
+                                        <span class="det-val" style="font-size:0.78rem">{{
+                                            detalleCompleto?.NombreApellidos ?? mensualidadAccion?._raw?.NombreApellidos
+                                            ?? '—' }}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-1.5">
-                                <div class="h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
-                                    <div class="h-full rounded-full transition-all duration-500"
-                                        :class="`fill--${mensualidadAccion?.estado}`"
-                                        :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
-                                </div>
-                                <span class="text-right text-[0.62rem] font-semibold text-gray-400">
-                                    {{ porcentajeVigencia(mensualidadAccion) }}% del periodo
-                                </span>
-                            </div>
-                        </div>
 
-                        <!-- Vehículos -->
-                        <div class="modal-section">
-                            <p class="modal-section__title">Vehículos registrados</p>
-                            <div class="flex flex-col gap-2">
+                            <!-- Vigencia -->
+                            <div class="modal-section">
+                                <p class="modal-section__title">Vigencia</p>
+                                <div class="grid grid-cols-2 gap-3 mb-3">
+                                    <div class="det-field">
+                                        <span class="det-label">Inicio</span>
+                                        <span class="det-val">{{ formatFecha(mensualidadAccion?.fechaInicio) }}</span>
+                                    </div>
+                                    <div class="det-field">
+                                        <span class="det-label">Fin</span>
+                                        <span class="det-val">{{ formatFecha(mensualidadAccion?.fechaFin) }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
+                                        <div class="h-full rounded-full transition-all duration-500"
+                                            :class="`fill--${mensualidadAccion?.estado}`"
+                                            :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
+                                    </div>
+                                    <span class="text-right text-[0.62rem] font-semibold text-gray-400">
+                                        {{ porcentajeVigencia(mensualidadAccion) }}% del periodo
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Vehículos -->
+                            <div class="modal-section">
                                 <div class="flex items-center justify-between">
-                                    <span class="det-label">Placa principal</span>
-                                    <button v-if="!editandoPlaca" @click="editandoPlaca = true"
-                                        class="text-[0.65rem] font-black cursor-pointer rounded-full px-2.5 py-0.5 bg-[#0D291C] text-[#7FD344] border border-[#0D291C] hover:opacity-80 transition-opacity">
-                                        ✏ Editar
-                                    </button>
-                                    <button v-else @click="guardarPlaca"
-                                        class="text-[0.65rem] font-black cursor-pointer rounded-full px-2.5 py-0.5 bg-[#299261] text-white border border-[#166534] hover:opacity-80 transition-opacity">
-                                        ✓ Guardar
-                                    </button>
-                                </div>
-                                <div v-if="!editandoPlaca"
-                                    class="inline-flex items-center gap-2 px-3 py-2 rounded-xl w-fit bg-[#f0fdf4] border-2 border-[#c8e6c9]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#299261"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                                    </svg>
-                                    <span class="text-[0.72rem] font-black tracking-widest uppercase text-[#0D291C]">
-                                        {{ mensualidadAccion?._raw?.Placa1 ?? '—' }}
-                                    </span>
-                                </div>
-                                <div v-else class="flex items-center gap-2">
-                                    <input v-model="placaEditada" type="text" maxlength="7"
-                                        class="uppercase tracking-widest font-black text-center text-sm rounded-xl px-3 py-2 outline-none w-32 border-2 border-[#299261] bg-[#f0fdf4] text-[#0D291C]" />
-                                    <button @click="editandoPlaca = false"
-                                        class="text-xs cursor-pointer bg-transparent border-none text-gray-400 hover:text-gray-600 transition-colors">
-                                        Cancelar
+                                    <p class="modal-section__title" style="margin:0;flex:1">Vehículos registrados</p>
+                                    <!-- Botón solicitar cambio -->
+                                    <button @click="abrirModalPlacas"
+                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
+                                        :class="placaCambiada
+                                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
+                                        :disabled="placaCambiada">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                        </svg>
+                                        {{ placaCambiada ? 'Cambio realizado este mes' : 'Solicitar cambio' }}
                                     </button>
                                 </div>
-                            </div>
-                            <div v-if="mensualidadAccion?.placas?.slice(1).length" class="flex flex-col gap-1.5 mt-3">
-                                <span class="det-label">Otras placas</span>
-                                <div class="flex gap-1.5 flex-wrap">
-                                    <span v-for="p in mensualidadAccion.placas.slice(1)" :key="p"
-                                        class="text-[0.65rem] font-black tracking-widest uppercase px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 border border-gray-300">
-                                        {{ p }}
-                                    </span>
-                                </div>
-                            </div>
-                            <p v-else-if="!mensualidadAccion?.placas?.length"
-                                class="text-xs font-semibold text-gray-400 mt-1">
-                                Sin vehículos registrados</p>
-                        </div>
 
-                        <!-- Sede -->
-                        <div class="modal-section">
-                            <p class="modal-section__title">Sede</p>
-                            <div
-                                class="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-white border-2 border-gray-200">
+                                <!-- Lista de todas las placas -->
+                                <div v-if="placasDetalle.length" class="flex flex-col gap-2 mt-1">
+                                    <div v-for="(placa, idx) in placasDetalle" :key="idx"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl border-2"
+                                        :class="idx === 0 ? 'bg-[#f0fdf4] border-[#c8e6c9]' : 'bg-gray-50 border-gray-200'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            :fill="idx === 0 ? '#299261' : '#9ca3af'" viewBox="0 0 24 24">
+                                            <path
+                                                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
+                                        </svg>
+                                        <span class="text-[0.8rem] font-black tracking-widest uppercase flex-1"
+                                            :class="idx === 0 ? 'text-[#0D291C]' : 'text-gray-500'">{{ placa }}</span>
+                                        <span v-if="idx === 0"
+                                            class="text-[0.55rem] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344]">
+                                            Principal
+                                        </span>
+                                    </div>
+                                </div>
+                                <p v-else class="text-xs font-semibold text-gray-400 mt-1">Sin vehículos registrados</p>
+                            </div>
+
+                            <!-- Sede -->
+                            <div class="modal-section">
+                                <p class="modal-section__title">Sede</p>
                                 <div
-                                    class="w-8 h-8 rounded-lg bg-[#0D291C] flex items-center justify-center flex-shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#7FD344"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                    </svg>
+                                    class="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-white border-2 border-gray-200">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-[#0D291C] flex items-center justify-center flex-shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#7FD344"
+                                            viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[0.85rem] font-bold text-[#0D291C]">{{
+                                            detalleCompleto?.T_Estacionamiento?.Nombre ??
+                                            mensualidadAccion?._raw?.T_Estacionamiento?.Nombre ?? '—' }}</p>
+                                        <p class="text-[0.62rem] font-semibold text-gray-400">ID {{
+                                            detalleCompleto?.T_Estacionamiento?.IdEstacionamiento ??
+                                            mensualidadAccion?._raw?.T_Estacionamiento?.IdEstacionamiento ?? '—' }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-[0.85rem] font-bold text-[#0D291C]">{{
-                                        mensualidadAccion?._raw?.T_Estacionamiento?.Nombre ?? '—' }}</p>
-                                    <p class="text-[0.62rem] font-semibold text-gray-400">ID {{
-                                        mensualidadAccion?._raw?.T_Estacionamiento?.IdEstacionamiento ?? '—' }}</p>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-foot det-foot">
+                            <button @click="modalDetalle = false" class="btn-modal btn-modal--cancel">Cerrar</button>
+                            <button @click="() => { modalDetalle = false; abrirPago(mensualidadAccion) }"
+                                class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                                </svg>
+                                Pagar
+                            </button>
+                            <button v-if="mensualidadAccion?.conPago"
+                                @click="() => { modalDetalle = false; abrirCongelar(mensualidadAccion) }"
+                                class="btn-modal btn-modal--freeze-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z" />
+                                </svg>
+                                Congelar
+                            </button>
+                        </div>
+                    </template>
+
+                </div>
+            </div>
+        </Transition>
+
+
+        <!-- ══ MODAL — CAMBIO DE PLACAS ══ -->
+        <Transition name="modal">
+            <div v-if="modalPlacas" class="modal-overlay" style="z-index:60">
+                <div class="modal-card modal-card--placas">
+
+                    <div class="modal-head">
+                        <div class="modal-head__left">
+                            <div class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="modal-head__name">Cambio de placas</p>
+                                <p class="modal-head__sub">{{ mensualidadAccion?.sede }} · 1 cambio por mes</p>
+                            </div>
+                        </div>
+                        <button @click="modalPlacas = false" class="modal-close-btn">✕</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <!-- Aviso límite mensual -->
+                        <div class="modal-section">
+                            <div class="placa-aviso">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706"
+                                    viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
+                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                </svg>
+                                <p>Solo se permite <strong>1 cambio de placas por mes</strong>. Una vez confirmado, no
+                                    podrás
+                                    realizar otro cambio hasta el próximo mes.</p>
+                            </div>
+                        </div>
+
+                        <!-- Placas actuales vs nuevas -->
+                        <div class="modal-section">
+                            <p class="modal-section__title">Editar placas</p>
+                            <div class="flex flex-col gap-3">
+                                <div v-for="(_, idx) in nuevasPlacas" :key="idx" class="placa-row">
+                                    <div class="placa-row__label">
+                                        <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">
+                                            {{ idx === 0 ? 'Principal' : `Placa ${idx + 1}` }}
+                                        </span>
+                                        <span v-if="idx === 0"
+                                            class="text-[0.55rem] font-black px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344] ml-1.5">
+                                            Requerida
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="placa-input-wrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                                :fill="nuevasPlacas[idx] ? '#299261' : '#d1d5db'" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
+                                            </svg>
+                                            <input v-model="nuevasPlacas[idx]" type="text" maxlength="7"
+                                                class="placa-input"
+                                                :placeholder="placasDetalle[idx] || (idx === 0 ? 'ABC123' : 'Opcional')"
+                                                @input="nuevasPlacas[idx] = nuevasPlacas[idx].toUpperCase()" />
+                                        </div>
+                                        <!-- Limpiar placa no-principal -->
+                                        <button v-if="idx > 0 && nuevasPlacas[idx]" @click="nuevasPlacas[idx] = ''"
+                                            class="w-7 h-7 rounded-lg bg-red-50 border border-red-200 text-red-500 text-xs font-black flex items-center justify-center cursor-pointer hover:bg-red-100 transition-colors flex-shrink-0">
+                                            ✕
+                                        </button>
+                                    </div>
+                                    <!-- Indicador cambio -->
+                                    <div v-if="nuevasPlacas[idx] && nuevasPlacas[idx] !== placasDetalle[idx]"
+                                        class="flex items-center gap-1.5 text-[0.62rem] font-semibold text-amber-600 mt-0.5">
+                                        <span class="line-through opacity-60">{{ placasDetalle[idx] || '—' }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                        <span class="font-black text-[#299261]">{{ nuevasPlacas[idx] }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Error -->
+                        <div v-if="errPlacas"
+                            class="mx-5 mb-1 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
+                            {{ errPlacas }}
+                        </div>
                     </div>
 
-                    <div class="modal-foot det-foot">
-                        <button @click="modalDetalle = false" class="btn-modal btn-modal--cancel">Cerrar</button>
-                        <button @click="() => { modalDetalle = false; abrirPago(mensualidadAccion) }"
-                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                    <div class="modal-foot">
+                        <button @click="modalPlacas = false" class="btn-modal btn-modal--cancel">Cancelar</button>
+                        <button @click="confirmarCambioPlacas"
+                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-2"
+                            :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas">
+                            <div v-if="guardandoPlacas" class="btn-spinner" />
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
                                 viewBox="0 0 24 24">
-                                <path
-                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                             </svg>
-                            Pagar
-                        </button>
-                        <button v-if="mensualidadAccion?.conPago"
-                            @click="() => { modalDetalle = false; abrirCongelar(mensualidadAccion) }"
-                            class="btn-modal btn-modal--freeze-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z" />
-                            </svg>
-                            Congelar
+                            Confirmar cambio
                         </button>
                     </div>
-
                 </div>
             </div>
         </Transition>
@@ -407,14 +505,31 @@ import { ref, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 
+// ── Estado general ─────────────────────────────────────────────────
+const loading = ref(false)
+const mensualidades = ref([])
 const modalDetalle = ref(false)
 const modalCodigo = ref(false)
 const modalPago = ref(false)
 const modalCongelar = ref(false)
+const modalPlacas = ref(false)
 const codigoInput = ref('')
 const mensualidadAccion = ref(null)
-const loading = ref(false)
-const mensualidades = ref([])
+
+// ── Estado detalle (carga lazy por ID) ────────────────────────────
+const loadingDetalle = ref(false)
+const detalleCompleto = ref(null)   // response de getMiMensualidadById
+const placasDetalle = ref([])      // array limpio de placas del detalle
+
+// ── Estado cambio de placas ───────────────────────────────────────
+const nuevasPlacas = ref(['', '', '', '', ''])
+const guardandoPlacas = ref(false)
+const errPlacas = ref('')
+// Clave localStorage: `placa_changed_${idMensualidad}_${YYYY-MM}`
+const placaCambiada = ref(false)
+
+// ── Resolvers ─────────────────────────────────────────────────────
+const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 
 const resolverEstado = (m) => {
     if (!m.Estado) return 'vencida'
@@ -426,13 +541,28 @@ const resolverEstado = (m) => {
     return 'activa'
 }
 
+// Devuelve true si ya se hizo un cambio este mes para esta mensualidad
+const verificarLimiteMensual = (id) => {
+    const key = `placa_changed_${id}_${mesActual()}`
+    return localStorage.getItem(key) === '1'
+}
+
+const marcarCambioMensual = (id) => {
+    const key = `placa_changed_${id}_${mesActual()}`
+    localStorage.setItem(key, '1')
+}
+
+const mesActual = () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+// ── Carga inicial ─────────────────────────────────────────────────
 const cargarMisMensualidades = async () => {
     loading.value = true
     try {
         const res = await MensualidadesService.getMisMensualidades()
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
-
-
         mensualidades.value = raw.map(m => ({
             _raw: m,
             id: m.IdPersonaAutorizada,
@@ -440,11 +570,14 @@ const cargarMisMensualidades = async () => {
             fechaInicio: m.FechaInicio ? m.FechaInicio.slice(0, 10) : null,
             fechaFin: m.FechaFin ? m.FechaFin.slice(0, 10) : null,
             sede: m.T_Estacionamiento?.Nombre ?? '—',
-            placas: ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5'].map(k => m[k]).filter(Boolean),
+            placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),
             valor: '—',
             conPago: !!(m.FechaFin && new Date(m.FechaFin) > new Date()),
         }))
+
+
+
     } catch (e) {
         console.error('[MisMensualidades]', e.response?.data ?? e.message)
         mensualidades.value = []
@@ -455,6 +588,109 @@ const cargarMisMensualidades = async () => {
 
 onMounted(cargarMisMensualidades)
 
+// ── Abrir detalle: carga lazy con getMiMensualidadById ────────────
+const abrirDetalle = async (m) => {
+    mensualidadAccion.value = m
+    detalleCompleto.value = null
+    placasDetalle.value = []
+    loadingDetalle.value = true
+    modalDetalle.value = true
+    placaCambiada.value = verificarLimiteMensual(m.id)
+
+    try {
+        const res = await MensualidadesService.getMiMensualidadById(m.id)
+        const data = res?.data ?? res
+        if (data?.error) throw new Error('Error al cargar detalle')
+        detalleCompleto.value = data
+        placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
+
+        console.log('[Detalle]', detalleCompleto.value)
+
+
+
+    } catch (e) {
+        console.error('[Detalle]', e)
+        // Fallback a datos del listado
+        placasDetalle.value = m.placas ?? []
+    } finally {
+        loadingDetalle.value = false
+    }
+}
+
+// ── Modal cambio de placas ────────────────────────────────────────
+const abrirModalPlacas = () => {
+    if (placaCambiada.value) return
+    errPlacas.value = ''
+    // Pre-cargar con valores actuales
+    nuevasPlacas.value = PLACA_KEYS.map((_, i) => placasDetalle.value[i] ?? '')
+    modalPlacas.value = true
+}
+
+const confirmarCambioPlacas = async () => {
+    errPlacas.value = ''
+    const placa1 = nuevasPlacas.value[0]?.trim().toUpperCase()
+    if (!placa1) { errPlacas.value = 'La placa principal es obligatoria.'; return }
+
+    // Construir Detalles: solo las placas que realmente cambiaron
+    const Detalles = PLACA_KEYS
+        .map((columna, i) => {
+            const nueva = nuevasPlacas.value[i]?.trim().toUpperCase() || null
+            const actual = placasDetalle.value[i] ?? null
+            // Incluir si el valor cambió (nuevo distinto al actual, o se está limpiando)
+            if (nueva !== actual) return { ColumnaPlaca: columna, PlacaNueva: nueva ?? '' }
+            return null
+        })
+        .filter(Boolean)
+
+    if (!Detalles.length) {
+        errPlacas.value = 'No hay cambios para guardar.'; return
+    }
+
+    guardandoPlacas.value = true
+    try {
+        const res = await MensualidadesService.ChangeCarPlate({
+            IdPersonaAutorizada: mensualidadAccion.value.id,
+            Detalles,
+        })
+
+        // 409 → backend ya tiene un cambio este mes
+        if (res?.error || res?.success === false) {
+            const status = res?.status
+            if (status === 409) {
+                errPlacas.value = 'Ya realizaste un cambio de placas este mes.'
+                marcarCambioMensual(mensualidadAccion.value.id)
+                placaCambiada.value = true
+            } else if (status === 400) {
+                errPlacas.value = res?.data?.message ?? 'Tipo de vehículo incompatible con alguna placa.'
+            } else {
+                errPlacas.value = res?.data?.message ?? 'Error al guardar. Intenta de nuevo.'
+            }
+            return
+        }
+
+        // Actualizar local optimistamente con los nuevos valores
+        const nuevosValores = [...placasDetalle.value]
+        PLACA_KEYS.forEach((k, i) => {
+            const cambio = Detalles.find(d => d.ColumnaPlaca === k)
+            if (cambio !== undefined) nuevosValores[i] = cambio.PlacaNueva || undefined
+        })
+        placasDetalle.value = nuevosValores.filter(Boolean)
+
+        const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
+        if (idx !== -1) mensualidades.value[idx].placas = [...placasDetalle.value]
+
+        marcarCambioMensual(mensualidadAccion.value.id)
+        placaCambiada.value = true
+        modalPlacas.value = false
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar las placas. Intenta de nuevo.')
+    } finally {
+        guardandoPlacas.value = false
+    }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
 const iniciales = (nombre = '') => nombre.trim().split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
 const formatFecha = (fecha) => {
     if (!fecha) return '—'
@@ -484,30 +720,9 @@ const cerrarModales = () => {
     modalCodigo.value = false; modalPago.value = false; modalCongelar.value = false
     codigoInput.value = ''; mensualidadAccion.value = null
 }
-const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; console.log('Código:', codigoInput.value); cerrarModales() }
-const confirmarPago = () => { console.log('Pagar:', mensualidadAccion.value); cerrarModales() }
+const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; cerrarModales() }
+const confirmarPago = () => { cerrarModales() }
 const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fecha, motivo); cerrarModales() }
-
-const editandoPlaca = ref(false)
-const placaEditada = ref('')
-
-const abrirDetalle = (m) => {
-    mensualidadAccion.value = m
-    placaEditada.value = m._raw?.Placa1 ?? ''
-    editandoPlaca.value = false
-    modalDetalle.value = true
-}
-const guardarPlaca = async () => {
-    if (!placaEditada.value.trim()) return
-    const placa = placaEditada.value.trim().toUpperCase()
-    if (mensualidadAccion.value?._raw) {
-        mensualidadAccion.value._raw.Placa1 = placa
-        mensualidadAccion.value.placas[0] = placa
-        const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
-        if (idx !== -1) { mensualidades.value[idx]._raw.Placa1 = placa; mensualidades.value[idx].placas[0] = placa }
-    }
-    editandoPlaca.value = false
-}
 </script>
 
 <style scoped>
@@ -554,6 +769,12 @@ const guardarPlaca = async () => {
     to {
         transform: scale(0.92) translateY(12px);
         opacity: 0
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg)
     }
 }
 
@@ -671,7 +892,7 @@ const guardarPlaca = async () => {
     background: #60a5fa
 }
 
-/* ══ OVERLAY — sin cierre al clickear fuera ══ */
+/* ── Overlay ── */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -684,7 +905,7 @@ const guardarPlaca = async () => {
     padding: 16px;
 }
 
-/* ══ Modal card ══ */
+/* ── Modal card ── */
 .modal-card {
     background: white;
     border: 2px solid #0D291C;
@@ -701,7 +922,11 @@ const guardarPlaca = async () => {
     max-width: 440px
 }
 
-/* Header oscuro (código, pago) */
+.modal-card--placas {
+    max-width: 460px
+}
+
+/* ── Headers ── */
 .modal-head {
     display: flex;
     align-items: center;
@@ -729,7 +954,6 @@ const guardarPlaca = async () => {
     font-weight: 600
 }
 
-/* Header claro (detalle) */
 .det-head {
     display: flex;
     align-items: center;
@@ -739,7 +963,7 @@ const guardarPlaca = async () => {
     border-bottom: 2px solid #e2e8f0;
 }
 
-/* Botón X — versión oscura (headers #0D291C) */
+/* ── Botón X ── */
 .modal-close-btn {
     width: 28px;
     height: 28px;
@@ -750,7 +974,6 @@ const guardarPlaca = async () => {
     justify-content: center;
     font-size: 0.82rem;
     font-weight: 900;
-    line-height: 1;
     cursor: pointer;
     border: 2px solid rgba(255, 255, 255, 0.25);
     background: rgba(255, 255, 255, 0.1);
@@ -761,23 +984,22 @@ const guardarPlaca = async () => {
 .modal-close-btn:hover {
     background: rgba(255, 255, 255, 0.22);
     color: white;
-    border-color: rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.45)
 }
 
-/* Botón X — versión clara (det-head) */
 .modal-close-btn--light {
     background: #f1f5f9;
     color: #64748b;
-    border-color: #cbd5e1;
+    border-color: #cbd5e1
 }
 
 .modal-close-btn--light:hover {
     background: #fee2e2;
     color: #dc2626;
-    border-color: #fca5a5;
+    border-color: #fca5a5
 }
 
-/* ══ Body ══ */
+/* ── Body ── */
 .modal-body {
     display: flex;
     flex-direction: column;
@@ -785,13 +1007,12 @@ const guardarPlaca = async () => {
 }
 
 .det-body {
-    max-height: 60vh;
+    max-height: 62vh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #c8e6c9 transparent
 }
 
-/* Secciones con separador inferior */
 .modal-section {
     padding: 16px 20px;
     border-bottom: 1.5px solid #f1f5f9;
@@ -804,7 +1025,6 @@ const guardarPlaca = async () => {
     border-bottom: none
 }
 
-/* Título de sección con línea decorativa */
 .modal-section__title {
     font-size: 0.6rem;
     font-weight: 900;
@@ -824,7 +1044,6 @@ const guardarPlaca = async () => {
     border-radius: 99px;
 }
 
-/* Aviso informativo */
 .modal-notice {
     display: flex;
     align-items: flex-start;
@@ -839,7 +1058,7 @@ const guardarPlaca = async () => {
     line-height: 1.5;
 }
 
-/* ══ Footer ══ */
+/* ── Footer ── */
 .modal-foot {
     display: flex;
     gap: 10px;
@@ -852,7 +1071,7 @@ const guardarPlaca = async () => {
     border-top: 2px solid #e8f5e9
 }
 
-/* ══ Botones modal ══ */
+/* ── Botones modal ── */
 .btn-modal {
     flex: 1;
     padding: 11px 14px;
@@ -891,7 +1110,7 @@ const guardarPlaca = async () => {
     box-shadow: 0 3px 0 #051510
 }
 
-.btn-modal--confirm:hover {
+.btn-modal--confirm:hover:not(:disabled) {
     background: #132e21
 }
 
@@ -910,7 +1129,18 @@ const guardarPlaca = async () => {
     background: #0284c7
 }
 
-/* ══ Pago resumen ══ */
+.btn-spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    border: 2px solid rgba(127, 211, 68, 0.3);
+    border-top-color: #7FD344;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+/* ── Pago resumen ── */
 .pago-resumen {
     display: flex;
     align-items: center;
@@ -955,7 +1185,7 @@ const guardarPlaca = async () => {
     border-radius: 99px
 }
 
-/* ══ Detalle campos ══ */
+/* ── Detalle campos ── */
 .det-field {
     display: flex;
     flex-direction: column;
@@ -976,7 +1206,85 @@ const guardarPlaca = async () => {
     color: #0D291C
 }
 
-/* ══ Campos formulario ══ */
+/* ── Loader detalle ── */
+.det-loader {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid #e8f5e9;
+    border-top-color: #299261;
+    animation: spin 0.7s linear infinite;
+}
+
+/* ── Cambio placas ── */
+.placa-aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #fffbeb;
+    border: 1.5px solid #fde68a;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #92400e;
+    line-height: 1.5;
+}
+
+.placa-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #f8fafb;
+    border: 1.5px solid #e2e8f0;
+}
+
+.placa-row__label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px
+}
+
+.placa-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    background: white;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    padding: 8px 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.placa-input-wrap:focus-within {
+    border-color: #299261;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.12)
+}
+
+.placa-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: monospace;
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #0D291C;
+    min-width: 0;
+}
+
+.placa-input::placeholder {
+    color: #d1d5db;
+    font-weight: 600;
+    letter-spacing: 0.05em
+}
+
+/* ── Campos formulario (modal código) ── */
 .field-group {
     display: flex;
     flex-direction: column;
@@ -1024,7 +1332,7 @@ const guardarPlaca = async () => {
     text-align: center
 }
 
-/* ══ Animaciones ══ */
+/* ── Animaciones ── */
 .modal-enter-active {
     transition: opacity 0.2s ease
 }
@@ -1046,7 +1354,7 @@ const guardarPlaca = async () => {
     animation: popOut 0.18s ease-in both
 }
 
-/* ══ Botones tarjeta ══ */
+/* ── Botones tarjeta ── */
 .btn-pagar,
 .btn-editar,
 .btn-congelar {
@@ -1104,7 +1412,7 @@ const guardarPlaca = async () => {
     background: #eff6ff
 }
 
-/* ══ Grid y estructura general ══ */
+/* ── Grid y estructura ── */
 .mensualidades-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
