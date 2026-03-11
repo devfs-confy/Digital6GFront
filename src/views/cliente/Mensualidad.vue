@@ -223,8 +223,8 @@
                                 {{ iniciales(mensualidadAccion?.nombre) }}
                             </div>
                             <div>
-                                <p class="text-[0.92rem] font-black text-[#0D291C]">{{ mensualidadAccion?.nombre }}</p>
-                                <p class="text-[0.65rem] font-semibold text-gray-400">{{ mensualidadAccion?.sede }}</p>
+                                <p class="text-[1rem] font-black text-[#0D291C]">{{ mensualidadAccion?.nombre }}</p>
+                                <p class="text-[0.80rem] font-semibold text-gray-400">{{ mensualidadAccion?.sede }}</p>
                             </div>
                         </div>
                         <button @click="modalDetalle = false" class="modal-close-btn modal-close-btn--light">✕</button>
@@ -245,7 +245,7 @@
                                     <span class="card-estado-badge" :class="`badge--${mensualidadAccion?.estado}`">
                                         {{ estadoLabel(mensualidadAccion?.estado) }}
                                     </span>
-                                    <span class="text-xs font-semibold text-gray-400">
+                                    <span class="text-sm font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{
                                             diasRestantes(mensualidadAccion?.fechaFin) }}</strong> días restantes
                                     </span>
@@ -289,7 +289,7 @@
                                             :class="`fill--${mensualidadAccion?.estado}`"
                                             :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
                                     </div>
-                                    <span class="text-right text-[0.62rem] font-semibold text-gray-400">
+                                    <span class="text-right text-xs font-semibold text-gray-400">
                                         {{ porcentajeVigencia(mensualidadAccion) }}% del periodo
                                     </span>
                                 </div>
@@ -301,7 +301,7 @@
                                     <p class="modal-section__title" style="margin:0;flex:1">Vehículos registrados</p>
                                     <!-- Botón solicitar cambio -->
                                     <button @click="abrirModalPlacas"
-                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
+                                        class="flex items-center gap-1.5 text-[0.75rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
                                         :class="placaCambiada
                                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                             : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
@@ -529,6 +529,8 @@ const errPlacas = ref('')
 const placaCambiada = ref(false)
 
 // ── Resolvers ─────────────────────────────────────────────────────
+
+
 const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 
 const resolverEstado = (m) => {
@@ -602,7 +604,9 @@ const abrirDetalle = async (m) => {
         const data = res?.data ?? res
         if (data?.error) throw new Error('Error al cargar detalle')
         detalleCompleto.value = data
+
         placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
+
 
         console.log('[Detalle]', detalleCompleto.value)
 
@@ -622,7 +626,8 @@ const abrirModalPlacas = () => {
     if (placaCambiada.value) return
     errPlacas.value = ''
     // Pre-cargar con valores actuales
-    nuevasPlacas.value = PLACA_KEYS.map((_, i) => placasDetalle.value[i] ?? '')
+    const totalFilas = Math.max(placasDetalle.value.length, 2)
+    nuevasPlacas.value = PLACA_KEYS.slice(0, totalFilas).map((_, i) => placasDetalle.value[i] ?? '')
     modalPlacas.value = true
 }
 
@@ -649,9 +654,11 @@ const confirmarCambioPlacas = async () => {
     guardandoPlacas.value = true
     try {
         const res = await MensualidadesService.ChangeCarPlate({
-            IdPersonaAutorizada: mensualidadAccion.value.id,
+            IdPersonaAutorizada: +mensualidadAccion.value.id,
             Detalles,
         })
+
+        console.log('[Cambio de placas]', mensualidadAccion.value.id, res)
 
         // 409 → backend ya tiene un cambio este mes
         if (res?.error || res?.success === false) {
@@ -826,7 +833,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 
 .card-estado-badge {
     display: inline-block;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -907,19 +914,22 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 
 /* ── Modal card ── */
 .modal-card {
+
     background: white;
     border: 2px solid #0D291C;
     border-radius: 24px;
     box-shadow: 0 6px 0 #000;
     width: 100%;
-    max-width: 420px;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
 .modal-card--detalle {
-    max-width: 440px
+    max-width: 560px;
+    height: 90%;
+    max-height: max-content;
 }
 
 .modal-card--placas {
@@ -943,7 +953,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .modal-head__name {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 800;
     color: white
 }
@@ -1003,11 +1013,12 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 .modal-body {
     display: flex;
     flex-direction: column;
-    background: white
+    background: white;
+    height: 100%;
 }
 
 .det-body {
-    max-height: 62vh;
+    max-height: 100%;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #c8e6c9 transparent
@@ -1026,7 +1037,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .modal-section__title {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -1193,7 +1204,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .det-label {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -1201,7 +1212,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .det-val {
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #0D291C
 }
@@ -1544,7 +1555,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .card-progress-label {
-    font-size: 0.62rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #9ca3af;
     text-align: right
