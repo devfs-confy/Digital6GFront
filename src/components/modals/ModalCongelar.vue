@@ -1,6 +1,6 @@
 <template>
     <Transition name="modal">
-        <div v-if="modelValue" class="modal-overlay" @click.self="$emit('update:modelValue', false)">
+        <div v-if="modelValue" class="modal-overlay">
             <div class="modal-card">
 
                 <div class="modal-head">
@@ -11,7 +11,7 @@
                             <p class="modal-head__sub">{{ cliente?.T_Estacionamiento?.Nombre ?? '—' }}</p>
                         </div>
                     </div>
-                    <button @click="$emit('update:modelValue', false)" class="modal-close">
+                    <button @click="cerrar" class="modal-close">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -22,98 +22,142 @@
 
                 <div class="modal-body">
 
-                    <!-- Alerta info -->
-                    <div class="info-alert">
-                        <div class="info-alert__icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                            </svg>
-                        </div>
-                        <p>El tiempo se pausará desde la fecha elegida. Podrás reactivarla cuando lo necesites.</p>
+                    <!-- Loading info congelamiento -->
+                    <div v-if="!infoCongelamiento" class="info-loading">
+                        <div class="info-spinner" />
+                        <span>Cargando información de congelamiento...</span>
                     </div>
 
-                    <!-- Selector de fecha visual -->
-                    <div class="field-group">
-                        <label class="field-label">Fecha de congelamiento</label>
+                    <template v-else>
 
-                        <div class="cal-wrapper">
-                            <!-- Header del calendario -->
-                            <div class="cal-header">
-                                <button type="button" @click="mesAnterior" class="cal-nav">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                                    </svg>
-                                </button>
-                                <span class="cal-mes-label">{{ mesLabel }} {{ anioActual }}</span>
-                                <button type="button" @click="mesSiguiente" :disabled="!puedeAvanzar"
-                                    class="cal-nav">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                                    </svg>
-                                </button>
+                        <!-- Bloqueo: no puede congelar -->
+                        <div v-if="!puedeCongelar" class="block-alert">
+                            <div class="block-alert__icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                                </svg>
                             </div>
-
-                            <!-- Días de la semana -->
-                            <div class="cal-grid">
-                                <span v-for="d in ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa']" :key="d"
-                                    class="cal-dow">{{ d }}</span>
-
-                                <!-- Espacios vacíos antes del día 1 -->
-                                <span v-for="_ in primerDiaSemana" :key="'e' + _" />
-
-                                <!-- Días del mes -->
-                                <button v-for="dia in diasDelMes" :key="dia" type="button"
-                                    @click="seleccionarDia(dia)" :disabled="!esDiaValido(dia)"
-                                    :class="['cal-day',
-                                        diaSeleccionado === dia ? 'cal-day--selected' : '',
-                                        esHoy(dia) ? 'cal-day--hoy' : '',
-                                        !esDiaValido(dia) ? 'cal-day--disabled' : ''
-                                    ]">
-                                    {{ dia }}
-                                </button>
+                            <div>
+                                <p class="block-alert__title">No es posible congelar</p>
+                                <p class="block-alert__msg">{{ estadoCongelamiento }}</p>
                             </div>
                         </div>
 
-                        <!-- Fecha seleccionada -->
-                        <div v-if="fechaCongelar" class="fecha-elegida">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg>
-                            Congelar el {{ fechaFormateada }}
-                        </div>
-                        <p v-else class="field-hint">Solo puedes programar hasta 15 días adelante.</p>
-                    </div>
+                        <template v-else>
+                            <!-- Info disponibilidad -->
+                            <div class="info-chips">
+                                <div class="info-chip">
+                                    <span class="info-chip__label">Días disponibles</span>
+                                    <span class="info-chip__val info-chip__val--green">{{
+                                        infoCongelamiento.DiasRestantes }}</span>
+                                </div>
+                                <div class="info-chip">
+                                    <span class="info-chip__label">Periodo</span>
+                                    <span class="info-chip__val">{{ formatFechaCorta(infoCongelamiento.FechaInicio) }} —
+                                        {{ formatFechaCorta(infoCongelamiento.FechaFin) }}</span>
+                                </div>
+                                <div class="info-chip">
+                                    <span class="info-chip__label">Días usados</span>
+                                    <span class="info-chip__val">{{ infoCongelamiento.DiasUsados }} / {{
+                                        infoCongelamiento.DiasTotalPeriodo }}</span>
+                                </div>
+                            </div>
 
-                    <!-- Motivo -->
-                    <div class="field-group">
-                        <label class="field-label">Motivo <span class="hint-opt">(opcional)</span></label>
-                        <select v-model="motivo" class="field-input">
-                            <option value="">Selecciona un motivo...</option>
-                            <option value="viaje">Viaje</option>
-                            <option value="lesion">Lesión o enfermedad</option>
-                            <option value="vacaciones">Vacaciones</option>
-                            <option value="otro">Otro</option>
-                        </select>
-                    </div>
+                            <!-- Alerta info -->
+                            <div class="info-alert">
+                                <div class="info-alert__icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                                    </svg>
+                                </div>
+                                <p>El periodo se pausará desde la fecha que elijas. La fecha de vencimiento se extenderá
+                                    automáticamente.</p>
+                            </div>
 
+                            <!-- Selector de fecha -->
+                            <div class="field-group">
+                                <label class="field-label">Fecha de inicio del congelamiento</label>
+                                <div class="cal-wrapper">
+                                    <div class="cal-header">
+                                        <button type="button" @click="mesAnterior" class="cal-nav">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                                            </svg>
+                                        </button>
+                                        <span class="cal-mes-label">{{ mesLabel }} {{ anioActual }}</span>
+                                        <button type="button" @click="mesSiguiente" :disabled="!puedeAvanzar"
+                                            class="cal-nav">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="cal-grid">
+                                        <span v-for="d in ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa']" :key="d"
+                                            class="cal-dow">{{ d }}</span>
+                                        <span v-for="_ in primerDiaSemana" :key="'e' + _" />
+                                        <button v-for="dia in diasDelMes" :key="dia" type="button"
+                                            @click="seleccionarDia(dia)" :disabled="!esDiaValido(dia)" :class="['cal-day',
+                                                diaSeleccionado === dia && mesVisible === hoyDate.getMonth() + (anioActual - hoyDate.getFullYear()) * 12 ? 'cal-day--selected' : '',
+                                                esHoy(dia) ? 'cal-day--hoy' : '',
+                                                !esDiaValido(dia) ? 'cal-day--disabled' : ''
+                                            ]">
+                                            {{ dia }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div v-if="fechaCongelar" class="fecha-elegida">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                    </svg>
+                                    Congelar desde el {{ fechaFormateada }}
+                                </div>
+                                <p v-else class="field-hint">Selecciona la fecha desde la que se pausará la mensualidad.
+                                </p>
+                            </div>
+
+                            <!-- Observación -->
+                            <div class="field-group">
+                                <label class="field-label">Observación <span class="hint-req">*</span></label>
+                                <input v-model="observacion" type="text" class="field-input-text"
+                                    placeholder="Ej: Viaje, lesión, vacaciones..." maxlength="200" />
+                                <p v-if="!observacion.trim() && intentoEnvio" class="field-error">La observación es
+                                    obligatoria.</p>
+                            </div>
+
+                            <!-- Error del backend -->
+                            <div v-if="errExterno" class="backend-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                                    viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                </svg>
+                                {{ errExterno }}
+                            </div>
+
+                        </template>
+                    </template>
                 </div>
 
                 <div class="modal-foot">
-                    <button @click="$emit('update:modelValue', false)" class="btn-modal btn-cancel">
-                        Cancelar
-                    </button>
-                    <button @click="confirmar" :disabled="!fechaCongelar" class="btn-modal btn-freeze">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                    <button @click="cerrar" class="btn-modal btn-cancel">Cancelar</button>
+                    <button @click="confirmar"
+                        :disabled="!puedeCongelar || !fechaCongelar || !infoCongelamiento || guardando"
+                        class="btn-modal btn-freeze">
+                        <div v-if="guardando" class="btn-spinner" />
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
                                 d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z" />
                         </svg>
-                        Congelar
+                        Confirmar congelamiento
                     </button>
                 </div>
 
@@ -128,20 +172,35 @@ import { ref, computed, watch } from 'vue'
 const props = defineProps({
     modelValue: Boolean,
     cliente: Object,
+    infoCongelamiento: Object,   // { EstadoCongelamiento, DiasRestantes, FechaFin, FechaInicio, DiasTotalPeriodo, DiasUsados }
+    errExterno: String,   // error que viene del backend tras intentar congelar
 })
+
 const emit = defineEmits(['update:modelValue', 'confirmar'])
 
-const motivo = ref('')
+// ── Estado interno ─────────────────────────────────────────────────
+const observacion = ref('')
 const fechaCongelar = ref('')   // 'YYYY-MM-DD'
 const diaSeleccionado = ref(null)
+const intentoEnvio = ref(false)
+const guardando = ref(false)
 
 const hoyDate = new Date()
 hoyDate.setHours(0, 0, 0, 0)
 
-const maxDate = new Date(hoyDate)
-maxDate.setDate(maxDate.getDate() + 15)
+// Límite: hoy + 2 meses (regla de negocio fija)
+const maxDate = computed(() => {
+    const d = new Date(hoyDate)
+    d.setMonth(d.getMonth() + 2)
+    d.setHours(0, 0, 0, 0)
+    return d
+})
 
-// Mes visible en el calendario
+// ── Puede congelar ─────────────────────────────────────────────────
+const estadoCongelamiento = computed(() => props.infoCongelamiento?.EstadoCongelamiento ?? '')
+const puedeCongelar = computed(() => estadoCongelamiento.value === 'PUEDE CONGELAR')
+
+// ── Calendario ────────────────────────────────────────────────────
 const mesVisible = ref(hoyDate.getMonth())
 const anioActual = ref(hoyDate.getFullYear())
 
@@ -151,46 +210,49 @@ const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
 const mesLabel = computed(() => MESES[mesVisible.value])
 
 const puedeAvanzar = computed(() => {
-    // No avanzar más allá del mes que contiene maxDate
-    const limMes = maxDate.getMonth()
-    const limAnio = maxDate.getFullYear()
+    const limMes = maxDate.value.getMonth()
+    const limAnio = maxDate.value.getFullYear()
     return anioActual.value < limAnio ||
         (anioActual.value === limAnio && mesVisible.value < limMes)
 })
 
 const mesAnterior = () => {
-    // No retroceder antes del mes actual
-    const hoyMes = hoyDate.getMonth()
-    const hoyAnio = hoyDate.getFullYear()
-    if (anioActual.value === hoyAnio && mesVisible.value === hoyMes) return
+    if (anioActual.value === hoyDate.getFullYear() && mesVisible.value === hoyDate.getMonth()) return
     if (mesVisible.value === 0) { mesVisible.value = 11; anioActual.value-- }
     else mesVisible.value--
+    diaSeleccionado.value = null
 }
 
 const mesSiguiente = () => {
     if (!puedeAvanzar.value) return
     if (mesVisible.value === 11) { mesVisible.value = 0; anioActual.value++ }
     else mesVisible.value++
+    diaSeleccionado.value = null
 }
 
-const diasDelMes = computed(() => {
-    return new Date(anioActual.value, mesVisible.value + 1, 0).getDate()
-})
+const diasDelMes = computed(() =>
+    new Date(anioActual.value, mesVisible.value + 1, 0).getDate()
+)
 
-const primerDiaSemana = computed(() => {
-    return new Date(anioActual.value, mesVisible.value, 1).getDay()
-})
+const primerDiaSemana = computed(() =>
+    new Date(anioActual.value, mesVisible.value, 1).getDay()
+)
 
 const esDiaValido = (dia) => {
     const d = new Date(anioActual.value, mesVisible.value, dia)
     d.setHours(0, 0, 0, 0)
-    return d >= hoyDate && d <= maxDate
+    return d >= hoyDate && d <= maxDate.value
 }
 
-const esHoy = (dia) => {
-    return dia === hoyDate.getDate() &&
-        mesVisible.value === hoyDate.getMonth() &&
-        anioActual.value === hoyDate.getFullYear()
+const esHoy = (dia) =>
+    dia === hoyDate.getDate() &&
+    mesVisible.value === hoyDate.getMonth() &&
+    anioActual.value === hoyDate.getFullYear()
+
+const esDiaSeleccionado = (dia) => {
+    if (!fechaCongelar.value) return false
+    const [y, m, d] = fechaCongelar.value.split('-').map(Number)
+    return d === dia && (m - 1) === mesVisible.value && y === anioActual.value
 }
 
 const seleccionarDia = (dia) => {
@@ -204,27 +266,43 @@ const seleccionarDia = (dia) => {
 const fechaFormateada = computed(() => {
     if (!fechaCongelar.value) return ''
     return new Date(fechaCongelar.value + 'T12:00:00').toLocaleDateString('es-CO', {
-        weekday: 'long', day: '2-digit', month: 'long'
+        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
     })
 })
 
-// Reset al cerrar
+const formatFechaCorta = (iso) => {
+    if (!iso) return '—'
+    return new Date(iso).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' })
+}
+
+// ── Reset al cerrar ────────────────────────────────────────────────
 watch(() => props.modelValue, (v) => {
     if (!v) {
         fechaCongelar.value = ''
         diaSeleccionado.value = null
-        motivo.value = ''
+        observacion.value = ''
+        intentoEnvio.value = false
+        guardando.value = false
         mesVisible.value = hoyDate.getMonth()
         anioActual.value = hoyDate.getFullYear()
     }
 })
 
+const cerrar = () => emit('update:modelValue', false)
+
 const iniciales = (nombre = '') =>
     (nombre ?? '').trim().split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
 
+// ── Confirmar ──────────────────────────────────────────────────────
 const confirmar = () => {
-    if (!fechaCongelar.value) return
-    emit('confirmar', { fecha: fechaCongelar.value, motivo: motivo.value })
+    intentoEnvio.value = true
+    if (!fechaCongelar.value || !observacion.value.trim()) return
+
+    // Emitir con los nombres exactos que espera el backend
+    emit('confirmar', {
+        FechaInicioPeriodoNvo: `${fechaCongelar.value}T00:00:00`,
+        Observacion: observacion.value.trim(),
+    })
 }
 </script>
 
@@ -254,7 +332,7 @@ const confirmar = () => {
     border-radius: 24px;
     box-shadow: 0 8px 0 #0c4a6e, 0 24px 60px rgba(3, 105, 161, 0.2);
     width: 100%;
-    max-width: 410px;
+    max-width: 420px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -275,7 +353,7 @@ const confirmar = () => {
 .modal-head__left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 12px
 }
 
 .modal-avatar-sm {
@@ -290,16 +368,14 @@ const confirmar = () => {
     justify-content: center;
     font-weight: 900;
     font-size: 0.78rem;
-    flex-shrink: 0;
-    letter-spacing: 0.02em;
+    flex-shrink: 0
 }
 
 .modal-head__name {
     font-size: 0.92rem;
     font-weight: 800;
-    color: #ffffff;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    color: #fff;
+    line-height: 1.2
 }
 
 .modal-head__sub {
@@ -308,7 +384,7 @@ const confirmar = () => {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-top: 2px;
+    margin-top: 2px
 }
 
 .modal-close {
@@ -322,13 +398,12 @@ const confirmar = () => {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.15s, color 0.15s
 }
 
 .modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff
 }
 
 /* ── Body ─────────────────────────────────────────── */
@@ -342,6 +417,108 @@ const confirmar = () => {
     background: #f0f9ff;
     scrollbar-width: thin;
     scrollbar-color: rgba(3, 105, 161, 0.15) transparent;
+}
+
+/* ── Loading ──────────────────────────────────────── */
+.info-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.info-spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2.5px solid #e0f2fe;
+    border-top-color: #0369a1;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+/* ── Bloqueo ──────────────────────────────────────── */
+.block-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.block-alert__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0
+}
+
+.block-alert__title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #991b1b
+}
+
+.block-alert__msg {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #b91c1c;
+    margin-top: 3px;
+    line-height: 1.4
+}
+
+/* ── Info chips ───────────────────────────────────── */
+.info-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.info-chip {
+    flex: 1;
+    min-width: 90px;
+    background: #fff;
+    border: 1.5px solid #bae6fd;
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.info-chip__label {
+    font-size: 0.55rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b
+}
+
+.info-chip__val {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #0c4a6e
+}
+
+.info-chip__val--green {
+    color: #16a34a
 }
 
 /* ── Info alert ───────────────────────────────────── */
@@ -365,21 +542,21 @@ const confirmar = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    flex-shrink: 0
 }
 
 .info-alert p {
     font-size: 0.78rem;
     color: #0c4a6e;
     line-height: 1.5;
-    flex: 1;
+    flex: 1
 }
 
 /* ── Field group ──────────────────────────────────── */
 .field-group {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 7px
 }
 
 .field-label {
@@ -388,41 +565,51 @@ const confirmar = () => {
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: #0c4a6e;
-    padding-left: 2px;
+    padding-left: 2px
 }
 
-.hint-opt {
-    font-weight: 500;
-    text-transform: none;
-    letter-spacing: 0;
-    color: #64748b;
+.hint-req {
+    color: #dc2626;
+    font-weight: 700
+}
+
+.field-hint {
     font-size: 0.68rem;
+    color: #64748b;
+    line-height: 1.5;
+    padding-left: 2px
 }
 
-/* ── Calendar wrapper ─────────────────────────────── */
+.field-error {
+    font-size: 0.68rem;
+    color: #dc2626;
+    font-weight: 700;
+    padding-left: 2px
+}
+
+/* ── Calendar ─────────────────────────────────────── */
 .cal-wrapper {
-    background: #ffffff;
+    background: #fff;
     border: 1.5px solid #bae6fd;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(3, 105, 161, 0.07);
+    box-shadow: 0 2px 8px rgba(3, 105, 161, 0.07)
 }
 
-/* ── Calendar header ──────────────────────────────── */
 .cal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: linear-gradient(135deg, #0369a1, #0c4a6e);
-    padding: 10px 14px;
+    padding: 10px 14px
 }
 
 .cal-mes-label {
     font-size: 0.82rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #fff;
     text-transform: capitalize;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.01em
 }
 
 .cal-nav {
@@ -431,29 +618,28 @@ const confirmar = () => {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    color: #ffffff;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s
 }
 
 .cal-nav:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.28)
 }
 
 .cal-nav:disabled {
     opacity: 0.3;
-    cursor: not-allowed;
+    cursor: not-allowed
 }
 
-/* ── Calendar grid ────────────────────────────────── */
 .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    padding: 10px 10px 12px;
+    padding: 10px 10px 12px
 }
 
 .cal-dow {
@@ -463,7 +649,7 @@ const confirmar = () => {
     color: #0369a1;
     text-transform: uppercase;
     padding: 4px 0;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.04em
 }
 
 .cal-day {
@@ -479,33 +665,33 @@ const confirmar = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif
 }
 
 .cal-day:hover:not(.cal-day--disabled):not(.cal-day--selected) {
     background: #e0f2fe;
     color: #0369a1;
-    transform: scale(1.05);
+    transform: scale(1.05)
 }
 
 .cal-day--hoy {
     font-weight: 900;
     color: #0369a1;
     background: #e0f2fe;
-    border: 1.5px solid #7dd3fc;
+    border: 1.5px solid #7dd3fc
 }
 
 .cal-day--selected {
     background: linear-gradient(135deg, #0369a1, #0284c7) !important;
-    color: #ffffff !important;
+    color: #fff !important;
     font-weight: 800;
     box-shadow: 0 2px 8px rgba(3, 105, 161, 0.35);
-    transform: scale(1.08);
+    transform: scale(1.08)
 }
 
 .cal-day--disabled {
     color: #cbd5e1;
-    cursor: not-allowed;
+    cursor: not-allowed
 }
 
 /* ── Fecha elegida ────────────────────────────────── */
@@ -520,19 +706,12 @@ const confirmar = () => {
     border: 1.5px solid #7dd3fc;
     border-radius: 11px;
     padding: 9px 13px;
-    text-transform: capitalize;
+    text-transform: capitalize
 }
 
-.field-hint {
-    font-size: 0.68rem;
-    color: #64748b;
-    line-height: 1.5;
-    padding-left: 2px;
-}
-
-/* ── Select ───────────────────────────────────────── */
-.field-input {
-    background: #ffffff !important;
+/* ── Textarea ─────────────────────────────────────── */
+.field-input-text {
+    background: #fff !important;
     border: 1.5px solid #bae6fd !important;
     border-radius: 12px !important;
     padding: 10px 13px !important;
@@ -540,15 +719,29 @@ const confirmar = () => {
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: #1e3a5f !important;
     outline: none !important;
-    box-shadow: none !important;
     width: 100%;
     box-sizing: border-box;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.field-input:focus {
+.field-input-text:focus {
     border-color: #0369a1 !important;
-    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.12) !important
+}
+
+/* ── Error backend ────────────────────────────────── */
+.backend-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #b91c1c;
+    line-height: 1.5;
 }
 
 /* ── Foot ─────────────────────────────────────────── */
@@ -557,102 +750,125 @@ const confirmar = () => {
     gap: 10px;
     padding: 14px 20px 20px;
     border-top: 1.5px solid #e0f2fe;
-    background: #ffffff;
-    flex-shrink: 0;
+    background: #fff;
+    flex-shrink: 0
 }
 
-/* ── Buttons ──────────────────────────────────────── */
+/* ── Buttons — misma temática 3D del sistema ──────── */
 .btn-modal {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 11px 18px;
-    border-radius: 12px;
-    font-size: 0.8rem;
+    gap: 7px;
+    padding: 11px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
     font-weight: 800;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     cursor: pointer;
-    transition: background 0.2s, transform 0.12s, box-shadow 0.2s;
+    border: 2px solid;
+    box-shadow: 0 3px 0;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
 }
 
-.btn-cancel {
-    background: #f1f5f9;
-    color: #374151;
-    border: 1.5px solid #e2e8f0;
-}
-
-.btn-cancel:hover {
-    background: #e2e8f0;
-}
-
-.btn-freeze {
-    background: #0369a1;
-    color: #ffffff;
-    border: 1.5px solid #0c4a6e;
-    box-shadow: 0 4px 14px rgba(3, 105, 161, 0.3);
-}
-
-.btn-freeze:hover:not(:disabled) {
-    background: #0284c7;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(3, 105, 161, 0.4);
-}
-
-.btn-freeze:active:not(:disabled),
-.btn-cancel:active {
-    transform: translateY(0);
+.btn-modal:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 !important;
 }
 
 .btn-modal:disabled {
     opacity: 0.4;
-    cursor: not-allowed;
+    cursor: not-allowed
+}
+
+/* Cancelar — blanco con borde negro */
+.btn-cancel {
+    background: white;
+    color: #232B3A;
+    border-color: #000;
+    box-shadow: 0 3px 0 #000;
+}
+
+.btn-cancel:hover:not(:disabled) {
+    background: #f1f5f9
+}
+
+/* Congelar — azul 3D */
+.btn-freeze {
+    background: #0369a1;
+    color: #fff;
+    border-color: #0c4a6e;
+    box-shadow: 0 3px 0 #0c4a6e;
+}
+
+.btn-freeze:hover:not(:disabled) {
+    background: #0284c7
+}
+
+.btn-spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0
 }
 
 /* ── Animations ───────────────────────────────────── */
 .modal-enter-active {
-    transition: opacity 0.22s ease;
+    transition: opacity 0.22s ease
 }
 
 .modal-leave-active {
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease
 }
 
 .modal-enter-from,
 .modal-leave-to {
-    opacity: 0;
+    opacity: 0
 }
 
 .modal-enter-active .modal-card {
-    animation: popIn 0.3s cubic-bezier(0.34, 1.5, 0.64, 1) both;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.5, 0.64, 1) both
 }
 
 .modal-leave-active .modal-card {
-    animation: popOut 0.18s ease-in both;
+    animation: popOut 0.18s ease-in both
+}
+
+@media (max-width: 600px) {
+    .btn-modal {
+        font-size: 0.7rem
+    }
+
 }
 
 @keyframes popIn {
     from {
         transform: scale(0.88) translateY(20px);
-        opacity: 0;
+        opacity: 0
     }
 
     to {
         transform: scale(1) translateY(0);
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes popOut {
     from {
         transform: scale(1) translateY(0);
-        opacity: 1;
+        opacity: 1
     }
 
     to {
         transform: scale(0.93) translateY(10px);
-        opacity: 0;
+        opacity: 0
     }
 }
 </style>

@@ -9,8 +9,7 @@
             <!-- Header -->
             <div class="ss-header">
                 <div class="ss-icon-wrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7FD344"
-                        viewBox="0 0 24 24">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7FD344" viewBox="0 0 24 24">
                         <path
                             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
@@ -60,7 +59,6 @@
                     </div>
 
                     <p class="sede-nombre">{{ sede.Nombre }}</p>
-                    <p class="sede-id">ID {{ sede.IdEstacionamiento }}</p>
                 </div>
             </div>
 
@@ -68,8 +66,8 @@
             <div class="ss-actions">
                 <button @click="continuar" :disabled="!sedeSeleccionada" class="btn-continuar">
                     <span>Continuar</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2.5" class="btn-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" class="btn-arrow">
                         <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                 </button>
@@ -273,8 +271,15 @@ const continuar = () => {
 }
 
 @keyframes shimmer {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 
 /* ── Empty state ──────────────────────────────── */
@@ -464,7 +469,10 @@ const continuar = () => {
 
 /* ── Reduced motion ───────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+
+    *,
+    *::before,
+    *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }

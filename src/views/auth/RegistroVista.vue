@@ -67,7 +67,7 @@
                             </h1>
                             <p class="text-[0.75rem] font-semibold text-gray-400 leading-snug m-0">
                                 {{ usuarioEncontrado ? 'Encontramos tus datos — revísalos y crea tu contraseña.' :
-                                    'Ingresa tu documento para comenzar.' }}
+                                'Ingresa tu documento para comenzar.' }}
                             </p>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
 
                     <!-- ── ESTUDIANTE sede 24 ── -->
                     <Transition name="fade">
-                        <div v-if="mostrarBloqueUCC && formularioListo"
+                        <div v-if="esSede24 && formularioListo"
                             class="bg-green-50 border-[1.5px] border-green-300 rounded-2xl p-4">
                             <div class="flex items-center gap-2 text-[0.82rem] font-black text-[#0D291C]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#0D291C"
@@ -307,9 +307,53 @@
                                 </div>
                             </Transition>
 
+                            <!-- Error 409 — email duplicado -->
+                            <Transition name="fade">
+                                <div v-if="errSubmit === '409_email'"
+                                    class="px-4 py-3.5 rounded-[14px] bg-blue-50 border-[1.5px] border-blue-200"
+                                    style="box-shadow:0 3px 0 #bfdbfe">
+                                    <div class="flex items-start gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#1d4ed8"
+                                            viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                            <path
+                                                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+                                        </svg>
+                                        <div>
+                                            <p class="text-[0.8rem] font-black text-blue-900 leading-tight">Este correo
+                                                ya tiene una cuenta</p>
+                                            <p class="text-[0.72rem] font-semibold text-blue-700 mt-0.5 leading-snug">
+                                                El correo <strong>{{ form.Email }}</strong> ya está registrado. Inicia
+                                                sesión o usa otro correo.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 mt-3">
+                                        <router-link to="/login"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-[#7FD344] bg-[#0D291C] border-none cursor-pointer no-underline transition-colors hover:bg-[#1a4a2e]"
+                                            style="box-shadow:0 3px 0 #051510">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" />
+                                            </svg>
+                                            Iniciar sesión
+                                        </router-link>
+                                        <button type="button" @click="form.Email = ''; errSubmit = ''"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-blue-800 bg-white border-[1.5px] border-blue-200 cursor-pointer transition-colors hover:border-blue-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                            </svg>
+                                            Cambiar correo
+                                        </button>
+                                    </div>
+                                </div>
+                            </Transition>
+
                             <!-- Error genérico -->
                             <Transition name="fade">
-                                <div v-if="errSubmit && errSubmit !== '409'"
+                                <div v-if="errSubmit && errSubmit !== '409' && errSubmit !== '409_email'"
                                     class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-600 border-[1.5px] border-red-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                         viewBox="0 0 24 24" class="shrink-0 mt-0.5">
@@ -387,8 +431,7 @@
                 <!-- Logo -->
                 <div class="w-full flex items-center justify-between relative z-[2]">
                     <img src="@/assets/img/confy-blanco.png" alt="Logo"
-                        class="max-h-[52px] max-w-[130px] object-contain"
-                        @error="$event.target.style.display = 'none'" />
+                        class="max-h-[52px] max-w-[130px] object-contain" @error="$event.target.style.display = 'none'" />
                     <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.14em] px-2.5 py-1 rounded-full"
                         style="color:rgba(127,211,68,0.6);background:rgba(127,211,68,0.08);border:1px solid rgba(127,211,68,0.2)">
                         Registro
@@ -464,9 +507,7 @@ const router = useRouter()
 
 const idSede = computed(() => Number(route.query.sede))
 const sedeNombre = computed(() => route.query.sedeNombre ?? 'Sede')
-// Después — solo activo si es sede 24 Y el usuario NO fue encontrado (nuevo)
-const mostrarBloqueUCC = computed(() => idSede.value === 24 && !usuarioEncontrado.value)
-
+const esSede24 = computed(() => idSede.value === 24)
 
 const buscandoDoc = ref(false)
 const formularioListo = ref(false)
@@ -594,8 +635,8 @@ const validarFormulario = () => {
     if (!form.Password || form.Password.length < 8) { errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false }
     if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
     if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
-    if (mostrarBloqueUCC.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
-    if (mostrarBloqueUCC.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
+    if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
+    if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
     return true
 }
 
@@ -612,8 +653,8 @@ const buildPayload = (esOld) => {
         ...(esOld && m?.fechaFin ? { FechaFin: m.fechaFin } : {}),
         Placa1: placas[0] || null, Placa2: placas[1] || null,
         Placa3: placas[2] || null, Placa4: placas[3] || null, Placa5: placas[4] || null,
-        EstudianteUcc: mostrarBloqueUCC.value ? (esEstudiante.value === true) : false,
-        CodigoEstudianteUCC: mostrarBloqueUCC.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
+        EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
+        CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
     }
 }
 
@@ -622,7 +663,12 @@ const manejarRespuesta = (res) => {
         const status = res?.status ?? res?.data?.statusCode
         const message = res?.data?.message ?? res?.message ?? ''
         const msg = Array.isArray(message) ? message.join(', ') : (message || 'Error al registrar.')
-        errSubmit.value = status === 409 ? '409' : msg
+        if (status === 409) {
+            // Distinguir: email duplicado vs documento duplicado
+            errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
+        } else {
+            errSubmit.value = msg
+        }
         return false
     }
     return true
@@ -638,7 +684,12 @@ const submit = async () => {
         if (!manejarRespuesta(res)) return
         modalExito.value = true
     } catch (e) {
-        if (e.response?.status === 409) { errSubmit.value = '409'; return }
+        if (e.response?.status === 409) {
+            const rawMsg = e.response?.data?.message ?? ''
+            const msg = Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg
+            errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
+            return
+        }
         const msg = e.response?.data?.message
         errSubmit.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al registrar. Intenta de nuevo.')
     } finally {
@@ -648,7 +699,7 @@ const submit = async () => {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 </style>
 
 <style scoped>

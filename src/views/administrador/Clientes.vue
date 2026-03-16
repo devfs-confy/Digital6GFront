@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full flex flex-col gap-6">
+    <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
         <div class="flex items-center justify-between relative bg-white rounded-full p-4">
@@ -48,8 +48,8 @@
                 <table class="border-collapse min-w-[700px] w-full">
                     <thead>
                         <tr>
-                            <th class="th-cell th-cell--sticky">Cliente</th>
-                            <th class="th-cell">Documento</th>
+                            <th class="th-cell ">Cliente</th>
+                            <th class="th-cell th-cell--sticky">Documento</th>
                             <th class="th-cell">Correo</th>
                             <th class="th-cell">Teléfono</th>
                             <th class="th-cell">Estado</th>
@@ -81,7 +81,7 @@
                         <tr v-else v-for="cliente in listaClientes" :key="cliente.Documento"
                             class="border-b border-[#e8f5e9] last:border-b-0 transition-colors duration-150 hover:bg-[#f0faf4] group">
 
-                            <td class="td-cell td-cell--sticky group-hover:bg-[#f0faf4]">
+                            <td class="td-cell  group-hover:bg-[#f0faf4]">
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-[0.75rem] flex-shrink-0 border-2 border-[#e8f5e9]">
@@ -94,7 +94,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="td-cell font-mono tracking-wide">{{ cliente.Documento }}</td>
+                            <td class="td-cell td-cell--sticky font-mono tracking-wide">{{ cliente.Documento }}</td>
                             <td class="td-cell">
                                 <span
                                     class="inline-block px-[10px] py-[3px] rounded-full text-[0.72rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9]">
@@ -763,5 +763,19 @@ input.search-input {
 .modal-enter-active .modal-card,
 .modal-leave-active .modal-card {
     transition: transform 0.22s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@media (max-width:780px) {
+    .shadow-sm {
+        height: auto;
+    }
+
+    .maincontainer {
+        height: auto;
+    }
+
+    .td-cell--sticky {
+        min-width: auto;
+    }
 }
 </style>

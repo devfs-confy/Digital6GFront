@@ -6,13 +6,13 @@
             <div class="header-bar__desktop">
                 <button @click="$router.back()" class="add-btn">Volver</button>
                 <h2 class="header-bar__title">Mis Mensualidades</h2>
-                <button @click="modalCodigo = true" class="add-btn">+ Añadir</button>
+                <button @click="modalCodigo = true" class="add-btn">Añadir</button>
             </div>
             <div class="header-bar__mobile">
                 <h2 class="header-bar__title">Mis Mensualidades</h2>
                 <div class="header-bar__actions">
-                    <button @click="$router.back()" class="add-btn">← Volver</button>
-                    <button @click="modalCodigo = true" class="add-btn">+ Añadir</button>
+                    <button @click="$router.back()" class="add-btn">Volver</button>
+                    <button @click="modalCodigo = true" class="add-btn">Añadir</button>
                 </div>
             </div>
         </div>
@@ -31,12 +31,13 @@
                     <div class="card-avatar">{{ iniciales(m.nombre) }}</div>
                     <div class="card-head__info">
                         <h3 class="card-nombre">{{ m.sede }}</h3>
-                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.nombre }}</p>
+                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}
+                        </p>
                         <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado) }}</span>
                     </div>
                     <div class="card-dias" :class="`card-dias--${m.estado}`">
-                        <span class="card-dias__num">{{ diasRestantes(m.fechaFin) }}</span>
-                        <span class="card-dias__label">días</span>
+                        <span class="card-dias__num">{{ diasRestantes(m) }}</span>
+                        <span class="card-dias__label">{{ m.estado === 'congelada' ? 'cong.' : 'días' }}</span>
                     </div>
                 </div>
                 <template v-if="m.fechaInicio && m.fechaFin">
@@ -95,7 +96,7 @@
                         </svg>
                         Ver
                     </button>
-                    <button v-if="m.conPago" @click="abrirCongelar(m)" class="btn-congelar">
+                    <button v-if="m.conPago && m.estado !== 'congelada'" @click="abrirCongelar(m)" class="btn-congelar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -208,7 +209,9 @@
 
 
         <!-- Modal congelar -->
-        <ModalCongelar v-model="modalCongelar" :cliente="mensualidadAccion?._raw" @confirmar="confirmarCongelar" />
+        <ModalCongelar v-model="modalCongelar" :cliente="mensualidadAccion?._raw"
+            :info-congelamiento="infoCongelamiento" :err-externo="errCongelar" @confirmar="confirmarCongelar"
+            @update:modelValue="v => { if (!v) errCongelar.value = '' }" />
 
 
         <!-- ══ MODAL — DETALLE ══ -->
@@ -223,8 +226,8 @@
                                 {{ iniciales(mensualidadAccion?.nombre) }}
                             </div>
                             <div>
-                                <p class="text-[1rem] font-black text-[#0D291C]">{{ mensualidadAccion?.nombre }}</p>
-                                <p class="text-[0.80rem] font-semibold text-gray-400">{{ mensualidadAccion?.sede }}</p>
+                                <p class="text-[0.92rem] font-black text-[#0D291C]">{{ mensualidadAccion?.nombre }}</p>
+                                <p class="text-[0.65rem] font-semibold text-gray-400">{{ mensualidadAccion?.sede }}</p>
                             </div>
                         </div>
                         <button @click="modalDetalle = false" class="modal-close-btn modal-close-btn--light">✕</button>
@@ -245,9 +248,9 @@
                                     <span class="card-estado-badge" :class="`badge--${mensualidadAccion?.estado}`">
                                         {{ estadoLabel(mensualidadAccion?.estado) }}
                                     </span>
-                                    <span class="text-sm font-semibold text-gray-400">
-                                        <strong class="font-black text-[#0D291C]">{{
-                                            diasRestantes(mensualidadAccion?.fechaFin) }}</strong> días restantes
+                                    <span class="text-xs font-semibold text-gray-400">
+                                        <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
+                                            }}</strong> días restantes
                                     </span>
                                 </div>
                             </div>
@@ -289,7 +292,7 @@
                                             :class="`fill--${mensualidadAccion?.estado}`"
                                             :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
                                     </div>
-                                    <span class="text-right text-xs font-semibold text-gray-400">
+                                    <span class="text-right text-[0.62rem] font-semibold text-gray-400">
                                         {{ porcentajeVigencia(mensualidadAccion) }}% del periodo
                                     </span>
                                 </div>
@@ -301,7 +304,7 @@
                                     <p class="modal-section__title" style="margin:0;flex:1">Vehículos registrados</p>
                                     <!-- Botón solicitar cambio -->
                                     <button @click="abrirModalPlacas"
-                                        class="flex items-center gap-1.5 text-[0.75rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
+                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
                                         :class="placaCambiada
                                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                             : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
@@ -364,25 +367,6 @@
 
                         <div class="modal-foot det-foot">
                             <button @click="modalDetalle = false" class="btn-modal btn-modal--cancel">Cerrar</button>
-                            <button @click="() => { modalDetalle = false; abrirPago(mensualidadAccion) }"
-                                class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                        d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                                </svg>
-                                Pagar
-                            </button>
-                            <button v-if="mensualidadAccion?.conPago"
-                                @click="() => { modalDetalle = false; abrirCongelar(mensualidadAccion) }"
-                                class="btn-modal btn-modal--freeze-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                        d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z" />
-                                </svg>
-                                Congelar
-                            </button>
                         </div>
                     </template>
 
@@ -528,16 +512,29 @@ const errPlacas = ref('')
 // Clave localStorage: `placa_changed_${idMensualidad}_${YYYY-MM}`
 const placaCambiada = ref(false)
 
+// ── Estado congelamiento ─────────────────────────────────────────
+const infoCongelamiento = ref(null)
+const errCongelar = ref('')
+
 // ── Resolvers ─────────────────────────────────────────────────────
-
-
 const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 
 const resolverEstado = (m) => {
+    // Congelado explícito desde el backend
+    if (m.Congelado === true || m.EstadoCongelamiento === 'CONGELADO') return 'congelada'
+
+    // Regla principal: si FechaInicio es posterior a hoy → periodo no ha arrancado → congelada
+    if (m.FechaInicio) {
+        const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+        const inicio = new Date(m.FechaInicio.length === 10 ? m.FechaInicio + 'T00:00:00' : m.FechaInicio)
+        if (inicio > hoy) return 'congelada'
+    }
+
     if (!m.Estado) return 'vencida'
     if (!m.FechaFin) return 'activa'
-    const diff = new Date(m.FechaFin) - new Date()
-    const dias = diff / (1000 * 60 * 60 * 24)
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+    const fin = new Date(m.FechaFin.length === 10 ? m.FechaFin + 'T00:00:00' : m.FechaFin)
+    const dias = (fin - hoy) / (1000 * 60 * 60 * 24)
     if (dias < 0) return 'vencida'
     if (dias <= 7) return 'por_vencer'
     return 'activa'
@@ -572,14 +569,12 @@ const cargarMisMensualidades = async () => {
             fechaInicio: m.FechaInicio ? m.FechaInicio.slice(0, 10) : null,
             fechaFin: m.FechaFin ? m.FechaFin.slice(0, 10) : null,
             sede: m.T_Estacionamiento?.Nombre ?? '—',
+            mensualidad: m.T_Autorizaciones?.NombreAutorizacion ?? '—',
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),
             valor: '—',
-            conPago: !!(m.FechaFin && new Date(m.FechaFin) > new Date()),
+            conPago: !!(m.FechaFin && new Date(m.FechaFin.length === 10 ? m.FechaFin + 'T00:00:00' : m.FechaFin) > new Date()),
         }))
-
-
-
     } catch (e) {
         console.error('[MisMensualidades]', e.response?.data ?? e.message)
         mensualidades.value = []
@@ -604,28 +599,21 @@ const abrirDetalle = async (m) => {
         const data = res?.data ?? res
         if (data?.error) throw new Error('Error al cargar detalle')
         detalleCompleto.value = data
-
         placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
-
-
-        console.log('[Detalle]', detalleCompleto.value)
-
-
-
     } catch (e) {
         console.error('[Detalle]', e)
-        // Fallback a datos del listado
         placasDetalle.value = m.placas ?? []
     } finally {
         loadingDetalle.value = false
     }
+
 }
 
 // ── Modal cambio de placas ────────────────────────────────────────
 const abrirModalPlacas = () => {
     if (placaCambiada.value) return
     errPlacas.value = ''
-    // Pre-cargar con valores actuales
+    // Mostrar al menos 2 filas; si hay más placas activas, mostrar todas
     const totalFilas = Math.max(placasDetalle.value.length, 2)
     nuevasPlacas.value = PLACA_KEYS.slice(0, totalFilas).map((_, i) => placasDetalle.value[i] ?? '')
     modalPlacas.value = true
@@ -653,12 +641,10 @@ const confirmarCambioPlacas = async () => {
 
     guardandoPlacas.value = true
     try {
-        const res = await MensualidadesService.ChangeCarPlate({
-            IdPersonaAutorizada: +mensualidadAccion.value.id,
+        const res = await MensualidadesService.cambiarPlacas({
+            IdPersonaAutorizada: mensualidadAccion.value.id,
             Detalles,
         })
-
-        console.log('[Cambio de placas]', mensualidadAccion.value.id, res)
 
         // 409 → backend ya tiene un cambio este mes
         if (res?.error || res?.success === false) {
@@ -699,18 +685,41 @@ const confirmarCambioPlacas = async () => {
 
 // ── Helpers ───────────────────────────────────────────────────────
 const iniciales = (nombre = '') => nombre.trim().split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
+// Parsea 'YYYY-MM-DD' como hora local para evitar desfase UTC (-5h en CO)
+const parseLocal = (fechaStr) => {
+    if (!fechaStr) return null
+    // Si ya trae hora (ISO completo), usar directo; si es solo fecha, agregar T00:00
+    return new Date(fechaStr.length === 10 ? fechaStr + 'T00:00:00' : fechaStr)
+}
+
 const formatFecha = (fecha) => {
     if (!fecha) return '—'
-    return new Date(fecha).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+    const d = parseLocal(fecha)
+    return d ? d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
 }
-const diasRestantes = (fechaFin) => {
+const diasRestantes = (m) => {
+    // Calcula fechaFin - fechaInicio (días totales del periodo actual)
+    // Cuando se congela, el backend actualiza FechaInicio y FechaFin,
+    // por lo que siempre reflejan el periodo vigente.
+    const fechaInicio = typeof m === 'object' ? m?.fechaInicio : null
+    const fechaFin = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
     if (!fechaFin) return 0
-    return Math.max(0, Math.ceil((new Date(fechaFin) - new Date()) / (1000 * 60 * 60 * 24)))
+    const fin = parseLocal(fechaFin)
+    const inicio = fechaInicio ? parseLocal(fechaInicio) : null
+    if (!fin) return 0
+    // Si tenemos inicio y fin: días totales del periodo (fin - inicio)
+    if (inicio) return Math.max(0, Math.round((fin - inicio) / (1000 * 60 * 60 * 24)))
+    // Fallback sin fecha inicio: días desde hoy hasta fin
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+    return Math.max(0, Math.round((fin - hoy) / (1000 * 60 * 60 * 24)))
 }
 const porcentajeVigencia = (m) => {
     if (!m?.fechaInicio || !m?.fechaFin) return 0
-    const total = new Date(m.fechaFin) - new Date(m.fechaInicio)
-    const usado = new Date() - new Date(m.fechaInicio)
+    const inicio = parseLocal(m.fechaInicio)
+    const fin = parseLocal(m.fechaFin)
+    if (!inicio || !fin) return 0
+    const total = fin - inicio
+    const usado = new Date() - inicio
     return Math.min(100, Math.max(0, Math.round((usado / total) * 100)))
 }
 const estadoClase = (m) => ({
@@ -722,14 +731,47 @@ const estadoClase = (m) => ({
 const estadoLabel = (estado) => ({ activa: 'Activa', por_vencer: 'Por vencer', vencida: 'Vencida', congelada: 'Congelada' })[estado] ?? estado
 
 const abrirPago = (m) => { mensualidadAccion.value = m; modalPago.value = true }
-const abrirCongelar = (m) => { mensualidadAccion.value = m; modalCongelar.value = true }
+const abrirCongelar = async (m) => {
+    mensualidadAccion.value = m
+    infoCongelamiento.value = null
+    modalCongelar.value = true
+    // Cargar info de congelamiento si no está ya cargada (puede venir desde tarjeta o desde detalle)
+    try {
+        const resC = await MensualidadesService.getCongelamiento(m.id)
+        infoCongelamiento.value = resC?.data ?? resC
+    } catch (e) {
+        console.error('[Congelamiento info]', e)
+    }
+}
 const cerrarModales = () => {
     modalCodigo.value = false; modalPago.value = false; modalCongelar.value = false
     codigoInput.value = ''; mensualidadAccion.value = null
 }
 const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; cerrarModales() }
 const confirmarPago = () => { cerrarModales() }
-const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fecha, motivo); cerrarModales() }
+const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
+    try {
+        const res = await MensualidadesService.updateCongelamiento(
+            mensualidadAccion.value.id,
+            { FechaInicioPeriodoNvo, Observacion }
+        )
+        if (res?.error || res?.success === false) {
+            const status = res?.status
+            const msg = res?.data?.message ?? 'Error al congelar.'
+            // 409 = congelamiento activo solapado | 400 = no puede congelar
+            console.error('[Congelar error]', status, msg)
+            // El modal recibe el error vía prop errCongelar para mostrarlo
+            errCongelar.value = Array.isArray(msg) ? msg.join(', ') : msg
+            return
+        }
+        errCongelar.value = ''
+        cerrarModales()
+        await cargarMisMensualidades()
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errCongelar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al congelar. Intenta de nuevo.')
+    }
+}
 </script>
 
 <style scoped>
@@ -806,6 +848,45 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
     box-shadow: 0 6px 0 #c8ddd1, 0 4px 20px rgba(13, 41, 28, 0.1)
 }
 
+/* ── Tarjeta congelada ── */
+.card--congelada {
+    background: linear-gradient(145deg, #eff6ff 0%, #f0f9ff 100%);
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 0 #93c5fd, 0 2px 16px rgba(59, 130, 246, 0.1);
+}
+
+.card--congelada:hover {
+    box-shadow: 0 6px 0 #7db8f7, 0 4px 20px rgba(59, 130, 246, 0.15);
+}
+
+.frozen-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: #dbeafe;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #1d4ed8;
+    line-height: 1.4;
+}
+
+.btn-pagar--frozen {
+    background: #e0e7ff !important;
+    color: #6366f1 !important;
+    border-color: #c7d2fe !important;
+    box-shadow: 0 3px 0 #a5b4fc !important;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.btn-pagar--frozen:hover {
+    background: #e0e7ff !important;
+    transform: none !important;
+}
+
 .card-band {
     position: absolute;
     top: 0;
@@ -833,7 +914,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 
 .card-estado-badge {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: 0.6rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -914,22 +995,19 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 
 /* ── Modal card ── */
 .modal-card {
-
     background: white;
     border: 2px solid #0D291C;
     border-radius: 24px;
     box-shadow: 0 6px 0 #000;
     width: 100%;
-    max-width: 500px;
+    max-width: 420px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
 .modal-card--detalle {
-    max-width: 560px;
-    height: 90%;
-    max-height: max-content;
+    max-width: 440px
 }
 
 .modal-card--placas {
@@ -953,7 +1031,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .modal-head__name {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: white
 }
@@ -1013,12 +1091,11 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 .modal-body {
     display: flex;
     flex-direction: column;
-    background: white;
-    height: 100%;
+    background: white
 }
 
 .det-body {
-    max-height: 100%;
+    max-height: 62vh;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #c8e6c9 transparent
@@ -1037,7 +1114,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .modal-section__title {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -1204,7 +1281,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .det-label {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -1212,7 +1289,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .det-val {
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #0D291C
 }
@@ -1555,7 +1632,7 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 }
 
 .card-progress-label {
-    font-size: 0.8rem;
+    font-size: 0.62rem;
     font-weight: 600;
     color: #9ca3af;
     text-align: right
@@ -1611,6 +1688,12 @@ const confirmarCongelar = ({ fecha, motivo }) => { console.log('Congelar:', fech
 @media (max-width:560px) {
     .header-bar__desktop {
         display: none
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
     }
 
     .header-bar__mobile {

@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full flex flex-col gap-6">
+    <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-4">
@@ -412,7 +412,7 @@ const cargarTodasLasMensualidades = async () => {
                 MensualidadesService.getAllBySede({ sede: s.IdEstacionamiento, page: 1, limit: 999 })
             )
         )
-       
+
         mensualidades.value = resultados.flatMap((res, idx) => {
             const items = res?.data?.data ?? res?.data ?? []
             return items.map(m => ({ ...m, _sedeName: sedes.value[idx]?.Nombre ?? '' }))
@@ -602,12 +602,23 @@ input[type="checkbox"].sr-only {
     clip: rect(0, 0, 0, 0);
 }
 
+@media (max-width:780px) {
+    .shadow-sm {
+        height: auto;
+    }
+
+    .maincontainer {
+        height: auto;
+    }
+
+    .td-cell--sticky {
+        min-width: auto;
+    }
+}
+
 /* ── Tabla mobile: max 5 filas visibles con scroll ────────────────── */
 @media (max-width: 640px) {
-    .table-scroll-wrapper {
-        max-height: calc(5 * 56px + 44px);
-        overflow-y: auto;
-    }
+
 
     .td-nombre-truncate {
         max-width: 100px !important;
