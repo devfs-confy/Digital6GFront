@@ -67,7 +67,7 @@
                             </h1>
                             <p class="text-[0.75rem] font-semibold text-gray-400 leading-snug m-0">
                                 {{ usuarioEncontrado ? 'Encontramos tus datos — revísalos y crea tu contraseña.' :
-                                'Ingresa tu documento para comenzar.' }}
+                                    'Ingresa tu documento para comenzar.' }}
                             </p>
                         </div>
                     </div>
@@ -141,12 +141,12 @@
                                     <path
                                         d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
                                 </svg>
-                                ¿Eres estudiante UCC?
+                                ¿Eres Comunidad UCC?
                             </div>
                             <div class="flex gap-2 mt-2.5">
                                 <button @click="esEstudiante = true" class="est-btn"
                                     :class="{ 'est-btn--on': esEstudiante === true }">
-                                    Sí, soy estudiante
+                                    Sí, soy comunidad UCC
                                 </button>
                                 <button @click="esEstudiante = false; form.CodigoEstudianteUCC = ''" class="est-btn"
                                     :class="{ 'est-btn--on': esEstudiante === false }">
@@ -234,7 +234,7 @@
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                            }}</label>
+                                        }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
                                                 class="field-input placa-input flex-1" placeholder="" maxlength="7" />
@@ -431,7 +431,8 @@
                 <!-- Logo -->
                 <div class="w-full flex items-center justify-between relative z-[2]">
                     <img src="@/assets/img/confy-blanco.png" alt="Logo"
-                        class="max-h-[52px] max-w-[130px] object-contain" @error="$event.target.style.display = 'none'" />
+                        class="max-h-[52px] max-w-[130px] object-contain"
+                        @error="$event.target.style.display = 'none'" />
                     <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.14em] px-2.5 py-1 rounded-full"
                         style="color:rgba(127,211,68,0.6);background:rgba(127,211,68,0.08);border:1px solid rgba(127,211,68,0.2)">
                         Registro

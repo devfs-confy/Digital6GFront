@@ -692,14 +692,6 @@ video {
   left: -5px;
 }
 
-[role="tooltip"].invisible > [data-popper-arrow]:before {
-  visibility: hidden;
-}
-
-[role="tooltip"].invisible > [data-popper-arrow]:after {
-  visibility: hidden;
-}
-
 [type='text'],[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {
   -webkit-appearance: none;
      -moz-appearance: none;
@@ -942,40 +934,6 @@ input[type="range"]::-ms-fill-lower {
   background: var(--color-blue-500);
 }
 
-.container {
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -994,10 +952,6 @@ input[type="range"]::-ms-fill-lower {
 
 .visible {
   visibility: visible;
-}
-
-.invisible {
-  visibility: hidden;
 }
 
 .collapse {
@@ -2674,6 +2628,10 @@ input[type="range"]::-ms-fill-lower {
   font-size: 0.55rem;
 }
 
+.text-\[0\.58rem\] {
+  font-size: 0.58rem;
+}
+
 .text-\[0\.62rem\] {
   font-size: 0.62rem;
 }
@@ -2720,10 +2678,6 @@ input[type="range"]::-ms-fill-lower {
 
 .text-\[0\.7rem\] {
   font-size: 0.7rem;
-}
-
-.text-\[0\.80rem\] {
-  font-size: 0.80rem;
 }
 
 .text-\[0\.82rem\] {

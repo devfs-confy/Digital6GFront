@@ -7,15 +7,14 @@
             <!-- Panel izquierdo: Marca -->
             <div class="brand-side">
                 <div class="brand-inner">
-                    <img src="@/assets/img/confy-blanco.png" alt="Confy" class="brand-logo" />
+                    <!-- <img src="@/assets/img/confy-blanco.png" alt="Confy" class="brand-logo" /> -->
                     <div class="brand-copy">
                         <h2>Bienvenido<br />de vuelta</h2>
                         <p>Plataforma de gestión<br />Digital 6G</p>
                     </div>
                 </div>
-                <img src="@/assets/img/image 3.png" alt="" class="brand-illustration" />
-                <div class="ring ring-1" />
-                <div class="ring ring-2" />
+                <img src="@/assets/img/locoshort.png" alt="" class="brand-illustration" />
+
             </div>
 
             <!-- Panel derecho: Formulario -->
@@ -230,33 +229,13 @@ async function handleLogin() {
 
 .brand-illustration {
     width: 100%;
-    max-width: 265px;
+    max-width: 100px;
     align-self: center;
     position: relative;
     z-index: 2;
-    margin-top: auto;
 }
 
-.ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(41, 146, 97, 0.2);
-    z-index: 1;
-}
 
-.ring-1 {
-    width: 190px;
-    height: 190px;
-    bottom: 16px;
-    right: -50px;
-}
-
-.ring-2 {
-    width: 95px;
-    height: 95px;
-    bottom: 68px;
-    right: 40px;
-}
 
 /* ── Form side ────────────────────────────────── */
 .form-side {
@@ -532,6 +511,7 @@ async function handleLogin() {
 @media (min-width: 768px) {
     .brand-side {
         display: flex;
+        justify-content: space-around;
     }
 
     .mobile-logo {

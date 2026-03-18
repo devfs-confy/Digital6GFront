@@ -74,13 +74,15 @@
                                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                                     </svg>
                                 </div>
-                                <p>El periodo se pausará desde la fecha que elijas. La fecha de vencimiento se extenderá
+                                <p>El periodo se pausará desde la hoy hasta la fecha que elijas. La fecha de vencimiento
+                                    se
+                                    extenderá
                                     automáticamente.</p>
                             </div>
 
                             <!-- Selector de fecha -->
                             <div class="field-group">
-                                <label class="field-label">Fecha de inicio del congelamiento</label>
+                                <label class="field-label">Fecha de regreso</label>
                                 <div class="cal-wrapper">
                                     <div class="cal-header">
                                         <button type="button" @click="mesAnterior" class="cal-nav">
@@ -119,7 +121,7 @@
                                     </svg>
                                     Congelar desde el {{ fechaFormateada }}
                                 </div>
-                                <p v-else class="field-hint">Selecciona la fecha desde la que se pausará la mensualidad.
+                                <p v-else class="field-hint">Selecciona la fecha que deseas regresar.
                                 </p>
                             </div>
 

@@ -4,15 +4,15 @@
         <!-- Header -->
         <div class="header-bar">
             <div class="header-bar__desktop">
-                <button @click="$router.back()" class="add-btn">Volver</button>
+                <button @click="$router.back()" class="btn-3d">Volver</button>
                 <h2 class="header-bar__title">Mis Mensualidades</h2>
-                <button @click="modalCodigo = true" class="add-btn">Añadir</button>
+                <button @click="modalCodigo = true" class="btn-3d">Añadir</button>
             </div>
             <div class="header-bar__mobile">
                 <h2 class="header-bar__title">Mis Mensualidades</h2>
                 <div class="header-bar__actions">
-                    <button @click="$router.back()" class="add-btn">Volver</button>
-                    <button @click="modalCodigo = true" class="add-btn">Añadir</button>
+                    <button @click="$router.back()" class="btn-3d">Volver</button>
+                    <button @click="modalCodigo = true" class="btn-3d">Añadir</button>
                 </div>
             </div>
         </div>
@@ -31,9 +31,9 @@
                     <div class="card-avatar">{{ iniciales(m.nombre) }}</div>
                     <div class="card-head__info">
                         <h3 class="card-nombre">{{ m.sede }}</h3>
-                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}
-                        </p>
-                        <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado) }}</span>
+                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}</p>
+                        <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado)
+                            }}</span>
                     </div>
                     <div class="card-dias" :class="`card-dias--${m.estado}`">
                         <span class="card-dias__num">{{ diasRestantes(m) }}</span>
@@ -163,49 +163,125 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
                     </div>
                     <div class="modal-body">
-                        <div class="modal-section">
-                            <p class="modal-section__title">Resumen del pago</p>
-                            <div class="pago-resumen">
-                                <div class="pago-resumen__item">
-                                    <span class="pago-resumen__label">Sede</span>
-                                    <span class="pago-resumen__val">{{ mensualidadAccion?.sede }}</span>
-                                </div>
-                                <div class="pago-sep" />
-                                <div class="pago-resumen__item">
-                                    <span class="pago-resumen__label">Vence</span>
-                                    <span class="pago-resumen__val">{{ formatFecha(mensualidadAccion?.fechaFin)
-                                        }}</span>
-                                </div>
-                                <div class="pago-sep" />
-                                <div class="pago-resumen__item">
-                                    <span class="pago-resumen__label">Valor</span>
-                                    <span class="pago-resumen__val pago-resumen__val--price">{{ mensualidadAccion?.valor
-                                        }}</span>
-                                </div>
-                            </div>
-                            <div class="modal-notice">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#299261"
-                                    viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                                </svg>
-                                <p>Al confirmar serás redirigido a la pasarela de pago.</p>
+
+                        <!-- Loading opciones -->
+                        <div v-if="loadingOpciones" class="flex flex-col items-center gap-3 py-10">
+                            <div class="det-loader" />
+                            <span class="text-xs text-gray-400 font-semibold">Cargando opciones de pago...</span>
+                        </div>
+
+                        <!-- Error carga -->
+                        <div v-else-if="errPago && !opcionesPago.length" class="modal-section">
+                            <div
+                                class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
+                                {{ errPago }}
                             </div>
                         </div>
+
+                        <template v-else>
+                            <!-- Selector de opciones -->
+                            <div class="modal-section">
+                                <p class="modal-section__title">Elige tu plan</p>
+                                <div class="flex flex-col gap-2">
+                                    <button v-for="op in opcionesPago" :key="op.modalidad + op.cantidadMeses"
+                                        @click="opcionSeleccionada = op" class="pago-opcion"
+                                        :class="{ 'pago-opcion--selected': opcionSeleccionada?.modalidad === op.modalidad && opcionSeleccionada?.cantidadMeses === op.cantidadMeses }">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex flex-col gap-0.5 text-left">
+                                                <span class="text-[0.85rem] font-black text-[#0D291C]">{{ op.nombre
+                                                }}</span>
+                                                <span
+                                                    class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
+                                                    {{ op.modalidad }} · {{ op.cantidadMeses }} {{ op.cantidadMeses ===
+                                                        1 ? 'mes' : 'meses' }}
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-col items-end gap-0.5">
+                                                <span class="text-[1rem] font-black text-[#299261]">
+                                                    {{ formatPrecio(op.totalFinal) }}
+                                                </span>
+                                                <span v-if="op.tarjeta"
+                                                    class="text-[0.58rem] font-semibold text-gray-400">
+                                                    + {{ formatPrecio(op.tarjeta.total) }} pasarela
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <!-- Desglose -->
+                                        <div v-if="opcionSeleccionada?.modalidad === op.modalidad && opcionSeleccionada?.cantidadMeses === op.cantidadMeses"
+                                            class="pago-desglose">
+                                            <div class="pago-desglose__row">
+                                                <span>Subtotal</span>
+                                                <span>{{ formatPrecio(op.desglose.subtotal) }}</span>
+                                            </div>
+                                            <div class="pago-desglose__row">
+                                                <span>IVA</span>
+                                                <span>{{ formatPrecio(op.desglose.iva) }}</span>
+                                            </div>
+                                            <div v-if="op.tarjeta" class="pago-desglose__row">
+                                                <span>Cobro pasarela</span>
+                                                <span>{{ formatPrecio(op.tarjeta.total) }}</span>
+                                            </div>
+                                            <div class="pago-desglose__row pago-desglose__row--total">
+                                                <span>Total a pagar</span>
+                                                <span>{{ formatPrecio(op.totalFinal) }}</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div v-if="!mensualidadAccion?.fechaFin" class="modal-section">
+                                <p class="modal-section__title">Fecha de inicio</p>
+                                <div class="field-group">
+                                    <label class="field-label">¿Desde cuándo inicia tu mensualidad?</label>
+                                    <input v-model="fechaInicioManual" type="date" class="field-input" :min="hoyISO" />
+                                    <p class="field-hint">Selecciona la fecha en que deseas activar tu mensualidad.</p>
+                                </div>
+                            </div>
+
+                            <!-- Aviso pasarela -->
+                            <div class="modal-section">
+                                <div class="modal-notice">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#299261"
+                                        viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                    </svg>
+                                    <p>Al confirmar serás redirigido a la pasarela de pago segura.</p>
+                                </div>
+                                <!-- Error al iniciar pago -->
+                                <div v-if="errPago"
+                                    class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
+                                    {{ errPago }}
+                                </div>
+                            </div>
+                        </template>
+
                     </div>
                     <div class="modal-foot">
                         <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
-                        <button @click="confirmarPago" class="btn-modal btn-modal--confirm">Ir a pagar</button>
+                        <button @click="confirmarPago"
+                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5"
+                            :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago || (!mensualidadAccion?.fechaFin && !fechaInicioManual)">
+                            <div v-if="iniciandoPago" class="btn-spinner" />
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                            </svg>
+                            {{ iniciandoPago ? 'Redirigiendo...' : 'Ir a pagar' }}
+                        </button>
                     </div>
                 </div>
             </div>
         </Transition>
+
 
 
         <!-- Modal congelar -->
@@ -356,9 +432,6 @@
                                         <p class="text-[0.85rem] font-bold text-[#0D291C]">{{
                                             detalleCompleto?.T_Estacionamiento?.Nombre ??
                                             mensualidadAccion?._raw?.T_Estacionamiento?.Nombre ?? '—' }}</p>
-                                        <p class="text-[0.62rem] font-semibold text-gray-400">ID {{
-                                            detalleCompleto?.T_Estacionamiento?.IdEstacionamiento ??
-                                            mensualidadAccion?._raw?.T_Estacionamiento?.IdEstacionamiento ?? '—' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -470,10 +543,6 @@
                             class="btn-modal btn-modal--confirm flex items-center justify-center gap-2"
                             :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas">
                             <div v-if="guardandoPlacas" class="btn-spinner" />
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                            </svg>
                             Confirmar cambio
                         </button>
                     </div>
@@ -487,8 +556,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
+import PagoService from '@/api/services/pagos.service'
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
+import { useAuthStore } from '@/stores/auth'
 
+
+const authStore = useAuthStore()
 // ── Estado general ─────────────────────────────────────────────────
 const loading = ref(false)
 const mensualidades = ref([])
@@ -502,9 +575,8 @@ const mensualidadAccion = ref(null)
 
 // ── Estado detalle (carga lazy por ID) ────────────────────────────
 const loadingDetalle = ref(false)
-const detalleCompleto = ref(null)   // response de getMiMensualidadById
-const placasDetalle = ref([])      // array limpio de placas del detalle
-
+const detalleCompleto = ref(null)  
+const placasDetalle = ref([])      
 // ── Estado cambio de placas ───────────────────────────────────────
 const nuevasPlacas = ref(['', '', '', '', ''])
 const guardandoPlacas = ref(false)
@@ -515,6 +587,16 @@ const placaCambiada = ref(false)
 // ── Estado congelamiento ─────────────────────────────────────────
 const infoCongelamiento = ref(null)
 const errCongelar = ref('')
+
+// ── Estado opciones de pago ───────────────────────────────────────
+const opcionesPago = ref([])
+const opcionSeleccionada = ref(null)
+const loadingOpciones = ref(false)
+const iniciandoPago = ref(false)
+const errPago = ref('')
+const fechaInicioManual = ref('')
+
+const hoyISO = new Date().toISOString().slice(0, 10)
 
 // ── Resolvers ─────────────────────────────────────────────────────
 const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
@@ -619,6 +701,7 @@ const abrirModalPlacas = () => {
     modalPlacas.value = true
 }
 
+
 const confirmarCambioPlacas = async () => {
     errPlacas.value = ''
     const placa1 = nuevasPlacas.value[0]?.trim().toUpperCase()
@@ -629,7 +712,6 @@ const confirmarCambioPlacas = async () => {
         .map((columna, i) => {
             const nueva = nuevasPlacas.value[i]?.trim().toUpperCase() || null
             const actual = placasDetalle.value[i] ?? null
-            // Incluir si el valor cambió (nuevo distinto al actual, o se está limpiando)
             if (nueva !== actual) return { ColumnaPlaca: columna, PlacaNueva: nueva ?? '' }
             return null
         })
@@ -639,14 +721,24 @@ const confirmarCambioPlacas = async () => {
         errPlacas.value = 'No hay cambios para guardar.'; return
     }
 
+    console.log(nuevasPlacas.value)
+    console.log(placasDetalle.value)
+    console.log(guardandoPlacas.value)
+
+
     guardandoPlacas.value = true
     try {
-        const res = await MensualidadesService.cambiarPlacas({
-            IdPersonaAutorizada: mensualidadAccion.value.id,
+
+        console.log(guardandoPlacas.value)
+
+
+        const res = await MensualidadesService.ChangeCarPlate({
+            IdPersonaAutorizada: Number(mensualidadAccion.value.id),
             Detalles,
         })
 
-        // 409 → backend ya tiene un cambio este mes
+        console.log('[CambiarPlacas]', res)
+
         if (res?.error || res?.success === false) {
             const status = res?.status
             if (status === 409) {
@@ -660,6 +752,8 @@ const confirmarCambioPlacas = async () => {
             }
             return
         }
+
+
 
         // Actualizar local optimistamente con los nuevos valores
         const nuevosValores = [...placasDetalle.value]
@@ -675,6 +769,8 @@ const confirmarCambioPlacas = async () => {
         marcarCambioMensual(mensualidadAccion.value.id)
         placaCambiada.value = true
         modalPlacas.value = false
+
+
     } catch (e) {
         const msg = e.response?.data?.message
         errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar las placas. Intenta de nuevo.')
@@ -713,6 +809,7 @@ const diasRestantes = (m) => {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
     return Math.max(0, Math.round((fin - hoy) / (1000 * 60 * 60 * 24)))
 }
+
 const porcentajeVigencia = (m) => {
     if (!m?.fechaInicio || !m?.fechaFin) return 0
     const inicio = parseLocal(m.fechaInicio)
@@ -728,9 +825,38 @@ const estadoClase = (m) => ({
     'card--vencida': m.estado === 'vencida',
     'card--congelada': m.estado === 'congelada',
 })
+
 const estadoLabel = (estado) => ({ activa: 'Activa', por_vencer: 'Por vencer', vencida: 'Vencida', congelada: 'Congelada' })[estado] ?? estado
 
-const abrirPago = (m) => { mensualidadAccion.value = m; modalPago.value = true }
+const formatPrecio = (valor) => {
+    if (!valor && valor !== 0) return '—'
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(valor)
+}
+const abrirPago = async (m) => {
+    mensualidadAccion.value = m
+    opcionesPago.value = []
+    opcionSeleccionada.value = null
+    errPago.value = ''
+    fechaInicioManual.value = m.fechaFin ? '' : hoyISO
+    loadingOpciones.value = true
+    modalPago.value = true
+    try {
+        const res = await PagoService.getOpcionesPago(m.id)
+
+        console.log(res)
+
+        const data = res?.data ?? res
+        if (data?.error || res?.success === false) throw new Error('Error opciones')
+        opcionesPago.value = Array.isArray(data) ? data : []
+        // Pre-seleccionar la primera opción disponible
+        if (opcionesPago.value.length) opcionSeleccionada.value = opcionesPago.value[0]
+    } catch (e) {
+        console.error('[OpcionesPago]', e)
+        errPago.value = 'No se pudieron cargar las opciones de pago.'
+    } finally {
+        loadingOpciones.value = false
+    }
+}
 const abrirCongelar = async (m) => {
     mensualidadAccion.value = m
     infoCongelamiento.value = null
@@ -746,9 +872,91 @@ const abrirCongelar = async (m) => {
 const cerrarModales = () => {
     modalCodigo.value = false; modalPago.value = false; modalCongelar.value = false
     codigoInput.value = ''; mensualidadAccion.value = null
+    iniciandoPago.value = false; errPago.value = ''
+    opcionesPago.value = []; opcionSeleccionada.value = null
+    fechaInicioManual.value = ''
 }
 const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; cerrarModales() }
-const confirmarPago = () => { cerrarModales() }
+
+const confirmarPago = async () => {
+    if (!opcionSeleccionada.value) return
+    errPago.value = ''
+    iniciandoPago.value = true
+    try {
+        const m = mensualidadAccion.value
+        const raw = m._raw
+        const user = authStore.user
+
+        // ← Agrega esto para debuggear
+        console.log('[user store]', JSON.stringify(user))
+        console.log('[raw mensualidad]', JSON.stringify(raw))
+
+        // Resolver documento con múltiples posibles nombres de campo
+        const documento = String(
+            user?.documento ?? user?.Documento ?? user?.cedula ?? user?.nroDocumento ?? ''
+        )
+
+        // Resolver email
+        const email = String(
+            user?.email ?? user?.Email ?? user?.correo ?? ''
+        )
+
+        // Resolver nombre completo
+        const nombre = String(
+            (user?.nombres || user?.Nombres)
+                ? `${user?.nombres ?? user?.Nombres ?? ''} ${user?.apellidos ?? user?.Apellidos ?? ''}`.trim()
+                : user?.nombre ?? user?.Nombre ?? user?.NombreApellidos
+                ?? raw?.NombreApellidos ?? ''
+        )
+
+        // Resolver idEstacionamiento
+        const idEstacionamiento = Number(
+            raw?.T_Estacionamiento?.IdEstacionamiento
+            ?? raw?.IdEstacionamiento
+            ?? 0
+        )
+
+        if (!documento) { errPago.value = 'No se encontró el documento del usuario.'; return }
+        if (!email) { errPago.value = 'No se encontró el email del usuario.'; return }
+        if (!idEstacionamiento) { errPago.value = 'No se encontró el ID del estacionamiento.'; return }
+
+        const body = {
+            Email: email,
+            CantidadMeses: opcionSeleccionada.value.cantidadMeses,
+            ModalidadPago: opcionSeleccionada.value.modalidad,
+            ...(m.fechaInicio
+                ? { FechaInicio: m.fechaInicio }
+                : fechaInicioManual.value
+                    ? { FechaInicio: fechaInicioManual.value }
+                    : {}),
+        }
+
+        console.log('[body pago final]', body)
+
+        const res = await PagoService.iniciarPago(m.id, body)
+        const data = res?.data ?? res
+
+        if (res?.error || res?.success === false) {
+            const msg = data?.message ?? 'Error al iniciar el pago.'
+            errPago.value = Array.isArray(msg) ? msg.join(', ') : msg
+            return
+        }
+
+        const url = data?.url ?? data?.urlPago ?? data?.redirectUrl ?? data?.datos?.processUrl ?? null
+
+        if (url) {
+            window.location.href = url
+        } else {
+            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
+        }
+    } catch (e) {
+        const msg = e.response?.data?.message
+        errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al iniciar el pago.')
+    } finally {
+        iniciandoPago.value = false
+    }
+}
+
 const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     try {
         const res = await MensualidadesService.updateCongelamiento(
@@ -1442,6 +1650,62 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     animation: popOut 0.18s ease-in both
 }
 
+/* ── Opciones de pago ── */
+.pago-opcion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafb;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 0 #e2e8f0;
+}
+
+.pago-opcion:hover {
+    border-color: #c8e6c9;
+    background: #f0fdf4
+}
+
+.pago-opcion--selected {
+    border-color: #299261 !important;
+    background: #f0fdf4 !important;
+    box-shadow: 0 2px 0 #c8e6c9 !important;
+}
+
+.pago-desglose {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 10px;
+    border-top: 1.5px solid #e2e8f0;
+}
+
+.pago-desglose__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.pago-desglose__row--total {
+    font-size: 0.82rem;
+    font-weight: 900;
+    color: #0D291C;
+    padding-top: 5px;
+    border-top: 1.5px solid #e2e8f0;
+    margin-top: 2px;
+}
+
+.pago-desglose__row--total span:last-child {
+    color: #299261
+}
+
 /* ── Botones tarjeta ── */
 .btn-pagar,
 .btn-editar,
@@ -1667,33 +1931,10 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     text-align: center
 }
 
-.add-btn {
-    font-size: 0.82rem;
-    font-weight: 800;
-    color: #232B3A;
-    background: #7FD344;
-    cursor: pointer;
-    padding: 8px 18px;
-    border-radius: 999px;
-    border: 2px solid #000;
-    box-shadow: 0 3px 0 #000;
-    transition: transform 0.1s, box-shadow 0.1s
-}
-
-.add-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #000
-}
 
 @media (max-width:560px) {
     .header-bar__desktop {
         display: none
-    }
-
-    .card-actions {
-        display: flex;
-        gap: 10px;
-        flex-direction: column;
     }
 
     .header-bar__mobile {
@@ -1710,7 +1951,7 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
         justify-content: center
     }
 
-    .header-bar__actions .add-btn {
+    .header-bar__actions .btn-3d {
         flex: 1;
         max-width: 160px
     }
