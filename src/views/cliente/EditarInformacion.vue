@@ -3,8 +3,8 @@
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-4">
-            <div class="w-[80px]">
-                <button @click="$router.back()" class="back-btn-3d">Volver</button>
+            <div class="w-[80px] ">
+                <button @click="$router.back()" class="btn-3d">Volver</button>
             </div>
             <h2 class="text-xl font-black text-[#232B3A]">Información Personal</h2>
             <div class="w-[80px]" />
@@ -163,7 +163,7 @@
                 <!-- Locked -->
                 <div v-if="!showPassForm" class="pass-locked">
                     <p class="pass-locked__text">••••••••••••</p>
-                    <button @click="showPassForm = true" class="pass-change-btn">
+                    <button @click="showPassForm = true" class="btn-3d">
                         Cambiar contraseña
                     </button>
                 </div>
@@ -397,29 +397,6 @@ const guardarPass = async () => {
 </script>
 
 <style scoped>
-.back-btn-3d {
-    font-size: 0.78rem;
-    font-weight: 900;
-    color: #0D291C;
-    background-color: #7FD344;
-    border: 2px solid #000;
-    border-radius: 999px;
-    padding: 7px 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #000;
-    transition: transform 0.1s, box-shadow 0.1s;
-    white-space: nowrap;
-}
-
-.back-btn-3d:hover {
-    background-color: #6fc23a;
-}
-
-.back-btn-3d:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #000;
-}
-
 /* ── Hero ─────────────────────────────────────────────────────────── */
 .profile-hero {
     background-color: #0D291C;
@@ -759,27 +736,7 @@ const guardarPass = async () => {
     font-weight: 900;
 }
 
-.pass-change-btn {
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: #0D291C;
-    background-color: #7FD344;
-    border: 2px solid #000;
-    border-radius: 999px;
-    padding: 8px 18px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #000;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
 
-.pass-change-btn:hover {
-    background-color: #6fc23a;
-}
-
-.pass-change-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #000;
-}
 
 /* Fortaleza de contraseña */
 .pass-strength {

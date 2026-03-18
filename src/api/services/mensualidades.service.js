@@ -7,6 +7,8 @@ class MensualidadesService {
     this.nameRoute = "v1/mensualidades";
     this.adminRoute = "v1/mensualidades/admin";
     this.clientRoute = "v1/mensualidades/clientes/mis-mensualidades";
+    this.cambioPlacas = "v1/mensualidades/clientes/cambio-placas";
+    this.congelamieto = "v1/mensualidades/clientes/congelamientos";
   }
 
   // ── ADMIN ──────────────────────────────────────────────────────────
@@ -70,6 +72,35 @@ class MensualidadesService {
   async getMiMensualidadById(id) {
     try {
       const response = await api.get(`${this.clientRoute}/${id}`);
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+  // PUT /v1/mensualidades/clientes/cambio-placas
+  async ChangeCarPlate(payload) {
+    try {
+      const response = await api.post(`${this.cambioPlacas}`, payload);
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // GET /v1/mensualidades/clientes/congelamientos
+  async getCongelamiento(id) {
+    try {
+      const response = await api.get(`${this.congelamieto}/${id}`);
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // PUT /v1/mensualidades/clientes/congelamientos
+  async updateCongelamiento(id, body) {
+    try {
+      const response = await api.post(`${this.congelamieto}/${id}`, body);
       return response.data;
     } catch (error) {
       return handleError(error);

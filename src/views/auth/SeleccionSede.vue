@@ -1,83 +1,81 @@
 <template>
-    <div class="flex flex-col justify-center items-center min-h-screen w-full bg-[#0D291C] px-4 py-10 gap-8">
+    <div class="ss-root">
+        <div class="blob blob-1" />
+        <div class="blob blob-2" />
 
-        <!-- Header -->
-        <div class="flex flex-col items-center gap-2">
-            <div class="w-12 h-12 rounded-2xl bg-[#7FD344] flex items-center justify-center shadow-lg mb-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0D291C" viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-            </div>
-            <h1 class="text-2xl font-black text-white tracking-tight">Elige tu sede</h1>
-            <p class="text-sm font-medium" style="color:rgba(127,211,68,0.6)">
-                Selecciona la sede donde tienes tu mensualidad
-            </p>
-        </div>
+        <div class="ss-card">
+            <div class="top-accent" />
 
-        <!-- Loading skeleton -->
-        <div v-if="loading" class="sedes-grid">
-            <div v-for="n in 6" :key="n" class="h-[110px] rounded-[18px]"
-                style="background:rgba(127,211,68,0.07);animation:shimmer 1.4s infinite;border:1.5px solid rgba(127,211,68,0.1)" />
-        </div>
-
-        <!-- Grid de sedes -->
-        <div v-else class="sedes-grid">
-            <div v-if="sedes.length === 0"
-                class="col-span-full flex flex-col items-center gap-3 py-16 text-sm font-semibold"
-                style="color:rgba(127,211,68,0.4)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-                No hay sedes disponibles
-            </div>
-
-            <div v-for="(sede, i) in sedes" :key="sede.IdEstacionamiento" class="sede-card"
-                :class="{ 'sede-card--selected': sedeSeleccionada?.IdEstacionamiento === sede.IdEstacionamiento }"
-                :style="{ animationDelay: `${i * 0.05}s` }" @click="seleccionarSede(sede)">
-
-                <!-- Check -->
-                <div class="sede-check"
-                    :class="{ 'sede-check--on': sedeSeleccionada?.IdEstacionamiento === sede.IdEstacionamiento }">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                    </svg>
-                </div>
-
-                <!-- Icono -->
-                <div class="sede-icon"
-                    :class="{ 'sede-icon--on': sedeSeleccionada?.IdEstacionamiento === sede.IdEstacionamiento }">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                        viewBox="0 0 24 24">
+            <!-- Header -->
+            <div class="ss-header">
+                <div class="ss-icon-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7FD344" viewBox="0 0 24 24">
                         <path
                             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
                 </div>
+                <div>
+                    <span class="ss-badge">Registro</span>
+                    <h1>Elige tu sede</h1>
+                    <p>Selecciona la sede donde tienes tu mensualidad</p>
+                </div>
+            </div>
 
-                <p class="sede-nombre">{{ sede.Nombre }}</p>
-                <p class="sede-id">ID {{ sede.IdEstacionamiento }}</p>
+            <!-- Loading skeleton -->
+            <div v-if="loading" class="sedes-grid">
+                <div v-for="n in 6" :key="n" class="skeleton-card" />
+            </div>
 
+            <!-- Grid de sedes -->
+            <div v-else class="sedes-grid">
+                <div v-if="sedes.length === 0" class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    No hay sedes disponibles
+                </div>
+
+                <div v-for="(sede, i) in sedes" :key="sede.IdEstacionamiento" class="sede-card"
+                    :class="{ 'sede-card--selected': sedeSeleccionada?.IdEstacionamiento === sede.IdEstacionamiento }"
+                    :style="{ animationDelay: `${i * 0.05}s` }" @click="seleccionarSede(sede)">
+
+                    <div class="sede-check"
+                        :class="{ 'sede-check--on': sedeSeleccionada?.IdEstacionamiento === sede.IdEstacionamiento }">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                    </div>
+
+                    <div class="sede-icon"
+                        :class="{ 'sede-icon--on': sedeSeleccionada?.IdEstacionamiento === sede.IdEstacionamiento }">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                    </div>
+
+                    <p class="sede-nombre">{{ sede.Nombre }}</p>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="ss-actions">
+                <button @click="continuar" :disabled="!sedeSeleccionada" class="btn-continuar">
+                    <span>Continuar</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" class="btn-arrow">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <button @click="$router.push('/login')" class="btn-volver">
+                    ← Volver al inicio de sesión
+                </button>
             </div>
         </div>
-
-        <!-- Botón continuar -->
-        <div class="flex flex-col items-center gap-3 w-full max-w-[340px]">
-            <button @click="continuar" :disabled="!sedeSeleccionada" class="btn-continuar">
-                Continuar
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                </svg>
-            </button>
-            <button @click="$router.push('/login')"
-                class="text-xs font-bold cursor-pointer bg-transparent border-none transition-colors"
-                style="color:rgba(127,211,68,0.45)" onmouseover="this.style.color='rgba(127,211,68,0.9)'"
-                onmouseout="this.style.color='rgba(127,211,68,0.45)'">
-                ← Volver al inicio de sesión
-            </button>
-        </div>
-
     </div>
 </template>
 
@@ -121,25 +119,72 @@ const continuar = () => {
 }
 </script>
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+</style>
+
 <style scoped>
-@keyframes shimmer {
-    0% {
-        opacity: 0.4;
-    }
+/* ── Root ─────────────────────────────────────── */
+.ss-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #0D291C;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
-    50% {
-        opacity: 0.8;
-    }
+/* ── Background blobs ─────────────────────────── */
+.blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: 0;
+    pointer-events: none;
+}
 
-    100% {
-        opacity: 0.4;
-    }
+.blob-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(41, 146, 97, 0.24) 0%, transparent 70%);
+    top: -150px;
+    left: -150px;
+}
+
+.blob-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(127, 211, 68, 0.15) 0%, transparent 70%);
+    bottom: -110px;
+    right: -110px;
+}
+
+/* ── Card ─────────────────────────────────────── */
+.ss-card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 640px;
+    background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    padding: 40px 44px 44px;
+    box-sizing: border-box;
+    box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
+    animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes cardIn {
     from {
         opacity: 0;
-        transform: translateY(10px) scale(0.96);
+        transform: translateY(26px) scale(0.97);
     }
 
     to {
@@ -148,60 +193,151 @@ const continuar = () => {
     }
 }
 
-/* Grid */
+.top-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #299261, #7FD344 50%, #299261);
+}
+
+/* ── Header ───────────────────────────────────── */
+.ss-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.ss-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #0D291C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 0 #051510;
+}
+
+.ss-badge {
+    display: inline-block;
+    color: #299261;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.ss-header h1 {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #232B3A;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 0 0 5px;
+}
+
+.ss-header p {
+    font-size: 0.84rem;
+    color: #a0aec0;
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* ── Grid ─────────────────────────────────────── */
 .sedes-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    width: 100%;
-    max-width: 560px;
+    gap: 10px;
+    margin-bottom: 28px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 520px) {
     .sedes-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 360px) {
-    .sedes-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+/* ── Skeleton ─────────────────────────────────── */
+.skeleton-card {
+    height: 108px;
+    border-radius: 16px;
+    background: #f1f5f9;
+    animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
     }
 }
 
-/* Card */
+/* ── Empty state ──────────────────────────────── */
+.empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #c4cdd8;
+}
+
+/* ── Sede card ────────────────────────────────── */
 .sede-card {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 18px 12px 14px;
-    border-radius: 18px;
-    border: 1.5px solid rgba(127, 211, 68, 0.18);
-    background: rgba(127, 211, 68, 0.05);
+    gap: 7px;
+    padding: 18px 10px 14px;
+    border-radius: 16px;
+    border: 1.5px solid #e8ecf0;
+    background: #f7f8fa;
     cursor: pointer;
     user-select: none;
-    animation: cardIn 0.3s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+    animation: cardItemIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
     transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.15s;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes cardItemIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .sede-card:hover {
-    border-color: rgba(127, 211, 68, 0.45);
-    background: rgba(127, 211, 68, 0.09);
+    border-color: #b8e6cc;
+    background: #f0fdf4;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 18px rgba(41, 146, 97, 0.12);
 }
 
 .sede-card--selected {
-    border-color: #7FD344 !important;
-    background: rgba(127, 211, 68, 0.13) !important;
-    box-shadow: 0 0 0 2px rgba(127, 211, 68, 0.25), 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    border-color: #299261 !important;
+    background: #f0fdf4 !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.12), 0 6px 18px rgba(41, 146, 97, 0.12) !important;
 }
 
-/* Check badge */
+/* ── Check badge ──────────────────────────────── */
 .sede-check {
     position: absolute;
     top: 8px;
@@ -209,14 +345,14 @@ const continuar = () => {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #7FD344;
-    color: #0D291C;
+    background: #299261;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transform: scale(0.4);
-    transition: opacity 0.2s, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: opacity 0.2s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .sede-check--on {
@@ -224,75 +360,133 @@ const continuar = () => {
     transform: scale(1);
 }
 
-/* Icono */
+/* ── Sede icon ────────────────────────────────── */
 .sede-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid rgba(127, 211, 68, 0.2);
-    background: rgba(127, 211, 68, 0.07);
-    color: rgba(127, 211, 68, 0.5);
+    border: 1.5px solid #e8ecf0;
+    background: #fff;
+    color: #b0bec5;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
     flex-shrink: 0;
 }
 
 .sede-icon--on {
-    background: #7FD344;
-    color: #0D291C;
-    border-color: #7FD344;
+    background: #299261;
+    color: #fff;
+    border-color: #299261;
 }
 
-/* Textos */
+/* ── Sede text ────────────────────────────────── */
 .sede-nombre {
-    font-size: 0.75rem;
-    font-weight: 900;
-    color: white;
+    font-size: 0.73rem;
+    font-weight: 800;
+    color: #232B3A;
     text-align: center;
     line-height: 1.2;
+    margin: 0;
 }
 
 .sede-id {
-    font-size: 0.55rem;
+    font-size: 0.56rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: rgba(127, 211, 68, 0.4);
+    color: #b0bec5;
+    margin: 0;
 }
 
-/* Botón continuar */
+/* ── Actions ──────────────────────────────────── */
+.ss-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ── Continue button ──────────────────────────── */
 .btn-continuar {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: #7FD344;
-    color: #0D291C;
+    background: #232B3A;
+    color: #fff;
     font-size: 0.9rem;
-    font-weight: 900;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     padding: 13px 28px;
-    border-radius: 999px;
-    border: 2px solid #5ab32a;
-    box-shadow: 0 4px 0 #3d7d1c, 0 8px 24px rgba(127, 211, 68, 0.2);
+    border-radius: 14px;
+    border: none;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s, opacity 0.15s;
+    transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
 }
 
 .btn-continuar:hover:not(:disabled) {
-    box-shadow: 0 6px 0 #3d7d1c, 0 10px 28px rgba(127, 211, 68, 0.25);
+    background: #299261;
+    box-shadow: 0 8px 24px rgba(41, 146, 97, 0.35);
     transform: translateY(-1px);
 }
 
 .btn-continuar:active:not(:disabled) {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #3d7d1c;
+    transform: translateY(0);
 }
 
 .btn-continuar:disabled {
-    opacity: 0.3;
+    opacity: 0.35;
     cursor: not-allowed;
+}
+
+.btn-arrow {
+    transition: transform 0.2s ease;
+}
+
+.btn-continuar:hover:not(:disabled) .btn-arrow {
+    transform: translateX(4px);
+}
+
+/* ── Back link ────────────────────────────────── */
+.btn-volver {
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #a0aec0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.btn-volver:hover {
+    color: #299261;
+}
+
+/* ── Reduced motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 480px) {
+    .ss-card {
+        padding: 32px 20px 36px;
+        border-radius: 22px;
+    }
+
+    .ss-header h1 {
+        font-size: 1.35rem;
+    }
 }
 </style>

@@ -1,57 +1,33 @@
 <template>
-    <div class="min-h-screen w-full bg-[#0D291C] flex items-center justify-center p-4 md:p-6 box-border">
-        <div class="w-full max-w-[820px] flex rounded-[28px] overflow-hidden border-2 border-[rgba(127,211,68,0.25)] min-h-[580px]"
-            style="box-shadow:0 0 0 1px rgba(0,0,0,0.5),0 32px 64px rgba(0,0,0,0.55),0 0 60px rgba(127,211,68,0.08)">
+    <!-- Root -->
+    <div class="relative min-h-screen w-full bg-[#0D291C] flex items-center justify-center max-[767px]:items-start
+                px-4 py-5 max-[767px]:p-3 box-border overflow-hidden font-[Plus_Jakarta_Sans,sans-serif]">
 
-            <!-- ── Panel izquierdo ──────────────────────────────── -->
-            <div
-                class="hidden md:flex w-[260px] shrink-0 bg-[#7FD344] p-8 flex-col justify-between relative overflow-hidden border-r-2 border-[rgba(13,41,28,0.15)]">
+        <!-- Blobs -->
+        <div class="fixed rounded-full pointer-events-none z-0 blur-[90px]
+                    w-[480px] h-[480px] -top-[140px] -left-[140px]"
+            style="background:radial-gradient(circle,rgba(41,146,97,0.22) 0%,transparent 70%)" />
+        <div class="fixed rounded-full pointer-events-none z-0 blur-[90px]
+                    w-[380px] h-[380px] -bottom-[100px] -right-[100px]"
+            style="background:radial-gradient(circle,rgba(127,211,68,0.15) 0%,transparent 70%)" />
 
-                <!-- Logo --><img src="@/assets/img/confy-verde.png" alt="Logo"
-                    class="max-h-full  object-contain max-w-full" @error="$event.target.style.display = 'none'" />
+        <!-- Card -->
+        <div class="reg-card relative z-10 flex w-full max-w-[960px] rounded-[28px] max-[767px]:rounded-[20px]
+                    overflow-hidden min-h-[580px] max-[767px]:min-h-0" style="border:1.5px solid rgba(127,211,68,0.15);
+                   box-shadow:0 0 0 1px rgba(0,0,0,0.4),0 32px 80px rgba(0,0,0,0.55),0 0 60px rgba(127,211,68,0.05)">
 
+            <!-- ── Panel formulario ───────────────────────────── -->
+            <div class="flex-1 bg-white flex flex-col min-w-0 relative">
 
-                <!-- Texto -->
-                <div class="relative z-10">
-                    <h2 class="text-[1.3rem] font-black text-[#0D291C] leading-tight mb-2">Bienvenido al<br />sistema
-                    </h2>
-                    <p class="text-[0.76rem] font-semibold text-[rgba(13,41,28,0.6)] leading-relaxed">
-                        Gestiona tu mensualidad de parqueo de forma fácil y rápida.
-                    </p>
-                </div>
-
-                <!-- Sede -->
-                <div class="relative z-10 flex flex-col gap-1.5">
-                    <div class="inline-flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black px-3 py-1.5 rounded-full w-fit"
-                        style="box-shadow:0 3px 0 rgba(5,21,16,0.4)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="#7FD344"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                        {{ sedeNombre }}
-                    </div>
-                    <p class="text-[0.62rem] font-semibold text-[rgba(13,41,28,0.45)] pl-0.5">
-                        Selecciona tu sede para comenzar el registro
-                    </p>
-                </div>
-
-                <!-- Círculos decorativos -->
-                <div class="absolute rounded-full bg-[rgba(13,41,28,0.07)]"
-                    style="width:200px;height:200px;top:-70px;right:-70px" />
-                <div class="absolute rounded-full bg-[rgba(13,41,28,0.07)]"
-                    style="width:130px;height:130px;bottom:50px;right:-40px" />
-                <div class="absolute rounded-full bg-[rgba(13,41,28,0.07)]"
-                    style="width:70px;height:70px;bottom:-15px;left:10px" />
-            </div>
-
-            <!-- ── Panel formulario ─────────────────────────────── -->
-            <div class="flex-1 bg-white flex flex-col min-w-0">
+                <!-- Top accent -->
+                <div class="absolute top-0 left-0 right-0 h-[3px] z-[2]"
+                    style="background:linear-gradient(90deg,#299261,#7FD344 50%,#299261)" />
 
                 <!-- Header mobile -->
-                <div class="flex md:hidden items-center justify-between px-5 py-3.5 border-b-[1.5px] border-gray-100">
+                <div class="flex items-center justify-between px-5 py-3.5 border-b-[1.5px] border-slate-100 mt-[3px]
+                            md:hidden">
                     <button @click="$router.back()"
-                        class="flex items-center gap-1.5 text-[0.76rem] font-black text-[#0D291C] bg-transparent border-none cursor-pointer p-0 hover:text-[#299261] transition-colors">
+                        class="flex items-center gap-1.5 text-[0.76rem] font-extrabold text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -59,7 +35,7 @@
                         Volver
                     </button>
                     <div
-                        class="inline-flex items-center gap-1 bg-[#0D291C] text-[#7FD344] text-[0.62rem] font-black px-2.5 py-1 rounded-full">
+                        class="inline-flex items-center gap-1 bg-[#0D291C] text-[#7FD344] text-[0.62rem] font-black px-2.5 py-[5px] rounded-full">
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#7FD344"
                             viewBox="0 0 24 24">
                             <path
@@ -70,7 +46,10 @@
                 </div>
 
                 <!-- Scroll -->
-                <div class="flex-1 overflow-y-auto flex flex-col gap-5 p-7 sm:p-4">
+                <div class="flex-1 overflow-y-auto flex flex-col gap-5
+                            px-7 pt-6 pb-7
+                            md:px-10 md:pt-7 md:pb-10
+                            max-[767px]:px-[18px] max-[767px]:py-5">
 
                     <!-- Encabezado -->
                     <div class="flex items-start gap-3">
@@ -83,26 +62,22 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-[1.25rem] font-black text-[#0D291C] leading-tight m-0 mb-0.5">
+                            <h1 class="text-[1.2rem] font-black text-[#0D291C] leading-tight tracking-[-0.02em] mb-1">
                                 {{ usuarioEncontrado ? 'Completa tu registro' : 'Crea tu cuenta' }}
                             </h1>
-                            <p class="text-[0.75rem] font-semibold text-gray-400 leading-snug">
+                            <p class="text-[0.75rem] font-semibold text-gray-400 leading-snug m-0">
                                 {{ usuarioEncontrado ? 'Encontramos tus datos — revísalos y crea tu contraseña.' :
                                     'Ingresa tu documento para comenzar.' }}
                             </p>
                         </div>
                     </div>
 
-                    <!-- ── DOCUMENTO ──────────────────────────────── -->
+                    <!-- ── DOCUMENTO ── -->
                     <div class="flex flex-col gap-2.5">
-                        <p
-                            class="text-[0.56rem] font-black uppercase tracking-widest text-[#0D291C] opacity-35 border-b border-[rgba(13,41,28,0.08)] pb-1">
-                            Identificación</p>
+                        <p class="section-label">Identificación</p>
                         <div class="flex flex-col gap-1">
-                            <label
-                                class="text-[0.58rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50 pl-0.5">
-                                Número de documento <span class="text-red-400">*</span>
-                            </label>
+                            <label class="field-label-sm">Número de documento <span
+                                    class="text-red-400">*</span></label>
                             <div class="relative">
                                 <input v-model="form.Documento" type="text" class="field-input"
                                     :class="{ 'field-input--active': buscandoDoc }" placeholder="Ej: 109..."
@@ -118,17 +93,16 @@
                                 </div>
                             </div>
 
-                            <p v-if="msgDoc" class="text-[0.66rem] font-semibold pl-0.5"
+                            <p v-if="msgDoc" class="text-[0.7rem] font-semibold pl-0.5 mt-0.5"
                                 :class="usuarioEncontrado ? 'text-[#299261]' : 'text-gray-400'">
                                 {{ msgDoc }}
                             </p>
 
-                            <!-- Editar documento -->
                             <Transition name="fade">
                                 <div v-if="formularioListo && !editandoDoc && !bloqueado"
-                                    class="flex items-center justify-between flex-wrap gap-1.5 mt-0.5">
+                                    class="flex items-center justify-between flex-wrap gap-1.5 mt-1">
                                     <button type="button" @click="habilitarEdicionDoc"
-                                        class="inline-flex items-center gap-1.5 text-[0.67rem] font-black text-gray-400 bg-transparent border-none cursor-pointer p-0 underline underline-offset-2 hover:text-[#299261] transition-colors">
+                                        class="inline-flex items-center gap-1.5 text-[0.67rem] font-extrabold text-gray-400 bg-transparent border-none cursor-pointer p-0 underline underline-offset-2 transition-colors hover:text-[#299261]">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path
@@ -137,17 +111,15 @@
                                         ¿Documento incorrecto? Corregir
                                     </button>
                                     <span v-if="busquedasRealizadas > 1"
-                                        class="text-[0.6rem] font-bold text-amber-600 bg-amber-50 border border-amber-300 rounded-full px-2 py-0.5">
+                                        class="text-[0.6rem] font-bold text-amber-800 bg-amber-50 border border-yellow-200 rounded-full px-2 py-0.5">
                                         {{ LIMITE_BUSQUEDAS - busquedasRealizadas }} intentos restantes
                                     </span>
                                 </div>
                             </Transition>
 
-                            <!-- Bloqueado -->
                             <Transition name="fade">
                                 <div v-if="bloqueado"
-                                    class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-amber-50 text-amber-800 border-2 border-amber-300"
-                                    style="box-shadow:0 3px 0 #fcd34d">
+                                    class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-amber-50 text-amber-800 border-[1.5px] border-yellow-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                         viewBox="0 0 24 24">
                                         <path
@@ -159,23 +131,22 @@
                         </div>
                     </div>
 
-                    <!-- ── ALERTA ESTUDIANTE sede 24 ──────────────── -->
+                    <!-- ── ESTUDIANTE sede 24 ── -->
                     <Transition name="fade">
                         <div v-if="esSede24 && formularioListo"
-                            class="bg-[#f0fdf4] border-2 border-[#86efac] rounded-2xl p-4"
-                            style="box-shadow:0 3px 0 #c8e6c9">
+                            class="bg-green-50 border-[1.5px] border-green-300 rounded-2xl p-4">
                             <div class="flex items-center gap-2 text-[0.82rem] font-black text-[#0D291C]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#0D291C"
                                     viewBox="0 0 24 24">
                                     <path
                                         d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
                                 </svg>
-                                ¿Eres estudiante UCC?
+                                ¿Eres Comunidad UCC?
                             </div>
                             <div class="flex gap-2 mt-2.5">
                                 <button @click="esEstudiante = true" class="est-btn"
                                     :class="{ 'est-btn--on': esEstudiante === true }">
-                                    Sí, soy estudiante
+                                    Sí, soy comunidad UCC
                                 </button>
                                 <button @click="esEstudiante = false; form.CodigoEstudianteUCC = ''" class="est-btn"
                                     :class="{ 'est-btn--on': esEstudiante === false }">
@@ -184,10 +155,8 @@
                             </div>
                             <Transition name="fade">
                                 <div v-if="esEstudiante === true" class="flex flex-col gap-1 mt-3">
-                                    <label
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50 pl-0.5">
-                                        Código estudiante UCC <span class="text-red-400">*</span>
-                                    </label>
+                                    <label class="field-label-sm">Código estudiante UCC <span
+                                            class="text-red-400">*</span></label>
                                     <input v-model="form.CodigoEstudianteUCC" type="text" class="field-input"
                                         placeholder="" />
                                 </div>
@@ -195,14 +164,12 @@
                         </div>
                     </Transition>
 
-                    <!-- ── FORMULARIO COMPLETO ────────────────────── -->
+                    <!-- ── FORMULARIO COMPLETO ── -->
                     <Transition name="reveal">
                         <div v-if="formularioListo" class="flex flex-col gap-5">
 
-                            <!-- Banner encontrado -->
                             <div v-if="usuarioEncontrado"
-                                class="flex items-start gap-2 bg-[#f0fdf4] border-2 border-[#86efac] rounded-xl px-3 py-2.5 text-[0.77rem] font-semibold text-[#166534] leading-snug"
-                                style="box-shadow:0 3px 0 #c8e6c9">
+                                class="flex items-start gap-2 bg-green-50 border-[1.5px] border-green-300 rounded-xl px-3 py-2.5 text-[0.77rem] font-semibold text-green-800 leading-snug">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#166534"
                                     viewBox="0 0 24 24" class="shrink-0 mt-0.5">
                                     <path
@@ -213,9 +180,7 @@
 
                             <!-- Datos personales -->
                             <div class="flex flex-col gap-2.5">
-                                <p
-                                    class="text-[0.56rem] font-black uppercase tracking-widest text-[#0D291C] opacity-35 border-b border-[rgba(13,41,28,0.08)] pb-1">
-                                    Datos personales</p>
+                                <p class="section-label">Datos personales</p>
                                 <div class="grid grid-cols-2 gap-2.5 max-[480px]:grid-cols-1">
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Nombres <span
@@ -246,7 +211,7 @@
                                             <input v-model="form.Password" :type="verPass ? 'text' : 'password'"
                                                 class="field-input" placeholder="Mínimo 8 caracteres" />
                                             <button type="button" @click="verPass = !verPass"
-                                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400 p-0 hover:text-[#0D291C] transition-colors">
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400 p-0 flex transition-colors hover:text-[#0D291C]">
                                                 <svg v-if="!verPass" xmlns="http://www.w3.org/2000/svg" width="15"
                                                     height="15" fill="currentColor" viewBox="0 0 24 24">
                                                     <path
@@ -265,19 +230,16 @@
 
                             <!-- Vehículos -->
                             <div class="flex flex-col gap-2.5">
-                                <p
-                                    class="text-[0.56rem] font-black uppercase tracking-widest text-[#0D291C] opacity-35 border-b border-[rgba(13,41,28,0.08)] pb-1">
-                                    Vehículos</p>
+                                <p class="section-label">Vehículos</p>
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                            }}</label>
+                                        }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
-                                                class="field-input placa-input flex-1" :placeholder="``"
-                                                maxlength="7" />
+                                                class="field-input placa-input flex-1" placeholder="" maxlength="7" />
                                             <button v-if="idx > 0" type="button" @click="form.placas.splice(idx, 1)"
-                                                class="w-8 h-8 rounded-[10px] shrink-0 flex items-center justify-center bg-red-100 text-red-600 border-none cursor-pointer hover:bg-red-600 hover:text-white transition-all">
+                                                class="w-8 h-8 rounded-[10px] shrink-0 flex items-center justify-center bg-red-100 text-red-600 border-none cursor-pointer transition-all hover:bg-red-600 hover:text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
                                                     fill="currentColor" viewBox="0 0 24 24">
                                                     <path
@@ -287,7 +249,7 @@
                                         </div>
                                     </div>
                                     <button v-if="form.placas.length < 2" type="button" @click="form.placas.push('')"
-                                        class="flex items-center gap-1.5 w-fit text-[0.72rem] font-black text-[#0D291C] bg-transparent border-none cursor-pointer p-0 hover:text-[#299261] transition-colors">
+                                        class="flex items-center gap-1.5 w-fit text-[0.72rem] font-black text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261]">
                                         <span
                                             class="w-5 h-5 rounded-lg bg-[#0D291C] flex items-center justify-center shrink-0"
                                             style="box-shadow:0 2px 0 #051510">
@@ -301,10 +263,10 @@
                                 </div>
                             </div>
 
-                            <!-- Error -->
+                            <!-- Error 409 -->
                             <Transition name="fade">
                                 <div v-if="errSubmit === '409'"
-                                    class="flex flex-col gap-3 px-4 py-3.5 rounded-xl border-2 border-amber-300 bg-amber-50"
+                                    class="px-4 py-3.5 rounded-[14px] bg-amber-50 border-[1.5px] border-yellow-200"
                                     style="box-shadow:0 3px 0 #fcd34d">
                                     <div class="flex items-start gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#92400e"
@@ -313,18 +275,17 @@
                                                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                                         </svg>
                                         <div>
-                                            <p class="text-[0.8rem] font-black text-amber-800 leading-tight">
-                                                Este documento ya tiene una cuenta
-                                            </p>
+                                            <p class="text-[0.8rem] font-black text-amber-800 leading-tight">Este
+                                                documento ya tiene una cuenta</p>
                                             <p class="text-[0.72rem] font-semibold text-amber-700 mt-0.5 leading-snug">
                                                 El documento <strong>{{ form.Documento }}</strong> ya está registrado en
                                                 el sistema.
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2 mt-3">
                                         <router-link to="/login"
-                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[0.72rem] font-black text-[#7FD344] bg-[#0D291C] border-none cursor-pointer no-underline transition-all hover:bg-[#1a4a2e]"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-[#7FD344] bg-[#0D291C] border-none cursor-pointer no-underline transition-colors hover:bg-[#1a4a2e]"
                                             style="box-shadow:0 3px 0 #051510">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                 fill="currentColor" viewBox="0 0 24 24">
@@ -334,7 +295,7 @@
                                             Iniciar sesión
                                         </router-link>
                                         <button type="button" @click="habilitarEdicionDoc"
-                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[0.72rem] font-black text-amber-800 bg-white border-2 border-amber-300 cursor-pointer transition-all hover:border-amber-500">
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-amber-800 bg-white border-[1.5px] border-yellow-200 cursor-pointer transition-colors hover:border-amber-400">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                                 fill="currentColor" viewBox="0 0 24 24">
                                                 <path
@@ -346,11 +307,54 @@
                                 </div>
                             </Transition>
 
+                            <!-- Error 409 — email duplicado -->
+                            <Transition name="fade">
+                                <div v-if="errSubmit === '409_email'"
+                                    class="px-4 py-3.5 rounded-[14px] bg-blue-50 border-[1.5px] border-blue-200"
+                                    style="box-shadow:0 3px 0 #bfdbfe">
+                                    <div class="flex items-start gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#1d4ed8"
+                                            viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                            <path
+                                                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+                                        </svg>
+                                        <div>
+                                            <p class="text-[0.8rem] font-black text-blue-900 leading-tight">Este correo
+                                                ya tiene una cuenta</p>
+                                            <p class="text-[0.72rem] font-semibold text-blue-700 mt-0.5 leading-snug">
+                                                El correo <strong>{{ form.Email }}</strong> ya está registrado. Inicia
+                                                sesión o usa otro correo.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 mt-3">
+                                        <router-link to="/login"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-[#7FD344] bg-[#0D291C] border-none cursor-pointer no-underline transition-colors hover:bg-[#1a4a2e]"
+                                            style="box-shadow:0 3px 0 #051510">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" />
+                                            </svg>
+                                            Iniciar sesión
+                                        </router-link>
+                                        <button type="button" @click="form.Email = ''; errSubmit = ''"
+                                            class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[10px] text-[0.72rem] font-black text-blue-800 bg-white border-[1.5px] border-blue-200 cursor-pointer transition-colors hover:border-blue-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                            </svg>
+                                            Cambiar correo
+                                        </button>
+                                    </div>
+                                </div>
+                            </Transition>
+
                             <!-- Error genérico -->
                             <Transition name="fade">
-                                <div v-if="errSubmit && errSubmit !== '409'"
-                                    class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-700 border-2 border-red-300"
-                                    style="box-shadow:0 3px 0 #fca5a5">
+                                <div v-if="errSubmit && errSubmit !== '409' && errSubmit !== '409_email'"
+                                    class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-600 border-[1.5px] border-red-200">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                         viewBox="0 0 24 24" class="shrink-0 mt-0.5">
                                         <path
@@ -361,36 +365,32 @@
                             </Transition>
 
                             <!-- Submit -->
-                            <button @click="submit" :disabled="guardando"
-                                class="w-full py-3 bg-[#0D291C] text-[#7FD344] border-2 border-[#0D291C] rounded-xl text-[0.88rem] font-black cursor-pointer flex items-center justify-center gap-2 transition-all disabled:opacity-45 disabled:cursor-not-allowed hover:bg-[#1a4a2e] active:translate-y-[3px]"
-                                style="box-shadow:0 4px 0 #051510">
+                            <button @click="submit" :disabled="guardando" class="submit-btn">
                                 <span v-if="guardando" class="spinner-sm spinner-sm--light" />
                                 {{ guardando ? 'Registrando...' : 'Crear cuenta' }}
+                                <svg v-if="!guardando" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    class="btn-arrow transition-transform">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
                             </button>
 
-                            <p class="text-center text-xs font-semibold text-gray-400 -mt-2">
+                            <p class="text-center text-xs font-semibold text-gray-400">
                                 ¿Ya tienes cuenta?
-                                <router-link to="/login" class="font-black text-[#299261] hover:underline">Inicia
+                                <router-link to="/login" class="font-bold text-[#299261] hover:underline">Inicia
                                     sesión</router-link>
                             </p>
-
                         </div>
-
-
-
-
                     </Transition>
 
-                    <!-- ── MODAL ÉXITO ──────────────────────────────────────────── -->
+                    <!-- ── MODAL ÉXITO ── -->
                     <Transition name="modal">
                         <div v-if="modalExito" class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                            style="background:rgba(0,0,0,0.6)">
+                            style="background:rgba(0,0,0,0.65)">
                             <div class="bg-white border-2 border-[#0D291C] rounded-[28px] w-full max-w-[380px] overflow-hidden"
                                 style="box-shadow:0 7px 0 #000">
-
-                                <!-- Head -->
-                                <div class="bg-[#0D291C] px-6 py-6 flex flex-col items-center gap-3">
-                                    <div class="w-14 h-14 rounded-2xl bg-[#7FD344] flex items-center justify-center"
+                                <div class="bg-[#0D291C] px-6 py-7 flex flex-col items-center gap-3.5">
+                                    <div class="w-14 h-14 rounded-[18px] bg-[#7FD344] flex items-center justify-center"
                                         style="box-shadow:0 4px 0 #4a8a1e">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#0D291C"
                                             viewBox="0 0 24 24">
@@ -399,118 +399,100 @@
                                     </div>
                                     <div class="text-center">
                                         <p class="text-[1rem] font-black text-white">¡Registro exitoso!</p>
-                                        <p class="text-[0.68rem] font-semibold mt-1"
-                                            style="color:rgba(255,255,255,0.5)">
-                                            Tu cuenta ha sido creada correctamente
-                                        </p>
+                                        <p class="text-[0.68rem] font-semibold mt-1 text-white/50">Tu cuenta ha sido
+                                            creada correctamente</p>
                                     </div>
                                 </div>
-
-                                <!-- Body -->
                                 <div class="px-6 py-5">
-                                    <p class="text-[0.82rem] font-semibold text-[#374151] text-center leading-relaxed">
+                                    <p class="text-[0.82rem] font-semibold text-gray-700 text-center leading-relaxed">
                                         Ya puedes iniciar sesión con tu documento y contraseña en la sede
                                         <strong class="text-[#0D291C]">{{ sedeNombre }}</strong>.
                                     </p>
                                 </div>
-
-                                <!-- Foot -->
                                 <div class="px-6 pb-6">
                                     <button @click="router.push({ name: 'login' })"
-                                        class="w-full py-3 rounded-full text-[0.82rem] font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-[#7FD344] border-2 border-black transition-colors hover:bg-[#1a4a2e]"
+                                        class="w-full py-3 rounded-full text-[0.82rem] font-black uppercase tracking-[0.06em] cursor-pointer bg-[#0D291C] text-[#7FD344] border-2 border-black transition-colors hover:bg-[#1a4a2e]"
                                         style="box-shadow:0 4px 0 #000">
                                         Ir al inicio de sesión
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </Transition>
 
-                    <!-- ── MODAL CÓDIGO DE VALIDACIÓN ──────────────────────────── -->
-                    <!-- <Transition name="modal">
-                        <div v-if="modalCodigo" class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                            style="background:rgba(0,0,0,0.6)" @click.self="modalCodigo = false">
-                            <div class="bg-[#B8E19E] border-2 border-[#0D291C] rounded-[28px] w-[30vw] max-w-[400px] overflow-hidden"
-                                style="box-shadow:0 7px 0 #000">
-
-                                <div class="flex items-center justify-between gap-3 px-6 py-5 bg-[#0D291C]">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                                            style="background:rgba(127,211,68,0.2)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                fill="#7FD344" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="text-[0.92rem] font-black text-white">Código de validación</p>
-                                            <p class="text-[0.63rem] font-semibold" style="color:rgba(255,255,255,0.5)">
-                                                Digita el código que te entregaron
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <button @click="modalCodigo = false"
-                                        class="text-white opacity-40 hover:opacity-100 bg-transparent border-none cursor-pointer text-lg font-black transition-opacity">✕</button>
-                                </div>
-
-                                
-                                <div class="px-6 py-5 flex flex-col gap-4">
-                                    <p class="text-[0.78rem] font-semibold text-[#0D291C] leading-relaxed opacity-70">
-                                        Para completar tu registro necesitas el código de validación que te entregaron
-                                        personalmente en el parqueadero.
-                                    </p>
-
-                                    <div class="flex flex-col gap-1.5">
-                                        <label
-                                            class="text-[0.58rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50 pl-0.5">
-                                            Código <span class="text-red-500">*</span>
-                                        </label>
-                                        <input v-model="codigoValidacion" type="text"
-                                            class="w-full box-border border-2 border-[#0D291C] rounded-[14px] px-4 py-3 text-[1.1rem] font-black text-[#0D291C] text-center tracking-[0.18em] uppercase outline-none bg-white transition-all"
-                                            style="box-shadow:inset 0 2px 0 rgba(13,41,28,0.06)"
-                                            placeholder="Ej: XYZ-9876"
-                                            @input="codigoValidacion = $event.target.value.toUpperCase(); errCodigo = ''"
-                                            @keyup.enter="submitConCodigo" />
-                                    </div>
-
-                                    
-                                    <Transition name="fade">
-                                        <div v-if="errCodigo"
-                                            class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.77rem] font-bold bg-red-50 text-red-700 border-2 border-red-300"
-                                            style="box-shadow:0 3px 0 #fca5a5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                fill="currentColor" viewBox="0 0 24 24" class="shrink-0 mt-0.5">
-                                                <path
-                                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                                            </svg>
-                                            {{ errCodigo }}
-                                        </div>
-                                    </Transition>
-                                </div>
-
-                                
-                                <div class="flex gap-2.5 px-6 pb-6 pt-1">
-                                    <button @click="modalCodigo = false"
-                                        class="flex-1 py-3 rounded-full text-[0.78rem] font-black uppercase tracking-wide cursor-pointer bg-white text-[#232B3A] border-2 border-black transition-colors hover:bg-gray-50"
-                                        style="box-shadow:0 3px 0 #000">
-                                        Cancelar
-                                    </button>
-                                    <button @click="submitConCodigo" :disabled="guardando || !codigoValidacion.trim()"
-                                        class="flex-[2] py-3 rounded-full text-[0.78rem] font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-white border-2 border-black flex items-center justify-center gap-2 transition-colors hover:bg-[#1a4a2e] disabled:opacity-40 disabled:cursor-not-allowed"
-                                        style="box-shadow:0 3px 0 #000">
-                                        <span v-if="guardando" class="spinner-sm spinner-sm--light" />
-                                        {{ guardando ? 'Registrando...' : 'Confirmar registro' }}
-                                    </button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </Transition> -->
-
                 </div>
             </div>
+
+            <!-- ── Panel visual (derecha) ── -->
+            <div class="brand-side hidden md:flex flex-col items-center justify-between
+                        px-8 pt-10 pb-11 w-[42%] shrink-0 relative overflow-hidden" style="background:linear-gradient(160deg,#183d26 0%,#0D291C 45%,#071810 100%);
+                       border-left:1px solid rgba(255,255,255,0.05)">
+
+                <!-- Logo -->
+                <div class="w-full flex items-center justify-between relative z-[2]">
+                    <img src="@/assets/img/confy-blanco.png" alt="Logo"
+                        class="max-h-[52px] max-w-[130px] object-contain"
+                        @error="$event.target.style.display = 'none'" />
+                    <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.14em] px-2.5 py-1 rounded-full"
+                        style="color:rgba(127,211,68,0.6);background:rgba(127,211,68,0.08);border:1px solid rgba(127,211,68,0.2)">
+                        Registro
+                    </span>
+                </div>
+
+                <!-- Focal -->
+                <div class="relative w-[180px] h-[180px] flex items-center justify-center z-[2]">
+                    <div class="focal-ring absolute rounded-full w-[180px] h-[180px] focal-ring--outer"
+                        style="border:1.5px solid rgba(127,211,68,0.15)" />
+                    <div class="focal-ring absolute rounded-full w-[130px] h-[130px] focal-ring--mid"
+                        style="border:1.5px solid rgba(127,211,68,0.22)" />
+                    <div class="absolute rounded-full w-[88px] h-[88px]"
+                        style="border:1.5px solid rgba(127,211,68,0.3);background:rgba(127,211,68,0.04)" />
+                    <div class="w-[68px] h-[68px] rounded-[22px] flex items-center justify-center relative z-[2]"
+                        style="background:linear-gradient(135deg,#1a5c36,#0a2516);border:1.5px solid rgba(127,211,68,0.3);box-shadow:0 0 0 4px rgba(127,211,68,0.07),0 8px 28px rgba(0,0,0,0.3)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#7FD344"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Copy -->
+                <div class="text-center relative z-[2]">
+                    <h2 class="text-[1.55rem] font-extrabold text-white leading-[1.18] tracking-[-0.03em] mb-2.5">
+                        Tu parqueo,<br />tu control
+                    </h2>
+                    <p class="text-[0.76rem] font-medium leading-relaxed max-w-[220px] mx-auto"
+                        style="color:rgba(255,255,255,0.38)">
+                        Gestiona tu mensualidad de forma fácil, rápida y segura desde cualquier lugar.
+                    </p>
+                </div>
+
+                <!-- Sede pill -->
+                <div class="flex flex-col items-center gap-1.5 relative z-[2]">
+                    <div class="inline-flex items-center gap-1.5 text-[#7FD344] text-[0.72rem] font-extrabold px-3.5 py-[7px] rounded-full"
+                        style="background:rgba(127,211,68,0.12);border:1px solid rgba(127,211,68,0.28)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                        {{ sedeNombre }}
+                    </div>
+                    <p class="text-[0.6rem] font-medium text-center" style="color:rgba(255,255,255,0.25)">
+                        Sede seleccionada para este registro
+                    </p>
+                </div>
+
+                <!-- Decorativos -->
+                <div class="absolute rounded-full w-[300px] h-[300px] -top-20 -right-20 pointer-events-none"
+                    style="background:radial-gradient(circle,rgba(127,211,68,0.12) 0%,transparent 70%)" />
+                <div class="absolute rounded-full w-[200px] h-[200px] -bottom-10 -left-[50px] pointer-events-none"
+                    style="background:radial-gradient(circle,rgba(127,211,68,0.12) 0%,transparent 70%)" />
+                <div class="absolute bottom-0 left-0 right-0 h-[160px] pointer-events-none"
+                    style="background:linear-gradient(to top,rgba(127,211,68,0.04),transparent)" />
+            </div>
+
         </div>
     </div>
 </template>
@@ -539,12 +521,10 @@ const msgDoc = ref('')
 const esEstudiante = ref(null)
 const modalExito = ref(false)
 
-// ── Anti-abuso ─────────────────────────────────────────────────────
 const LIMITE_BUSQUEDAS = 4
 const busquedasRealizadas = ref(0)
 const documentosBuscados = ref(new Set())
 const bloqueado = ref(false)
-
 const mensualidadData = ref(null)
 
 const form = reactive({
@@ -554,18 +534,14 @@ const form = reactive({
     placas: [''],
 })
 
-// ── Tipo de vehículo por placa (Colombia) ──────────────────────────
-// Carro:  ABC123  → 3L + 3N
-// Moto:   ABC12D  → 3L + 2N + 1L
 const detectarTipoVehiculo = (placa) => {
     if (!placa) return null
     const p = placa.trim().toUpperCase()
-    if (/^[A-Z]{3}[0-9]{3}$/.test(p)) return 1  // Carro
-    if (/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(p)) return 2  // Moto
+    if (/^[A-Z]{3}[0-9]{3}$/.test(p)) return 1
+    if (/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(p)) return 2
     return null
 }
 
-// ── Editar documento ───────────────────────────────────────────────
 const habilitarEdicionDoc = () => {
     if (bloqueado.value) return
     formularioListo.value = false
@@ -574,16 +550,11 @@ const habilitarEdicionDoc = () => {
     msgDoc.value = ''
     errSubmit.value = ''
     mensualidadData.value = null
-    Object.assign(form, {
-        Nombres: '', Apellidos: '', Telefono: '', Email: '',
-        Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''],
-    })
+    Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
 }
 
-// ── Input documento ────────────────────────────────────────────────
 let docTimer = null
-
 const onDocumentoInput = () => {
     if (bloqueado.value) return
     clearTimeout(docTimer)
@@ -593,12 +564,9 @@ const onDocumentoInput = () => {
     errSubmit.value = ''
     const doc = form.Documento.replace(/\D/g, '')
     form.Documento = doc
-    if (doc.length >= 6) {
-        docTimer = setTimeout(() => buscarDocumento(doc), 700)
-    }
+    if (doc.length >= 6) docTimer = setTimeout(() => buscarDocumento(doc), 700)
 }
 
-// ── Búsqueda ───────────────────────────────────────────────────────
 const buscarDocumento = async (doc) => {
     if (!documentosBuscados.value.has(doc)) {
         if (busquedasRealizadas.value >= LIMITE_BUSQUEDAS) {
@@ -609,14 +577,11 @@ const buscarDocumento = async (doc) => {
         busquedasRealizadas.value++
         documentosBuscados.value.add(doc)
     }
-
     buscandoDoc.value = true
     editandoDoc.value = false
-
     try {
         const res = await MensualidadesService.getDesdeApiSede(idSede.value, doc)
         const esError = res?.error === true || res?.success === false || res?.statusCode >= 400
-
         if (esError) {
             usuarioEncontrado.value = false
             mensualidadData.value = null
@@ -625,14 +590,11 @@ const buscarDocumento = async (doc) => {
             formularioListo.value = true
             return
         }
-
         const d = res.data ?? res
         mensualidadData.value = d
         usuarioEncontrado.value = true
-
         const partes = (d.nombreApellidos ?? '').trim().split(/\s+/)
         const mitad = Math.ceil(partes.length / 2)
-
         Object.assign(form, {
             Documento: String(d.documento ?? doc),
             Nombres: partes.slice(0, mitad).join(' '),
@@ -646,10 +608,8 @@ const buscarDocumento = async (doc) => {
             placas: [d.placa1, d.placa2, d.placa3, d.placa4, d.placa5].filter(Boolean),
         })
         if (form.placas.length === 0) form.placas = ['']
-
         msgDoc.value = '✓ Mensualidad encontrada — completa los datos faltantes'
         formularioListo.value = true
-
     } catch {
         mensualidadData.value = null
         usuarioEncontrado.value = false
@@ -662,111 +622,75 @@ const buscarDocumento = async (doc) => {
 }
 
 const limpiarCampos = () => {
-    Object.assign(form, {
-        Nombres: '', Apellidos: '', Telefono: '', Email: '',
-        Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''],
-    })
+    Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
 }
 
 const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
-// ── Validaciones comunes ───────────────────────────────────────────
 const validarFormulario = () => {
     errSubmit.value = ''
-    if (!form.Documento || !form.Nombres || !form.Apellidos) {
-        errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return false
-    }
-    if (!form.Telefono || form.Telefono.length < 7) {
-        errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return false
-    }
-    if (!form.Email || !emailValido(form.Email)) {
-        errSubmit.value = 'Ingresa un correo electrónico válido.'; return false
-    }
-    if (!form.Password || form.Password.length < 8) {
-        errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false
-    }
-    if (!form.placas[0]?.trim()) {
-        errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false
-    }
-    if (detectarTipoVehiculo(form.placas[0]) === null) {
-        errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false
-    }
-    if (esSede24.value && esEstudiante.value === null) {
-        errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false
-    }
-    if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) {
-        errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false
-    }
+    if (!form.Documento || !form.Nombres || !form.Apellidos) { errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return false }
+    if (!form.Telefono || form.Telefono.length < 7) { errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return false }
+    if (!form.Email || !emailValido(form.Email)) { errSubmit.value = 'Ingresa un correo electrónico válido.'; return false }
+    if (!form.Password || form.Password.length < 8) { errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false }
+    if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
+    if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
+    if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
+    if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
     return true
 }
 
-// ── Construir payload ──────────────────────────────────────────────
 const buildPayload = (esOld) => {
     const m = mensualidadData.value
     const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
-
     return {
-        Documento: rest.Documento,
-        Nombres: rest.Nombres,
-        Apellidos: rest.Apellidos,
-        Telefono: rest.Telefono,
-        Email: rest.Email,
-        Password: rest.Password,
-        IdEstacionamiento: idSede.value,
-        Estado: true,
-        Sincronizacion: m?.sincronizacion ?? false,
-        Old: esOld,
+        Documento: rest.Documento, Nombres: rest.Nombres, Apellidos: rest.Apellidos,
+        Telefono: rest.Telefono, Email: rest.Email, Password: rest.Password,
+        IdEstacionamiento: idSede.value, Estado: true,
+        Sincronizacion: m?.sincronizacion ?? false, Old: esOld,
         ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
         ...(esOld && m?.fechaInicio ? { FechaInicio: m.fechaInicio } : {}),
         ...(esOld && m?.fechaFin ? { FechaFin: m.fechaFin } : {}),
-        Placa1: placas[0] || null,
-        Placa2: placas[1] || null,
-        Placa3: placas[2] || null,
-        Placa4: placas[3] || null,
-        Placa5: placas[4] || null,
+        Placa1: placas[0] || null, Placa2: placas[1] || null,
+        Placa3: placas[2] || null, Placa4: placas[3] || null, Placa5: placas[4] || null,
         EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
         CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
     }
 }
 
-// ── Manejar respuesta ──────────────────────────────────────────────
-const manejarRespuesta = (res, esModal = false) => {
+const manejarRespuesta = (res) => {
     if (res?.error === true || res?.success === false) {
         const status = res?.status ?? res?.data?.statusCode
         const message = res?.data?.message ?? res?.message ?? ''
         const msg = Array.isArray(message) ? message.join(', ') : (message || 'Error al registrar.')
-        if (status === 409) errSubmit.value = '409'
-        else if (esModal) errSubmit.value = msg
-        else errSubmit.value = msg
+        if (status === 409) {
+            // Distinguir: email duplicado vs documento duplicado
+            errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
+        } else {
+            errSubmit.value = msg
+        }
         return false
     }
     return true
 }
 
-// ── Submit principal ───────────────────────────────────────────────
 const submit = async () => {
     if (!validarFormulario()) return
-
     guardando.value = true
     errSubmit.value = ''
-
     try {
         const esOld = !!mensualidadData.value
-        const payload = buildPayload(esOld)
-
-        console.group(`📤 [submit] Old=${esOld}`)
-        console.log('Payload:', JSON.stringify(payload, null, 2))
-        console.groupEnd()
-
-        const res = await ClientService.createClient(payload)
-
+        const res = await ClientService.createClient(buildPayload(esOld))
         if (!manejarRespuesta(res)) return
-
         modalExito.value = true
-
     } catch (e) {
-        if (e.response?.status === 409) { errSubmit.value = '409'; return }
+        if (e.response?.status === 409) {
+            const rawMsg = e.response?.data?.message ?? ''
+            const msg = Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg
+            errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
+            return
+        }
         const msg = e.response?.data?.message
         errSubmit.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al registrar. Intenta de nuevo.')
     } finally {
@@ -775,123 +699,222 @@ const submit = async () => {
 }
 </script>
 
-<script>
-
-// ── Submit ─────────────────────────────────────────────────────────
-// const abrirModalCodigo = async () => {
-//     errSubmit.value = ''
-//     if (!form.Documento || !form.Nombres || !form.Apellidos) {
-//         errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return
-//     }
-//     if (!form.Telefono || form.Telefono.length < 7) {
-//         errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return
-//     }
-//     if (!form.Email || !emailValido(form.Email)) {
-//         errSubmit.value = 'Ingresa un correo electrónico válido.'; return
-//     }
-//     if (!form.Password || form.Password.length < 8) {
-//         errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return
-//     }
-//     if (!form.placas[0]?.trim()) {
-//         errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return
-//     }
-//     if (esSede24.value && esEstudiante.value === null) {
-//         errSubmit.value = 'Indica si eres estudiante UCC o no.'; return
-//     }
-//     if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) {
-//         errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return
-//     }
-
-//     if (mensualidadData.value) {
-//         guardando.value = true
-//         await submitSinCodigo()
-//         return
-//     }
-
-//     codigoValidacion.value = ''
-//     errCodigo.value = ''
-//     modalCodigo.value = true
-// }
-
-
-// const submitConCodigo = async () => {
-//     if (!codigoValidacion.value.trim()) {
-//         errCodigo.value = 'Ingresa el código de validación.'; return
-//     }
-
-//     guardando.value = true
-//     errCodigo.value = ''
-
-//     try {
-//         const m = mensualidadData.value
-//         const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
-
-//         const payload = {
-//             Documento: rest.Documento,
-//             Nombres: rest.Nombres,
-//             Apellidos: rest.Apellidos,
-//             Telefono: rest.Telefono,
-//             Email: rest.Email,
-//             Password: rest.Password,
-//             IdEstacionamiento: idSede.value,
-//             Estado: true,
-//             Sincronizacion: m?.sincronizacion ?? false,
-//             Old: !!m,
-//             ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
-//             Placa1: placas[0] || null,
-//             Placa2: placas[1] || null,
-//             Placa3: placas[2] || null,
-//             Placa4: placas[3] || null,
-//             Placa5: placas[4] || null,
-//             EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
-//             CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
-//             Codigo: codigoValidacion.value.trim(),
-//         }
-
-//         const res = await ClientService.createClientWithCodigo(payload)
-
-//         if (res?.error === true || res?.success === false) {
-//             const status = res?.status ?? res?.data?.statusCode
-//             const message = res?.data?.message ?? res?.message ?? ''
-//             if (status === 409) { modalCodigo.value = false; errSubmit.value = '409'; return }
-//             errCodigo.value = Array.isArray(message) ? message.join(', ') : (message || 'Código inválido o error al registrar.')
-//             return
-//         }
-
-//         router.push({ name: 'login', query: { registered: '1' } })
-
-//     } catch (e) {
-//         if (e.response?.status === 409) { modalCodigo.value = false; errSubmit.value = '409'; return }
-//         const msg = e.response?.data?.message
-//         errCodigo.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al registrar. Intenta de nuevo.')
-//     } finally {
-//         guardando.value = false
-//     }
-// }
-</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+</style>
 
 <style scoped>
-/* Solo lo que Tailwind no puede hacer inline */
+/* ── Animación card entrada ── */
+.reg-card {
+    animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards
+}
 
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(26px) scale(0.97)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+    }
+}
+
+/* ── Anillos del focal con animación ── */
+.focal-ring--outer {
+    animation: ringPulse 3.5s ease-in-out infinite
+}
+
+.focal-ring--mid {
+    animation: ringPulse 3.5s ease-in-out 0.5s infinite
+}
+
+@keyframes ringPulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1)
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.02)
+    }
+}
+
+/* ── Inputs (múltiples !important para pisar estilos globales) ── */
+.field-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1.5px solid #e8ecf0 !important;
+    border-radius: 12px !important;
+    padding: 10px 14px !important;
+    font-size: 0.875rem !important;
+    color: #0D291C !important;
+    background: #f7f8fa !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.field-input:focus {
+    border-color: #299261 !important;
+    background: white !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.1) !important
+}
+
+.field-input:disabled {
+    background: #f3f4f6 !important;
+    color: #9ca3af !important;
+    cursor: not-allowed
+}
+
+.field-input--active {
+    border-color: #299261 !important
+}
+
+.field-label-sm {
+    font-size: 0.58rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0D291C;
+    opacity: 0.5;
+    padding-left: 2px;
+}
+
+.placa-input {
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    font-weight: 800 !important
+}
+
+/* ── Section label ── */
+.section-label {
+    font-size: 0.56rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #0D291C;
+    opacity: 0.32;
+    border-bottom: 1px solid rgba(13, 41, 28, 0.08);
+    padding-bottom: 5px;
+    margin: 0;
+}
+
+/* ── Est buttons ── */
+.est-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1.5px solid #d1d5db;
+    background: white;
+    color: #6b7280;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.15s;
+}
+
+.est-btn:hover {
+    border-color: #299261;
+    color: #299261
+}
+
+.est-btn--on {
+    background: #0D291C !important;
+    color: #7FD344 !important;
+    border-color: #0D291C !important;
+    box-shadow: 0 3px 0 #051510
+}
+
+/* ── Submit ── */
+.submit-btn {
+    width: 100%;
+    padding: 13px 20px;
+    background: #0D291C;
+    color: #7FD344;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 900;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+    box-shadow: 0 4px 0 #051510;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #1a4a2e;
+    box-shadow: 0 6px 20px rgba(13, 41, 28, 0.4);
+    transform: translateY(-1px)
+}
+
+.submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 #051510
+}
+
+.submit-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed
+}
+
+.submit-btn:hover:not(:disabled) .btn-arrow {
+    transform: translateX(4px)
+}
+
+/* ── Spinner ── */
+.spinner-sm {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    border: 2px solid rgba(41, 146, 97, 0.3);
+    border-top-color: #299261;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+.spinner-sm--light {
+    border-color: rgba(127, 211, 68, 0.3);
+    border-top-color: #7FD344
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+/* ── Vue Transitions ── */
 .modal-enter-active {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease
 }
 
 .modal-leave-active {
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease
 }
 
 .modal-enter-from,
 .modal-leave-to {
-    opacity: 0;
+    opacity: 0
 }
 
-.modal-enter-active .bg-\[\#B8E19E\] {
-    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+.modal-enter-active .success-modal {
+    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both
 }
 
-.modal-leave-active .bg-\[\#B8E19E\] {
-    animation: popOut 0.18s ease-in both;
+.modal-leave-active .success-modal {
+    animation: popOut 0.18s ease-in both
 }
 
 @keyframes popIn {
@@ -918,125 +941,41 @@ const submit = async () => {
     }
 }
 
-
-.field-input {
-    width: 100%;
-    box-sizing: border-box;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 12px !important;
-    padding: 10px 14px !important;
-    font-size: 0.875rem !important;
-    color: #0D291C !important;
-    background: #f9fafb !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    font-family: inherit;
-}
-
-.field-input:focus {
-    border-color: #299261 !important;
-    background: white !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.12) !important;
-}
-
-.field-input:disabled {
-    background: #f3f4f6 !important;
-    color: #9ca3af !important;
-    cursor: not-allowed;
-}
-
-.field-input--active {
-    border-color: #299261 !important;
-}
-
-.field-label-sm {
-    font-size: 0.58rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0D291C;
-    opacity: 0.5;
-    padding-left: 2px;
-}
-
-.placa-input {
-    text-transform: uppercase !important;
-    letter-spacing: 0.12em !important;
-    font-weight: 800 !important;
-}
-
-.est-btn {
-    flex: 1;
-    padding: 8px 10px;
-    border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    cursor: pointer;
-    border: 2px solid #d1d5db;
-    background: white;
-    color: #6b7280;
-    transition: all 0.15s;
-}
-
-.est-btn:hover {
-    border-color: #299261;
-    color: #299261;
-}
-
-.est-btn--on {
-    background: #0D291C !important;
-    color: #7FD344 !important;
-    border-color: #0D291C !important;
-    box-shadow: 0 3px 0 #051510;
-}
-
-.spinner-sm {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(41, 146, 97, 0.3);
-    border-top-color: #299261;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-}
-
-.spinner-sm--light {
-    border-color: rgba(127, 211, 68, 0.3);
-    border-top-color: #7FD344;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s, transform 0.2s
 }
 
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-5px)
 }
 
 .reveal-enter-active {
-    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1)
 }
 
 .reveal-leave-active {
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease
 }
 
 .reveal-enter-from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(10px)
 }
 
 .reveal-leave-to {
-    opacity: 0;
+    opacity: 0
+}
+
+@media (prefers-reduced-motion:reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important
+    }
 }
 </style>

@@ -4,7 +4,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between relative bg-white rounded-full p-4">
             <div class="w-[80px]">
-                <button @click="$router.back()" class="back-btn-3d">Volver</button>
+                <button @click="$router.back()" class="btn-3d">Volver</button>
             </div>
             <h2 class="text-2xl font-bold text-[#232B3A]">Historial de Pagos</h2>
             <div class="w-[80px]" />
@@ -293,30 +293,6 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
 </script>
 
 <style scoped>
-/* ── Header ──────────────────────────────────────────────────────── */
-.back-btn-3d {
-    font-size: 0.78rem;
-    font-weight: 900;
-    color: #0D291C;
-    background-color: #7FD344;
-    border: 2px solid #000;
-    border-radius: 999px;
-    padding: 7px 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #000;
-    transition: transform 0.1s, box-shadow 0.1s;
-    white-space: nowrap;
-}
-
-.back-btn-3d:hover {
-    background-color: #6fc23a;
-}
-
-.back-btn-3d:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #000;
-}
-
 /* ── Filtros ─────────────────────────────────────────────────────── */
 .filters-bar {
     display: flex;

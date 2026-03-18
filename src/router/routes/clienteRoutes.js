@@ -28,7 +28,6 @@ export const clienteMenuItems = [
     activeFor: [
       "/cliente/peticiones",
       "/cliente/informacion",
-      "/cliente/placa",
       "/cliente/pqrs",
     ],
   },
@@ -71,10 +70,6 @@ export const clienteRoutes = {
     {
       path: "informacion",
       component: () => import("@/views/cliente/EditarInformacion.vue"),
-    },
-    {
-      path: "placa",
-      component: () => import("@/views/cliente/CambioPlaca.vue"),
     },
     {
       path: "pqrs",

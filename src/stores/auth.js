@@ -141,6 +141,7 @@ export const useAuthStore = defineStore(
           apellidos: payload.apellidos,
           email: payload.email,
           documento: payload.documento,
+          telefono: payload.telefono,
         };
 
         return newToken;

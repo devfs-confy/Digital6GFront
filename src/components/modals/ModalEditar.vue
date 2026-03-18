@@ -13,7 +13,13 @@
                                 <p class="modal-head__sub">Editando información</p>
                             </div>
                         </div>
-                        <button @click="emit('update:modelValue', false)" class="modal-close">✕</button>
+                        <button @click="emit('update:modelValue', false)" class="modal-close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                            </svg>
+                        </button>
                     </div>
 
                     <!-- Cuerpo -->
@@ -23,10 +29,15 @@
 
                     <!-- Pie -->
                     <div class="modal-foot">
-                        <button @click="emit('update:modelValue', false)" class="btn-modal-dark btn-modal-dark--cancel">
+                        <button @click="emit('update:modelValue', false)" class="btn-modal btn-cancel">
                             Cancelar
                         </button>
-                        <button @click="emit('guardar')" class="btn-modal-dark">
+                        <button @click="emit('guardar')" class="btn-modal btn-save">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+                            </svg>
                             Actualizar datos
                         </button>
                     </div>
@@ -51,7 +62,12 @@ const iniciales = (nombre = '') => {
 }
 </script>
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+</style>
+
 <style scoped>
+/* ── Overlay ──────────────────────────────────────── */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -60,35 +76,40 @@ const iniciales = (nombre = '') => {
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    background-color: rgba(13, 41, 28, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(9, 28, 19, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
+/* ── Card ─────────────────────────────────────────── */
 .modal-card {
-    background-color: #B8E19E;
-    border: 2.5px solid #0D291C;
-    border-radius: 40px;
-    box-shadow: 0 7px 0 #0D291C;
+    background: #ffffff;
+    border: 2px solid #0D291C;
+    border-radius: 24px;
+    box-shadow:
+        0 8px 0 #0D291C,
+        0 24px 60px rgba(13, 41, 28, 0.25);
     width: 100%;
     max-width: 500px;
     max-height: 88vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .modal-card--wide {
     max-width: 660px;
 }
 
+/* ── Head ─────────────────────────────────────────── */
 .modal-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 22px 26px 16px;
-    border-bottom: 2px solid rgba(13, 41, 28, 0.14);
+    padding: 20px 24px 18px;
+    background: linear-gradient(135deg, #122e1e 0%, #0D291C 100%);
     flex-shrink: 0;
 }
 
@@ -100,113 +121,143 @@ const iniciales = (nombre = '') => {
 }
 
 .modal-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: #0D291C;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1a5c36, #0a2516);
     color: #7FD344;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 900;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     flex-shrink: 0;
-    border: 2px solid rgba(13, 41, 28, 0.4);
+    border: 1.5px solid rgba(127, 211, 68, 0.3);
+    box-shadow: 0 0 0 3px rgba(127, 211, 68, 0.1);
+    letter-spacing: 0.02em;
 }
 
 .modal-head__name {
-    font-size: 1rem;
-    font-weight: 900;
-    color: #0D291C;
-    font-style: italic;
-    text-transform: uppercase;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #ffffff;
     letter-spacing: -0.01em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.2;
 }
 
 .modal-head__sub {
-    font-size: 0.65rem;
-    font-weight: 700;
+    font-size: 0.62rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #0D291C;
-    opacity: 0.45;
-    margin-top: 2px;
+    letter-spacing: 0.1em;
+    color: rgba(127, 211, 68, 0.7);
+    margin-top: 3px;
 }
 
 .modal-close {
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: #0D291C;
-    opacity: 0.35;
-    transition: opacity 0.15s;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     flex-shrink: 0;
-    line-height: 1;
+    transition: background 0.15s, color 0.15s;
 }
 
 .modal-close:hover {
-    opacity: 1;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
 }
 
+/* ── Body ─────────────────────────────────────────── */
 .modal-body {
     flex: 1;
     overflow-y: auto;
-    padding: 18px 26px;
+    padding: 20px 24px;
     display: flex;
     flex-direction: column;
     gap: 14px;
     scrollbar-width: thin;
-    scrollbar-color: rgba(13, 41, 28, 0.2) transparent;
+    scrollbar-color: rgba(13, 41, 28, 0.15) transparent;
+    background: #f8faf8;
 }
 
 .modal-body::-webkit-scrollbar {
-    width: 5px;
+    width: 4px;
 }
 
 .modal-body::-webkit-scrollbar-thumb {
-    background: rgba(13, 41, 28, 0.25);
+    background: rgba(13, 41, 28, 0.18);
     border-radius: 99px;
 }
 
+/* ── Foot ─────────────────────────────────────────── */
 .modal-foot {
     display: flex;
-    gap: 12px;
-    padding: 12px 26px 22px;
-    border-top: 2px solid rgba(13, 41, 28, 0.12);
+    gap: 10px;
+    padding: 14px 24px 20px;
+    border-top: 1.5px solid #e8ede8;
     flex-shrink: 0;
+    background: #ffffff;
 }
 
-.btn-modal-dark {
+/* ── Buttons ──────────────────────────────────────── */
+.btn-modal {
     flex: 1;
-    padding: 12px 20px;
-    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 18px;
+    border-radius: 12px;
     font-weight: 800;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 2px solid #000;
-    box-shadow: 0 4px 0px #000;
-    background-color: #232B3A;
-    color: white;
+    font-size: 0.8rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: background 0.2s, transform 0.12s, box-shadow 0.2s;
 }
 
-.btn-modal-dark:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0px #000;
+.btn-cancel {
+    background: #f4f6f4;
+    color: #374151;
+    border: 1.5px solid #d1d9d1;
+    box-shadow: none;
 }
 
-.btn-modal-dark--cancel {
-    background-color: white;
-    color: #232B3A;
+.btn-cancel:hover {
+    background: #eaefea;
 }
 
-/* Animación */
+.btn-save {
+    background: #0D291C;
+    color: #ffffff;
+    border: 1.5px solid #0D291C;
+    box-shadow: 0 4px 14px rgba(13, 41, 28, 0.25);
+}
+
+.btn-save:hover {
+    background: #1a4a2e;
+    box-shadow: 0 6px 20px rgba(13, 41, 28, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-save:active,
+.btn-cancel:active {
+    transform: translateY(0);
+}
+
+/* ── Animations ───────────────────────────────────── */
 .modal-enter-active {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.22s ease;
 }
 
 .modal-leave-active {
@@ -219,7 +270,7 @@ const iniciales = (nombre = '') => {
 }
 
 .modal-enter-active .modal-card {
-    animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.5, 0.64, 1) both;
 }
 
 .modal-leave-active .modal-card {
@@ -228,7 +279,7 @@ const iniciales = (nombre = '') => {
 
 @keyframes popIn {
     from {
-        transform: scale(0.86) translateY(24px);
+        transform: scale(0.88) translateY(20px);
         opacity: 0;
     }
 
@@ -245,14 +296,15 @@ const iniciales = (nombre = '') => {
     }
 
     to {
-        transform: scale(0.92) translateY(12px);
+        transform: scale(0.93) translateY(10px);
         opacity: 0;
     }
 }
 
+/* ── Responsive ───────────────────────────────────── */
 @media (max-width: 500px) {
     .modal-card {
-        border-radius: 26px;
+        border-radius: 20px;
     }
 
     .modal-head {
@@ -264,7 +316,7 @@ const iniciales = (nombre = '') => {
     }
 
     .modal-foot {
-        padding: 10px 18px 18px;
+        padding: 12px 18px 18px;
     }
 }
 </style>

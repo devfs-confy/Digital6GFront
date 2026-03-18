@@ -15,6 +15,7 @@ import icoDisponibilidad from "@/assets/img/calendar_check.svg?raw";
 import IcoVerificacion from "@/assets/img/verified.svg?raw";
 import icoTarifas from "@/assets/img/car_tag.svg?raw";
 import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
+import icoRoles from "@/assets/img/dashboard_customize_white.svg?raw";
 import { PERMS } from "@/constants/permisions";
 
 // ── Ítems del menú lateral ─────────────────────────────────────────
@@ -74,6 +75,12 @@ export const adminMenuItems = [
     label: "Usuarios",
     icon: icoUsuarios,
     route: "/admin/usuarios",
+    permission: PERMS.ROLES_VER,
+  },
+  {
+    label: "Roles",
+    icon: icoRoles,
+    route: "/admin/roles",
     permission: PERMS.ROLES_VER,
   },
 
@@ -159,6 +166,11 @@ export const adminRoutes = {
     {
       path: "usuarios",
       component: () => import("@/views/administrador/Usuarios.vue"),
+      meta: { permission: PERMS.ROLES_VER },
+    },
+    {
+      path: "roles",
+      component: () => import("@/views/administrador/Roles.vue"),
       meta: { permission: PERMS.ROLES_VER },
     },
 

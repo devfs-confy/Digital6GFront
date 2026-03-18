@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full flex flex-col gap-6">
+    <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-4">
@@ -351,3 +351,19 @@ onMounted(() => {
     ])
 })
 </script>
+
+<style>
+@media (max-width:780px) {
+    .shadow-sm {
+        height: auto;
+    }
+
+    .maincontainer {
+        height: auto;
+    }
+
+    .td-cell--sticky {
+        min-width: auto;
+    }
+}
+</style>
