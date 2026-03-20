@@ -9,6 +9,7 @@ export const clienteMenuItems = [
     label: "Mis Mensualidades",
     icon: icoMensualidad,
     route: "/cliente/mensualidad",
+    activeFor: ["/cliente/mensualidad", "/cliente/mensualidad/pago"],
   },
   {
     label: "Notificaciones<br>Pendientes",
@@ -25,11 +26,7 @@ export const clienteMenuItems = [
     label: "Cambios y<br>peticiones",
     icon: icoContrato,
     route: "/cliente/peticiones",
-    activeFor: [
-      "/cliente/peticiones",
-      "/cliente/informacion",
-      "/cliente/pqrs",
-    ],
+    activeFor: ["/cliente/peticiones", "/cliente/informacion", "/cliente/pqrs"],
   },
 ];
 
@@ -74,6 +71,10 @@ export const clienteRoutes = {
     {
       path: "pqrs",
       component: () => import("@/views/cliente/PQRS.vue"),
+    },
+    {
+      path: "mensualidad/pago",
+      component: () => import("@/views/cliente/VerFactura.vue"),
     },
 
     { path: "", redirect: "inicio" }, // /cliente → /cliente/inicio

@@ -33,7 +33,7 @@
                         <h3 class="card-nombre">{{ m.sede }}</h3>
                         <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}</p>
                         <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado)
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="card-dias" :class="`card-dias--${m.estado}`">
                         <span class="card-dias__num">{{ diasRestantes(m) }}</span>
@@ -152,7 +152,7 @@
 
         <!-- ══ MODAL — PAGAR ══ -->
         <Transition name="modal">
-            <div v-if="modalPago" class="modal-overlay">
+            <div v-if="modalPago" class="modal-overlay modal-pago">
                 <div class="modal-card">
                     <div class="modal-head">
                         <div class="modal-head__left">
@@ -163,7 +163,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
@@ -194,8 +194,8 @@
                                         :class="{ 'pago-opcion--selected': opcionSeleccionada?.modalidad === op.modalidad && opcionSeleccionada?.cantidadMeses === op.cantidadMeses }">
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
-                                                <span class="text-[0.85rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }} · {{ op.cantidadMeses }} {{ op.cantidadMeses ===
@@ -207,8 +207,8 @@
                                                     {{ formatPrecio(op.totalFinal) }}
                                                 </span>
                                                 <span v-if="op.tarjeta"
-                                                    class="text-[0.58rem] font-semibold text-gray-400">
-                                                    + {{ formatPrecio(op.tarjeta.total) }} pasarela
+                                                    class="text-[0.68rem] font-semibold text-gray-400">
+                                                    + {{ formatPrecio(op.tarjeta.total) }} Tarjeta
                                                 </span>
                                             </div>
                                         </div>
@@ -224,7 +224,7 @@
                                                 <span>{{ formatPrecio(op.desglose.iva) }}</span>
                                             </div>
                                             <div v-if="op.tarjeta" class="pago-desglose__row">
-                                                <span>Cobro pasarela</span>
+                                                <span>Cobro Tarjeta</span>
                                                 <span>{{ formatPrecio(op.tarjeta.total) }}</span>
                                             </div>
                                             <div class="pago-desglose__row pago-desglose__row--total">
@@ -245,7 +245,7 @@
                                 </div>
                             </div>
 
-                            <!-- Aviso pasarela -->
+                            <!-- Aviso Tarjeta -->
                             <div class="modal-section">
                                 <div class="modal-notice">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#299261"
@@ -253,7 +253,7 @@
                                         <path
                                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                                     </svg>
-                                    <p>Al confirmar serás redirigido a la pasarela de pago segura.</p>
+                                    <p>Al confirmar serás redirigido a la Tarjeta de pago segura.</p>
                                 </div>
                                 <!-- Error al iniciar pago -->
                                 <div v-if="errPago"
@@ -270,11 +270,7 @@
                             class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5"
                             :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago || (!mensualidadAccion?.fechaFin && !fechaInicioManual)">
                             <div v-if="iniciandoPago" class="btn-spinner" />
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                            </svg>
+
                             {{ iniciandoPago ? 'Redirigiendo...' : 'Ir a pagar' }}
                         </button>
                     </div>
@@ -287,8 +283,7 @@
         <!-- Modal congelar -->
         <ModalCongelar v-model="modalCongelar" :cliente="mensualidadAccion?._raw"
             :info-congelamiento="infoCongelamiento" :err-externo="errCongelar" @confirmar="confirmarCongelar"
-            @update:modelValue="v => { if (!v) errCongelar.value = '' }" />
-
+            @cerrar="errCongelar = ''" />
 
         <!-- ══ MODAL — DETALLE ══ -->
         <Transition name="modal">
@@ -326,7 +321,7 @@
                                     </span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                            }}</strong> días restantes
+                                        }}</strong> días restantes
                                     </span>
                                 </div>
                             </div>
@@ -385,12 +380,8 @@
                                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                             : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
                                         :disabled="placaCambiada">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
-                                            fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                        </svg>
-                                        {{ placaCambiada ? 'Cambio realizado este mes' : 'Solicitar cambio' }}
+
+                                        {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
                                     </button>
                                 </div>
 
@@ -575,8 +566,8 @@ const mensualidadAccion = ref(null)
 
 // ── Estado detalle (carga lazy por ID) ────────────────────────────
 const loadingDetalle = ref(false)
-const detalleCompleto = ref(null)  
-const placasDetalle = ref([])      
+const detalleCompleto = ref(null)
+const placasDetalle = ref([])
 // ── Estado cambio de placas ───────────────────────────────────────
 const nuevasPlacas = ref(['', '', '', '', ''])
 const guardandoPlacas = ref(false)
@@ -861,9 +852,16 @@ const abrirCongelar = async (m) => {
     mensualidadAccion.value = m
     infoCongelamiento.value = null
     modalCongelar.value = true
-    // Cargar info de congelamiento si no está ya cargada (puede venir desde tarjeta o desde detalle)
+    const resC = await MensualidadesService.getCongelamiento(m.id)
+    console.log('[infoCongelamiento raw]', JSON.stringify(resC))
+    infoCongelamiento.value = resC?.data ?? resC
+    console.log('[infoCongelamiento value]', JSON.stringify(infoCongelamiento.value))
+
     try {
         const resC = await MensualidadesService.getCongelamiento(m.id)
+
+        console.log(m.id)
+
         infoCongelamiento.value = resC?.data ?? resC
     } catch (e) {
         console.error('[Congelamiento info]', e)
@@ -875,6 +873,7 @@ const cerrarModales = () => {
     iniciandoPago.value = false; errPago.value = ''
     opcionesPago.value = []; opcionSeleccionada.value = null
     fechaInicioManual.value = ''
+    errCongelamiento.value = ''
 }
 const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; cerrarModales() }
 
@@ -886,10 +885,6 @@ const confirmarPago = async () => {
         const m = mensualidadAccion.value
         const raw = m._raw
         const user = authStore.user
-
-        // ← Agrega esto para debuggear
-        console.log('[user store]', JSON.stringify(user))
-        console.log('[raw mensualidad]', JSON.stringify(raw))
 
         // Resolver documento con múltiples posibles nombres de campo
         const documento = String(
@@ -1688,13 +1683,13 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
 .pago-desglose__row {
     display: flex;
     justify-content: space-between;
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: #6b7280;
 }
 
 .pago-desglose__row--total {
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     font-weight: 900;
     color: #0D291C;
     padding-top: 5px;
@@ -1929,6 +1924,18 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     font-weight: 900;
     color: #232B3A;
     text-align: center
+}
+
+
+@media (max-width:720px) {
+
+    .modal-pago .modal-card {
+        height: 100%;
+    }
+
+    .modal-pago .modal-body {
+        overflow-y: auto;
+    }
 }
 
 
