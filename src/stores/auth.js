@@ -7,7 +7,6 @@ const roleRedirects = {
   admin: "/admin/dashboard",
   cliente: "/cliente/inicio",
 };
-
 export const useAuthStore = defineStore(
   "auth",
   () => {
@@ -85,7 +84,7 @@ export const useAuthStore = defineStore(
     }
 
     // ── Logout ──────────────────────────────────────────────────────
-    function logout() {
+  async  function logout() {
       user.value = null;
       token.value = null;
       role.value = null;
@@ -150,6 +149,83 @@ export const useAuthStore = defineStore(
         return null;
       }
     }
+    // ── Forgot Password ─────────────────────────────────────────────
+    async function sendForgotCode(documento) {
+      loading.value = true;
+      errorMsg.value = null;
+      try {
+        const { data } = await api.post("auth/forgot-password", { Documento: documento });
+        
+        if (!data?.success) {
+          errorMsg.value = data?.message ?? "Error al enviar el código.";
+          return null;
+        }
+        return data;
+      } catch (err) {
+        console.log(err)
+        const status = err.response?.status;
+        const mensaje = err.response?.data?.message;
+        if (status === 404) errorMsg.value = mensaje ?? "Documento no encontrado.";
+        else if (status === 429) errorMsg.value = "Demasiados intentos. Espera unos minutos.";
+        else if (!err.response) errorMsg.value = "Sin conexión con el servidor.";
+        else errorMsg.value = mensaje ?? "Error al enviar el código.";
+        return null;
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    async function verifyForgotCode(documento, codigo) {
+      loading.value = true;
+      errorMsg.value = null;
+      try {
+        const { data } = await api.post("/auth/verify-code", { Documento: documento, Codigo: codigo });
+        if (!data?.success) {
+          errorMsg.value = data?.message ?? "Código inválido.";
+          return null;
+        }
+        return data;
+      } catch (err) {
+        const status = err.response?.status;
+        const mensaje = err.response?.data?.message;
+        if (status === 400) errorMsg.value = mensaje ?? "Código inválido.";
+        else if (status === 410) errorMsg.value = "El código ha expirado. Solicita uno nuevo.";
+        else if (status === 404) errorMsg.value = mensaje ?? "Documento no encontrado.";
+        else if (!err.response) errorMsg.value = "Sin conexión con el servidor.";
+        else errorMsg.value = mensaje ?? "Error al verificar el código.";
+        return null;
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    async function resetPassword(documento, codigo, newPassword) {
+      loading.value = true;
+      errorMsg.value = null;
+      try {
+        const { data } = await api.post("/auth/reset-password", {
+          Documento: documento,
+          Codigo: codigo,
+          NewPassword: newPassword,
+        });
+        if (!data?.success) {
+          errorMsg.value = data?.message ?? "Error al cambiar la contraseña.";
+          return null;
+        }
+        return data;
+      } catch (err) {
+        const status = err.response?.status;
+        const mensaje = err.response?.data?.message;
+        if (status === 400) errorMsg.value = mensaje ?? "Código o contraseña inválidos.";
+        else if (status === 410) errorMsg.value = "El código ha expirado. Inicia el proceso de nuevo.";
+        else if (status === 404) errorMsg.value = mensaje ?? "Documento no encontrado.";
+        else if (!err.response) errorMsg.value = "Sin conexión con el servidor.";
+        else errorMsg.value = mensaje ?? "Error al cambiar la contraseña.";
+        return null;
+      } finally {
+        loading.value = false;
+      }
+    }
 
     return {
       user,
@@ -166,6 +242,9 @@ export const useAuthStore = defineStore(
       logout,
       restoreSession,
       refreshAccessToken,
+      sendForgotCode,
+      verifyForgotCode,
+      resetPassword,
     };
   },
   {

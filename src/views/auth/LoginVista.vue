@@ -62,6 +62,18 @@
                             </div>
                         </div>
 
+                        <!-- Olvidé mi contraseña -->
+                        <div class="text-right -mt-1">
+                            <router-link
+                                to="/forgot-password"
+                                style="color:#299261;font-size:0.78rem;font-weight:700;text-decoration:none;"
+                                onmouseover="this.style.textDecoration='underline'"
+                                onmouseout="this.style.textDecoration='none'"
+                            >
+                                ¿Olvidaste tu contraseña?
+                            </router-link>
+                        </div>
+
                         <!-- Error -->
                         <Transition name="error">
                             <div v-if="auth.errorMsg" class="error-alert">

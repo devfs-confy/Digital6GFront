@@ -2,6 +2,7 @@ import { useAuthStore } from "@/stores/auth";
 
 const rutasPublicas = [
   "/login",
+  "/forgot-password",
   "/registro",
   "/seleccionsede",
   "/unauthorized",
