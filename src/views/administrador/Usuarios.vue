@@ -3,23 +3,29 @@
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <div class="w-16 sm:w-20"></div>
-            <h2 class="text-lg sm:text-2xl font-bold text-[#232B3A]">Usuarios</h2>
-            <div class="flex items-center gap-2">
-                <button @click="abrirCrear"
-                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                    style="box-shadow: #595858 0px 2px 0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                    </svg>
-                    <span class="hidden sm:inline">Nuevo</span>
-                </button>
-                <div
-                    class="flex items-center bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-full border border-black shadow-[0_2px_0_#595858]">
-                    <button @click="$router.back()">Volver</button>
-                </div>
-            </div>
+
+            <!-- Botón Volver — siempre a la izquierda -->
+            <button @click="$router.back()"
+                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                style="box-shadow: #595858 0px 2px 0">
+                <AppIcon name="arrow_left_alt" :size="14" style="fill: black" />
+                <span class="hidden sm:inline">Volver</span>
+            </button>
+
+            <!-- Título — siempre centrado -->
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Usuarios</h2>
+
+            <!-- Botón Nuevo — siempre a la derecha -->
+            <button @click="abrirCrear"
+                class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                style="box-shadow: #595858 0px 2px 0">
+                <AppIcon name="add" :size="14" />
+                <span class="hidden sm:inline">Nuevo</span>
+            </button>
+
+
+            <!-- Botón Nuevo -->
+
         </div>
 
         <!-- Buscador -->
@@ -105,15 +111,17 @@
                                     {{ u.T_UsuarioRol?.[0]?.T_Roles?.Nombre ?? 'Sin rol' }}
                                 </span>
                             </td>
-                            <td class="px-3 sm:px-4 py-3 whitespace-nowrap">
-                                <div class="flex items-center justify-center gap-2">
-                                    <button @click="abrirEditar(u)"
-                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9]"
-                                        title="Editar información" v-html="editarcliente" />
-                                    <button @click="darDeBaja(u)"
-                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all"
-                                        title="Inhabilitar" v-html="account_circle_off" />
-                                </div>
+                            <td class="px-3 sm:px-4 py-3 whitespace-nowrap icongap">
+                                <button @click="abrirEditar(u)"
+                                    class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9] text-gray-400 hover:text-[#299261]"
+                                    title="Editar información">
+                                    <AppIcon name="person_edit" :size="35" style="color:black;" />
+                                </button>
+                                <button @click="darDeBaja(u)"
+                                    class="w-8 h-8 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all text-gray-400 hover:text-red-500"
+                                    title="Inhabilitar">
+                                    <AppIcon name="account_circle_off" :size="35" style="color:black;" />
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -180,17 +188,9 @@
                     <input v-model="formUsuario.Password" :type="mostrarPassword ? 'text' : 'password'"
                         class="field-input pr-10" maxlength="15" placeholder="" />
                     <button type="button" @click="mostrarPassword = !mostrarPassword"
-                        class="absolute right-2.5 bg-transparent border-none cursor-pointer p-1 flex items-center [&>svg]:fill-gray-400 hover:[&>svg]:fill-[#299261]">
-                        <svg v-if="!mostrarPassword" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                        </svg>
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path
-                                d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78 3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" />
-                        </svg>
+                        class="absolute right-2.5 bg-transparent border-none cursor-pointer p-1 flex items-center text-gray-400 hover:text-[#299261] transition-colors">
+                        <AppIcon v-if="!mostrarPassword" name="visibility" :size="16" />
+                        <AppIcon v-else name="visibility_off" :size="16" />
                     </button>
                 </div>
             </div>
@@ -205,8 +205,6 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
-import account_circle_off from '@/assets/img/account_circle_off.svg?raw'
-import editarcliente from '@/assets/img/person_edit.svg?raw'
 import adminServices from '@/api/services/admin.service'
 import RolService from '@/api/services/rol.service'
 import TablePagination from '@/components/shared/Paginacion.vue'
@@ -353,6 +351,12 @@ const iniciales = (nombre = '') =>
 </script>
 
 <style scoped>
+.icongap {
+    gap: 5%;
+    display: flex;
+    justify-content: center;
+}
+
 .field-label {
     font-size: 0.72rem;
     font-weight: 800;
@@ -389,14 +393,6 @@ const iniciales = (nombre = '') =>
     cursor: pointer;
 }
 
-:deep(button[v-html] svg),
-:deep(.icon-btn svg) {
-    width: 19px;
-    height: 19px;
-    fill: #9ca3af;
-    transition: fill 0.12s;
-    display: block;
-}
 
 .scrollbar-thin {
     scrollbar-width: thin;

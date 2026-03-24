@@ -219,10 +219,25 @@
                         </p>
                     </div>
 
+                    <!-- Error API contraseña -->
+                    <Transition name="err-slide">
+                        <div v-if="passError"
+                            class="field-wrap--full flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5"
+                            style="grid-column: 1 / -1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#dc2626"
+                                viewBox="0 0 24 24" class="shrink-0">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                            </svg>
+                            <span class="text-red-600 text-[0.75rem] font-medium">{{ passError }}</span>
+                        </div>
+                    </Transition>
+
                     <div class="field-wrap field-wrap--full flex gap-3">
                         <button @click="cancelarPass" class="btn-cancel">Cancelar</button>
-                        <button @click="guardarPass" :disabled="!passValida" class="btn-save">
-                            Guardar contraseña
+                        <button @click="guardarPass" :disabled="!passValida || passLoading" class="btn-save">
+                            <span v-if="passLoading">Guardando...</span>
+                            <span v-else>Guardar contraseña</span>
                         </button>
                     </div>
                 </div>
@@ -257,6 +272,7 @@ import icoeditsquare from '@/assets/img/edit_square.svg?raw'
 import visibility from '@/assets/img/visibility.svg?raw'
 import visibilityoff from '@/assets/img/visibility_off.svg?raw'
 import ClientService from '@/api/services/client.service'
+import AuthService from '@/api/services/auth.service'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
@@ -352,9 +368,12 @@ const guardarCambios = async () => {
 }
 
 // ── Contraseña ─────────────────────────────────────────────────────
+// ── Contraseña ─────────────────────────────────────────────────────
 const showPassForm = ref(false)
 const passForm = reactive({ actual: '', nueva: '', confirmar: '' })
 const showPass = reactive({ actual: false, nueva: false, confirmar: false })
+const passLoading = ref(false)
+const passError = ref('')
 
 const passMatch = computed(() => passForm.nueva === passForm.confirmar)
 const passValida = computed(() =>
@@ -386,13 +405,28 @@ const cancelarPass = () => {
     showPassForm.value = false
     Object.assign(passForm, { actual: '', nueva: '', confirmar: '' })
     Object.assign(showPass, { actual: false, nueva: false, confirmar: false })
+    passError.value = ''
+    passLoading.value = false
 }
 
 const guardarPass = async () => {
-    if (!passValida.value) return
-    // TODO: conectar endpoint de cambio de contraseña cuando esté disponible
-    console.log('Cambiar contraseña:', passForm.actual, '→', passForm.nueva)
-    cancelarPass()
+    if (!passValida.value || passLoading.value) return
+    passLoading.value = true
+    passError.value = ''
+    try {
+        const res = await AuthService.changePassword(passForm.actual, passForm.nueva)
+        if (res?.error === true || res?.success === false) {
+            const msg = res?.data?.message ?? res?.message ?? 'Error al cambiar la contraseña.'
+            passError.value = Array.isArray(msg) ? msg.join(', ') : msg
+            return
+        }
+        cancelarPass()
+    } catch (e) {
+        const msg = e.response?.data?.message
+        passError.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al cambiar la contraseña.')
+    } finally {
+        passLoading.value = false
+    }
 }
 </script>
 
@@ -836,7 +870,7 @@ const guardarPass = async () => {
     border-radius: 999px;
     padding: 9px 20px;
     cursor: pointer;
-    box-shadow: 0 3px 0 #000;
+    box-shadow: 0 1px 0 #000;
     transition: transform 0.1s, box-shadow 0.1s;
 }
 

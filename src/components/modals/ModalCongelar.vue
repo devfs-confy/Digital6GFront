@@ -151,9 +151,9 @@
                 <div class="modal-foot">
                     <button @click="cerrar" class="btn-modal btn-cancel">Cancelar</button>
                     <button @click="confirmar"
-                        :disabled="!puedeCongelar || !fechaCongelar || !infoCongelamiento || guardando"
+                        :disabled="!puedeCongelar || !fechaCongelar || !infoCongelamiento || guardando || guardandoExterno"
                         class="btn-modal btn-freeze">
-                        <div v-if="guardando" class="btn-spinner" />
+                        <div v-if="guardando || guardandoExterno" class="btn-spinner" />
 
                         Confirmar congelamiento
                     </button>
@@ -172,6 +172,7 @@ const props = defineProps({
     cliente: Object,
     infoCongelamiento: Object,   // { EstadoCongelamiento, DiasRestantes, FechaFin, FechaInicio, DiasTotalPeriodo, DiasUsados }
     errExterno: String,   // error que viene del backend tras intentar congelar
+    guardandoExterno: Boolean,
 })
 
 const emit = defineEmits(['update:modelValue', 'confirmar'])
@@ -295,11 +296,12 @@ const iniciales = (nombre = '') =>
     (nombre ?? '').trim().split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
 
 // ── Confirmar ──────────────────────────────────────────────────────
+// En ModalCongelar.vue — script setup, en confirmar():
 const confirmar = () => {
     intentoEnvio.value = true
     if (!fechaCongelar.value || !observacion.value.trim()) return
 
-    // Emitir con los nombres exactos que espera el backend
+    guardando.value = true  // ← ya existe, solo asegúrate que esté
     emit('confirmar', {
         FechaInicioPeriodoNvo: `${fechaCongelar.value}T00:00:00`,
         Observacion: observacion.value.trim(),
@@ -790,7 +792,7 @@ const confirmar = () => {
     background: white;
     color: #232B3A;
     border-color: #000;
-    box-shadow: 0 3px 0 #000;
+    box-shadow: 0 1px 0 #000;
 }
 
 .btn-cancel:hover:not(:disabled) {
@@ -802,7 +804,7 @@ const confirmar = () => {
     background: #0369a1;
     color: #fff;
     border-color: #0c4a6e;
-    box-shadow: 0 3px 0 #0c4a6e;
+    box-shadow: 0 1px 0 #0c4a6e;
 }
 
 .btn-freeze:hover:not(:disabled) {

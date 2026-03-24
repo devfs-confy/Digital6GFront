@@ -2,14 +2,15 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-4">
-            <div class="w-20"></div>
-            <h2 class="text-2xl font-bold text-[#232B3A]">Mensualidades</h2>
+        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
             <button @click="$router.back()"
-                class="flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm font-semibold px-4 py-2 rounded-full border border-black"
+                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
                 style="box-shadow: #595858 0px 2px 0">
-                Volver
+                <AppIcon name="arrow_left_alt" :size="14" />
+                <span class="hidden sm:inline">Volver</span>
             </button>
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Mensualidades</h2>
+            <div class="w-[72px] sm:w-[88px]" />
         </div>
 
         <!-- Filtros -->
@@ -21,11 +22,8 @@
                     <input v-model="filtros.search" type="text" placeholder="Nombre, documento o placa..."
                         class="w-full rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 pr-10 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all"
                         @input="onFiltroChange" />
-                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
-                        fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                    </svg>
+                    <AppIcon name="search" :size="20"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
             </div>
 
@@ -103,11 +101,7 @@
                         <tr v-else-if="mensualidades.length === 0">
                             <td colspan="6" class="py-20 text-center text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                                    </svg>
+                                    <AppIcon name="manage_accounts" :size="48" class="text-gray-300" />
                                     <span class="text-sm font-medium">No se encontraron mensualidades</span>
                                 </div>
                             </td>
@@ -179,9 +173,9 @@
                             <!-- Opciones -->
                             <td class=" text-center">
                                 <button @click="abrirDetalle(m)"
-                                    class="inline-flex items-center gap-1.5 text-[#7FD344] text-[0.75rem] font-bold px-3 py-1.5 rounded-xl border-none cursor-pointer hover:text-white transition-colors"
+                                    class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-[#299261] hover:bg-[#e8f5e9] transition-all"
                                     title="Ver / Editar">
-                                    <span v-html="credit_card_gear"></span>
+                                    <AppIcon name="credit_card_gear" :size="35" style=" color:black " />
                                 </button>
                             </td>
                         </tr>
@@ -236,11 +230,8 @@
                     <div class="flex items-center gap-2.5 flex-1 p-3.5 bg-white rounded-xl border-2 border-gray-200">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                             :class="detalle?.CobroTarjeta ? 'bg-[#dcfce7]' : 'bg-gray-100'">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                :class="detalle?.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'" viewBox="0 0 24 24">
-                                <path
-                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                            </svg>
+                            <AppIcon name="payment_card" :size="16"
+                                :class="detalle?.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'" />
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[0.78rem] font-black"
@@ -310,7 +301,6 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
-import credit_card_gear from '@/assets/img/credit_card_gear.svg?raw'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 
 // ── Estado ─────────────────────────────────────────────────────────
@@ -613,6 +603,11 @@ input[type="checkbox"].sr-only {
 
     .td-cell--sticky {
         min-width: auto;
+    }
+
+    .orden {
+        display: flex;
+        flex-direction: column;
     }
 }
 

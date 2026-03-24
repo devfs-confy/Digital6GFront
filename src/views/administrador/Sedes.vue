@@ -12,9 +12,8 @@
             </div>
             <button v-permission="PERMS.SEDES_CREAR" @click="abrirNueva"
                 class="flex items-center gap-1.5 bg-[#0D291C] text-white border-none rounded-xl px-5 py-2.5 text-[0.85rem] font-bold cursor-pointer transition-all hover:bg-[#299261] hover:-translate-y-px active:translate-y-px">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                </svg>
+                <AppIcon name="add" :size="18" />
+
                 Nueva sede
             </button>
         </div>
@@ -65,9 +64,9 @@
                     <div v-for="d in sede.T_Disponibilidades" :key="d.IdTipoVehiculo"
                         class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 border"
                         :class="sede.Estado ? 'bg-white border-[#d1fae5]' : 'bg-gray-50 border-gray-200'">
-                        <span class="svg-icon-lg flex-shrink-0"
-                            :class="sede.Estado ? '[&>svg]:fill-[#0D291C]' : '[&>svg]:fill-gray-400'"
-                            v-html="d.IdTipoVehiculo === '1' ? car : motorbike" />
+                        <AppIcon :name="d.IdTipoVehiculo === '1' ? 'car-side' : 'two_wheeler'" :size="18"
+                            class="flex-shrink-0 text-[#0D291C]"
+                            :class="sede.Estado ? 'text-[#0D291C]' : 'text-gray-400'" />
                         <div class="flex-1 flex flex-col gap-1">
                             <div class="flex items-center justify-between">
                                 <span class="text-[0.72rem] font-bold"
@@ -98,14 +97,14 @@
                         sede.RequiereTarjetaCarro
                             ? 'bg-white border-[#a7f3d0] text-[#065f46]'
                             : 'bg-white border-gray-200 text-gray-400']">
-                        <span class="svg-icon" v-html="car" />
+                        <AppIcon name="car-side" :size="14" />
                         {{ sede.RequiereTarjetaCarro ? 'Con tarjeta' : 'Sin tarjeta' }}
                     </span>
                     <span :class="['inline-flex items-center gap-1 text-[0.65rem] font-bold px-2.5 py-1 rounded-full border',
                         sede.RequiereTarjetaMoto
                             ? 'bg-white border-[#a7f3d0] text-[#065f46]'
                             : 'bg-white border-gray-200 text-gray-400']">
-                        <span class="svg-icon" v-html="motorbike" />
+                        <AppIcon name="two_wheeler" :size="14" />
                         {{ sede.RequiereTarjetaMoto ? 'Con tarjeta' : 'Sin tarjeta' }}
                     </span>
                 </div>
@@ -131,11 +130,8 @@
                         :class="sede.Estado
                             ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:bg-[#299261] hover:border-[#299261] hover:text-white'
                             : 'bg-gray-200 text-gray-500 border-gray-200 hover:bg-gray-300'">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path
-                                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                        </svg>
+                        <AppIcon name="edit_square" :size="20" class="text-[#7FD344] " />
+
                         Editar
                     </button>
                     <button v-permission="PERMS.SEDES_INACTIVAR" @click="toggleEstado(sede)"
@@ -143,11 +139,8 @@
                         :class="sede.Estado
                             ? 'border-red-200 bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 hover:border-red-300'
                             : 'border-[#c8e6c9] bg-[#f0faf4] text-[#299261] hover:bg-[#dcfce7]'">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                        </svg>
+                        <AppIcon :name="sede.Estado ? 'account_circle_off' : 'verified'" :size="15" />
+
                         {{ sede.Estado ? 'Inactivar' : 'Activar' }}
                     </button>
                 </div>
@@ -218,9 +211,8 @@
                             :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
                                 form.RequiereTarjetaCarro ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-gray-50 border-gray-200 hover:border-gray-300']">
                             <input type="checkbox" v-model="form.RequiereTarjetaCarro" class="hidden" />
-                            <span class="svg-icon flex-shrink-0"
-                                :class="form.RequiereTarjetaCarro ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
-                                v-html="car" />
+                            <AppIcon name="car-side" :size="14" class="flex-shrink-0"
+                                :class="form.RequiereTarjetaCarro ? 'text-[#7FD344]' : 'text-gray-400'" />
                             <span
                                 :class="['text-[0.8rem] font-bold', form.RequiereTarjetaCarro ? 'text-[#7FD344]' : 'text-gray-500']">
                                 Carros
@@ -232,9 +224,8 @@
                             :class="['flex items-center gap-2 cursor-pointer select-none flex-1 px-3 py-2.5 rounded-xl border-2 transition-all duration-150',
                                 form.RequiereTarjetaMoto ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-gray-50 border-gray-200 hover:border-gray-300']">
                             <input type="checkbox" v-model="form.RequiereTarjetaMoto" class="hidden" />
-                            <span class="svg-icon flex-shrink-0"
-                                :class="form.RequiereTarjetaMoto ? '[&>svg]:fill-[#7FD344]' : '[&>svg]:fill-gray-400'"
-                                v-html="motorbike" />
+                            <AppIcon name="two_wheeler" :size="14" class="flex-shrink-0"
+                                :class="form.RequiereTarjetaMoto ? 'text-[#7FD344]' : 'text-gray-400'" />
                             <span
                                 :class="['text-[0.8rem] font-bold', form.RequiereTarjetaMoto ? 'text-[#7FD344]' : 'text-gray-500']">
                                 Motos
@@ -272,21 +263,18 @@
 
             <!-- ── Solo edición: tarjeta solo lectura ──────────── -->
             <div v-else class="flex gap-2.5 p-3.5 bg-amber-50 border-2 border-amber-200 rounded-xl">
-                <svg class="flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                    viewBox="0 0 24 24" fill="#d97706">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                </svg>
+                <AppIcon name="warning" :size="14" class="flex-shrink-0 mt-0.5 text-amber-500" />
+
                 <div>
                     <p class="text-[0.72rem] font-bold text-amber-700">Requiere tarjeta (solo lectura)</p>
                     <p class="text-[0.68rem] text-amber-600 mt-1 flex items-center gap-2 flex-wrap">
                         <span class="inline-flex items-center gap-1">
-                            <span class="svg-icon" v-html="car" />
+                            <AppIcon name="car-side" :size="14" />
                             Carros: {{ sedeEditando?.RequiereTarjetaCarro ? 'Sí' : 'No' }}
                         </span>
                         <span class="opacity-40">·</span>
                         <span class="inline-flex items-center gap-1">
-                            <span class="svg-icon" v-html="motorbike" />
+                            <AppIcon name="two_wheeler" :size="14" />
                             Motos: {{ sedeEditando?.RequiereTarjetaMoto ? 'Sí' : 'No' }}
                         </span>
                     </p>
@@ -303,8 +291,8 @@
 
                         <!-- Tipo vehículo -->
                         <div class="flex items-center gap-2 pb-1 border-b border-gray-100">
-                            <span class="svg-icon-lg [&>svg]:fill-[#0D291C]"
-                                v-html="d.IdTipoVehiculo === '1' ? car : motorbike" />
+                            <AppIcon :name="d.IdTipoVehiculo === '1' ? 'car-side' : 'two_wheeler'" :size="18"
+                                class="text-[#0D291C]" />
                             <span class="text-[0.78rem] font-black text-[#0D291C]">
                                 {{ d.IdTipoVehiculo === '1' ? 'Carros' : 'Motos' }}
                             </span>
@@ -349,8 +337,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import { PERMS } from '@/constants/permisions'
 import SedesService from '@/api/services/sedes.service'
-import car from '@/assets/img/car-side.svg?raw'
-import motorbike from '@/assets/img/two_wheeler.svg?raw'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 
 // ── Estado ─────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-// src/api/services/pagos.service.js
+// src/api/services/factura.service.js
 import { api } from "../axios";
 import { handleError } from "@/utils/error.handler";
 class FacturaService {

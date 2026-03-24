@@ -22,37 +22,8 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import estado from '@/assets/img/stacked_email_green.svg?raw'
-import parqueos from '@/assets/img/parking_sign_green.svg?raw'
-import pagos from '@/assets/img/receipt_long_green.svg?raw'
 
 
-const router = useRouter()
-
-const opciones = [
-    {
-        id: 1,
-        icon: estado,
-        titulo: 'Mis Solicitudes',
-        sub: '',
-        route: "/cliente/solicitudes"
-    },
-    {
-        id: 2,
-        icon: parqueos,
-        titulo: 'Parqueos Recientes',
-        sub: 'Ultimo: Hoy 14:20',
-        route: "/cliente/parqueos",
-    },
-    {
-        id: 3,
-        icon: pagos,
-        titulo: 'Pagos Recientes',
-        sub: '',
-        route: "/cliente/pagos",
-
-    },
-]
 </script>
 
 <style scoped>

@@ -22,37 +22,10 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import informacion from '@/assets/img/account_circle_green.svg?raw'
-import placa from '@/assets/img/av1_green.svg?raw'
-import pqrs from '@/assets/img/contract_edit_green.svg?raw'
 
 
-const router = useRouter()
 
-const opciones = [
-    {
-        id: 1,
-        icon: informacion,
-        titulo: 'Informacion Personal',
-        sub: '',
-        route: "/cliente/informacion"
-    },
-    {
-        id: 2,
-        icon: placa,
-        titulo: 'Cambio de placa',
-        sub: '',
-        route: "/cliente/placa",
-    },
-    {
-        id: 3,
-        icon: pqrs,
-        titulo: 'PQRS',
-        sub: '',
-        route: "/cliente/pqrs",
 
-    },
-]
 </script>
 
 <style scoped>

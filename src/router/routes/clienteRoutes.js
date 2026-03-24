@@ -2,6 +2,10 @@ import icoInicio from "@/assets/img/home.svg?raw";
 import icoMensualidad from "@/assets/img/event_available.svg?raw";
 import icoNotificacion from "@/assets/img/notifications.svg?raw";
 import icoContrato from "@/assets/img/contract.svg?raw";
+import icoPagos from "@/assets/img/receipt_long.svg?raw";
+import icoParqueos from "@/assets/img/parking_sign.svg?raw";
+import icoPQRS from "@/assets/img/contract_edit.svg?raw";
+import icoPerfil from "@/assets/img/account_circle.svg?raw";
 
 export const clienteMenuItems = [
   { label: "Inicio", icon: icoInicio, route: "/cliente/inicio" },
@@ -11,23 +15,38 @@ export const clienteMenuItems = [
     route: "/cliente/mensualidad",
     activeFor: ["/cliente/mensualidad", "/cliente/mensualidad/pago"],
   },
+
   {
-    label: "Notificaciones<br>Pendientes",
-    icon: icoNotificacion,
-    route: "/cliente/notificaciones",
-    activeFor: [
-      "/cliente/notificaciones",
-      "/cliente/solicitudes",
-      "/cliente/parqueos",
-      "/cliente/pagos",
-    ],
+    label: "Pagos Recientes",
+    icon: icoPagos,
+    route: "/cliente/pagos",
   },
   {
-    label: "Cambios y<br>peticiones",
-    icon: icoContrato,
-    route: "/cliente/peticiones",
-    activeFor: ["/cliente/peticiones", "/cliente/informacion", "/cliente/pqrs"],
+    label: "Parqueos recientes",
+    icon: icoParqueos,
+    route: "/cliente/parqueos",
   },
+  {
+    label: "PQRS",
+    icon: icoPQRS,
+    route: "/cliente/pqrs",
+  },
+  {
+    label: "Información </br> personal",
+    icon: icoPerfil,
+    route: "/cliente/informacion",
+  },
+
+  // {
+  //   label: "Notificaciones<br>Pendientes",
+  //   icon: icoNotificacion,
+  //   route: "/cliente/notificaciones",
+  // },
+  // {
+  //   label: "Cambios y<br>peticiones",
+  //   icon: icoContrato,
+  //   route: "/cliente/peticiones",
+  // },
 ];
 
 export const clienteRoutes = {
@@ -43,14 +62,14 @@ export const clienteRoutes = {
       path: "mensualidad",
       component: () => import("@/views/cliente/Mensualidad.vue"),
     },
-    {
-      path: "notificaciones",
-      component: () => import("@/views/cliente/Notificaciones.vue"),
-    },
-    {
-      path: "peticiones",
-      component: () => import("@/views/cliente/Peticiones.vue"),
-    },
+    // {
+    //   path: "notificaciones",
+    //   component: () => import("@/views/cliente/Notificaciones.vue"),
+    // },
+    // {
+    //   path: "peticiones",
+    //   component: () => import("@/views/cliente/Peticiones.vue"),
+    // },
     {
       path: "solicitudes",
       component: () => import("@/views/cliente/Solicitudes.vue"),
@@ -63,7 +82,6 @@ export const clienteRoutes = {
       path: "pagos",
       component: () => import("@/views/cliente/PagosRecientes.vue"),
     },
-
     {
       path: "informacion",
       component: () => import("@/views/cliente/EditarInformacion.vue"),

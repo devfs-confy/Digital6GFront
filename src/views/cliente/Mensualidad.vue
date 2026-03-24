@@ -33,7 +33,7 @@
                         <h3 class="card-nombre">{{ m.sede }}</h3>
                         <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}</p>
                         <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado)
-                        }}</span>
+                            }}</span>
                     </div>
                     <div class="card-dias" :class="`card-dias--${m.estado}`">
                         <span class="card-dias__num">{{ diasRestantes(m) }}</span>
@@ -80,7 +80,8 @@
                         aún</span>
                 </div>
                 <div class="card-actions">
-                    <button @click="abrirPago(m)" class="btn-pagar">
+                    <button @click="abrirPago(m)"
+                        class="flex-1 flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -88,7 +89,8 @@
                         </svg>
                         Pagar
                     </button>
-                    <button @click="abrirDetalle(m)" class="btn-editar">
+                    <button @click="abrirDetalle(m)"
+                        class="flex-1 flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -96,7 +98,8 @@
                         </svg>
                         Ver
                     </button>
-                    <button v-if="m.conPago && m.estado !== 'congelada'" @click="abrirCongelar(m)" class="btn-congelar">
+                    <button v-if="m.conPago && m.estado !== 'congelada'" @click="abrirCongelar(m)"
+                        class="flex-1 flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#3b82f6] border-[#bfdbfe] shadow-[0_3px_0_#bfdbfe] hover:bg-[#eff6ff]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -163,7 +166,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
@@ -195,7 +198,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }} · {{ op.cantidadMeses }} {{ op.cantidadMeses ===
@@ -253,7 +256,7 @@
                                         <path
                                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                                     </svg>
-                                    <p>Al confirmar serás redirigido a la Tarjeta de pago segura.</p>
+                                    <p>Al confirmar serás redirigido a la página de pago.</p>
                                 </div>
                                 <!-- Error al iniciar pago -->
                                 <div v-if="errPago"
@@ -282,8 +285,8 @@
 
         <!-- Modal congelar -->
         <ModalCongelar v-model="modalCongelar" :cliente="mensualidadAccion?._raw"
-            :info-congelamiento="infoCongelamiento" :err-externo="errCongelar" @confirmar="confirmarCongelar"
-            @cerrar="errCongelar = ''" />
+            :info-congelamiento="infoCongelamiento" :err-externo="errCongelar" :guardando-externo="guardandoCongelar"
+            @confirmar="confirmarCongelar" @cerrar="errCongelar = ''" />
 
         <!-- ══ MODAL — DETALLE ══ -->
         <Transition name="modal">
@@ -321,7 +324,7 @@
                                     </span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                        }}</strong> días restantes
+                                            }}</strong> días restantes
                                     </span>
                                 </div>
                             </div>
@@ -578,6 +581,7 @@ const placaCambiada = ref(false)
 // ── Estado congelamiento ─────────────────────────────────────────
 const infoCongelamiento = ref(null)
 const errCongelar = ref('')
+const guardandoCongelar = ref(false)
 
 // ── Estado opciones de pago ───────────────────────────────────────
 const opcionesPago = ref([])
@@ -851,29 +855,25 @@ const abrirPago = async (m) => {
 const abrirCongelar = async (m) => {
     mensualidadAccion.value = m
     infoCongelamiento.value = null
+    errCongelar.value = ''
     modalCongelar.value = true
-    const resC = await MensualidadesService.getCongelamiento(m.id)
-    console.log('[infoCongelamiento raw]', JSON.stringify(resC))
-    infoCongelamiento.value = resC?.data ?? resC
-    console.log('[infoCongelamiento value]', JSON.stringify(infoCongelamiento.value))
 
     try {
-        const resC = await MensualidadesService.getCongelamiento(m.id)
-
-        console.log(m.id)
-
-        infoCongelamiento.value = resC?.data ?? resC
+        const res = await MensualidadesService.getCongelamiento(m.id)
+        infoCongelamiento.value = res?.data ?? res
     } catch (e) {
         console.error('[Congelamiento info]', e)
+        infoCongelamiento.value = null
     }
 }
+
 const cerrarModales = () => {
     modalCodigo.value = false; modalPago.value = false; modalCongelar.value = false
     codigoInput.value = ''; mensualidadAccion.value = null
     iniciandoPago.value = false; errPago.value = ''
     opcionesPago.value = []; opcionSeleccionada.value = null
     fechaInicioManual.value = ''
-    errCongelamiento.value = ''
+    errCongelar.value = ''
 }
 const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; cerrarModales() }
 
@@ -953,17 +953,15 @@ const confirmarPago = async () => {
 }
 
 const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
+    guardandoCongelar.value = true
+    errCongelar.value = ''
     try {
         const res = await MensualidadesService.updateCongelamiento(
             mensualidadAccion.value.id,
             { FechaInicioPeriodoNvo, Observacion }
         )
         if (res?.error || res?.success === false) {
-            const status = res?.status
-            const msg = res?.data?.message ?? 'Error al congelar.'
-            // 409 = congelamiento activo solapado | 400 = no puede congelar
-            console.error('[Congelar error]', status, msg)
-            // El modal recibe el error vía prop errCongelar para mostrarlo
+            const msg = res?.data?.message ?? res?.message ?? 'Error al congelar.'
             errCongelar.value = Array.isArray(msg) ? msg.join(', ') : msg
             return
         }
@@ -973,6 +971,8 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     } catch (e) {
         const msg = e.response?.data?.message
         errCongelar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al congelar. Intenta de nuevo.')
+    } finally {
+        guardandoCongelar.value = false
     }
 }
 </script>
@@ -1373,7 +1373,7 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     letter-spacing: 0.05em;
     cursor: pointer;
     border: 2px solid;
-    box-shadow: 0 3px 0;
+    box-shadow: 0 1px 0;
     transition: transform 0.1s, box-shadow 0.1s;
 }
 
@@ -1391,14 +1391,14 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     background: white;
     color: #232B3A;
     border-color: #000;
-    box-shadow: 0 3px 0 #000
+    box-shadow: 0 1px 0 #000
 }
 
 .btn-modal--confirm {
     background: #0D291C;
     color: #7FD344;
     border-color: #0D291C;
-    box-shadow: 0 3px 0 #051510
+    box-shadow: 0 1px 0 #051510
 }
 
 .btn-modal--confirm:hover:not(:disabled) {
@@ -1701,63 +1701,6 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     color: #299261
 }
 
-/* ── Botones tarjeta ── */
-.btn-pagar,
-.btn-editar,
-.btn-congelar {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 10px;
-    border-radius: 14px;
-    font-size: 0.78rem;
-    font-weight: 800;
-    cursor: pointer;
-    border: 2px solid;
-    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
-}
-
-.btn-pagar:active,
-.btn-editar:active,
-.btn-congelar:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 !important
-}
-
-.btn-pagar {
-    background: #0D291C;
-    color: #7FD344;
-    border-color: #0D291C;
-    box-shadow: 0 3px 0 #051510
-}
-
-.btn-pagar:hover {
-    background: #132e21
-}
-
-.btn-editar {
-    background: white;
-    color: #299261;
-    border-color: #c8e6c9;
-    box-shadow: 0 3px 0 #c8e6c9
-}
-
-.btn-editar:hover {
-    background: #f0faf4
-}
-
-.btn-congelar {
-    background: white;
-    color: #3b82f6;
-    border-color: #bfdbfe;
-    box-shadow: 0 3px 0 #bfdbfe
-}
-
-.btn-congelar:hover {
-    background: #eff6ff
-}
 
 /* ── Grid y estructura ── */
 .mensualidades-grid {
@@ -1897,9 +1840,28 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     text-align: right
 }
 
+/* ── Card actions: grid mobile, fila desktop ── */
 .card-actions {
-    display: flex;
-    gap: 10px
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Pagar ocupa fila completa solo cuando hay 3 botones */
+.card-actions:has(> :nth-child(3))> :first-child {
+    grid-column: 1 / -1;
+}
+
+/* Desktop: todos en una sola fila */
+@media (min-width: 480px) {
+    .card-actions {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card-actions:has(> :nth-child(3))> :first-child {
+        grid-column: auto;
+    }
 }
 
 .header-bar {
@@ -1930,7 +1892,7 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
 @media (max-width:720px) {
 
     .modal-pago .modal-card {
-        height: 100%;
+        max-height: 100%;
     }
 
     .modal-pago .modal-body {

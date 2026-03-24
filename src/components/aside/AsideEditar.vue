@@ -31,7 +31,7 @@
                     </div>
                     <button @click="emit('update:modelValue', false)"
                         class="w-[34px] h-[34px] rounded-[10px] border-2 border-[#0D291C] bg-white flex items-center justify-center cursor-pointer flex-shrink-0 text-[#0D291C] transition-all duration-150 aside-close"
-                        style="box-shadow: 0 3px 0 #0D291C;">
+                        style="box-shadow: 0 1px 0 #0D291C;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -119,7 +119,7 @@ const iniciales = (texto = '') => {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border: 2px solid #000;
-    box-shadow: 0 4px 0 #000;
+    box-shadow: 0 1px 0 #000;
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
     display: flex;

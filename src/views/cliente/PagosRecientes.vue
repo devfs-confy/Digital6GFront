@@ -10,370 +10,252 @@
             <div class="w-[80px]" />
         </div>
 
-        <!-- Filtros -->
-        <div class="bg-white rounded-2xl shadow-sm p-4 filters-bar">
+        <!-- Loading -->
+        <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
+            <div class="det-loader" />
+            <span class="text-sm font-semibold text-gray-400">Cargando historial...</span>
+        </div>
 
-            <div class="filter-field filter-field--search">
-                <label class="filter-label">Buscar</label>
-                <input v-model="busqueda" type="text" placeholder="Sede o referencia..." class="search-input w-full" />
-            </div>
-
-            <div class="filter-field">
-                <label class="filter-label">Sede</label>
-                <select v-model="filtroSede" class="filter-select">
-                    <option value="">Todas las sedes</option>
-                    <option v-for="s in sedesUnicas" :key="s" :value="s">{{ s }}</option>
-                </select>
-            </div>
-
-            <div class="filter-field">
-                <label class="filter-label">Período</label>
-                <select v-model="filtroPeriodo" class="filter-select">
-                    <option value="">Todos</option>
-                    <option value="1">Último mes</option>
-                    <option value="2">Últimos 2 meses</option>
-                    <option value="3">Últimos 3 meses</option>
-                </select>
-            </div>
-
-            <div class="filter-field">
-                <label class="filter-label">Estado</label>
-                <select v-model="filtroEstado" class="filter-select">
-                    <option value="">Todos</option>
-                    <option value="aprobado">Aprobado</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="rechazado">Rechazado</option>
-                </select>
-            </div>
-
-            <button v-if="busqueda || filtroSede || filtroPeriodo || filtroEstado" @click="limpiarFiltros"
-                class="filter-clear-btn">
-                ✕ Limpiar
+        <!-- Error -->
+        <div v-else-if="errorCarga"
+            class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-red-50 border-2 border-red-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#dc2626" viewBox="0 0 24 24"
+                class="shrink-0">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+            <span class="text-sm font-semibold text-red-600 flex-1">{{ errorCarga }}</span>
+            <button @click="cargarHistorial" class="text-xs font-black text-red-600 underline cursor-pointer">
+                Reintentar
             </button>
         </div>
 
-        <!-- Resumen rápido -->
-        <div class="resumen-row">
-            <div class="resumen-card resumen-card--total">
-                <span class="resumen-card__num">{{ formatCOP(totalPagado) }}</span>
-                <span class="resumen-card__label">Total pagado</span>
+        <template v-else>
+
+            <!-- Resumen rápido global (suma todas las sedes) -->
+            <div class="resumen-row">
+                <div class="resumen-card resumen-card--total">
+                    <span class="resumen-card__num">{{ formatCOP(totalPagado) }}</span>
+                    <span class="resumen-card__label">Total pagado</span>
+                </div>
+                <div class="resumen-card resumen-card--count">
+                    <span class="resumen-card__num">{{ totalTx }}</span>
+                    <span class="resumen-card__label">Transacciones</span>
+                </div>
+                <div class="resumen-card resumen-card--iva">
+                    <span class="resumen-card__num">{{ formatCOP(totalIva) }}</span>
+                    <span class="resumen-card__label">IVA total</span>
+                </div>
+                <div class="resumen-card resumen-card--subtotal">
+                    <span class="resumen-card__num">{{ formatCOP(totalSubtotal) }}</span>
+                    <span class="resumen-card__label">Subtotal</span>
+                </div>
             </div>
-            <div class="resumen-card resumen-card--count">
-                <span class="resumen-card__num">{{ pagosFiltrados.length }}</span>
-                <span class="resumen-card__label">Transacciones</span>
-            </div>
-            <div class="resumen-card resumen-card--aprobados">
-                <span class="resumen-card__num">{{ countEstado('aprobado') }}</span>
-                <span class="resumen-card__label">Aprobados</span>
-            </div>
-            <div class="resumen-card resumen-card--pendientes">
-                <span class="resumen-card__num">{{ countEstado('pendiente') }}</span>
-                <span class="resumen-card__label">Pendientes</span>
-            </div>
-        </div>
 
-        <!-- Tabla -->
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
+            <!-- Una tabla por cada sede -->
+            <div v-for="sede in sedes" :key="sede.idPersona"
+                class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
 
-            <div class="table-scroll-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th class="th-cell th-cell--sticky">Sede</th>
-                            <th class="th-cell">Referencia</th>
-                            <th class="th-cell">Valor</th>
-                            <th class="th-cell">Fecha de pago</th>
-                            <th class="th-cell">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <!-- Header de sede -->
+                <div class="sede-header">
+                    <div class="sede-header__avatar">
+                        {{ String(sede.idEstacionamiento).slice(0, 2).toUpperCase() }}
+                    </div>
+                    <div>
+                        <p class="sede-header__title">Sede {{ sede.idEstacionamiento }}</p>
+                        <p class="sede-header__sub">
+                            {{ sede.nombre }} · {{ sede.pagos.length }} pago{{ sede.pagos.length !== 1 ? 's' : '' }}
+                        </p>
+                    </div>
+                </div>
 
-                        <tr v-if="pagosPaginados.length === 0">
-                            <td colspan="5" class="text-center py-20 text-gray-300">
-                                <div class="flex flex-col items-center gap-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path
-                                            d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                                    </svg>
-                                    <span class="text-sm font-medium">No se encontraron pagos</span>
-                                </div>
-                            </td>
-                        </tr>
+                <div class="table-scroll-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="th-cell">N° Factura</th>
+                                <th class="th-cell">Subtotal</th>
+                                <th class="th-cell">IVA</th>
+                                <th class="th-cell">Total</th>
+                                <th class="th-cell">Fecha de pago</th>
+                                <th class="th-cell">Factura</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="sede.pagos.length === 0">
+                                <td colspan="6" class="text-center py-10 text-gray-300">
+                                    <span class="text-sm font-medium">Sin pagos registrados</span>
+                                </td>
+                            </tr>
+                            <tr v-for="(pago, i) in sede.pagos" :key="pago.id" class="table-row"
+                                :style="{ animationDelay: `${i * 0.07}s` }">
 
-                        <tr v-for="(pago, i) in pagosPaginados" :key="pago.id" class="table-row"
-                            :style="{ animationDelay: `${i * 0.04}s` }">
-
-                            <!-- Sede sticky -->
-                            <td class="td-cell td-cell--sticky">
-                                <div class="flex items-center gap-3">
-                                    <div class="sede-avatar">
-                                        {{ pago.sede.slice(0, 2).toUpperCase() }}
+                                <td class="td-cell">
+                                    <span class="ref-code">{{ pago.numeroFactura }}</span>
+                                </td>
+                                <td class="td-cell">
+                                    <span class="subtotal-text">{{ formatCOP(pago.subtotal) }}</span>
+                                </td>
+                                <td class="td-cell">
+                                    <span class="iva-text">{{ formatCOP(pago.iva) }}</span>
+                                </td>
+                                <td class="td-cell">
+                                    <span class="valor-text">{{ formatCOP(pago.total) }}</span>
+                                </td>
+                                <td class="td-cell">
+                                    <div class="fecha-wrap">
+                                        <span class="fecha-dia">{{ formatDia(pago.fecha) }}</span>
+                                        <span class="fecha-mes">{{ formatMes(pago.fecha) }}</span>
                                     </div>
-                                    <span class="font-semibold text-[#0D291C] truncate max-w-[120px]">
-                                        {{ pago.sede }}
-                                    </span>
-                                </div>
-                            </td>
-
-                            <!-- Referencia -->
-                            <td class="td-cell">
-                                <span class="ref-code">{{ pago.referencia }}</span>
-                            </td>
-
-                            <!-- Valor -->
-                            <td class="td-cell">
-                                <span class="valor-text">{{ formatCOP(pago.valor) }}</span>
-                            </td>
-
-                            <!-- Fecha -->
-                            <td class="td-cell">
-                                <div class="fecha-wrap">
-                                    <span class="fecha-dia">{{ formatDia(pago.fecha) }}</span>
-                                    <span class="fecha-mes">{{ formatMes(pago.fecha) }}</span>
-                                </div>
-                            </td>
-
-                            <!-- Estado -->
-                            <td class="td-cell">
-                                <span class="estado-badge" :class="`estado-badge--${pago.estado}`">
-                                    <span class="estado-dot" />
-                                    {{ estadoLabel(pago.estado) }}
-                                </span>
-                            </td>
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Paginación -->
-            <div class="table-foot">
-                <span class="foot-counter">
-                    <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de
-                    <strong>{{ pagosFiltrados.length }}</strong>
-                </span>
-
-                <div class="flex items-center gap-1">
-                    <button @click="paginaActual--" :disabled="paginaActual === 1" class="page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                        </svg>
-                    </button>
-                    <span class="page-mobile-indicator">{{ paginaActual }} / {{ totalPaginas }}</span>
-                    <template v-for="p in totalPaginas" :key="p">
-                        <button @click="paginaActual = p"
-                            :class="['page-btn page-btn--num', paginaActual === p ? 'page-btn--active' : '']">
-                            {{ p }}
-                        </button>
-                    </template>
-                    <button @click="paginaActual++" :disabled="paginaActual === totalPaginas" class="page-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                        </svg>
-                    </button>
+                                </td>
+                                <td class="td-cell">
+                                    <button v-if="pago.tokenFactura" @click="descargarFactura(pago)"
+                                        :disabled="descargando === pago.numeroFactura" class="btn-factura"
+                                        :class="{ 'btn-factura--loading': descargando === pago.numeroFactura }"
+                                        title="Descargar factura electrónica">
+                                        <div v-if="descargando === pago.numeroFactura" class="btn-factura__spinner" />
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                                        </svg>
+                                        <span>{{ descargando === pago.numeroFactura ? 'Descargando...' : 'Factura'
+                                            }}</span>
+                                    </button>
+                                    <span v-else class="sin-factura">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="flex items-center gap-2 text-xs text-gray-400">
-                    <span class="hidden sm:inline">Filas:</span>
-                    <select v-model.number="itemsPorPagina" @change="paginaActual = 1" class="paginator-select">
-                        <option :value="5">5</option>
-                        <option :value="10">10</option>
-                        <option :value="15">15</option>
-                    </select>
+                <!-- Footer por sede -->
+                <div class="table-foot">
+                    <span class="foot-counter">
+                        Mostrando <strong>{{ sede.pagos.length }}</strong>
+                        pago{{ sede.pagos.length !== 1 ? 's' : '' }} recientes
+                    </span>
+                    <Transition name="err-slide">
+                        <div v-if="errDescarga" class="err-descarga">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#dc2626"
+                                viewBox="0 0 24 24" class="shrink-0">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                            </svg>
+                            {{ errDescarga }}
+                        </div>
+                    </Transition>
                 </div>
+
             </div>
 
-        </div>
+        </template>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import PagosService from '@/api/services/pagos.service'
+import FacturaService from '@/api/services/factura.service'
 
-// ── Datos mock — últimos 3 meses ──────────────────────────────────
-// TODO: reemplazar con → await PagosService.getMisPagos({ meses: 3 })
-const mockPagos = ref([
-    { id: 1, sede: 'Digital6G', referencia: 'REF-2026-0142', valor: 120000, fecha: '2026-01-15', estado: 'aprobado' },
-    { id: 2, sede: 'CSU', referencia: 'REF-2026-0138', valor: 95000, fecha: '2026-01-10', estado: 'aprobado' },
-    { id: 3, sede: 'Digital6G', referencia: 'REF-2025-0521', valor: 120000, fecha: '2025-12-15', estado: 'aprobado' },
-    { id: 4, sede: 'CSU', referencia: 'REF-2025-0518', valor: 95000, fecha: '2025-12-10', estado: 'aprobado' },
-    { id: 5, sede: 'Digital6G', referencia: 'REF-2025-0489', valor: 120000, fecha: '2025-12-01', estado: 'pendiente' },
-    { id: 6, sede: 'Norte', referencia: 'REF-2025-0471', valor: 80000, fecha: '2025-11-28', estado: 'aprobado' },
-    { id: 7, sede: 'CSU', referencia: 'REF-2025-0465', valor: 95000, fecha: '2025-11-15', estado: 'rechazado' },
-    { id: 8, sede: 'Norte', referencia: 'REF-2025-0460', valor: 80000, fecha: '2025-11-10', estado: 'aprobado' },
-    { id: 9, sede: 'Digital6G', referencia: 'REF-2025-0451', valor: 120000, fecha: '2025-11-05', estado: 'aprobado' },
-    { id: 10, sede: 'CSU', referencia: 'REF-2025-0440', valor: 95000, fecha: '2025-11-01', estado: 'pendiente' },
-    { id: 11, sede: 'Norte', referencia: 'REF-2025-0431', valor: 80000, fecha: '2025-10-20', estado: 'aprobado' },
-    { id: 12, sede: 'Digital6G', referencia: 'REF-2025-0418', valor: 120000, fecha: '2025-10-15', estado: 'aprobado' },
-])
+// ── Estado ────────────────────────────────────────────────────────
+const sedes = ref([])
+const loading = ref(false)
+const errorCarga = ref('')
+const descargando = ref(null)
+const errDescarga = ref('')
 
-// ── Filtros ───────────────────────────────────────────────────────
-const busqueda = ref('')
-const filtroSede = ref('')
-const filtroPeriodo = ref('')
-const filtroEstado = ref('')
-const paginaActual = ref(1)
-const itemsPorPagina = ref(10)
+// ── Carga del historial ───────────────────────────────────────────
+// Respuesta: { success, data: [{ IdEstacionamiento, pagos: [...] }] }
+const cargarHistorial = async () => {
+    loading.value = true
+    errorCarga.value = ''
+    try {
+        const res = await PagosService.historialPago()
+        const raw = Array.isArray(res?.data) ? res.data : []
 
-const sedesUnicas = computed(() => [...new Set(mockPagos.value.map(p => p.sede))])
-
-const pagosFiltrados = computed(() => {
-    const q = busqueda.value.toLowerCase()
-    const ahora = new Date()
-
-    return mockPagos.value.filter(p => {
-        const matchBusqueda = !q ||
-            p.sede.toLowerCase().includes(q) ||
-            p.referencia.toLowerCase().includes(q)
-
-        const matchSede = !filtroSede.value || p.sede === filtroSede.value
-        const matchEstado = !filtroEstado.value || p.estado === filtroEstado.value
-
-        let matchPeriodo = true
-        if (filtroPeriodo.value) {
-            const meses = parseInt(filtroPeriodo.value)
-            const limite = new Date(ahora)
-            limite.setMonth(limite.getMonth() - meses)
-            matchPeriodo = new Date(p.fecha) >= limite
-        }
-
-        return matchBusqueda && matchSede && matchEstado && matchPeriodo
-    })
-})
-
-const pagosPaginados = computed(() => {
-    const inicio = (paginaActual.value - 1) * itemsPorPagina.value
-    return pagosFiltrados.value.slice(inicio, inicio + itemsPorPagina.value)
-})
-
-const totalPaginas = computed(() =>
-    Math.max(1, Math.ceil(pagosFiltrados.value.length / itemsPorPagina.value))
-)
-const rangoInicio = computed(() =>
-    pagosFiltrados.value.length === 0 ? 0 : (paginaActual.value - 1) * itemsPorPagina.value + 1
-)
-const rangoFin = computed(() =>
-    Math.min(paginaActual.value * itemsPorPagina.value, pagosFiltrados.value.length)
-)
-
-watch([busqueda, filtroSede, filtroPeriodo, filtroEstado], () => { paginaActual.value = 1 })
-
-const limpiarFiltros = () => {
-    busqueda.value = ''
-    filtroSede.value = ''
-    filtroPeriodo.value = ''
-    filtroEstado.value = ''
+        sedes.value = raw.map(sede => ({
+            idPersona: sede.IdPersonaAutorizada,
+            idEstacionamiento: sede.IdEstacionamiento,
+            nombre: sede.NombreApellidos ?? '—',
+            pagos: (sede.pagos ?? []).slice(0, 3).map(p => ({
+                id: p.NumeroFactura,
+                numeroFactura: p.NumeroFactura ?? '—',
+                total: p.Total ?? 0,
+                subtotal: p.Subtotal ?? 0,
+                iva: p.Iva ?? 0,
+                fecha: (p.FechaPago ?? '').slice(0, 10),
+                tokenFactura: p.Token || null,  // '' → null → sin botón
+            }))
+        }))
+    } catch (e) {
+        console.error('[HistorialPagos]', e)
+        errorCarga.value = 'No se pudo cargar el historial de pagos.'
+    } finally {
+        loading.value = false
+    }
 }
 
-// ── Resumen ───────────────────────────────────────────────────────
-const totalPagado = computed(() =>
-    pagosFiltrados.value
-        .filter(p => p.estado === 'aprobado')
-        .reduce((acc, p) => acc + p.valor, 0)
-)
-const countEstado = (estado) =>
-    pagosFiltrados.value.filter(p => p.estado === estado).length
+onMounted(cargarHistorial)
+
+// ── Descarga de factura electrónica ──────────────────────────────
+const descargarFactura = async (pago) => {
+    if (descargando.value) return
+    errDescarga.value = ''
+    descargando.value = pago.numeroFactura
+
+    try {
+        const res = await FacturaService.GetFacturaPos(pago.tokenFactura)
+
+        if (!res?.blob) {
+            errDescarga.value = 'No se pudo obtener la factura. Intenta de nuevo.'
+            return
+        }
+
+        const url = URL.createObjectURL(res.blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = res.fileName ?? `factura-${pago.numeroFactura}.pdf`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+    } catch (e) {
+        console.error('[DescargarFactura]', e)
+        errDescarga.value = 'Error al descargar la factura.'
+    } finally {
+        descargando.value = null
+        if (errDescarga.value) {
+            setTimeout(() => { errDescarga.value = '' }, 4000)
+        }
+    }
+}
+
+// ── Computeds resumen global (todas las sedes) ────────────────────
+const todosPagos = computed(() => sedes.value.flatMap(s => s.pagos))
+const totalTx = computed(() => todosPagos.value.length)
+const totalPagado = computed(() => todosPagos.value.reduce((acc, p) => acc + p.total, 0))
+const totalIva = computed(() => todosPagos.value.reduce((acc, p) => acc + p.iva, 0))
+const totalSubtotal = computed(() => todosPagos.value.reduce((acc, p) => acc + p.subtotal, 0))
 
 // ── Helpers ───────────────────────────────────────────────────────
 const formatCOP = (valor) =>
     new Intl.NumberFormat('es-CO', {
         style: 'currency', currency: 'COP', maximumFractionDigits: 0
-    }).format(valor)
+    }).format(valor ?? 0)
 
-const formatDia = (fecha) =>
-    new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', { day: '2-digit', month: 'short' })
+const formatDia = (fecha) => {
+    if (!fecha) return '—'
+    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', { day: '2-digit', month: 'short' })
+}
 
-const formatMes = (fecha) =>
-    new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', { year: 'numeric' })
-
-const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rechazado: 'Rechazado' })[e] ?? e
+const formatMes = (fecha) => {
+    if (!fecha) return ''
+    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', { year: 'numeric' })
+}
 </script>
 
 <style scoped>
-/* ── Filtros ─────────────────────────────────────────────────────── */
-.filters-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
-}
-
-.filter-field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    min-width: 140px;
-}
-
-.filter-field--search {
-    flex: 2;
-    min-width: 200px;
-}
-
-.filter-label {
-    font-size: 0.62rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #9ca3af;
-    padding-left: 4px;
-}
-
-.search-input,
-.filter-select {
-    background-color: #EAEAEA !important;
-    border: 2px solid #299261 !important;
-    border-radius: 999px !important;
-    padding: 8px 14px !important;
-    font-size: 0.82rem !important;
-    color: #232B3A !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    width: 100%;
-}
-
-.search-input:focus,
-.filter-select:focus {
-    border-color: #0D291C !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.15) !important;
-}
-
-.filter-clear-btn {
-    align-self: flex-end;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #dc2626;
-    background: none;
-    border: 2px solid #fca5a5;
-    border-radius: 999px;
-    padding: 7px 14px;
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
-    white-space: nowrap;
-}
-
-.filter-clear-btn:hover {
-    background-color: #fee2e2;
-}
-
-@media (max-width: 600px) {
-    .filters-bar {
-        flex-direction: column;
-    }
-
-    .filter-field,
-    .filter-field--search {
-        width: 100%;
-        min-width: unset;
-    }
-}
-
-/* ── Resumen rápido ──────────────────────────────────────────────── */
+/* ── Resumen ─────────────────────────────────────────────────────── */
 .resumen-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -417,7 +299,7 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
 }
 
 .resumen-card__num {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 900;
     line-height: 1;
 }
@@ -442,12 +324,59 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     color: #6b7280;
 }
 
-.resumen-card--aprobados .resumen-card__num {
-    color: #299261;
+.resumen-card--iva {
+    border-color: #fef3c7;
 }
 
-.resumen-card--pendientes .resumen-card__num {
+.resumen-card--iva .resumen-card__num {
     color: #d97706;
+}
+
+.resumen-card--subtotal {
+    border-color: #dbeafe;
+}
+
+.resumen-card--subtotal .resumen-card__num {
+    color: #2563eb;
+}
+
+/* ── Header de sede ──────────────────────────────────────────────── */
+.sede-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px 16px;
+    border-bottom: 2px solid #f3f4f6;
+    background: linear-gradient(135deg, #f8fafb 0%, #ffffff 100%);
+}
+
+.sede-header__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background-color: #0D291C;
+    color: #7FD344;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.82rem;
+    flex-shrink: 0;
+    border: 2px solid #e8f5e9;
+}
+
+.sede-header__title {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #0D291C;
+    line-height: 1.2;
+}
+
+.sede-header__sub {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #9ca3af;
+    margin-top: 3px;
 }
 
 /* ── Tabla ───────────────────────────────────────────────────────── */
@@ -471,51 +400,32 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    padding: 14px 16px;
+    padding: 12px 16px;
     text-align: left;
     white-space: nowrap;
 }
 
-.th-cell--sticky {
-    position: sticky;
-    left: 0;
-    z-index: 3;
-    background-color: #0D291C;
-}
-
 .td-cell {
-    padding: 14px 16px;
+    padding: 13px 16px;
     font-size: 0.84rem;
     color: #374151;
     border-bottom: 1px solid #f3f4f6;
     white-space: nowrap;
 }
 
-.td-cell--sticky {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background-color: white;
-    box-shadow: 3px 0 8px rgba(13, 41, 28, 0.06);
-}
-
 .table-row {
     transition: background-color 0.12s;
-    animation: rowIn 0.3s ease both;
+    animation: rowIn 0.32s ease both;
 }
 
 .table-row:hover .td-cell {
     background-color: #f0faf4;
 }
 
-.table-row:hover .td-cell--sticky {
-    background-color: #f0faf4;
-}
-
 @keyframes rowIn {
     from {
         opacity: 0;
-        transform: translateX(-6px);
+        transform: translateX(-8px);
     }
 
     to {
@@ -524,22 +434,7 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     }
 }
 
-/* Avatar de sede */
-.sede-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background-color: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.7rem;
-    flex-shrink: 0;
-}
-
-/* Referencia */
+/* N° Factura */
 .ref-code {
     font-family: monospace;
     font-size: 0.78rem;
@@ -551,11 +446,23 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     letter-spacing: 0.04em;
 }
 
-/* Valor */
+/* Valores */
 .valor-text {
-    font-weight: 800;
+    font-weight: 900;
     color: #0D291C;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
+}
+
+.subtotal-text {
+    font-weight: 700;
+    color: #374151;
+    font-size: 0.84rem;
+}
+
+.iva-text {
+    font-weight: 700;
+    color: #d97706;
+    font-size: 0.84rem;
 }
 
 /* Fecha */
@@ -577,54 +484,62 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     color: #9ca3af;
 }
 
-/* Badges de estado */
-.estado-badge {
+/* ── Botón factura ───────────────────────────────────────────────── */
+.btn-factura {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 2px solid #0D291C;
+    background: white;
+    color: #0D291C;
     font-size: 0.68rem;
     font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #0D291C;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.12s, color 0.12s;
+    white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 4px 10px;
-    border-radius: 999px;
+    letter-spacing: 0.04em;
 }
 
-.estado-dot {
-    width: 6px;
-    height: 6px;
+.btn-factura:hover:not(:disabled) {
+    background: #0D291C;
+    color: #7FD344;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 0 #051510;
+}
+
+.btn-factura:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 #0D291C;
+}
+
+.btn-factura:disabled,
+.btn-factura--loading {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-factura__spinner {
+    width: 11px;
+    height: 11px;
+    border: 2px solid rgba(13, 41, 28, 0.2);
+    border-top-color: #0D291C;
     border-radius: 50%;
+    animation: spin 0.7s linear infinite;
     flex-shrink: 0;
 }
 
-.estado-badge--aprobado {
-    background-color: #dcfce7;
-    color: #16a34a;
+.sin-factura {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #d1d5db;
 }
 
-.estado-badge--aprobado .estado-dot {
-    background-color: #16a34a;
-}
-
-.estado-badge--pendiente {
-    background-color: #fef3c7;
-    color: #d97706;
-}
-
-.estado-badge--pendiente .estado-dot {
-    background-color: #d97706;
-}
-
-.estado-badge--rechazado {
-    background-color: #fee2e2;
-    color: #dc2626;
-}
-
-.estado-badge--rechazado .estado-dot {
-    background-color: #dc2626;
-}
-
-/* ── Paginación ──────────────────────────────────────────────────── */
+/* ── Footer ──────────────────────────────────────────────────────── */
 .table-foot {
     display: flex;
     align-items: center;
@@ -634,6 +549,7 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     background-color: white;
     gap: 12px;
     flex-wrap: wrap;
+    min-height: 48px;
 }
 
 .foot-counter {
@@ -641,66 +557,50 @@ const estadoLabel = (e) => ({ aprobado: 'Aprobado', pendiente: 'Pendiente', rech
     color: #9ca3af;
 }
 
-.page-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1.5px solid #e5e7eb;
-    background-color: white;
-    color: #374151;
-    font-size: 0.78rem;
-    font-weight: 700;
-    cursor: pointer;
+.err-descarga {
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.12s;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 999px;
+    padding: 4px 12px;
 }
 
-.page-btn:hover:not(:disabled) {
-    border-color: #299261;
-    color: #299261;
+/* ── Loader ──────────────────────────────────────────────────────── */
+.det-loader {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid #e8f5e9;
+    border-top-color: #299261;
+    animation: spin 0.7s linear infinite;
 }
 
-.page-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
+/* ── Transitions ─────────────────────────────────────────────────── */
+.err-slide-enter-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.page-btn--active {
-    background-color: #0D291C;
-    border-color: #0D291C;
-    color: #7FD344;
+.err-slide-leave-active {
+    transition: opacity 0.15s ease;
 }
 
-.page-btn--num {
-    display: none;
+.err-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-4px);
 }
 
-.page-mobile-indicator {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #6b7280;
-    padding: 0 4px;
+.err-slide-leave-to {
+    opacity: 0;
 }
 
-@media (min-width: 500px) {
-    .page-btn--num {
-        display: flex;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
-
-    .page-mobile-indicator {
-        display: none;
-    }
-}
-
-.paginator-select {
-    background-color: #f9fafb;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    color: #374151;
-    cursor: pointer;
 }
 </style>

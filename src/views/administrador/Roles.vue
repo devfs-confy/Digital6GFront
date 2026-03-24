@@ -3,14 +3,14 @@
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <div class="w-16 sm:w-20"></div>
-            <h2 class="text-lg sm:text-2xl font-bold text-[#232B3A]">Roles</h2>
-            <div class="flex items-center gap-2">
-                <div
-                    class="flex items-center bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-full border border-black shadow-[0_2px_0_#595858]">
-                    <button @click="$router.back()">Volver</button>
-                </div>
-            </div>
+            <button @click="$router.back()"
+                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                style="box-shadow: #595858 0px 2px 0">
+                <AppIcon name="arrow_left_alt" :size="14" />
+                <span class="hidden sm:inline">Volver</span>
+            </button>
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Roles</h2>
+            <div class="w-[72px] sm:w-[88px]" />
         </div>
 
         <!-- Layout -->
@@ -53,10 +53,8 @@
                                 </p>
                             </div>
                         </div>
-                        <svg v-if="rolSeleccionado?.Id === rol.Id" xmlns="http://www.w3.org/2000/svg" width="14"
-                            height="14" fill="#7FD344" viewBox="0 0 24 24" class="flex-shrink-0">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                        </svg>
+                        <AppIcon v-if="rolSeleccionado?.Id === rol.Id" name="verified" :size="14"
+                            class="flex-shrink-0 text-[#7FD344]" />
                     </button>
                 </div>
             </div>
@@ -67,11 +65,8 @@
                 <!-- Sin selección -->
                 <div v-if="!rolSeleccionado"
                     class="flex-1 bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center gap-3 py-16 text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z" />
-                    </svg>
+                    <AppIcon name="verified" :size="48" class="text-gray-300" />
+
                     <p class="text-sm font-semibold">Selecciona un rol para gestionar sus permisos</p>
                 </div>
 
@@ -109,11 +104,8 @@
                     <div class="bg-white rounded-2xl shadow-sm px-3 py-2.5 flex items-center gap-2 flex-shrink-0">
                         <div
                             class="flex items-center gap-2 flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 focus-within:border-[#299261] transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#9ca3af"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                            </svg>
+                            <AppIcon name="search" :size="12" class="text-gray-400 flex-shrink-0" />
+
                             <input v-model="busquedaPerm" type="text" placeholder="Buscar permiso..."
                                 class="flex-1 min-w-0 text-xs text-gray-700 bg-transparent border-none outline-none" />
                             <button v-if="busquedaPerm" @click="busquedaPerm = ''"
@@ -172,10 +164,9 @@
                                         @click="togglePerm(perm.value)">
                                         <div class="w-4 h-4 rounded-[4px] flex-shrink-0 flex items-center justify-center border-2 transition-all"
                                             :class="isSelected(perm.value) ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-white border-gray-300'">
-                                            <svg v-if="isSelected(perm.value)" xmlns="http://www.w3.org/2000/svg"
-                                                width="9" height="9" fill="white" viewBox="0 0 24 24">
-                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                                            </svg>
+                                            <AppIcon v-if="isSelected(perm.value)" name="verified_green" :size="9"
+                                                class="text-white" />
+
                                         </div>
                                         <span class="text-[0.75rem] flex-1"
                                             :class="isSelected(perm.value) ? 'font-bold text-[#0D291C]' : 'font-semibold text-gray-500'">
@@ -198,11 +189,7 @@
                             class="flex-[3] py-3 rounded-full text-xs font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-white border-2 border-black flex items-center justify-center gap-2 hover:bg-[#132e21] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             style="box-shadow:0 3px 0 #000">
                             <div v-if="loadingPermisos" class="btn-spinner" />
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
-                            </svg>
+                            <AppIcon v-else name="contract_edit" :size="13" />
                             Guardar permisos de {{ rolSeleccionado.Nombre }}
                         </button>
                     </div>

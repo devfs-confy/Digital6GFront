@@ -25,7 +25,10 @@ import { useRouter } from 'vue-router'
 import mensualidades from '@/assets/img/calendar_month.svg?raw'
 import peticiones from '@/assets/img/contract_green.svg?raw'
 import notificaciones from '@/assets/img/stacked_email.svg?raw'
-
+import parqueos from '@/assets/img/parking_sign_green.svg?raw'
+import pagos from '@/assets/img/receipt_long_green.svg?raw'
+import informacion from '@/assets/img/account_circle_green.svg?raw'
+import pqrs from '@/assets/img/contract_edit_green.svg?raw'
 
 const router = useRouter()
 
@@ -37,21 +40,50 @@ const opciones = [
         sub: '',
         route: "/cliente/mensualidad"
     },
+    // {
+    //     id: 2,
+    //     icon: notificaciones,
+    //     titulo: 'Notificaciones Pendientes',
+    //     sub: '3 nuevas sin leer',
+    //     route: "/cliente/notificaciones",
+    // },
+    // {
+    //     id: 3,
+    //     icon: peticiones,
+    //     titulo: 'Cambios y Peticiones',
+    //     sub: '',
+    //     route: "/cliente/peticiones",
+    // },
     {
-        id: 2,
-        icon: notificaciones,
-        titulo: 'Notificaciones Pendientes',
-        sub: '3 nuevas sin leer',
-        route: "/cliente/notificaciones",
+        id: 4,
+        icon: parqueos,
+        titulo: 'Parqueos Recientes',
+        sub: '',
+        route: "/cliente/parqueos",
     },
     {
-        id: 3,
-        icon: peticiones,
-        titulo: 'Cambios y Peticiones',
+        id: 5,
+        icon: pagos,
+        titulo: 'Pagos Recientes',
         sub: '',
-        route: "/cliente/peticiones",
+        route: "/cliente/pagos",
+    },
+    {
+        id: 6,
+        icon: pqrs,
+        titulo: 'PQRS',
+        sub: '',
+        route: "/cliente/pqrs",
 
     },
+    {
+        id: 7,
+        icon: informacion,
+        titulo: 'Informacion Personal',
+        sub: '',
+        route: "/cliente/informacion"
+    },
+
 ]
 </script>
 

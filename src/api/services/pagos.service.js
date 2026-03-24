@@ -19,15 +19,6 @@ class PagosService {
     }
   }
 
-  async RegistrarPago() {
-    try {
-      const response = await api.post(`${this.opcionespago}`);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-
   async iniciarPago(idPersona, body) {
     try {
       const response = await api.post(`${this.iniciarpago}/${idPersona}`, body);
@@ -37,9 +28,9 @@ class PagosService {
     }
   }
 
-  async consultarPago(referencia) {
+  async historialPago() {
     try {
-      const response = await api.get(`${this.estadopago}/${referencia}`);
+      const response = await api.get(`/v1/payments/historial`);
       return response.data;
     } catch (error) {
       return handleError(error);

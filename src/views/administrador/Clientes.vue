@@ -2,14 +2,22 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between relative bg-white rounded-full p-4">
-            <div class="w-[80px]"></div>
-            <h2 class="text-2xl font-bold text-[#232B3A]">Clientes</h2>
-            <div class="flex items-center gap-2 bg-[#7FD344] text-[#232B3A] text-sm px-4 py-2 rounded-full border border-black"
+        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
+            <button @click="$router.back()"
+                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
                 style="box-shadow: #595858 0px 2px 0">
-                <button @click="$router.back()">Volver</button>
-            </div>
+                <AppIcon name="arrow_left_alt" :size="14" />
+                <span class="hidden sm:inline">Volver</span>
+            </button>
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Clientes</h2>
+            <button @click="abrirNuevo"
+                class=" cursor-none pointer-events-none flex items-center gap-1.5 bg-transparent text-transparent text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full">
+                <AppIcon name="add" :size="14" />
+                <span class="hidden sm:inline"></span>
+            </button>
         </div>
+
+
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -108,14 +116,20 @@
                                 <span v-else class="text-[#dc2626] font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
                             <td class="td-cell text-center">
-                                <div class="flex items-center justify-center gap-4">
-                                    <button @click="abrirEditar(cliente)" class="action-btn" title="Editar">
-                                        <p v-html="editarcliente"></p>
+                                <div class="flex items-center justify-center gap-2">
+                                    <button @click="abrirEditar(cliente)"
+                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all"
+                                        title="Editar">
+                                        <AppIcon name="person_edit" :size="35" style="color:black;" />
                                     </button>
                                     <button @click="abrirCambioEstado(cliente)"
-                                        :class="['action-btn', cliente.Estado ? 'action-btn--danger' : 'action-btn--activate']"
+                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent transition-all"
+                                        :class="cliente.Estado
+                                            ? 'text-gray-400 hover:bg-red-100 hover:text-red-500'
+                                            : 'text-gray-400 hover:bg-green-100 hover:text-[#299261]'"
                                         :title="cliente.Estado ? 'Inhabilitar' : 'Activar'">
-                                        <p v-html="cliente.Estado ? inhabilitarSvg : activarSvg"></p>
+                                        <AppIcon :name="cliente.Estado ? 'account_circle_off' : 'how_to_reg'" :size="35"
+                                            style="color:black;" />
                                     </button>
                                 </div>
                             </td>
@@ -277,11 +291,9 @@
                         </div>
                         <button v-if="fN.placas.length < 5" type="button" @click="fN.placas.push('')"
                             class="self-start flex items-center gap-1.5 text-[0.75rem] font-bold text-[#0D291C] hover:text-[#299261] transition-colors border-none bg-transparent p-0 cursor-pointer mt-1">
-                            <span class="w-5 h-5 rounded-lg bg-[#0D291C] flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
-                                    fill="#7FD344">
-                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                                </svg>
+                            <span
+                                class="w-5 h-5 rounded-lg bg-[#0D291C] text-[#7FD344] flex items-center justify-center">
+                                <AppIcon name="add" :size="11" />
                             </span>
                             Agregar placa
                         </button>
