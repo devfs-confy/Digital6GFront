@@ -246,7 +246,7 @@
                 <!-- Nombre titular -->
                 <div class="flex flex-col gap-1.5">
                     <label class="aside-field-label">Nombre completo</label>
-                    <input v-model="form.NombreApellidos" type="text" placeholder="JUAN CARLOS RODRÍGUEZ"
+                    <input v-model="form.NombreApellidos" type="text" placeholder="JUAN..."
                         class="aside-field-input" />
                 </div>
 
@@ -254,11 +254,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
                         <label class="aside-field-label">NIT</label>
-                        <input v-model="form.Nit" type="text" placeholder="900123456" class="aside-field-input" />
+                        <input v-model="form.Nit" type="text" placeholder="901..." class="aside-field-input" />
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label class="aside-field-label">Empresa</label>
-                        <input v-model="form.NombreEmpresa" type="text" placeholder="Empresa SAS"
+                        <input v-model="form.NombreEmpresa" type="text" placeholder="Empr..."
                             class="aside-field-input" />
                     </div>
                 </div>

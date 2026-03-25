@@ -139,7 +139,6 @@
             </div>
 
             <!-- Paginación -->
-            <!-- Paginación — idéntica al resto de vistas -->
             <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
@@ -356,9 +355,6 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
-import editarcliente from '@/assets/img/person_edit.svg?raw'
-import inhabilitarSvg from '@/assets/img/account_circle_off.svg?raw'
-import activarSvg from '@/assets/img/how_to_reg.svg?raw'
 import ClientService from '@/api/services/client.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
@@ -409,13 +405,6 @@ const listaClientes = computed(() =>
     Array.isArray(clientes.value) ? clientes.value : (clientes.value?.data ?? [])
 )
 
-const paginasVisibles = computed(() => {
-    const total = totalPaginas.value
-    const actual = paginaActual.value
-    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
-    const start = Math.max(1, Math.min(actual - 2, total - 4))
-    return Array.from({ length: 5 }, (_, i) => start + i)
-})
 
 // ── Helpers ────────────────────────────────────────────────────────
 const iniciales = (nombre = '') =>

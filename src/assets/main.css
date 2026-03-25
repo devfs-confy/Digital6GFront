@@ -1438,14 +1438,6 @@ input[type="range"]::-ms-fill-lower {
   width: 3.5rem;
 }
 
-.w-16 {
-  width: 4rem;
-}
-
-.w-20 {
-  width: 5rem;
-}
-
 .w-4 {
   width: 1rem;
 }
@@ -1615,10 +1607,6 @@ input[type="range"]::-ms-fill-lower {
   max-width: 110px;
 }
 
-.max-w-\[120px\] {
-  max-width: 120px;
-}
-
 .max-w-\[130px\] {
   max-width: 130px;
 }
@@ -1673,10 +1661,6 @@ input[type="range"]::-ms-fill-lower {
 
 .max-w-xs {
   max-width: 20rem;
-}
-
-.max-w-\[100px\] {
-  max-width: 100px;
 }
 
 .flex-1 {
@@ -1748,6 +1732,10 @@ input[type="range"]::-ms-fill-lower {
 
 .cursor-default {
   cursor: default;
+}
+
+.cursor-none {
+  cursor: none;
 }
 
 .cursor-not-allowed {
@@ -2086,6 +2074,11 @@ input[type="range"]::-ms-fill-lower {
   border-color: rgb(167 243 208 / var(--tw-border-opacity, 1));
 }
 
+.border-\[\#bfdbfe\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(191 219 254 / var(--tw-border-opacity, 1));
+}
+
 .border-\[\#c8e6c9\] {
   --tw-border-opacity: 1;
   border-color: rgb(200 230 201 / var(--tw-border-opacity, 1));
@@ -2212,11 +2205,6 @@ input[type="range"]::-ms-fill-lower {
 .border-yellow-200 {
   --tw-border-opacity: 1;
   border-color: rgb(254 240 138 / var(--tw-border-opacity, 1));
-}
-
-.border-\[\#bfdbfe\] {
-  --tw-border-opacity: 1;
-  border-color: rgb(191 219 254 / var(--tw-border-opacity, 1));
 }
 
 .border-t-\[\#7FD344\] {
@@ -2777,14 +2765,6 @@ input[type="range"]::-ms-fill-lower {
   padding-top: 22px;
 }
 
-.pb-2 {
-  padding-bottom: 0.5rem;
-}
-
-.pt-4 {
-  padding-top: 1rem;
-}
-
 .text-left {
   text-align: left;
 }
@@ -3111,6 +3091,11 @@ input[type="range"]::-ms-fill-lower {
   color: rgb(41 146 97 / var(--tw-text-opacity, 1));
 }
 
+.text-\[\#3b82f6\] {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
+}
+
 .text-\[\#6b7280\] {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity, 1));
@@ -3266,6 +3251,10 @@ input[type="range"]::-ms-fill-lower {
   color: rgb(100 116 139 / var(--tw-text-opacity, 1));
 }
 
+.text-transparent {
+  color: transparent;
+}
+
 .text-violet-800 {
   --tw-text-opacity: 1;
   color: rgb(91 33 182 / var(--tw-text-opacity, 1));
@@ -3283,11 +3272,6 @@ input[type="range"]::-ms-fill-lower {
 .text-yellow-800 {
   --tw-text-opacity: 1;
   color: rgb(133 77 14 / var(--tw-text-opacity, 1));
-}
-
-.text-\[\#3b82f6\] {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 
 .underline {
@@ -3368,33 +3352,9 @@ input[type="range"]::-ms-fill-lower {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.shadow-\[0_2px_0_\#595858\] {
-  --tw-shadow: 0 2px 0 #595858;
-  --tw-shadow-colored: 0 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 .shadow-\[0_2px_0_rgba\(13\2c 41\2c 28\2c 0\.3\)\] {
   --tw-shadow: 0 2px 0 rgba(13,41,28,0.3);
   --tw-shadow-colored: 0 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-\[3px_0_8px_rgba\(0\2c 0\2c 0\2c 0\.07\)\] {
-  --tw-shadow: 3px 0 8px rgba(0,0,0,0.07);
-  --tw-shadow-colored: 3px 0 8px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-\[3px_0_8px_rgba\(0\2c 0\2c 0\2c 0\.12\)\] {
-  --tw-shadow: 3px 0 8px rgba(0,0,0,0.12);
-  --tw-shadow-colored: 3px 0 8px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-sm {
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -3413,6 +3373,24 @@ input[type="range"]::-ms-fill-lower {
 .shadow-\[0_3px_0_\#c8e6c9\] {
   --tw-shadow: 0 3px 0 #c8e6c9;
   --tw-shadow-colored: 0 3px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-\[3px_0_8px_rgba\(0\2c 0\2c 0\2c 0\.07\)\] {
+  --tw-shadow: 3px 0 8px rgba(0,0,0,0.07);
+  --tw-shadow-colored: 3px 0 8px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-\[3px_0_8px_rgba\(0\2c 0\2c 0\2c 0\.12\)\] {
+  --tw-shadow: 3px 0 8px rgba(0,0,0,0.12);
+  --tw-shadow-colored: 3px 0 8px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-sm {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -3786,6 +3764,11 @@ input[type="range"]::-ms-fill-lower {
   background-color: rgb(232 245 233 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-\[\#eff6ff\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-\[\#f0faf4\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(240 250 244 / var(--tw-bg-opacity, 1));
@@ -3834,11 +3817,6 @@ input[type="range"]::-ms-fill-lower {
 .hover\:bg-red-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(220 38 38 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-\[\#eff6ff\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-\[\#0D291C\]:hover {
@@ -4109,12 +4087,12 @@ input[type="range"]::-ms-fill-lower {
     height: 2.25rem;
   }
 
-  .sm\:w-20 {
-    width: 5rem;
-  }
-
   .sm\:w-9 {
     width: 2.25rem;
+  }
+
+  .sm\:w-\[88px\] {
+    width: 88px;
   }
 
   .sm\:grid-cols-2 {
@@ -4251,14 +4229,6 @@ input[type="range"]::-ms-fill-lower {
     --tw-text-opacity: 1;
     color: rgb(229 231 235 / var(--tw-text-opacity, 1));
   }
-}
-
-.\[\&\>svg\]\:fill-\[\#0D291C\]>svg {
-  fill: #0D291C;
-}
-
-.\[\&\>svg\]\:fill-\[\#7FD344\]>svg {
-  fill: #7FD344;
 }
 
 .\[\&\>svg\]\:fill-gray-400>svg {
