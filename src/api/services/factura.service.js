@@ -4,6 +4,17 @@ import { handleError } from "@/utils/error.handler";
 class FacturaService {
   constructor() {
     this.facturapos = "v1/facturas/pos"; // ?token=${token}
+    this.estadoget = "v1/payments/mensualidad/consultar-estado/"
+  }
+
+
+  async GetEstado(rquid) {
+    try {
+      const response = await api.get(`${this.estadoget}${rquid}`);
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
   }
 
   async GetFacturaPos(token) {

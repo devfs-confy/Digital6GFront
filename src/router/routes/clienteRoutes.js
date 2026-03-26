@@ -91,8 +91,8 @@ export const clienteRoutes = {
       component: () => import("@/views/cliente/PQRS.vue"),
     },
     {
-      path: "mensualidad/pago",
-      component: () => import("@/views/cliente/VerFactura.vue"),
+      path: "mensualidad/pago/:rquid",
+      component: () => import("@/views/cliente/EstadoTransaccion.vue"),
     },
 
     { path: "", redirect: "inicio" }, // /cliente → /cliente/inicio

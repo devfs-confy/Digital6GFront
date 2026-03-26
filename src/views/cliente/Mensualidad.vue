@@ -1,19 +1,5 @@
 <template>
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
-        <!-- <div class="header-bar">
-            <div class="header-bar__desktop">
-                <button @click="$router.back()" class="btn-3d">Volver</button>
-                <h2 class="header-bar__title">Mis Mensualidades</h2>
-                <button @click="modalCodigo = true" class="btn-3d">Añadir</button>
-            </div>
-            <div class="header-bar__mobile">
-                <h2 class="header-bar__title">Mis Mensualidades</h2>
-                <div class="header-bar__actions">
-                    <button @click="$router.back()" class="btn-3d">Volver</button>
-                    <button @click="modalCodigo = true" class="btn-3d">Añadir</button>
-                </div>
-            </div>
-        </div> -->
 
         <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
             <button @click="$router.back()"
@@ -483,6 +469,94 @@
             </div>
         </Transition>
 
+        <Transition name="modal">
+            <div v-if="modalConsentimiento" class="modal-overlay" style="z-index:55">
+                <div class="modal-card modal-card--consentimiento">
+                    <div class="modal-head">
+                        <div class="modal-head__left">
+                            <div class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="modal-head__name">Antes de continuar</p>
+                                <p class="modal-head__sub">Tratamiento de datos personales</p>
+                            </div>
+                        </div>
+                        <button @click="cerrarModales" class="modal-close-btn">✕</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="modal-section" style="align-items:center; padding-top:28px; padding-bottom:20px;">
+                            <img src="@/assets/img/logo-avalpay-center.webp" alt="AvalPay" style="height:48px; object-fit:contain;"
+                                @error="$event.target.style.display = 'none'" />
+                            <p
+                                style="font-size:0.72rem; color:#6b7280; font-weight:600; text-align:center; line-height:1.5; margin-top:4px;">
+                                El proceso de pago es gestionado de forma segura por <strong
+                                    style="color:#0D291C;">AvalPay</strong>
+                            </p>
+                        </div>
+
+                        <div class="modal-section">
+                            <div class="consentimiento-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#299261"
+                                    viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
+                                    <path
+                                        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                                </svg>
+                                <div>
+                                    <p style="font-size:0.8rem; font-weight:800; color:#0D291C; margin-bottom:3px;">
+                                        Política de Tratamiento de Datos
+                                    </p>
+                                    <p style="font-size:0.7rem; color:#6b7280; font-weight:600; line-height:1.55;">
+                                        Al realizar este pago, tus datos personales serán tratados conforme a nuestra
+                                        política
+                                        de privacidad y las normas de la Ley 1581 de 2012.
+                                    </p>
+                                    <a href="https://parquearse.com/pdf/politicadetratamientosdedatos.pdf" target="_blank"
+                                        style="display:inline-flex; align-items:center; gap:5px; margin-top:8px; font-size:0.7rem; font-weight:800; color:#299261; text-decoration:none; padding:5px 10px; border-radius:8px; border:1.5px solid #c8e6c9; background:#f0fdf4; transition:background 0.15s;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V9H10c.83 0 1.5.67 1.5 1.5v.5zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V9H15c.83 0 1.5.67 1.5 1.5v2zm4-3H19v1h1.5V11H19v2h-1.5V9h3v1zM9 10.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-2h-1v2z" />
+                                        </svg>
+                                        Ver política completa (PDF)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-section">
+                            <label class="consentimiento-check"
+                                :class="{ 'consentimiento-check--on': consentimientoAceptado }">
+                                <input type="checkbox" v-model="consentimientoAceptado" style="display:none;" />
+                                <div class="check-box" :class="{ 'check-box--on': consentimientoAceptado }">
+                                    <svg v-if="consentimientoAceptado" xmlns="http://www.w3.org/2000/svg" width="12"
+                                        height="12" fill="#7FD344" viewBox="0 0 24 24">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                    </svg>
+                                </div>
+                                <span>He leído y acepto la <strong>Política de Tratamiento de Datos
+                                        Personales</strong></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-foot">
+                        <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
+                        <button @click="confirmarConsentimiento"
+                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5"
+                            :disabled="!consentimientoAceptado">
+                            Continuar al pago
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
         <ModalFacturacion v-model="modalFacturacion"
             :documento-usuario="String(authStore.user?.documento ?? authStore.user?.Documento ?? '')"
             :nombre-usuario="String((authStore.user?.nombres ?? authStore.user?.Nombres ?? '') + ' ' + (authStore.user?.apellidos ?? authStore.user?.Apellidos ?? '')).trim()"
@@ -530,7 +604,8 @@ const iniciandoPago = ref(false)
 const errPago = ref('')
 const fechaInicioManual = ref('')
 const mesesExtra = ref(1)
-
+const modalConsentimiento = ref(false)
+const consentimientoAceptado = ref(false)
 
 
 const hoyISO = new Date().toISOString().slice(0, 10)
@@ -706,11 +781,7 @@ const abrirCongelar = async (m) => {
     }
 }
 
-const cerrarModales = () => {
-    modalCodigo.value = false; modalPago.value = false; modalCongelar.value = false
-    codigoInput.value = ''; mensualidadAccion.value = null; iniciandoPago.value = false; errPago.value = ''
-    opcionesPago.value = []; opcionSeleccionada.value = null; fechaInicioManual.value = ''; errCongelar.value = ''; mesesExtra.value = 1
-}
+
 
 const confirmarCodigo = () => { if (!codigoInput.value.trim()) return; cerrarModales() }
 
@@ -724,6 +795,13 @@ const confirmarPago = () => {
         fechaInicioManual: fechaInicioManual.value || '(usa fechaFin existente)',
     })
     modalPago.value = false
+    consentimientoAceptado.value = false
+    modalConsentimiento.value = true
+}
+
+const confirmarConsentimiento = () => {
+    if (!consentimientoAceptado.value) return
+    modalConsentimiento.value = false
     modalFacturacion.value = true
 }
 
@@ -799,6 +877,12 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     } finally { guardandoCongelar.value = false }
 }
 
+const cerrarModales = () => {
+    modalCodigo.value = false; modalPago.value = false; modalCongelar.value = false
+    modalConsentimiento.value = false; consentimientoAceptado.value = false   // ← nuevo
+    codigoInput.value = ''; mensualidadAccion.value = null; iniciandoPago.value = false; errPago.value = ''
+    opcionesPago.value = []; opcionSeleccionada.value = null; fechaInicioManual.value = ''; errCongelar.value = ''; mesesExtra.value = 1
+}
 
 
 </script>
@@ -1676,6 +1760,61 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     font-weight: 900;
     color: #232B3A;
     text-align: center
+}
+
+.modal-card--consentimiento {
+    max-width: 400px
+}
+
+.consentimiento-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f0fdf4;
+    border: 1.5px solid #c8e6c9;
+    border-radius: 16px
+}
+
+.consentimiento-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafb;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #374151;
+    line-height: 1.5;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none
+}
+
+.consentimiento-check--on {
+    border-color: #299261 !important;
+    background: #f0fdf4 !important
+}
+
+.check-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid #d1d5db;
+    background: white;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+    margin-top: 1px
+}
+
+.check-box--on {
+    background: #0D291C;
+    border-color: #0D291C
 }
 
 @media (max-width:720px) {
