@@ -1084,7 +1084,7 @@ const cerrarModales = () => {
     max-width: 420px;
     display: flex;
     flex-direction: column;
-    overflow: hidden
+    overflow-y: auto;
 }
 
 .modal-card--detalle {
@@ -1817,14 +1817,20 @@ const cerrarModales = () => {
     border-color: #0D291C
 }
 
-@media (max-width:720px) {
-    .modal-pago .modal-card {
-        max-height: 100%
-    }
+.modal-pago .modal-card {
+    max-height: calc(100vh - 32px);
+}
 
-    .modal-pago .modal-body {
-        overflow-y: auto
-    }
+.modal-pago .modal-body {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #c8e6c9 transparent;
+}
+
+.modal-pago .modal-foot {
+    flex-shrink: 0;
 }
 
 @media (max-width:560px) {
