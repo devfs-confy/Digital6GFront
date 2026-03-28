@@ -65,12 +65,13 @@
                 <!-- Header de sede -->
                 <div class="sede-header">
                     <div class="sede-header__avatar">
-                        {{ String(sede.idEstacionamiento).slice(0, 2).toUpperCase() }}
+                        {{ sede.pagos[0]?.idModulo ?? sede.idEstacionamiento }}
                     </div>
                     <div>
-                        <p class="sede-header__title">Sede {{ sede.idEstacionamiento }}</p>
+                        <p class="sede-header__title">{{ sede.nombre }}</p>
                         <p class="sede-header__sub">
-                            {{ sede.nombre }} · {{ sede.pagos.length }} pago{{ sede.pagos.length !== 1 ? 's' : '' }}
+                            {{ sede.pagos.length }} pago{{ sede.pagos.length !== 1 ?
+                                's' : '' }}
                         </p>
                     </div>
                 </div>
@@ -176,21 +177,21 @@ const cargarHistorial = async () => {
     loading.value = true
     errorCarga.value = ''
     try {
-        const res = await PagosService.historialPago()
+        const res = await PagosService.getHistorialPagos()
         const raw = Array.isArray(res?.data) ? res.data : []
-
         sedes.value = raw.map(sede => ({
             idPersona: sede.IdPersonaAutorizada,
             idEstacionamiento: sede.IdEstacionamiento,
             nombre: sede.NombreApellidos ?? '—',
-            pagos: (sede.pagos ?? []).slice(0, 3).map(p => ({
+            pagos: (sede.pagos ?? []).map(p => ({
                 id: p.NumeroFactura,
+                idModulo: p.IdModulo ?? '—',
                 numeroFactura: p.NumeroFactura ?? '—',
                 total: p.Total ?? 0,
                 subtotal: p.Subtotal ?? 0,
                 iva: p.Iva ?? 0,
                 fecha: (p.FechaPago ?? '').slice(0, 10),
-                tokenFactura: p.Token || null,  // '' → null → sin botón
+                tokenFactura: p.Token || null,
             }))
         }))
     } catch (e) {

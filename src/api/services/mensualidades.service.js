@@ -1,107 +1,125 @@
-// src/api/services/mensualidades.service.js
 import { api } from "../axios";
 import { handleError } from "@/utils/error.handler";
 
+const BASE_CLIENT = "v1/mensualidades/clientes";
+const BASE_ADMIN = "v1/mensualidades/admin";
+
 class MensualidadesService {
-  constructor() {
-    this.nameRoute = "v1/mensualidades";
-    this.adminRoute = "v1/mensualidades/admin";
-    this.clientRoute = "v1/mensualidades/clientes/mis-mensualidades";
-    this.cambioPlacas = "v1/mensualidades/clientes/cambio-placas";
-    this.congelamieto = "v1/mensualidades/clientes/congelamientos";
+  // ── Cliente ───────────────────────────────────────────────
+
+  // GET /v1/mensualidades/clientes/mis-mensualidades
+  async getMisMensualidades() {
+    try {
+      const { data } = await api.get(`${BASE_CLIENT}/mis-mensualidades`);
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
   }
 
-  // ── ADMIN ──────────────────────────────────────────────────────────
+  // GET /v1/mensualidades/clientes/mis-mensualidades/{id}
+  // 404 si no existe o no pertenece al usuario autenticado
+  async getMiMensualidadById(id) {
+    try {
+      const { data } = await api.get(`${BASE_CLIENT}/mis-mensualidades/${id}`);
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // POST /v1/mensualidades/clientes/cambio-placas
+  // Body: { IdPersonaAutorizada, Detalles: [{ ColumnaPlaca, PlacaNueva }] }
+  // 202 sin body | 400 tipo incompatible | 404 no encontrada | 409 límite mensual o placa duplicada
+  async cambiarPlacas(payload) {
+    try {
+      const { data } = await api.post(`${BASE_CLIENT}/cambio-placas`, payload);
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // GET /v1/mensualidades/clientes/congelamientos/{idPersona}
+  // 400 si no existe la persona autorizada
+  async getCongelamiento(idPersona) {
+    try {
+      const { data } = await api.get(
+        `${BASE_CLIENT}/congelamientos/${idPersona}`,
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // POST /v1/mensualidades/clientes/congelamientos/{idPersona}
+  // Body: { FechaInicioPeriodoNvo: ISO date-time, Observacion }
+  // 201 sin body | 400 no se puede congelar | 409 congelamiento activo solapado
+  async crearCongelamiento(idPersona, { FechaInicioPeriodoNvo, Observacion }) {
+    try {
+      const { data } = await api.post(
+        `${BASE_CLIENT}/congelamientos/${idPersona}`,
+        {
+          FechaInicioPeriodoNvo: new Date(FechaInicioPeriodoNvo).toISOString(),
+          Observacion,
+        },
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // ── Admin ─────────────────────────────────────────────────
+
   // GET /v1/mensualidades/admin?sede={id}&page&limit&search
+  // sede es obligatorio — 400 si no se envía | 403 sin permiso VER-MENSUALIDADES
   async getAllBySede({ sede, page = 1, limit = 10, search = "" } = {}) {
     try {
       const params = { sede, page, limit };
       if (search) params.search = search;
-      const response = await api.get(this.adminRoute, { params });
-      return response.data;
+      const { data } = await api.get(BASE_ADMIN, { params });
+      return data;
     } catch (error) {
       return handleError(error);
     }
   }
 
   // GET /v1/mensualidades/admin/detalle/{id}
+  // 403 sin permiso | 404 no encontrada
   async getDetalleById(id) {
     try {
-      const response = await api.get(`${this.adminRoute}/detalle/${id}`);
-      return response.data;
+      const { data } = await api.get(`${BASE_ADMIN}/detalle/${id}`);
+      return data;
     } catch (error) {
       return handleError(error);
     }
   }
 
   // GET /v1/mensualidades/admin/api-sede/{idsede}/{documento}
+  // Consulta directa a la API local de la sede vía gateway
+  // 404 si la persona no existe en la sede
   async getDesdeApiSede(idsede, documento) {
     try {
-      const response = await api.get(
-        `${this.adminRoute}/api-sede/${idsede}/${documento}`,
+      const { data } = await api.get(
+        `${BASE_ADMIN}/api-sede/${idsede}/${documento}`,
       );
-      return response.data;
+      return data;
     } catch (error) {
       return handleError(error);
     }
   }
 
   // PUT /v1/mensualidades/admin/{id}
+  // Body: todos los campos opcionales — NombreApellidos, IdAutorizacion, Nit,
+  //       NombreEmpresa, Placa1-5, Estado, FechaInicio, FechaFin
+  // Fechas en formato "YYYY-MM-DD HH:mm:ss"
+  // 403 sin permiso | 404 no encontrada
   async updateById(id, dto) {
     try {
-      const response = await api.put(`${this.adminRoute}/${id}`, dto);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-
-  // ── USUARIO AUTENTICADO ────────────────────────────────────────────
-
-  // GET /v1/mensualidades/mis-mensualidades
-  async getMisMensualidades() {
-    try {
-      const response = await api.get(`${this.clientRoute}`);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-
-  // GET /v1/mensualidades/mis-mensualidades/{id}
-  async getMiMensualidadById(id) {
-    try {
-      const response = await api.get(`${this.clientRoute}/${id}`);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-  // PUT /v1/mensualidades/clientes/cambio-placas
-  async ChangeCarPlate(payload) {
-    try {
-      const response = await api.post(`${this.cambioPlacas}`, payload);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-
-  // GET /v1/mensualidades/clientes/congelamientos
-  async getCongelamiento(id) {
-    try {
-      const response = await api.get(`${this.congelamieto}/${id}`);
-      return response.data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-
-  // PUT /v1/mensualidades/clientes/congelamientos
-  async updateCongelamiento(id, body) {
-    try {
-      const response = await api.post(`${this.congelamieto}/${id}`, body);
-      return response.data;
+      const { data } = await api.put(`${BASE_ADMIN}/${id}`, dto);
+      return data;
     } catch (error) {
       return handleError(error);
     }
