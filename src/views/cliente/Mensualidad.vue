@@ -168,7 +168,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
@@ -203,7 +203,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -239,7 +239,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -378,7 +378,7 @@
                                         estadoLabel(mensualidadAccion?.estado) }}</span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                            }}</strong>
+                                        }}</strong>
                                         días restantes
                                     </span>
                                 </div>
@@ -547,13 +547,72 @@
                             class="mx-5 mb-1 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
                             {{ errPlacas }}</div>
                     </div>
+                    <!-- Banner: upgrade moto→carro requiere pago -->
+                    <Transition name="modal">
+                        <div v-if="infoExcedente" class="modal-section">
+                            <div class="flex flex-col gap-3 rounded-2xl border-2 border-[#c8e6c9] bg-[#f0fdf4] p-4">
+                                <div class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#299261"
+                                        viewBox="0 0 24 24" class="shrink-0">
+                                        <path
+                                            d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                    </svg>
+                                    <span class="text-[0.82rem] font-black text-[#0D291C]">Cambio de autorización</span>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between text-[0.72rem] font-semibold text-gray-500">
+                                    <span>{{ infoExcedente.autorizacionAnterior }}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#299261"
+                                        viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                    <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva }}</span>
+                                </div>
+                                <div
+                                    class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
+                                    <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
+                                        <span>Subtotal</span>
+                                        <span>{{ formatPrecio(infoExcedente.excedente?.subtotal) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
+                                        <span>IVA</span>
+                                        <span>{{ formatPrecio(infoExcedente.excedente?.iva) }}</span>
+                                    </div>
+                                    <div
+                                        class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
+                                        <span>Total a pagar</span>
+                                        <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
+                                            }}</span>
+                                    </div>
+                                </div>
+                                <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
+                                    Al confirmar serás redirigido a la pasarela de pago para cubrir el excedente por la
+                                    diferencia de autorización.
+                                </p>
+                            </div>
+                        </div>
+                    </Transition>
+
+
                     <div class="modal-foot">
-                        <button @click="modalPlacas = false" class="btn-modal btn-modal--cancel">Cancelar</button>
-                        <button @click="confirmarCambioPlacas"
+                        <button @click="infoExcedente ? (infoExcedente = null) : (modalPlacas = false)"
+                            class="btn-modal btn-modal--cancel">
+                            {{ infoExcedente ? 'Volver' : 'Cancelar' }}
+                        </button>
+                        <button v-if="!infoExcedente" @click="confirmarCambioPlacas"
                             class="btn-modal btn-modal--confirm flex items-center justify-center gap-2"
                             :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas">
                             <div v-if="guardandoPlacas" class="btn-spinner" />
                             Confirmar cambio
+                        </button>
+                        <button v-else @click="confirmarPagoExcedente"
+                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                            </svg>
+                            Ir a pagar ({{ formatPrecio(infoExcedente?.excedente?.total) }})
                         </button>
                     </div>
                 </div>
@@ -694,6 +753,11 @@ const nuevasPlacas = ref(['', '', '', '', ''])
 const guardandoPlacas = ref(false)
 const errPlacas = ref('')
 const placaCambiada = ref(false)
+
+// ── Cambio de autorización (moto↔carro) ───────────────────
+const infoAutorizacion = ref(null)      // respuesta de getChangesByPersona
+const infoExcedente = ref(null)         // data cuando requierePago: true
+const loadingAutorizacion = ref(false)
 
 // ── Congelamiento ─────────────────────────────────────────────
 const infoCongelamiento = ref(null)
@@ -849,52 +913,96 @@ const abrirDetalle = async (m) => {
 const abrirModalPlacas = () => {
     if (placaCambiada.value) return
     errPlacas.value = ''
+    infoExcedente.value = null
+    infoAutorizacion.value = null
     const totalFilas = Math.max(placasDetalle.value.length, 2)
     nuevasPlacas.value = PLACA_KEYS.slice(0, totalFilas).map((_, i) => placasDetalle.value[i] ?? '')
     modalPlacas.value = true
+
+    // Cargar info de autorización en paralelo (no bloquea apertura del modal)
+    loadingAutorizacion.value = true
+    MensualidadesService.getChangesByPersona(mensualidadAccion.value.id)
+        .then(res => { infoAutorizacion.value = res?.data ?? res })
+        .catch(() => { infoAutorizacion.value = null })
+        .finally(() => { loadingAutorizacion.value = false })
 }
 
 const confirmarCambioPlacas = async () => {
     errPlacas.value = ''
+    infoExcedente.value = null
+
     if (!nuevasPlacas.value[0]?.trim()) {
         errPlacas.value = 'La placa principal es obligatoria.'
         return
     }
-    const Detalles = PLACA_KEYS.map((columna, i) => {
-        const nueva = nuevasPlacas.value[i]?.trim().toUpperCase() || null
-        const actual = placasDetalle.value[i] ?? null
-        return nueva !== actual ? { ColumnaPlaca: columna, PlacaNueva: nueva ?? '' } : null
-    }).filter(Boolean)
-
-    if (!Detalles.length) { errPlacas.value = 'No hay cambios para guardar.'; return }
 
     guardandoPlacas.value = true
     try {
-        await MensualidadesService.cambiarPlacas({
+        // Siempre intenta cambio de autorización primero
+        const placasPayload = nuevasPlacas.value.map(p => {
+            const val = p?.trim().toUpperCase() || null
+            return [val]
+        })
+        console.log('[payload Placas]', JSON.stringify(placasPayload))
+
+        const res = await MensualidadesService.cambiarAutorizacion({
             IdPersonaAutorizada: Number(mensualidadAccion.value.id),
-            Detalles,
+            Placas: placasPayload,
+            Email: String(authStore.user?.email ?? authStore.user?.Email ?? ''),
+            Telefono: String(authStore.user?.telefono ?? authStore.user?.Telefono ?? ''),
+            IdentificacionCliente: String(
+                authStore.user?.documento ?? authStore.user?.Documento ?? ''
+            ),
         })
-        const nv = [...placasDetalle.value]
-        Detalles.forEach(({ ColumnaPlaca, PlacaNueva }) => {
-            const i = PLACA_KEYS.indexOf(ColumnaPlaca)
-            if (i !== -1) nv[i] = PlacaNueva || undefined
-        })
-        placasDetalle.value = nv.filter(Boolean)
-        const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
-        if (idx !== -1) mensualidades.value[idx].placas = [...placasDetalle.value]
-        marcarCambioMensual(mensualidadAccion.value.id)
-        placaCambiada.value = true
+        console.log('[cambiarAutorizacion] res:', JSON.stringify(res))
+
+
+        const data = res?.data ?? res
+
+        console.log('[cambiarAutorizacion] data:', JSON.stringify(data))
+        console.log('[cambiarAutorizacion] requierePago:', data?.requierePago)
+
+        if (data?.requierePago) {
+
+            infoExcedente.value = data
+
+            return
+        }
+
+
+        _aplicarCambioPlacasLocal()
         modalPlacas.value = false
+
     } catch (e) {
         const status = e?.response?.status
         const msg = e?.response?.data?.message
-        if (status === 409) errPlacas.value = 'Ya realizaste un cambio de placas este mes.'
-        else if (status === 400) errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Tipo de vehículo incompatible.')
-        else errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar las placas.')
+
+        if (status === 409) errPlacas.value = 'Una o más placas ya están registradas en la sede.'
+        else if (status === 404) errPlacas.value = 'Persona autorizada no encontrada.'
+        else if (status === 400) errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Datos inválidos.')
+        else errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al procesar el cambio.')
     } finally {
         guardandoPlacas.value = false
     }
 }
+
+// Helper: actualiza estado local de placas después de un cambio exitoso
+const _aplicarCambioPlacasLocal = () => {
+    const nuevas = nuevasPlacas.value.map(p => p?.trim().toUpperCase() || null).filter(Boolean)
+    placasDetalle.value = nuevas
+    const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
+    if (idx !== -1) mensualidades.value[idx].placas = [...nuevas]
+    marcarCambioMensual(mensualidadAccion.value.id)
+    placaCambiada.value = true
+}
+
+const confirmarPagoExcedente = () => {
+    modalPlacas.value = false
+    consentimientoAceptado.value = false
+    modalConsentimiento.value = true
+}
+
+
 // ── Congelamiento ─────────────────────────────────────────────
 const abrirCongelar = async (m) => {
     mensualidadAccion.value = m
@@ -1059,25 +1167,49 @@ const confirmarConsentimiento = () => {
 const ejecutarPago = async ({ IdentificacionCliente }) => {
     errPago.value = ''
     iniciandoPago.value = true
+
+    // ✅ Guardar snapshot por si hay error y necesitamos restaurar
+    const excedentePendiente = infoExcedente.value
+    const placasSnapshot = [...nuevasPlacas.value]
+
     try {
         const m = mensualidadAccion.value
         const user = authStore.user
-        const email = String(user?.email ?? user?.Email ?? user?.correo ?? '')
+        const email = String(user?.email ?? user?.Email ?? '')
         const telefono = String(user?.telefono ?? user?.Telefono ?? '')
-        const documento = String(
-            authStore.user?.documento ??
-            authStore.user?.Documento ??
-            authStore.user?.cedula ??
-            authStore.user?.nroDocumento ?? ''
-        )
 
         if (!email) { errPago.value = 'No se encontró el email del usuario.'; return }
-        if (!documento) { errPago.value = 'No se encontró el documento del usuario.'; return }
 
-        const cantidadMeses = esSoloTarjeta.value ? 1 : (opcionSeleccionada.value.cantidadMeses ?? 1)
+        // ── Caso: pago de excedente por cambio de autorización ──
+        if (excedentePendiente) {
+            const body = {
+                Email: email,
+                Telefono: telefono,
+                CantidadMeses: 1,
+                ModalidadPago: 'CAMBIO_AUTORIZACION',
+                IdentificacionCliente,
+                IdAutorizacionNueva: Number(excedentePendiente.IdAutorizacionNueva),
+                PlacasNuevas: {
+                    Placa1: placasSnapshot[0]?.trim().toUpperCase() || null,
+                    Placa2: placasSnapshot[1]?.trim().toUpperCase() || null,
+                    Placa3: placasSnapshot[2]?.trim().toUpperCase() || null,
+                    Placa4: placasSnapshot[3]?.trim().toUpperCase() || null,
+                    Placa5: placasSnapshot[4]?.trim().toUpperCase() || null,
+                },
+            }
+            const res = await PagoService.iniciarPago(m.id, body)
+            const data = res?.data ?? res
+            const url = data?.urlPago ?? null
+            if (url) { window.location.href = url; return }
+            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
+            infoExcedente.value = excedentePendiente
+            nuevasPlacas.value = placasSnapshot
+            modalPlacas.value = true
+            return
+        }
 
-        console.log(IdentificacionCliente)
-
+        // ── Caso normal: renovación de mensualidad ──
+        const cantidadMeses = esSoloTarjeta.value ? 1 : (opcionSeleccionada.value?.cantidadMeses ?? 1)
         const body = {
             Email: email,
             Telefono: telefono,
@@ -1086,23 +1218,18 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             IdentificacionCliente,
             ...(!m.fechaFin && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
-
         const res = await PagoService.iniciarPago(m.id, body)
         const data = res?.data ?? res
         const url = data?.urlPago ?? null
+        if (url) { window.location.href = url; return }
+        errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
+        modalFacturacion.value = false
+        modalPago.value = true
 
-        if (url) {
-            window.location.href = url
-        } else {
-            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
-            modalFacturacion.value = false
-            modalPago.value = true
-        }
     } catch (e) {
         const status = e?.response?.status
         const data = e?.response?.data
         const msg = data?.message
-
         if (status === 409 && data?.data?.UrlPago) {
             pagoPendiente.value = {
                 urlPago: data.data.UrlPago,
@@ -1110,17 +1237,21 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 valor: data.data.valor ?? data.data.Valor ?? null,
                 cus: data.data.cus ?? null,
             }
-            errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Tienes una transacción pendiente de pago.')
-        } else {
-            errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al iniciar el pago.')
         }
+        errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al iniciar el pago.')
         modalFacturacion.value = false
-        modalPago.value = true
+        if (excedentePendiente) {
+            // ✅ Restaurar banner en modal de placas
+            infoExcedente.value = excedentePendiente
+            nuevasPlacas.value = placasSnapshot
+            modalPlacas.value = true
+        } else {
+            modalPago.value = true
+        }
     } finally {
         iniciandoPago.value = false
     }
 }
-
 // ── Cerrar modales ────────────────────────────────────────────
 const cerrarModales = () => {
     modalCodigo.value = false
@@ -1128,6 +1259,7 @@ const cerrarModales = () => {
     modalCongelar.value = false
     modalConsentimiento.value = false
     modalFacturacion.value = false
+    modalPlacas.value = false          // ← asegurarse que también cierra este
     pagoPendiente.value = null
     codigoInput.value = ''
     mensualidadAccion.value = null
@@ -1139,6 +1271,10 @@ const cerrarModales = () => {
     errCongelar.value = ''
     consentimientoAceptado.value = false
     iniciandoPago.value = false
+    infoExcedente.value = null
+    infoAutorizacion.value = null
+    errPlacas.value = ''
+    nuevasPlacas.value = ['', '', '', '', '']
 }
 </script>
 

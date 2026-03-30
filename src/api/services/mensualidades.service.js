@@ -44,6 +44,7 @@ class MensualidadesService {
   // Body: { IdPersonaAutorizada, Placas, Email?, IdentificacionCliente?, Telefono? }
   // 200 con datos de pago si es upgrade (moto→carro) | 200 aplicado si es downgrade (carro→moto)
   // 400 validación fallida | 404 persona no encontrada | 409 placas duplicadas
+  // mensualidades.service.js — cambiarAutorizacion
   async cambiarAutorizacion({
     IdPersonaAutorizada,
     Placas,
@@ -51,18 +52,15 @@ class MensualidadesService {
     IdentificacionCliente,
     Telefono,
   }) {
-    try {
-      const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
-        IdPersonaAutorizada,
-        Placas,
-        ...(Email && { Email }),
-        ...(IdentificacionCliente && { IdentificacionCliente }),
-        ...(Telefono && { Telefono }),
-      });
-      return data;
-    } catch (error) {
-      return handleError(error);
-    }
+    // ✅ Sin try/catch — que el error suba al componente
+    const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
+      IdPersonaAutorizada,
+      Placas,
+      ...(Email && { Email }),
+      ...(IdentificacionCliente && { IdentificacionCliente }),
+      ...(Telefono && { Telefono }),
+    });
+    return data;
   }
 
   // GET /v1/autorizaciones-mensuales/changes?IdPersona={id}
