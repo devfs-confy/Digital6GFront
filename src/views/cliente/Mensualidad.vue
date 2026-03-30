@@ -65,6 +65,16 @@
                         <span class="card-progress-label">{{ porcentajeVigencia(m) }}% del periodo</span>
                     </div>
                 </template>
+                <div v-else-if="m.estado"
+                    class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706" viewBox="0 0 24 24"
+                        class="shrink-0">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                    </svg>
+                    <span class="text-[0.72rem] font-bold text-amber-700 leading-snug">Pago pendiente — sin fechas de
+                        vigencia aún</span>
+                </div>
                 <div v-else class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706" viewBox="0 0 24 24"
                         class="shrink-0">
@@ -158,7 +168,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
@@ -183,7 +193,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -316,7 +326,7 @@
                                         estadoLabel(mensualidadAccion?.estado) }}</span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                            }}</strong>
+                                        }}</strong>
                                         días restantes
                                     </span>
                                 </div>
@@ -682,6 +692,17 @@ const estadoClase = (m) => ({
     'card--congelada': m.estado === 'congelada',
 })
 
+const mesActual = () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+const verificarLimiteMensual = (id) =>
+    localStorage.getItem(`placa_changed_${id}_${mesActual()}`) === '1'
+
+const marcarCambioMensual = (id) =>
+    localStorage.setItem(`placa_changed_${id}_${mesActual()}`, '1')
+
 const diasRestantes = (m) => {
     const ff = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
     const fi = typeof m === 'object' ? m?.fechaInicio : null
@@ -755,7 +776,7 @@ const abrirDetalle = async (m) => {
     detalleCompleto.value = null
     placasDetalle.value = []
     errDetalle.value = ''
-    placaCambiada.value = false
+    placaCambiada.value = verificarLimiteMensual(m.id)
     loadingDetalle.value = true
     modalDetalle.value = true
     try {
@@ -808,6 +829,7 @@ const confirmarCambioPlacas = async () => {
         placasDetalle.value = nv.filter(Boolean)
         const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
         if (idx !== -1) mensualidades.value[idx].placas = [...placasDetalle.value]
+        marcarCambioMensual(mensualidadAccion.value.id)
         placaCambiada.value = true
         modalPlacas.value = false
     } catch (e) {
@@ -820,7 +842,6 @@ const confirmarCambioPlacas = async () => {
         guardandoPlacas.value = false
     }
 }
-
 // ── Congelamiento ─────────────────────────────────────────────
 const abrirCongelar = async (m) => {
     mensualidadAccion.value = m
