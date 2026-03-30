@@ -62,6 +62,17 @@ class PagosService {
       return handleError(error);
     }
   }
+
+  async getEstadoReferencia(requestId) {
+    try {
+      const { data } = await api.get(
+        `${BASE}/mensualidad/consultar-estado/${requestId}`,
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
 }
 
 export default new PagosService();

@@ -168,7 +168,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
@@ -176,8 +176,54 @@
                     <div class="modal-body">
                         <div v-if="loadingOpciones" class="flex flex-col items-center gap-3 py-10">
                             <div class="det-loader" />
-                            <span class="text-xs text-gray-400 font-semibold">Cargando opciones de pago...</span>
+                            <span class="text-xs text-gray-400 font-semibold">Verificando estado del pago...</span>
                         </div>
+                        <template v-else-if="pagoPendiente && !opcionesPago.length">
+                            <div class="modal-section">
+                                <div class="flex flex-col gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4">
+                                    <div class="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#d97706"
+                                            viewBox="0 0 24 24" class="shrink-0">
+                                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                        </svg>
+                                        <span class="text-[0.82rem] font-black text-amber-800">Tienes un pago
+                                            pendiente</span>
+                                    </div>
+                                    <p class="text-[0.72rem] font-semibold text-amber-700 leading-relaxed">
+                                        Encontramos una transacción pendiente para esta mensualidad.
+                                        Completa el pago antes de iniciar uno nuevo.
+                                    </p>
+                                    <div class="flex flex-col gap-1.5 text-[0.72rem] font-semibold text-amber-700">
+                                        <!-- <div v-if="pagoPendiente.referencia" class="flex justify-between">
+                                            <span
+                                                class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Referencia</span>
+                                            <span class="font-mono font-black">{{ pagoPendiente.referencia }}</span>
+                                        </div> -->
+                                        <div v-if="pagoPendiente.valor" class="flex justify-between">
+                                            <span
+                                                class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
+                                            <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
+                                            }}</span>
+                                        </div>
+                                        <div v-if="pagoPendiente.cus" class="flex justify-between">
+                                            <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
+                                                Transacción</span>
+                                            <span class="font-mono font-black">{{ pagoPendiente.cus }}</span>
+                                        </div>
+                                    </div>
+                                    <a :href="pagoPendiente.urlPago"
+                                        class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-[14px] text-[0.78rem] font-black border-2 bg-amber-500 text-white border-amber-600 shadow-[0_3px_0_#b45309] hover:bg-amber-600 active:translate-y-[2px] transition-all cursor-pointer no-underline">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                                        </svg>
+                                        Continuar al pago pendiente
+                                    </a>
+                                </div>
+                            </div>
+                        </template>
+
                         <div v-else-if="errPago && !opcionesPago.length" class="modal-section">
                             <div
                                 class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
@@ -193,7 +239,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -273,8 +319,14 @@
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
                                     {{ errPago }}</div>
                             </div>
+
+
+
                         </template>
                     </div>
+
+                    <!-- Transacción pendiente -->
+
                     <div class="modal-foot">
                         <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
                         <button @click="confirmarPago"
@@ -326,7 +378,7 @@
                                         estadoLabel(mensualidadAccion?.estado) }}</span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                        }}</strong>
+                                            }}</strong>
                                         días restantes
                                     </span>
                                 </div>
@@ -657,6 +709,7 @@ const iniciandoPago = ref(false)
 const errPago = ref('')
 const fechaInicioManual = ref('')
 const mesesExtra = ref(1)
+const pagoPendiente = ref(null) // { urlPago, referencia, valor, cus }
 
 // ── Constantes ────────────────────────────────────────────────
 const hoyISO = new Date().toISOString().slice(0, 10)
@@ -885,11 +938,45 @@ const abrirPago = async (m) => {
     opcionesPago.value = []
     opcionSeleccionada.value = null
     errPago.value = ''
+    pagoPendiente.value = null
     mesesExtra.value = 1
     fechaInicioManual.value = m.fechaFin ? '' : hoyISO
     loadingOpciones.value = true
     modalPago.value = true
+
     try {
+        // ── 1. Verificar pago pendiente
+        try {
+            const historial = await PagoService.getHistorialTransacciones()
+            const transacciones = Array.isArray(historial) ? historial : (historial?.data ?? [])
+
+
+
+            const pendiente = transacciones.find(t => t.Status === 'PENDIENTE')
+
+            if (pendiente?.RequestId) {
+                const estadoRes = await PagoService.getEstadoReferencia(pendiente.RequestId)
+
+                const estado = estadoRes?.data ?? estadoRes
+                const urlPago = estado?.UrlPago ?? estado?.urlPago ?? null
+
+                if (urlPago) {
+                    pagoPendiente.value = {
+                        urlPago,
+                        referencia: estado?.RequestId ?? pendiente?.Reference ?? null,
+                        valor: estado?.Valor ?? pendiente?.Valor ?? null,
+                        cus: estado?.IdTransaccion ?? null,
+                    }
+                    loadingOpciones.value = false
+                    return
+                }
+            }
+        } catch (e) {
+            console.warn('[abrirPago] No se pudo verificar historial:', e)
+            // ✅ Fix 4: no dejar loadingOpciones colgado si el bloque interno falla
+        }
+
+        // ── 2. Sin pendiente — cargar opciones normalmente
         const res = await PagoService.getOpcionesPago(m.id, 1)
         const data = res?.data ?? res
         if (res?.success === false) {
@@ -898,13 +985,19 @@ const abrirPago = async (m) => {
         }
         opcionesPago.value = Array.isArray(data) ? data : []
         opcionSeleccionada.value = opcionesPago.value[0] ?? null
+
     } catch (e) {
         const msg = e?.response?.data?.message
         errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'No se pudieron cargar las opciones de pago.')
     } finally {
+        // ✅ Fix 5: el finally siempre apaga el spinner, incluso si ya se apagó antes
         loadingOpciones.value = false
     }
 }
+
+
+
+
 
 const seleccionarOpcion = async (op) => {
     if (mesesExtra.value !== 1) {
@@ -971,7 +1064,12 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
         const user = authStore.user
         const email = String(user?.email ?? user?.Email ?? user?.correo ?? '')
         const telefono = String(user?.telefono ?? user?.Telefono ?? '')
-        const documento = String(user?.documento ?? user?.Documento ?? user?.cedula ?? user?.nroDocumento ?? '')
+        const documento = String(
+            authStore.user?.documento ??
+            authStore.user?.Documento ??
+            authStore.user?.cedula ??
+            authStore.user?.nroDocumento ?? ''
+        )
 
         if (!email) { errPago.value = 'No se encontró el email del usuario.'; return }
         if (!documento) { errPago.value = 'No se encontró el documento del usuario.'; return }
@@ -999,9 +1097,21 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             modalPago.value = true
         }
     } catch (e) {
+        const status = e?.response?.status
         const data = e?.response?.data
         const msg = data?.message
-        errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al iniciar el pago.')
+
+        if (status === 409 && data?.data?.UrlPago) {
+            pagoPendiente.value = {
+                urlPago: data.data.UrlPago,
+                referencia: data.data.referencia ?? data.data.Reference ?? null,
+                valor: data.data.valor ?? data.data.Valor ?? null,
+                cus: data.data.cus ?? null,
+            }
+            errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Tienes una transacción pendiente de pago.')
+        } else {
+            errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al iniciar el pago.')
+        }
         modalFacturacion.value = false
         modalPago.value = true
     } finally {
@@ -1016,7 +1126,7 @@ const cerrarModales = () => {
     modalCongelar.value = false
     modalConsentimiento.value = false
     modalFacturacion.value = false
-
+    pagoPendiente.value = null
     codigoInput.value = ''
     mensualidadAccion.value = null
     opcionesPago.value = []
