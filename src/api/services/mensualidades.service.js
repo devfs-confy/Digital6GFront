@@ -40,6 +40,44 @@ class MensualidadesService {
     }
   }
 
+  // POST /v1/mensualidades/clientes/cambio-autorizacion
+  // Body: { IdPersonaAutorizada, Placas, Email?, IdentificacionCliente?, Telefono? }
+  // 200 con datos de pago si es upgrade (moto→carro) | 200 aplicado si es downgrade (carro→moto)
+  // 400 validación fallida | 404 persona no encontrada | 409 placas duplicadas
+  async cambiarAutorizacion({
+    IdPersonaAutorizada,
+    Placas,
+    Email,
+    IdentificacionCliente,
+    Telefono,
+  }) {
+    try {
+      const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
+        IdPersonaAutorizada,
+        Placas,
+        ...(Email && { Email }),
+        ...(IdentificacionCliente && { IdentificacionCliente }),
+        ...(Telefono && { Telefono }),
+      });
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // GET /v1/autorizaciones-mensuales/changes?IdPersona={id}
+  // 200 con autorización actual y complementaria
+  async getChangesByPersona(idPersona) {
+    try {
+      const { data } = await api.get("v1/autorizaciones-mensuales/changes", {
+        params: { IdPersona: idPersona },
+      });
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
   // GET /v1/mensualidades/clientes/congelamientos/{idPersona}
   // 400 si no existe la persona autorizada
   async getCongelamiento(idPersona) {

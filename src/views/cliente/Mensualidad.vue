@@ -1076,6 +1076,8 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
 
         const cantidadMeses = esSoloTarjeta.value ? 1 : (opcionSeleccionada.value.cantidadMeses ?? 1)
 
+        console.log(IdentificacionCliente)
+
         const body = {
             Email: email,
             Telefono: telefono,

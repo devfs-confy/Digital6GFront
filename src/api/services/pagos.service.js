@@ -22,9 +22,31 @@ class PagosService {
 
   async iniciarPago(idPersona, body) {
     try {
+      const {
+        Email,
+        Telefono,
+        CantidadMeses,
+        ModalidadPago,
+        FechaInicio,
+        IdentificacionCliente,
+        IdAutorizacionNueva,
+        PlacasNuevas,
+      } = body;
+
+      const payload = {
+        Email,
+        Telefono,
+        CantidadMeses,
+        ModalidadPago,
+        ...(FechaInicio && { FechaInicio }),
+        ...(IdentificacionCliente && { IdentificacionCliente }),
+        ...(IdAutorizacionNueva && { IdAutorizacionNueva }),
+        ...(PlacasNuevas && { PlacasNuevas }),
+      };
+
       const { data } = await api.post(
         `${BASE_MENSUALIDAD}/iniciar-pago/${idPersona}`,
-        body,
+        payload,
       );
       return data;
     } catch (error) {

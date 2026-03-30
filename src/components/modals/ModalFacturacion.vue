@@ -330,8 +330,8 @@ const reset = () => {
 
 // ── Paso 0: Elección ─────────────────────────────────────────────
 const elegirNo = () => {
-    // Sin factura: IdentificacionCliente estándar 2222222
-    emit('confirmar', { IdentificacionCliente: '2222222' })
+    // Sin factura: IdentificacionCliente estándar 222222222222
+    emit('confirmar', { IdentificacionCliente: '222222222222' })
     emit('update:modelValue', false)
 }
 
