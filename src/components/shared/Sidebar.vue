@@ -17,6 +17,7 @@
 
         <!-- Nav -->
         <nav class="sidebar-nav sidebar-scroll">
+
             <ul class="sidebar-list">
                 <li v-for="(item, i) in menuItems" :key="item.route"
                     :class="['menu-item', isActive(item) ? 'menu-item--active' : '']"
@@ -39,6 +40,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import icoconfynormal from '@/assets/img/confyaside.svg?raw'
+
 
 const logoRef = ref(null)
 

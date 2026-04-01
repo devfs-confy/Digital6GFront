@@ -21,6 +21,9 @@
                 <span class="user-name">{{ auth.user?.nombres ?? 'Usuario' }}</span>
             </div>
 
+            <NotificacionesBtn />
+
+
             <!-- Botón avatar con inicial + ícono -->
             <button @click="dropdownOpen = !dropdownOpen" class="avatar-btn"
                 :class="{ 'avatar-btn--open': dropdownOpen }">
@@ -74,6 +77,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import colapsenobg from '@/assets/img/colapsenobg.svg?raw'
 import { addonCategoryNames } from '@vueuse/core/metadata.mjs'
+import NotificacionesBtn from '@/components/aside/NotificacionesBtn.vue'
+
 
 defineProps({
     isOpen: Boolean,
