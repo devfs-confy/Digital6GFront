@@ -20,38 +20,37 @@ class PagosService {
     }
   }
 
+  // pagos.service.js
   async iniciarPago(idPersona, body) {
-    try {
-      const {
-        Email,
-        Telefono,
-        CantidadMeses,
-        ModalidadPago,
-        FechaInicio,
-        IdentificacionCliente,
-        IdAutorizacionNueva,
-        PlacasNuevas,
-      } = body;
+    const {
+      Email,
+      Telefono,
+      CantidadMeses,
+      ModalidadPago,
+      FechaInicio,
+      IdentificacionCliente,
+      IdAutorizacionNueva,
+      PlacasNuevas,
+      Placas,
+    } = body;
 
-      const payload = {
-        Email,
-        Telefono,
-        CantidadMeses,
-        ModalidadPago,
-        ...(FechaInicio && { FechaInicio }),
-        ...(IdentificacionCliente && { IdentificacionCliente }),
-        ...(IdAutorizacionNueva && { IdAutorizacionNueva }),
-        ...(PlacasNuevas && { PlacasNuevas }),
-      };
+    const payload = {
+      Email,
+      Telefono,
+      CantidadMeses,
+      ModalidadPago,
+      ...(FechaInicio && { FechaInicio }),
+      ...(IdentificacionCliente && { IdentificacionCliente }),
+      ...(IdAutorizacionNueva && { IdAutorizacionNueva }),
+      ...(PlacasNuevas && { PlacasNuevas }),
+      ...(Placas && { Placas }),
+    };
 
-      const { data } = await api.post(
-        `${BASE_MENSUALIDAD}/iniciar-pago/${idPersona}`,
-        payload,
-      );
-      return data;
-    } catch (error) {
-      return handleError(error);
-    }
+    const { data } = await api.post(
+      `${BASE_MENSUALIDAD}/iniciar-pago/${idPersona}`,
+      payload,
+    );
+    return data;
   }
 
   async consultarEstado(rquid) {

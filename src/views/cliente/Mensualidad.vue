@@ -431,6 +431,17 @@
                                         :disabled="placaCambiada">
                                         {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
                                     </button>
+
+                                    <button @click="abrirModalCambioTipo"
+                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all flex-shrink-0 bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M7.5 21.5l-5-5 5-5 1.41 1.41L6.33 15.5H13v2H6.33l2.58 2.59L7.5 21.5zm9-9l-1.41-1.41 2.58-2.59H11v-2h6.67l-2.58-2.59L16.5 2.5l5 5-5 5z" />
+                                        </svg>
+                                        Cambiar tipo
+                                    </button>
+
                                 </div>
                                 <div v-if="placasDetalle.length" class="flex flex-col gap-2 mt-1">
                                     <div v-for="(placa, idx) in placasDetalle" :key="idx"
@@ -612,7 +623,7 @@
                                 <path
                                     d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                             </svg>
-                            Ir a pagar ({{ formatPrecio(infoExcedente?.excedente?.total) }})
+                            Pagar excedente ({{ formatPrecio(infoExcedente?.excedente?.total) }})
                         </button>
                     </div>
                 </div>
@@ -753,6 +764,7 @@ const nuevasPlacas = ref(['', '', '', '', ''])
 const guardandoPlacas = ref(false)
 const errPlacas = ref('')
 const placaCambiada = ref(false)
+const usandoCambioAutorizacion = ref(false)  // ← agregar aquí
 
 // ── Cambio de autorización (moto↔carro) ───────────────────
 const infoAutorizacion = ref(null)      // respuesta de getChangesByPersona
@@ -909,12 +921,21 @@ const abrirDetalle = async (m) => {
     }
 }
 
+const abrirModalCambioTipo = () => {
+    errPlacas.value = ''
+    infoExcedente.value = null
+    usandoCambioAutorizacion.value = true
+    nuevasPlacas.value = ['', '']
+    modalPlacas.value = true
+}
+
 // ── Placas ────────────────────────────────────────────────────
 const abrirModalPlacas = () => {
     if (placaCambiada.value) return
     errPlacas.value = ''
     infoExcedente.value = null
     infoAutorizacion.value = null
+    usandoCambioAutorizacion.value = false  // ← siempre false al abrir cambio de placas normal
     const totalFilas = Math.max(placasDetalle.value.length, 2)
     nuevasPlacas.value = PLACA_KEYS.slice(0, totalFilas).map((_, i) => placasDetalle.value[i] ?? '')
     modalPlacas.value = true
@@ -936,48 +957,67 @@ const confirmarCambioPlacas = async () => {
         return
     }
 
+    // ← Verificar límite mensual para AMBOS flujos antes de cualquier llamada
+    if (verificarLimiteMensual(mensualidadAccion.value.id)) {
+        errPlacas.value = 'Ya realizaste un cambio de placas o autorización este mes.'
+        return
+    }
+
     guardandoPlacas.value = true
     try {
-        // Siempre intenta cambio de autorización primero
-        const placasPayload = nuevasPlacas.value.map(p => {
-            const val = p?.trim().toUpperCase() || null
-            return [val]
-        })
-        console.log('[payload Placas]', JSON.stringify(placasPayload))
+        if (usandoCambioAutorizacion.value) {
 
-        const res = await MensualidadesService.cambiarAutorizacion({
-            IdPersonaAutorizada: Number(mensualidadAccion.value.id),
-            Placas: placasPayload,
-            Email: String(authStore.user?.email ?? authStore.user?.Email ?? ''),
-            Telefono: String(authStore.user?.telefono ?? authStore.user?.Telefono ?? ''),
-            IdentificacionCliente: String(
-                authStore.user?.documento ?? authStore.user?.Documento ?? ''
-            ),
-        })
-        console.log('[cambiarAutorizacion] res:', JSON.stringify(res))
+            const placasPayload = nuevasPlacas.value
+                .map((val, i) => {
+                    const placa = val?.trim().toUpperCase() || null
+                    return placa ? [{ ColumnaPlaca: PLACA_KEYS[i], PlacaNueva: placa }] : []
+                })
+                .filter(arr => arr.length > 0)
 
+            await MensualidadesService.cambiarAutorizacion({
+                IdPersonaAutorizada: Number(mensualidadAccion.value.id),
+                Placas: placasPayload,
+                // ← sin Email, Telefono, IdentificacionCliente
+            })
 
-        const data = res?.data ?? res
+            // 200 = downgrade carro→moto, aplicado directo
+            _aplicarCambioPlacasLocal()
+            await cargarMisMensualidades()
+            modalPlacas.value = false
+            modalDetalle.value = false
 
-        console.log('[cambiarAutorizacion] data:', JSON.stringify(data))
-        console.log('[cambiarAutorizacion] requierePago:', data?.requierePago)
+        } else {
+            // ── Cambio de placas normal (mismo tipo) → cambio-placas
 
-        if (data?.requierePago) {
+            const Detalles = PLACA_KEYS.map((columna, i) => {
+                const nueva = nuevasPlacas.value[i]?.trim().toUpperCase() || null
+                const actual = placasDetalle.value[i] ?? null
+                return nueva !== actual ? { ColumnaPlaca: columna, PlacaNueva: nueva ?? '' } : null
+            }).filter(Boolean)
 
-            infoExcedente.value = data
+            if (!Detalles.length) { errPlacas.value = 'No hay cambios para guardar.'; return }
 
-            return
+            await MensualidadesService.cambiarPlacas({
+                IdPersonaAutorizada: Number(mensualidadAccion.value.id),
+                Detalles,
+            })
+            _aplicarCambioPlacasLocal()
+            modalPlacas.value = false
         }
-
-
-        _aplicarCambioPlacasLocal()
-        modalPlacas.value = false
 
     } catch (e) {
         const status = e?.response?.status
-        const msg = e?.response?.data?.message
+        const responseData = e?.response?.data
 
-        if (status === 409) errPlacas.value = 'Una o más placas ya están registradas en la sede.'
+        console.log('[cambioTipo] status:', status, 'data:', JSON.stringify(responseData))
+
+        if (usandoCambioAutorizacion.value && status === 409 && responseData?.data?.requierePago) {
+            console.log('[cambioTipo] infoExcedente seteado:', JSON.stringify(responseData.data))
+            infoExcedente.value = responseData.data
+            return
+        }
+        const msg = responseData?.message
+        if (status === 409) errPlacas.value = 'Ya existe una solicitud de cambio de placas para este mes.'
         else if (status === 404) errPlacas.value = 'Persona autorizada no encontrada.'
         else if (status === 400) errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Datos inválidos.')
         else errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al procesar el cambio.')
@@ -1182,6 +1222,14 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
 
         // ── Caso: pago de excedente por cambio de autorización ──
         if (excedentePendiente) {
+            const datosPago = excedentePendiente.datosPago
+            const placasNuevas = datosPago?.placasNuevas ?? {}
+
+            // ← filtrar las null, solo enviar las que tienen valor
+            const placasPayload = PLACA_KEYS
+                .filter(key => placasNuevas[key])
+                .map(key => [{ ColumnaPlaca: key, PlacaNueva: placasNuevas[key] }])
+
             const body = {
                 Email: email,
                 Telefono: telefono,
@@ -1189,21 +1237,17 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 ModalidadPago: 'CAMBIO_AUTORIZACION',
                 IdentificacionCliente,
                 IdAutorizacionNueva: Number(excedentePendiente.IdAutorizacionNueva),
-                PlacasNuevas: {
-                    Placa1: placasSnapshot[0]?.trim().toUpperCase() || null,
-                    Placa2: placasSnapshot[1]?.trim().toUpperCase() || null,
-                    Placa3: placasSnapshot[2]?.trim().toUpperCase() || null,
-                    Placa4: placasSnapshot[3]?.trim().toUpperCase() || null,
-                    Placa5: placasSnapshot[4]?.trim().toUpperCase() || null,
-                },
+                Placas: placasPayload,
             }
+
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
             const url = data?.urlPago ?? null
             if (url) { window.location.href = url; return }
-            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
+
             infoExcedente.value = excedentePendiente
             nuevasPlacas.value = placasSnapshot
+            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
             modalPlacas.value = true
             return
         }
@@ -1275,6 +1319,8 @@ const cerrarModales = () => {
     infoAutorizacion.value = null
     errPlacas.value = ''
     nuevasPlacas.value = ['', '', '', '', '']
+    usandoCambioAutorizacion.value = false
+
 }
 </script>
 
