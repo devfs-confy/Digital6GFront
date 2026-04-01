@@ -82,7 +82,7 @@ const colorearSVG = (svgRaw, color) =>
     background: linear-gradient(175deg, #122e1e 0%, #0D291C 40%, #0a2016 100%);
     position: relative;
     overflow: hidden;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
     flex-shrink: 0;
 }
 
