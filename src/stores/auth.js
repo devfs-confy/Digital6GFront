@@ -84,7 +84,7 @@ export const useAuthStore = defineStore(
     }
 
     // ── Logout ──────────────────────────────────────────────────────
-  async  function logout() {
+    async function logout() {
       user.value = null;
       token.value = null;
       role.value = null;
@@ -154,20 +154,25 @@ export const useAuthStore = defineStore(
       loading.value = true;
       errorMsg.value = null;
       try {
-        const { data } = await api.post("auth/forgot-password", { Documento: documento });
-        
+        const { data } = await api.post("auth/forgot-password", {
+          Documento: documento,
+        });
+
         if (!data?.success) {
           errorMsg.value = data?.message ?? "Error al enviar el código.";
           return null;
         }
         return data;
       } catch (err) {
-        console.log(err)
+        console.log(err);
         const status = err.response?.status;
         const mensaje = err.response?.data?.message;
-        if (status === 404) errorMsg.value = mensaje ?? "Documento no encontrado.";
-        else if (status === 429) errorMsg.value = "Demasiados intentos. Espera unos minutos.";
-        else if (!err.response) errorMsg.value = "Sin conexión con el servidor.";
+        if (status === 404)
+          errorMsg.value = mensaje ?? "Documento no encontrado.";
+        else if (status === 429)
+          errorMsg.value = "Demasiados intentos. Espera unos minutos.";
+        else if (!err.response)
+          errorMsg.value = "Sin conexión con el servidor.";
         else errorMsg.value = mensaje ?? "Error al enviar el código.";
         return null;
       } finally {
@@ -179,7 +184,10 @@ export const useAuthStore = defineStore(
       loading.value = true;
       errorMsg.value = null;
       try {
-        const { data } = await api.post("/auth/verify-code", { Documento: documento, Codigo: codigo });
+        const { data } = await api.post("/auth/verify-code", {
+          Documento: documento,
+          Codigo: codigo,
+        });
         if (!data?.success) {
           errorMsg.value = data?.message ?? "Código inválido.";
           return null;
@@ -189,9 +197,12 @@ export const useAuthStore = defineStore(
         const status = err.response?.status;
         const mensaje = err.response?.data?.message;
         if (status === 400) errorMsg.value = mensaje ?? "Código inválido.";
-        else if (status === 410) errorMsg.value = "El código ha expirado. Solicita uno nuevo.";
-        else if (status === 404) errorMsg.value = mensaje ?? "Documento no encontrado.";
-        else if (!err.response) errorMsg.value = "Sin conexión con el servidor.";
+        else if (status === 410)
+          errorMsg.value = "El código ha expirado. Solicita uno nuevo.";
+        else if (status === 404)
+          errorMsg.value = mensaje ?? "Documento no encontrado.";
+        else if (!err.response)
+          errorMsg.value = "Sin conexión con el servidor.";
         else errorMsg.value = mensaje ?? "Error al verificar el código.";
         return null;
       } finally {
@@ -216,16 +227,25 @@ export const useAuthStore = defineStore(
       } catch (err) {
         const status = err.response?.status;
         const mensaje = err.response?.data?.message;
-        if (status === 400) errorMsg.value = mensaje ?? "Código o contraseña inválidos.";
-        else if (status === 410) errorMsg.value = "El código ha expirado. Inicia el proceso de nuevo.";
-        else if (status === 404) errorMsg.value = mensaje ?? "Documento no encontrado.";
-        else if (!err.response) errorMsg.value = "Sin conexión con el servidor.";
+        if (status === 400)
+          errorMsg.value = mensaje ?? "Código o contraseña inválidos.";
+        else if (status === 410)
+          errorMsg.value = "El código ha expirado. Inicia el proceso de nuevo.";
+        else if (status === 404)
+          errorMsg.value = mensaje ?? "Documento no encontrado.";
+        else if (!err.response)
+          errorMsg.value = "Sin conexión con el servidor.";
         else errorMsg.value = mensaje ?? "Error al cambiar la contraseña.";
         return null;
       } finally {
         loading.value = false;
       }
     }
+
+    const hasPermiso = (permiso) => {
+      if (!permiso) return true; // rutas sin permiso → libre
+      return user.value?.permisos?.includes(permiso) ?? false;
+    };
 
     return {
       user,
@@ -245,6 +265,7 @@ export const useAuthStore = defineStore(
       sendForgotCode,
       verifyForgotCode,
       resetPassword,
+      hasPermiso,
     };
   },
   {

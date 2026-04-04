@@ -10,7 +10,7 @@
                         '' }}
                 </p>
             </div>
-            <button v-permission="PERMS.SEDES_CREAR" @click="abrirNueva"
+            <button v-permission="'CREAR-SEDES'" @click="abrirNueva"
                 class="flex items-center gap-1.5 bg-[#0D291C] text-white border-none rounded-xl px-5 py-2.5 text-[0.85rem] font-bold cursor-pointer transition-all hover:bg-[#299261] hover:-translate-y-px active:translate-y-px">
                 <AppIcon name="add" :size="18" />
 
@@ -125,7 +125,7 @@
 
                 <!-- Acciones -->
                 <div class="flex gap-2 mt-auto pt-1">
-                    <button v-permission="PERMS.SEDES_EDITAR" @click="abrirEdicion(sede)"
+                    <button v-permission="'EDITAR-SEDES'" @click="abrirEdicion(sede)"
                         class="flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150 border-2"
                         :class="sede.Estado
                             ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:bg-[#299261] hover:border-[#299261] hover:text-white'
@@ -134,7 +134,7 @@
 
                         Editar
                     </button>
-                    <button v-permission="PERMS.SEDES_INACTIVAR" @click="toggleEstado(sede)"
+                    <button v-permission="'INACTIVAR-SEDES'" @click="toggleEstado(sede)"
                         class="flex-1 flex items-center justify-center gap-1.5 border-2 rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150"
                         :class="sede.Estado
                             ? 'border-red-200 bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 hover:border-red-300'
@@ -335,7 +335,6 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { PERMS } from '@/constants/permisions'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 

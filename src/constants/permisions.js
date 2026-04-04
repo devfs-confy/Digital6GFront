@@ -1,38 +1,13 @@
 // src/constants/permisions.js
 
-export const PERMS = {
-  // Módulo de Usuarios
-  USUARIOS_VER: "VER-USUARIOS",
-  USUARIOS_CREAR: "CREAR-USUARIOS",
-  USUARIOS_EDITAR: "EDITAR-USUARIOS",
-  USUARIOS_INACTIVAR: "INACTIVAR-USUARIOS",
+export const permisosCatalogo = {
+  ids: {}, // { "VER-USUARIOS": "57", ... }
+  nombres: [], // ["VER-USUARIOS", "CREAR-USUARIOS", ...]
+};
 
-  // Módulo de Roles
-  ROLES_VER: "VER-ROLES",
-  ROLES_CREAR: "CREAR-ROLES",
-  ROLES_EDITAR: "EDITAR-ROLES",
-
-  // Módulo de Gestión de Permisos
-  PERMISOS_VER: "VER-PERMISOS",
-  PERMISOS_ASIGNAR: "ASIGNAR-PERMISOS",
-  PERMISOS_INACTIVAR: "INACTIVAR-PERMISOS",
-
-  // Módulo de Mensualidades
-  MENSUALIDADES_VER: "VER-MENSUALIDADES",
-  MENSUALIDADES_CREAR: "CREAR-MENSUALIDADES",
-  MENSUALIDADES_EDITAR: "EDITAR-MENSUALIDADES",
-  MENSUALIDADES_INACTIVAR: "INACTIVAR-MENSUALIDADES",
-
-  // Módulo de Sedes
-  SEDES_VER: "VER-SEDES",
-  SEDES_CREAR: "CREAR-SEDES",
-  SEDES_EDITAR: "EDITAR-SEDES",
-  SEDES_INACTIVAR: "INACTIVAR-SEDES",
-
-  // Módulo de Códigos
-  CODIGOS_CREAR: "CREAR-CODIGOS",
-  ESTUDIANTES_SUBIR: "SUBIR-ESTUDIANTES",
-
-  // Módulo de autorizaciones
-  AUTORIZACIONES_VER: "VER-AUTORIZACIONES",
+export const cargarCatalogo = (permisosApi) => {
+  permisosCatalogo.nombres = permisosApi.map((p) => p.Nombre);
+  permisosCatalogo.ids = Object.fromEntries(
+    permisosApi.map((p) => [p.Nombre, p.Id]),
+  );
 };

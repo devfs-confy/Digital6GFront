@@ -19,11 +19,9 @@ export async function authGuard(to, from, next) {
   }
 
   // ── 2. Sin token → login ──────────────────────────────────────────
-  if (!auth.isAuthenticated) {
-    return next("/login");
-  }
+  if (!auth.isAuthenticated) return next("/login");
 
-  // ── 3. Token existe pero user se perdió (recarga de página) ───────
+  // ── 3. Restaurar sesión si user se perdió (recarga) ───────────────
   if (!auth.user) {
     await auth.restoreSession();
     if (!auth.isAuthenticated) return next("/login");
@@ -31,21 +29,24 @@ export async function authGuard(to, from, next) {
 
   // ── 4. Verificación de rol ────────────────────────────────────────
   const rolRequerido = to.meta.role;
-  if (rolRequerido && auth.role !== rolRequerido) {
-    return next("/unauthorized");
+  if (rolRequerido) {
+    const rolesValidos = Array.isArray(rolRequerido)
+      ? rolRequerido
+      : [rolRequerido];
+    const tieneRol = rolesValidos.some(
+      (r) =>
+        auth.role === r || (auth.role === "administrador" && r === "admin"),
+    );
+    if (!tieneRol) return next("/unauthorized");
   }
 
-  // ── 5. Verificación de Permiso Específico ──────────────────────────
-  // Si la ruta tiene un meta.permission, verificamos el array del usuario
+  // ── 5. Verificación de permiso ────────────────────────────────────
   const permisoRequerido = to.meta.permission;
-  if (permisoRequerido) {
-    const tienePermiso =
-      auth.isAdmin || auth.user?.permisos?.includes(permisoRequerido);
-
-    if (!tienePermiso) {
-      console.warn(`Acceso denegado: Falta permiso ${permisoRequerido}`);
-      return next("/unauthorized"); // O a auth.redirectTo
-    }
+  if (permisoRequerido && !auth.hasPermiso(permisoRequerido)) {
+    console.warn(
+      `[Guard] Acceso denegado: falta permiso "${permisoRequerido}"`,
+    );
+    return next("/unauthorized");
   }
 
   next();

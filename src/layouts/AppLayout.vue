@@ -15,6 +15,10 @@
         </div>
 
     </div>
+
+    <ModalBanner :imagen-url="bannerUrl" />
+
+
 </template>
 
 <style></style>
@@ -23,6 +27,26 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import Sidebar from '../components/shared/Sidebar.vue'
 import Navbar from '../components/shared/Navbar.vue'
+import ModalBanner from '@/components/modals/ModalBanner.vue'
+
+const bannerUrl = ref('')
+
+onMounted(async () => {
+    try {
+        const res = await BannerService.getBanner()
+        bannerUrl.value = res?.data?.url ?? res?.url ?? ''
+    } catch {
+
+    }
+})
+
+// onMounted(() => {
+//     const yaVisto = sessionStorage.getItem('banner_visto')
+//     if (!yaVisto) {
+//         bannerUrl.value = 'https://tu-url-de-imagen.com/banner.jpg'
+//         sessionStorage.setItem('banner_visto', '1')
+//     }
+// })
 
 defineProps({
     menuItems: Array,
@@ -38,7 +62,7 @@ const checkMobile = () => {
     const mobile = window.innerWidth < 1024
     if (isMobile.value !== mobile) {
         isMobile.value = mobile
-        isOpen.value = !mobile 
+        isOpen.value = !mobile
     }
 }
 

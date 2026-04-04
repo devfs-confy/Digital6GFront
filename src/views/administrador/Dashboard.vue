@@ -3,7 +3,7 @@
 
 
         <!-- ── Gráfica 1: Mensualidades vencidas ────────── -->
-        <div v-if="hasPermission(PERMS.MENSUALIDADES_VER)" class="chart-card card-animation">
+        <div v-if="hasPermission('VER-MENSUALIDADES')" class="chart-card card-animation">
             <div class="chart-accent chart-accent--red" />
             <div class="chart-head">
                 <div class="chart-meta">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- ── Gráfica 2: Ingresos mensuales ────────────── -->
-        <div v-if="hasPermission(PERMS.MENSUALIDADES_VER)" class="chart-card card-animation">
+        <div v-if="hasPermission('VER-MENSUALIDADES')" class="chart-card card-animation">
             <div class="chart-accent chart-accent--green" />
             <div class="chart-head">
                 <div class="chart-meta">
@@ -41,7 +41,7 @@
         </div>
 
         <!-- ── Gráfica 3: Disponibilidad por sede ───────── -->
-        <div v-if="hasPermission(PERMS.SEDES_VER)" class="chart-card card-animation">
+        <div v-if="hasPermission('VER-MENSUALIDADES')" class="chart-card card-animation">
             <div class="chart-accent chart-accent--blue" />
             <div class="chart-head">
                 <div class="chart-meta">
@@ -119,7 +119,6 @@
 </template>
 
 <script setup>
-import { PERMS } from '@/constants/permisions'
 import { useAuth } from '@/composables/useAuth'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -185,7 +184,6 @@ const optsIngresos = {
 
 // ── Disponibilidad ─────────────────────────────────────────────────
 const sedeSeleccionada = ref('')
-
 const sedesAgrupadas = computed(() => {
     if (!Array.isArray(Sedesdata.value) || !Sedesdata.value.length) return []
     const grupos = {}
@@ -196,51 +194,40 @@ const sedesAgrupadas = computed(() => {
     })
     return Object.values(grupos)
 })
-
 const sedeActual = computed(() =>
     sedesAgrupadas.value.find(s => s.IdEstacionamiento === Number(sedeSeleccionada.value)) ?? null
 )
-
 const pct = (v) => (!v.Total || v.Total === 0) ? 0 : Math.round((v.MensualidadesOcupadas / v.Total) * 100)
 
 // ── Menú rápido ────────────────────────────────────────────────────
 const opciones = computed(() => [
-    { id: 1, icon: clientes, titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: PERMS.USUARIOS_VER },
-    { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: 'Al día', route: '/admin/mensualidades', permission: PERMS.MENSUALIDADES_VER },
-    { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '3 pendientes', route: '/admin/solicitudes', permission: PERMS.MENSUALIDADES_VER },
-    { id: 4, icon: reportes, titulo: 'Reportes', sub: 'Ver estadísticas', route: '/admin/reportes', permission: PERMS.USUARIOS_VER },
-    { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: PERMS.SEDES_VER },
-    { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: PERMS.ROLES_VER },
-    { id: 7, icon: disponibilidad, titulo: 'Ver disponibilidad', sub: '', route: '/admin/disponibilidad', permission: PERMS.CODIGOS_CREAR },
-    { id: 8, icon: verificacion, titulo: 'Codigo verificacion', sub: '', route: '/admin/verificacion', permission: PERMS.CODIGOS_CREAR },
-    { id: 9, icon: tarifas, titulo: 'Ver tarifas', sub: '', route: '/admin/tarifas', permission: PERMS.CODIGOS_CREAR },
-    { id: 10, icon: tarjetas, titulo: 'Tarjeta', sub: '', route: '/admin/tarjetas', permission: PERMS.CODIGOS_CREAR },
+    { id: 1, icon: clientes, titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: 'VER-USUARIOS' },
+    { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: 'Al día', route: '/admin/mensualidades', permission: 'VER-MENSUALIDADES' },
+    { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '3 pendientes', route: '/admin/solicitudes', permission: 'VER-MENSUALIDADES' },
+    { id: 4, icon: reportes, titulo: 'Reportes', sub: 'Ver estadísticas', route: '/admin/reportes', permission: 'VER-USUARIOS' },
+    { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: 'VER-SEDES' },
+    { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: 'VER-ROLES' },
+    { id: 7, icon: disponibilidad, titulo: 'Ver disponibilidad', sub: '', route: '/admin/disponibilidad', permission: 'CREAR-CODIGOS' },
+    { id: 8, icon: verificacion, titulo: 'Codigo verificacion', sub: '', route: '/admin/verificacion', permission: 'CREAR-CODIGOS' },
+    { id: 9, icon: tarifas, titulo: 'Ver tarifas', sub: '', route: '/admin/tarifas', permission: 'CREAR-CODIGOS' },
+    { id: 10, icon: tarjetas, titulo: 'Tarjeta', sub: '', route: '/admin/tarjetas', permission: 'CREAR-CODIGOS' },
 ].filter(item => hasPermission(item.permission)))
 
 // ── onMounted ──────────────────────────────────────────────────────
 onMounted(async () => {
     try {
         const [sedesRes, usuariosRes, dispRes] = await Promise.all([
-            (hasPermission(PERMS.SEDES_VER) || hasPermission(PERMS.MENSUALIDADES_VER))
+            (hasPermission('VER-SEDES') || hasPermission('VER-MENSUALIDADES'))
                 ? sedesServices.getAll() : Promise.resolve([]),
-            hasPermission(PERMS.USUARIOS_VER)
+            hasPermission('VER-USUARIOS')
                 ? UsersService.getAllClients() : Promise.resolve([]),
-            hasPermission(PERMS.SEDES_VER)
+            hasPermission('VER-SEDES')
                 ? SedesDisponibilidadService.getDisponibilidadDetalle() : Promise.resolve([]),
         ])
-
-        // console.group('📊 [Dashboard] onMounted')
-        // console.log('dispRes raw:', dispRes)
-        // console.log('dispRes tipo:', Array.isArray(dispRes) ? 'array' : typeof dispRes)
-        // console.log('dispRes keys:', dispRes && typeof dispRes === 'object' ? Object.keys(dispRes) : '—')
-        // console.groupEnd()
 
         Sedes.value = sedesRes ?? []
         Usuarios.value = usuariosRes ?? []
         Sedesdata.value = Array.isArray(dispRes) ? dispRes : (dispRes?.data ?? [])
-
-        // console.log('Sedesdata.value:', Sedesdata.value)
-        // console.log('sedesAgrupadas:', sedesAgrupadas.value)
 
         if (sedesAgrupadas.value.length > 0)
             sedeSeleccionada.value = sedesAgrupadas.value[0].IdEstacionamiento

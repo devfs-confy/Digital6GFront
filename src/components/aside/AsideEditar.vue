@@ -71,9 +71,13 @@
             </div>
         </Transition>
     </Teleport>
+
+
 </template>
 
 <script setup>
+
+
 const props = defineProps({
     modelValue: { type: Boolean, default: false },
     titulo: { type: String, default: 'Editar' },

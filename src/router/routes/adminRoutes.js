@@ -1,10 +1,5 @@
-// CORRECCIONES:
-// - Doble `meta` en reportes eliminado
-// - Todos los strings literales reemplazados por constantes PERMS
-// - Dashboard sin restricción de permiso (acceso libre para cualquier admin)
-
+// src/router/adminRoutes.js
 import icoClientes from "@/assets/img/account_box.svg?raw";
-import icoValidar from "@/assets/img/calendar_check.svg?raw";
 import icoSolicitudes from "@/assets/img/receipt_long.svg?raw";
 import icoReportes from "@/assets/img/assignment.svg?raw";
 import icoSedes from "@/assets/img/emoji_transportation.svg?raw";
@@ -16,104 +11,81 @@ import IcoVerificacion from "@/assets/img/verified.svg?raw";
 import icoTarifas from "@/assets/img/car_tag.svg?raw";
 import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
 import icoRoles from "@/assets/img/dashboard_customize_white.svg?raw";
-import { PERMS } from "@/constants/permisions";
 
 // ── Ítems del menú lateral ─────────────────────────────────────────
-// El sidebar filtra estos ítems según el permiso del usuario logueado.
 export const adminMenuItems = [
-  {
-    label: "Dashboard",
-    icon: icoDashboard,
-    route: "/admin/dashboard",
-    // Sin permiso → visible para cualquier rol autenticado
-  },
+  { label: "Dashboard", icon: icoDashboard, route: "/admin/dashboard" },
   {
     label: "Clientes",
     icon: icoClientes,
     route: "/admin/clientes",
-    permission: PERMS.USUARIOS_VER,
+    permission: "VER-USUARIOS",
   },
-  // {
-  //   label: "Validar<br>Mensualidades",
-  //   icon: icoValidar,
-  //   route: "/admin/validar",
-  //   permission: PERMS.MENSUALIDADES_VER,
-  // },
   {
     label: "Solicitudes",
     icon: icoSolicitudes,
     route: "/admin/solicitudes",
-    permission: PERMS.MENSUALIDADES_VER,
+    permission: "VER-MENSUALIDADES",
   },
   {
     label: "Reportes",
     icon: icoReportes,
     route: "/admin/reportes",
-    permission: PERMS.SEDES_EDITAR,
+    permission: "EDITAR-SEDES",
   },
   {
     label: "Administrar<br>sedes",
     icon: icoSedes,
     route: "/admin/sedes",
-    permission: PERMS.SEDES_VER,
+    permission: "VER-SEDES",
   },
-
   {
-    label: "Administrar <br> Tarifas",
+    label: "Administrar<br>Tarifas",
     icon: icoTarifas,
     route: "/admin/tarifas-admin",
-    permission: PERMS.SEDES_VER,
+    permission: "VER-SEDES",
   },
-
   {
     label: "Mensualidades",
     icon: icoMensual2,
     route: "/admin/mensualidades",
-    permission: PERMS.MENSUALIDADES_VER,
+    permission: "VER-MENSUALIDADES",
   },
   {
     label: "Usuarios",
     icon: icoUsuarios,
     route: "/admin/usuarios",
-    permission: PERMS.ROLES_VER,
+    permission: "VER-ROLES",
   },
   {
     label: "Roles",
     icon: icoRoles,
     route: "/admin/roles",
-    permission: PERMS.ROLES_VER,
+    permission: "VER-ROLES",
   },
-
-  // {
-  //   label: "Inicio",
-  //   icon: icoInicio,
-  //   route: "/admin/inicio",
-  //   permission: PERMS.CODIGOS_CREAR,
-  // },
-
   {
     label: "Ver disponibilidad",
     icon: icoDisponibilidad,
     route: "/admin/disponibilidad",
-    permission: PERMS.CODIGOS_CREAR,
+    permission: "CREAR-CODIGOS",
   },
   {
     label: "Codigo verificacion",
     icon: IcoVerificacion,
     route: "/admin/verificacion",
-    permission: PERMS.CODIGOS_CREAR,
+    permission: "CREAR-CODIGOS",
   },
   {
     label: "Ver tarifas",
     icon: icoTarifas,
     route: "/admin/tarifas",
-    permission: PERMS.CODIGOS_CREAR,
+    permission: "CREAR-CODIGOS",
   },
   {
     label: "Tarjetas",
     icon: icoTarjetas,
     route: "/admin/tarjetas",
-    permission: PERMS.CODIGOS_CREAR,
+    permission: "CREAR-CODIGOS",
   },
 ];
 
@@ -126,79 +98,66 @@ export const adminRoutes = {
     {
       path: "dashboard",
       component: () => import("@/views/administrador/Dashboard.vue"),
-      // Sin meta.permission → cualquier admin puede acceder
     },
     {
       path: "clientes",
       component: () => import("@/views/administrador/Clientes.vue"),
-      meta: { permission: PERMS.USUARIOS_VER },
+      meta: { permission: "VER-USUARIOS" },
     },
-    // {
-    //   path: "validar",
-    //   component: () => import("@/views/administrador/ValidarMensualidades.vue"),
-    //   meta: { permission: PERMS.MENSUALIDADES_VER },
-    // },
     {
       path: "solicitudes",
       component: () => import("@/views/administrador/Solicitudes.vue"),
-      meta: { permission: PERMS.MENSUALIDADES_VER },
+      meta: { permission: "VER-MENSUALIDADES" },
     },
     {
       path: "reportes",
       component: () => import("@/views/administrador/Reportes.vue"),
-      meta: { permission: PERMS.SEDES_EDITAR },
+      meta: { permission: "EDITAR-SEDES" },
     },
     {
       path: "sedes",
       component: () => import("@/views/administrador/Sedes.vue"),
-      meta: { permission: PERMS.SEDES_VER },
+      meta: { permission: "VER-SEDES" },
     },
     {
       path: "mensualidades",
       component: () => import("@/views/administrador/Mensualidades.vue"),
-      meta: { permission: PERMS.MENSUALIDADES_VER },
+      meta: { permission: "VER-MENSUALIDADES" },
     },
     {
       path: "tarifas-admin",
       component: () => import("@/views/administrador/AdministrarTarifas.vue"),
-      meta: { permission: PERMS.SEDES_VER },
+      meta: { permission: "VER-SEDES" },
     },
     {
       path: "usuarios",
       component: () => import("@/views/administrador/Usuarios.vue"),
-      meta: { permission: PERMS.ROLES_VER },
+      meta: { permission: "VER-ROLES" },
     },
     {
       path: "roles",
       component: () => import("@/views/administrador/Roles.vue"),
-      meta: { permission: PERMS.ROLES_VER },
+      meta: { permission: "VER-ROLES" },
     },
-
-    // {
-    //   path: "inicio",
-    //   component: () => import("@/views/administrador/OperadorInicio.vue"),
-    //   meta: { permission: PERMS.CODIGOS_CREAR },
-    // },
-
     {
       path: "disponibilidad",
       component: () => import("@/views/administrador/VerDisponibilidad.vue"),
-      meta: { permission: PERMS.CODIGOS_CREAR },
+      meta: { permission: "CREAR-CODIGOS" },
     },
     {
       path: "verificacion",
       component: () => import("@/views/administrador/Codigo.vue"),
-      meta: { permission: PERMS.CODIGOS_CREAR },
+      meta: { permission: "CREAR-CODIGOS" },
     },
     {
       path: "tarifas",
       component: () => import("@/views/administrador/Tarifas.vue"),
-      meta: { permission: PERMS.CODIGOS_CREAR },
+      meta: { permission: "CREAR-CODIGOS" },
     },
     {
       path: "tarjetas",
       component: () => import("@/views/administrador/Tarjetas.vue"),
-      meta: { permission: PERMS.CODIGOS_CREAR },
+      meta: { permission: "CREAR-CODIGOS" },
     },
     { path: "", redirect: "dashboard" },
   ],

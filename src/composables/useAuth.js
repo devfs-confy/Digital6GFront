@@ -12,7 +12,7 @@ export function useAuth() {
 
   /**
    * El usuario tiene el permiso indicado.
-   * @param {string} permission  Ej: "VER-USUARIOS" o PERMS.USUARIOS_VER
+   * @param {string} permission
    */
   const hasPermission = (permission) => {
     if (!permission) return true; // sin restricción → libre

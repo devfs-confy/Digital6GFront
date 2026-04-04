@@ -202,42 +202,27 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import RolService from '@/api/services/rol.service'
-import { PERMS } from '@/constants/permisions'
+import { cargarCatalogo, permisosCatalogo } from '@/constants/permisions'
 
-// ── Catálogo ───────────────────────────────────────────────────────
-const LABEL_MAP = {
-    [PERMS.USUARIOS_VER]: 'Ver usuarios',
-    [PERMS.USUARIOS_CREAR]: 'Crear usuarios',
-    [PERMS.USUARIOS_EDITAR]: 'Editar usuarios',
-    [PERMS.USUARIOS_INACTIVAR]: 'Inactivar usuarios',
-    [PERMS.ROLES_VER]: 'Ver roles',
-    [PERMS.ROLES_CREAR]: 'Crear roles',
-    [PERMS.ROLES_EDITAR]: 'Editar roles',
-    [PERMS.PERMISOS_VER]: 'Ver permisos',
-    [PERMS.PERMISOS_ASIGNAR]: 'Asignar permisos',
-    [PERMS.PERMISOS_INACTIVAR]: 'Inactivar permisos',
-    [PERMS.MENSUALIDADES_VER]: 'Ver mensualidades',
-    [PERMS.MENSUALIDADES_CREAR]: 'Crear mensualidades',
-    [PERMS.MENSUALIDADES_EDITAR]: 'Editar mensualidades',
-    [PERMS.MENSUALIDADES_INACTIVAR]: 'Inactivar mensualidades',
-    [PERMS.SEDES_VER]: 'Ver sedes',
-    [PERMS.SEDES_CREAR]: 'Crear sedes',
-    [PERMS.SEDES_EDITAR]: 'Editar sedes',
-    [PERMS.SEDES_INACTIVAR]: 'Inactivar sedes',
-    [PERMS.CODIGOS_CREAR]: 'Crear códigos',
-    [PERMS.AUTORIZACIONES_VER]: 'Ver autorizaciones',
-}
+// ── Formato y agrupación dinámica ──────────────────────────────────
+const formatLabel = (nombre) =>
+    nombre.toLowerCase().replace(/-/g, ' ').replace(/^\w/, c => c.toUpperCase())
 
-const GRUPOS = [
-    { label: 'Usuarios', permisos: [PERMS.USUARIOS_VER, PERMS.USUARIOS_CREAR, PERMS.USUARIOS_EDITAR, PERMS.USUARIOS_INACTIVAR] },
-    { label: 'Roles', permisos: [PERMS.ROLES_VER, PERMS.ROLES_CREAR, PERMS.ROLES_EDITAR] },
-    { label: 'Permisos', permisos: [PERMS.PERMISOS_VER, PERMS.PERMISOS_ASIGNAR, PERMS.PERMISOS_INACTIVAR] },
-    { label: 'Mensualidades', permisos: [PERMS.MENSUALIDADES_VER, PERMS.MENSUALIDADES_CREAR, PERMS.MENSUALIDADES_EDITAR, PERMS.MENSUALIDADES_INACTIVAR] },
-    { label: 'Sedes', permisos: [PERMS.SEDES_VER, PERMS.SEDES_CREAR, PERMS.SEDES_EDITAR, PERMS.SEDES_INACTIVAR] },
-    { label: 'Códigos', permisos: [PERMS.CODIGOS_CREAR, PERMS.AUTORIZACIONES_VER] },
-].map(g => ({ ...g, permisos: g.permisos.map(n => ({ value: n, label: LABEL_MAP[n] ?? n })) }))
+const GRUPOS = computed(() => {
+    const map = new Map()
+    for (const p of permisosDisponibles.value) {
+        const partes = p.Nombre.split('-')
+        const grupo = partes.slice(1).join(' ')
+            .toLowerCase().replace(/^\w/, c => c.toUpperCase())
+        if (!map.has(grupo)) map.set(grupo, [])
+        map.get(grupo).push({ value: p.Nombre, label: formatLabel(p.Nombre) })
+    }
+    return [...map.entries()].map(([label, permisos]) => ({ label, permisos }))
+})
 
-const totalPermisos = GRUPOS.reduce((acc, g) => acc + g.permisos.length, 0)
+const totalPermisos = computed(() =>
+    GRUPOS.value.reduce((acc, g) => acc + g.permisos.length, 0)
+)
 
 // ── Estado ─────────────────────────────────────────────────────────
 const loadingRoles = ref(false)
@@ -247,10 +232,9 @@ const permisosDisponibles = ref([])
 const rolSeleccionado = ref(null)
 const seleccionados = ref(new Set())
 const busquedaPerm = ref('')
-
-// Cuántos permisos activos tiene cada rol (para el listado)
 const permisosCount = ref({})
 
+// ── Init ───────────────────────────────────────────────────────────
 onMounted(async () => {
     loadingRoles.value = true
     try {
@@ -261,7 +245,8 @@ onMounted(async () => {
         roles.value = resR?.data ?? resR ?? []
         permisosDisponibles.value = resP?.data ?? resP ?? []
 
-        // Precargar conteo de permisos por rol
+        cargarCatalogo(permisosDisponibles.value) // ✅ puebla ids y nombres
+
         await Promise.all(roles.value.map(async rol => {
             try {
                 const res = await RolService.getPermisosRol(rol.Id)
@@ -276,7 +261,7 @@ onMounted(async () => {
     }
 })
 
-// ── Seleccionar rol → cargar sus permisos ──────────────────────────
+// ── Seleccionar rol ────────────────────────────────────────────────
 const seleccionarRol = async (rol) => {
     if (rolSeleccionado.value?.Id === rol.Id) { rolSeleccionado.value = null; return }
     rolSeleccionado.value = rol
@@ -296,8 +281,9 @@ const seleccionarRol = async (rol) => {
 // ── Guardar ────────────────────────────────────────────────────────
 const guardarPermisos = async () => {
     if (!rolSeleccionado.value) return
+
     const ids = [...seleccionados.value]
-        .map(nombre => permisosDisponibles.value.find(p => p.Nombre === nombre)?.Id)
+        .map(nombre => permisosCatalogo.ids[nombre]) // ✅ usa el catálogo directo
         .filter(Boolean)
 
     loadingPermisos.value = true
@@ -312,15 +298,20 @@ const guardarPermisos = async () => {
     }
 }
 
-// ── Helpers permisos ───────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────
 const isSelected = v => seleccionados.value.has(v)
 const countActivos = g => g.permisos.filter(p => isSelected(p.value)).length
 
 const gruposFiltrados = computed(() => {
     const q = busquedaPerm.value.toLowerCase().trim()
-    if (!q) return GRUPOS
-    return GRUPOS
-        .map(g => ({ ...g, permisos: g.permisos.filter(p => p.label.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)) }))
+    if (!q) return GRUPOS.value
+    return GRUPOS.value
+        .map(g => ({
+            ...g,
+            permisos: g.permisos.filter(p =>
+                p.label.toLowerCase().includes(q) || p.value.toLowerCase().includes(q)
+            )
+        }))
         .filter(g => g.permisos.length > 0)
 })
 
@@ -337,7 +328,10 @@ const toggleGrupo = g => {
     seleccionados.value = s
 }
 
-const selectAll = () => { seleccionados.value = new Set(GRUPOS.flatMap(g => g.permisos.map(p => p.value))) }
+const selectAll = () => {
+    seleccionados.value = new Set(GRUPOS.value.flatMap(g => g.permisos.map(p => p.value)))
+}
+
 const clearAll = () => { seleccionados.value = new Set() }
 </script>
 
