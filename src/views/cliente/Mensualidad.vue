@@ -1,6 +1,7 @@
 <template>
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
+        <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
             <button @click="$router.back()"
                 class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
@@ -16,77 +17,132 @@
             </button>
         </div>
 
-        <div class="mensualidades-grid">
-            <div v-if="loading" class="mensualidades-grid">
-                <div v-for="n in 2" :key="n" class="h-[320px] rounded-[24px]"
-                    style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite" />
-            </div>
-            <div v-for="(m, i) in mensualidades" :key="m.id" class="mensualidad-card" :class="estadoClase(m)"
-                :style="{ animationDelay: `${i * 0.08}s` }">
-                <div class="card-band" :class="`card-band--${m.estado}`" />
-                <div class="card-head">
-                    <div class="card-avatar">{{ iniciales(m.nombre) }}</div>
-                    <div class="card-head__info">
-                        <h3 class="card-nombre">{{ m.sede }}</h3>
-                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}</p>
-                        <span class="card-estado-badge" :class="`badge--${m.estado}`">{{ estadoLabel(m.estado) }}</span>
+        <!-- Grid -->
+        <div class="grid grid-cols-2 max-[700px]:grid-cols-1 gap-5 content-start">
+
+            <!-- Skeleton -->
+            <template v-if="loading">
+                <div v-for="n in 2" :key="n" class="h-80 rounded-3xl animate-pulse"
+                    style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%" />
+            </template>
+
+            <!-- Card -->
+            <div v-for="(m, i) in mensualidades" :key="m.id"
+                class="bg-white rounded-3xl p-[22px] flex flex-col gap-4 relative overflow-hidden border-2 transition-all duration-200 hover:-translate-y-0.5"
+                :class="[
+                    m.estado === 'congelada'
+                        ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 shadow-[0_4px_0_#93c5fd,0_2px_16px_rgba(59,130,246,0.10)] hover:shadow-[0_6px_0_#7db8f7,0_4px_20px_rgba(59,130,246,0.15)]'
+                        : 'border-[#e8f5e9] shadow-[0_4px_0_#e2ede7,0_2px_16px_rgba(13,41,28,0.06)] hover:shadow-[0_6px_0_#c8ddd1,0_4px_20px_rgba(13,41,28,0.10)]'
+                ]" :style="{ animationDelay: `${i * 0.08}s` }">
+
+                <!-- Top band -->
+                <div class="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" :class="{
+                    'bg-[#7FD344]': m.estado === 'activa',
+                    'bg-amber-400': m.estado === 'por_vencer',
+                    'bg-red-600': m.estado === 'vencida',
+                    'bg-blue-400': m.estado === 'congelada',
+                }" />
+
+                <!-- Card head -->
+                <div class="flex items-center gap-3 mt-1.5">
+                    <!-- Avatar -->
+                    <div
+                        class="w-11 h-11 rounded-[14px] bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0 border-2 border-[#e8f5e9]">
+                        {{ iniciales(m.nombre) }}
                     </div>
-                    <div class="card-dias" :class="`card-dias--${m.estado}`">
-                        <span class="card-dias__num">{{ diasRestantes(m) }}</span>
-                        <span class="card-dias__label">{{ m.estado === 'congelada' ? 'cong.' : 'días' }}</span>
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-[0.95rem] font-extrabold text-[#0D291C] truncate">{{ m.sede }}</h3>
+                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}</p>
+                        <!-- Badge -->
+                        <span
+                            class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full mt-[3px] border"
+                            :class="{
+                                'bg-green-100 text-green-700 border-green-200': m.estado === 'activa',
+                                'bg-amber-100 text-amber-600 border-amber-200': m.estado === 'por_vencer',
+                                'bg-red-100   text-red-600   border-red-200': m.estado === 'vencida',
+                                'bg-blue-100  text-blue-600  border-blue-200': m.estado === 'congelada',
+                            }">
+                            {{ estadoLabel(m.estado) }}
+                        </span>
+                    </div>
+                    <!-- Days counter -->
+                    <div
+                        class="flex flex-col items-center flex-shrink-0 bg-gray-50 rounded-xl px-3 py-2 border border-[1.5px] border-gray-200">
+                        <span class="text-[1.4rem] font-black leading-none" :class="{
+                            'text-[#299261]': m.estado === 'activa',
+                            'text-amber-600': m.estado === 'por_vencer',
+                            'text-red-600': m.estado === 'vencida',
+                            'text-blue-500': m.estado === 'congelada',
+                        }">
+                            {{ diasRestantes(m) }}
+                        </span>
+                        <span class="text-[0.58rem] font-bold uppercase tracking-[0.06em] opacity-50 text-black">
+                            {{ m.estado === 'congelada' ? 'cong.' : 'días' }}
+                        </span>
                     </div>
                 </div>
+
+                <!-- Dates block -->
                 <template v-if="m.fechaInicio && m.fechaFin">
-                    <div class="card-data">
-                        <div class="card-data__item">
+                    <div
+                        class="flex flex-col gap-[7px] bg-gray-50 rounded-[14px] px-3.5 py-3 border border-[1.5px] border-gray-200">
+                        <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                viewBox="0 0 24 24">
+                                class="text-gray-400 flex-shrink-0" viewBox="0 0 24 24">
                                 <path
                                     d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
                             </svg>
-                            <span class="card-data__label">Inicia</span>
-                            <span class="card-data__val">{{ formatFecha(m.fechaInicio) }}</span>
+                            <span
+                                class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
+                            }}</span>
                         </div>
-                        <div class="card-data__item">
+                        <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                viewBox="0 0 24 24">
+                                class="text-gray-400 flex-shrink-0" viewBox="0 0 24 24">
                                 <path
                                     d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
                             </svg>
-                            <span class="card-data__label">Vence</span>
-                            <span class="card-data__val">{{ formatFecha(m.fechaFin) }}</span>
+                            <span
+                                class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Vence</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaFin) }}</span>
                         </div>
                     </div>
-                    <div class="card-progress-wrap">
-                        <div class="card-progress-bar">
-                            <div class="card-progress-fill" :class="`fill--${m.estado}`"
-                                :style="{ width: `${porcentajeVigencia(m)}%` }" />
+                    <!-- Progress bar -->
+                    <div class="flex flex-col gap-[5px]">
+                        <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-[width] duration-500" :class="{
+                                'bg-[#7FD344]': m.estado === 'activa',
+                                'bg-amber-400': m.estado === 'por_vencer',
+                                'bg-red-600': m.estado === 'vencida',
+                                'bg-blue-400': m.estado === 'congelada',
+                            }" :style="{ width: `${porcentajeVigencia(m)}%` }" />
                         </div>
-                        <span class="card-progress-label">{{ porcentajeVigencia(m) }}% del periodo</span>
+                        <span class="text-[0.62rem] font-semibold text-gray-400 text-right">
+                            {{ porcentajeVigencia(m) }}% del periodo
+                        </span>
                     </div>
                 </template>
-                <div v-else-if="m.estado"
-                    class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706" viewBox="0 0 24 24"
-                        class="shrink-0">
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                    </svg>
-                    <span class="text-[0.72rem] font-bold text-amber-700 leading-snug">Pago pendiente — sin fechas de
-                        vigencia aún</span>
-                </div>
+
+                <!-- Pending payment notice -->
                 <div v-else class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706" viewBox="0 0 24 24"
                         class="shrink-0">
                         <path
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                     </svg>
-                    <span class="text-[0.72rem] font-bold text-amber-700 leading-snug">Pago pendiente — sin fechas de
-                        vigencia aún</span>
+                    <span class="text-[0.72rem] font-bold text-amber-700 leading-snug">
+                        Pago pendiente — sin fechas de vigencia aún
+                    </span>
                 </div>
-                <div class="card-actions">
-                    <button @click="abrirPago(m)"
-                        class="flex-1 flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21]">
+
+                <!-- Card actions -->
+                <div class="grid gap-2 w-full"
+                    :class="m.conPago && m.estado !== 'congelada' ? 'grid-cols-3' : 'grid-cols-2'">
+                    <!-- Pay -->
+                    <button @click="abrirPago(m)" :class="m.conPago && m.estado !== 'congelada' ? 'col-span-1' : ''"
+                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -94,8 +150,9 @@
                         </svg>
                         Pagar
                     </button>
+                    <!-- View -->
                     <button @click="abrirDetalle(m)"
-                        class="flex-1 flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
+                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -103,8 +160,9 @@
                         </svg>
                         Ver
                     </button>
+                    <!-- Freeze -->
                     <button v-if="m.conPago && m.estado !== 'congelada'" @click="abrirCongelar(m)"
-                        class="flex-1 flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#3b82f6] border-[#bfdbfe] shadow-[0_3px_0_#bfdbfe] hover:bg-[#eff6ff]">
+                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -116,13 +174,17 @@
             </div>
         </div>
 
-        <!-- Modal: Añadir mensualidad por código -->
+        <!-- ───────────────── MODAL: AÑADIR CÓDIGO ───────────────── -->
         <Transition name="modal">
-            <div v-if="modalCodigo" class="modal-overlay">
-                <div class="modal-card">
-                    <div class="modal-head">
-                        <div class="modal-head__left">
-                            <div class="w-9 h-9 rounded-xl bg-[#0D291C] flex items-center justify-center flex-shrink-0">
+            <div v-if="modalCodigo"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-y-auto">
+                    <!-- Head -->
+                    <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-9 h-9 rounded-xl bg-[#0D291C] border border-[#7FD344]/30 flex items-center justify-center flex-shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#7FD344"
                                     viewBox="0 0 24 24">
                                     <path
@@ -130,56 +192,86 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="modal-head__name">Añadir mensualidad</p>
-                                <p class="modal-head__sub">Ingresa el código que te proporcionó la sede</p>
+                                <p class="text-[0.9rem] font-extrabold text-white">Añadir mensualidad</p>
+                                <p class="text-[0.65rem] text-white/50 font-semibold">Ingresa el código que te
+                                    proporcionó la
+                                    sede</p>
                             </div>
                         </div>
-                        <button @click="cerrarModales" class="modal-close-btn">✕</button>
+                        <button @click="cerrarModales"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white hover:border-white/45 transition-all">✕</button>
                     </div>
-                    <div class="modal-body">
-                        <div class="modal-section">
-                            <div class="field-group">
-                                <label class="field-label">Código de verificación</label>
-                                <input v-model="codigoInput" type="text" class="field-input field-input--code"
+                    <!-- Body -->
+                    <div class="flex flex-col bg-white">
+                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                            <div class="flex flex-col gap-1.5">
+                                <label
+                                    class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Código
+                                    de verificación</label>
+                                <input v-model="codigoInput" type="text"
+                                    class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-base text-center font-mono tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
                                     placeholder="Ej: PARK-2024-XXXX" maxlength="20" @keyup.enter="cerrarModales"
                                     autofocus />
-                                <p class="field-hint">El código es entregado por el administrador de la sede.</p>
+                                <p class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">El código es entregado por
+                                    el
+                                    administrador de la sede.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
-                        <button @click="cerrarModales" class="btn-modal btn-modal--confirm"
-                            :disabled="!codigoInput.trim()">Aceptar</button>
+                    <!-- Foot -->
+                    <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
+                        <button @click="cerrarModales"
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            Cancelar
+                        </button>
+                        <button @click="cerrarModales" :disabled="!codigoInput.trim()"
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            Aceptar
+                        </button>
                     </div>
                 </div>
             </div>
         </Transition>
 
-        <!-- Modal: Pago -->
+        <!-- ───────────────── MODAL: PAGO ───────────────── -->
         <Transition name="modal">
-            <div v-if="modalPago" class="modal-overlay modal-pago">
-                <div class="modal-card">
-                    <div class="modal-head">
-                        <div class="modal-head__left">
+            <div v-if="modalPago"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)] max-[720px]:max-h-[95%]">
+                    <!-- Head -->
+                    <div
+                        class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15] flex-shrink-0">
+                        <div class="flex items-center gap-3">
                             <div
-                                class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-xs flex-shrink-0">
-                                {{ iniciales(mensualidadAccion?.nombre) }}</div>
+                                class="w-9 h-9 rounded-full bg-[#0D291C] border border-[#7FD344]/40 text-[#7FD344] flex items-center justify-center font-black text-xs flex-shrink-0">
+                                {{ iniciales(mensualidadAccion?.nombre) }}
+                            </div>
                             <div>
-                                <p class="modal-head__name">Renovar mensualidad</p>
-                                <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                    }}</p>
+                                <p class="text-[0.9rem] font-extrabold text-white">Renovar mensualidad</p>
+                                <p class="text-[0.65rem] text-white/50 font-semibold">{{ mensualidadAccion?.nombre }} ·
+                                    {{
+                                        mensualidadAccion?.sede }}</p>
                             </div>
                         </div>
-                        <button @click="cerrarModales" class="modal-close-btn">✕</button>
+                        <button @click="cerrarModales"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
-                    <div class="modal-body">
+
+                    <!-- Body (scrollable) -->
+                    <div
+                        class="flex flex-col bg-white overflow-y-auto flex-1 min-h-0 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
+
+                        <!-- Loading -->
                         <div v-if="loadingOpciones" class="flex flex-col items-center gap-3 py-10">
-                            <div class="det-loader" />
+                            <div
+                                class="w-8 h-8 rounded-full border-[3px] border-[#e8f5e9] border-t-[#299261] animate-spin" />
                             <span class="text-xs text-gray-400 font-semibold">Verificando estado del pago...</span>
                         </div>
+
+                        <!-- Pending payment -->
                         <template v-else-if="pagoPendiente && !opcionesPago.length">
-                            <div class="modal-section">
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <div class="flex flex-col gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4">
                                     <div class="flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#d97706"
@@ -190,15 +282,10 @@
                                             pendiente</span>
                                     </div>
                                     <p class="text-[0.72rem] font-semibold text-amber-700 leading-relaxed">
-                                        Encontramos una transacción pendiente para esta mensualidad.
-                                        Completa el pago antes de iniciar uno nuevo.
+                                        Encontramos una transacción pendiente para esta mensualidad. Completa el pago
+                                        antes de iniciar uno nuevo.
                                     </p>
                                     <div class="flex flex-col gap-1.5 text-[0.72rem] font-semibold text-amber-700">
-                                        <!-- <div v-if="pagoPendiente.referencia" class="flex justify-between">
-                                            <span
-                                                class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Referencia</span>
-                                            <span class="font-mono font-black">{{ pagoPendiente.referencia }}</span>
-                                        </div> -->
                                         <div v-if="pagoPendiente.valor" class="flex justify-between">
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
@@ -224,22 +311,33 @@
                             </div>
                         </template>
 
-                        <div v-else-if="errPago && !opcionesPago.length" class="modal-section">
+                        <!-- Error -->
+                        <div v-else-if="errPago && !opcionesPago.length" class="px-5 py-4 border-b border-gray-100">
                             <div
                                 class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
-                                {{ errPago }}</div>
+                                {{ errPago }}
+                            </div>
                         </div>
+
+                        <!-- Options -->
                         <template v-else>
-                            <div class="modal-section">
-                                <p class="modal-section__title">Elige tu plan</p>
+                            <!-- Plan selector -->
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Elige tu plan
+                                </p>
                                 <div class="flex flex-col gap-2">
                                     <button v-for="op in opcionesPago" :key="op.modalidad + op.cantidadMeses"
-                                        @click="seleccionarOpcion(op)" class="pago-opcion"
-                                        :class="{ 'pago-opcion--selected': opcionSeleccionada?.modalidad === op.modalidad }">
+                                        @click="seleccionarOpcion(op)"
+                                        class="flex flex-col gap-2.5 p-3.5 px-4 rounded-2xl border-2 bg-gray-50 cursor-pointer text-left w-full transition-all shadow-[0_2px_0_#e2e8f0] hover:border-[#c8e6c9] hover:bg-[#f0fdf4]"
+                                        :class="opcionSeleccionada?.modalidad === op.modalidad
+                                            ? 'border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9]'
+                                            : 'border-gray-200'">
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -250,46 +348,65 @@
                                                 </span>
                                             </div>
                                             <div class="flex flex-col items-end gap-0.5">
-                                                <span class="text-[1rem] font-black text-[#299261]">{{
+                                                <span class="text-base font-black text-[#299261]">{{
                                                     formatPrecio(op.totalFinal) }}</span>
                                                 <span v-if="op.tarjeta"
-                                                    class="text-[0.68rem] font-semibold text-gray-400">+
-                                                    {{ formatPrecio(op.tarjeta.total) }} Tarjeta</span>
+                                                    class="text-[0.68rem] font-semibold text-gray-400">+ {{
+                                                        formatPrecio(op.tarjeta.total) }} Tarjeta</span>
                                             </div>
                                         </div>
+                                        <!-- Desglose -->
                                         <div v-if="opcionSeleccionada?.modalidad === op.modalidad"
-                                            class="pago-desglose">
-                                            <div class="pago-desglose__row">
-                                                <span>Subtotal</span>
-                                                <span>{{ formatPrecio(op.desglose.subtotal) }}</span>
+                                            class="flex flex-col gap-[5px] pt-2.5 border-t border-gray-200">
+                                            <div
+                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                                <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
+                                                }}</span>
                                             </div>
-                                            <div class="pago-desglose__row">
-                                                <span>IVA</span>
-                                                <span>{{ formatPrecio(op.desglose.iva) }}</span>
+                                            <div
+                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                                <span>IVA</span><span>{{ formatPrecio(op.desglose.iva) }}</span>
                                             </div>
-                                            <div v-if="op.tarjeta" class="pago-desglose__row">
-                                                <span>Cobro Tarjeta</span>
-                                                <span>{{ formatPrecio(op.tarjeta.total) }}</span>
+                                            <div v-if="op.tarjeta"
+                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                                <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
+                                                }}</span>
                                             </div>
-                                            <div class="pago-desglose__row pago-desglose__row--total">
-                                                <span>Total a pagar</span>
-                                                <span>{{ formatPrecio(op.totalFinal) }}</span>
+                                            <div
+                                                class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
+                                                <span>Total a pagar</span><span class="text-[#299261]">{{
+                                                    formatPrecio(op.totalFinal) }}</span>
                                             </div>
                                         </div>
                                     </button>
                                 </div>
                             </div>
-                            <!-- Selector de meses: solo para MENSUALIDAD y RECARGA -->
-                            <div v-if="opcionSeleccionada && !esQuincena && !esSoloTarjeta" class="modal-section">
-                                <p class="modal-section__title">Meses a renovar</p>
-                                <div class="meses-selector">
+
+                            <!-- Month selector -->
+                            <div v-if="opcionSeleccionada && !esQuincena && !esSoloTarjeta"
+                                class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Meses a renovar
+                                </p>
+                                <div class="flex gap-2.5">
                                     <button v-for="n in [1, 2]" :key="n" @click="seleccionarMesesExtra(n)"
-                                        class="mes-btn" :class="{ 'mes-btn--on': mesesExtra === n }">
-                                        <span class="mes-btn__num">{{ n }}</span>
-                                        <span class="mes-btn__label">{{ n === 1 ? 'mes' : 'meses' }}</span>
+                                        class="flex-1 flex flex-col items-center gap-0.5 py-3 px-2.5 rounded-[14px] border-2 cursor-pointer transition-all"
+                                        :class="mesesExtra === n
+                                            ? 'border-[#299261] bg-[#0D291C] shadow-[0_3px_0_#051510]'
+                                            : 'border-gray-200 bg-gray-50 shadow-[0_2px_0_#e2e8f0] hover:border-[#c8e6c9] hover:bg-[#f0fdf4]'">
+                                        <span class="text-[1.6rem] font-black leading-none transition-colors"
+                                            :class="mesesExtra === n ? 'text-[#7FD344]' : 'text-[#0D291C]'">{{ n
+                                            }}</span>
+                                        <span
+                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.08em] transition-colors"
+                                            :class="mesesExtra === n ? 'text-[#7FD344]/60' : 'text-gray-400'">
+                                            {{ n === 1 ? 'mes' : 'meses' }}
+                                        </span>
                                     </button>
                                 </div>
-                                <p v-if="mesesExtra === 2" class="meses-aviso">
+                                <p v-if="mesesExtra === 2"
+                                    class="flex items-start gap-1.5 text-[0.7rem] font-semibold text-green-800 bg-[#f0fdf4] border border-[1.5px] border-[#c8e6c9] rounded-[10px] px-3 py-2 leading-relaxed">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#299261"
                                         viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
@@ -297,17 +414,32 @@
                                     Pagarás 2 meses de una vez — el segundo inicia cuando vence el primero.
                                 </p>
                             </div>
-                            <!-- Fecha de inicio manual: solo si no tiene vigencia activa -->
-                            <div v-if="!mensualidadAccion?.fechaFin" class="modal-section">
-                                <p class="modal-section__title">Fecha de inicio</p>
-                                <div class="field-group">
-                                    <label class="field-label">¿Desde cuándo inicia tu mensualidad?</label>
-                                    <input v-model="fechaInicioManual" type="date" class="field-input" :min="hoyISO" />
-                                    <p class="field-hint">Selecciona la fecha en que deseas activar tu mensualidad.</p>
+
+                            <!-- Manual start date -->
+                            <div v-if="!mensualidadAccion?.fechaFin"
+                                class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Fecha de inicio
+                                </p>
+                                <div class="flex flex-col gap-1.5">
+                                    <label
+                                        class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">¿Desde
+                                        cuándo
+                                        inicia tu mensualidad?</label>
+                                    <input v-model="fechaInicioManual" type="date"
+                                        class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                                        :min="hoyISO" />
+                                    <p class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">Selecciona la fecha en
+                                        que deseas activar tu
+                                        mensualidad.</p>
                                 </div>
                             </div>
-                            <div class="modal-section">
-                                <div class="modal-notice">
+
+                            <!-- Notice -->
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <div
+                                    class="flex items-start gap-2 px-3 py-2.5 bg-[#f0fdf4] border border-[1.5px] border-[#c8e6c9] rounded-[10px] text-[0.72rem] font-semibold text-green-800 leading-relaxed">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#299261"
                                         viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                         <path
@@ -317,28 +449,25 @@
                                 </div>
                                 <div v-if="errPago"
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
-                                    {{ errPago }}</div>
+                                    {{ errPago }}
+                                </div>
                             </div>
-
-
-
                         </template>
                     </div>
 
-                    <!-- Transacción pendiente
-                    
-                    (${mesesExtra} ${mesesExtra === 1 ? 'mes' : 'meses'})
-                    
-                    -->
-
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
+                    <!-- Foot -->
+                    <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200 flex-shrink-0">
+                        <button @click="cerrarModales"
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            Cancelar
+                        </button>
                         <button @click="confirmarPago"
-                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5"
-                            :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago || (!mensualidadAccion?.fechaFin && !fechaInicioManual)">
-                            <div v-if="iniciandoPago" class="btn-spinner" />
-                            {{ iniciandoPago ? 'Redirigiendo...' : esSoloTarjeta ? 'Ir a pagar (solo tarjeta)' : `Ir a
-                            pagar` }}
+                            :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago || (!mensualidadAccion?.fechaFin && !fechaInicioManual)"
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            <div v-if="iniciandoPago"
+                                class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
+                            {{ iniciandoPago ? 'Redirigiendo...' : esSoloTarjeta ?
+                                'Ir a pagar (solo tarjeta)' : 'Ir a pagar' }}
                         </button>
                     </div>
                 </div>
@@ -349,92 +478,134 @@
             :info-congelamiento="infoCongelamiento" :err-externo="errCongelar" :guardando-externo="guardandoCongelar"
             @confirmar="confirmarCongelar" @cerrar="errCongelar = ''" />
 
-        <!-- Modal: Detalle -->
+        <!-- ───────────────── MODAL: DETALLE ───────────────── -->
         <Transition name="modal">
-            <div v-if="modalDetalle" class="modal-overlay">
-                <div class="modal-card modal-card--detalle">
-                    <div class="det-head">
+            <div v-if="modalDetalle"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[440px] flex flex-col overflow-y-auto">
+                    <!-- Head -->
+                    <div class="flex items-center justify-between px-5 py-4 bg-gray-50 border-b-2 border-gray-200">
                         <div class="flex items-center gap-3">
                             <div
                                 class="w-10 h-10 rounded-xl bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0">
-                                {{ iniciales(mensualidadAccion?.nombre) }}</div>
+                                {{ iniciales(mensualidadAccion?.nombre) }}
+                            </div>
                             <div>
                                 <p class="text-[0.92rem] font-black text-[#0D291C]">{{ mensualidadAccion?.nombre }}</p>
                                 <p class="text-[0.65rem] font-semibold text-gray-400">{{ mensualidadAccion?.sede }}</p>
                             </div>
                         </div>
-                        <button @click="modalDetalle = false" class="modal-close-btn modal-close-btn--light">✕</button>
+                        <button @click="modalDetalle = false"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 bg-gray-100 text-gray-500 border-gray-300 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all">✕</button>
                     </div>
+
+                    <!-- Loading -->
                     <div v-if="loadingDetalle" class="flex flex-col items-center justify-center gap-3 py-14">
-                        <div class="det-loader" />
+                        <div
+                            class="w-8 h-8 rounded-full border-[3px] border-[#e8f5e9] border-t-[#299261] animate-spin" />
                         <span class="text-xs text-gray-400 font-semibold">Cargando información...</span>
                     </div>
+
                     <template v-else>
                         <div v-if="errDetalle"
                             class="mx-5 mt-3 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[0.72rem] font-semibold text-amber-700">
                             {{ errDetalle }}
                         </div>
-                        <div class="modal-body det-body">
-                            <div class="modal-section">
+                        <!-- Body -->
+                        <div
+                            class="flex flex-col bg-white max-h-[62vh] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
+                            <!-- Estado + días -->
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="card-estado-badge" :class="`badge--${mensualidadAccion?.estado}`">{{
-                                        estadoLabel(mensualidadAccion?.estado) }}</span>
+                                    <span
+                                        class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full border"
+                                        :class="{
+                                            'bg-green-100 text-green-700 border-green-200': mensualidadAccion?.estado === 'activa',
+                                            'bg-amber-100 text-amber-600 border-amber-200': mensualidadAccion?.estado === 'por_vencer',
+                                            'bg-red-100   text-red-600   border-red-200': mensualidadAccion?.estado === 'vencida',
+                                            'bg-blue-100  text-blue-600  border-blue-200': mensualidadAccion?.estado === 'congelada',
+                                        }">
+                                        {{ estadoLabel(mensualidadAccion?.estado) }}
+                                    </span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                            }}</strong>
-                                        días restantes
+                                        }}</strong> días restantes
                                     </span>
                                 </div>
                             </div>
-                            <div class="modal-section">
-                                <p class="modal-section__title">Datos personales</p>
+                            <!-- Datos personales -->
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Datos personales
+                                </p>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <div class="det-field">
-                                        <span class="det-label">Documento</span>
-                                        <span class="det-val font-mono">{{ detalleCompleto?.Documento ??
-                                            mensualidadAccion?._raw?.Documento ?? '—' }}</span>
+                                    <div class="flex flex-col gap-[3px]">
+                                        <span
+                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Documento</span>
+                                        <span class="text-[0.85rem] font-bold text-[#0D291C] font-mono">{{
+                                            detalleCompleto?.Documento ?? mensualidadAccion?._raw?.Documento ?? '—'
+                                        }}</span>
                                     </div>
-                                    <div class="det-field">
-                                        <span class="det-label">Nombre</span>
-                                        <span class="det-val" style="font-size:0.78rem">{{
+                                    <div class="flex flex-col gap-[3px]">
+                                        <span
+                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Nombre</span>
+                                        <span class="text-[0.78rem] font-bold text-[#0D291C]">{{
                                             detalleCompleto?.NombreApellidos ?? mensualidadAccion?._raw?.NombreApellidos
                                             ?? '—' }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-section">
-                                <p class="modal-section__title">Vigencia</p>
+                            <!-- Vigencia -->
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Vigencia
+                                </p>
                                 <div class="grid grid-cols-2 gap-3 mb-3">
-                                    <div class="det-field">
-                                        <span class="det-label">Inicio</span>
-                                        <span class="det-val">{{ formatFecha(mensualidadAccion?.fechaInicio) }}</span>
+                                    <div class="flex flex-col gap-[3px]">
+                                        <span
+                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Inicio</span>
+                                        <span class="text-[0.85rem] font-bold text-[#0D291C]">{{
+                                            formatFecha(mensualidadAccion?.fechaInicio) }}</span>
                                     </div>
-                                    <div class="det-field">
-                                        <span class="det-label">Fin</span>
-                                        <span class="det-val">{{ formatFecha(mensualidadAccion?.fechaFin) }}</span>
+                                    <div class="flex flex-col gap-[3px]">
+                                        <span
+                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Fin</span>
+                                        <span class="text-[0.85rem] font-bold text-[#0D291C]">{{
+                                            formatFecha(mensualidadAccion?.fechaFin) }}</span>
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1.5">
                                     <div class="h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
-                                        <div class="h-full rounded-full transition-all duration-500"
-                                            :class="`fill--${mensualidadAccion?.estado}`"
-                                            :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
+                                        <div class="h-full rounded-full transition-all duration-500" :class="{
+                                            'bg-[#7FD344]': mensualidadAccion?.estado === 'activa',
+                                            'bg-amber-400': mensualidadAccion?.estado === 'por_vencer',
+                                            'bg-red-600': mensualidadAccion?.estado === 'vencida',
+                                            'bg-blue-400': mensualidadAccion?.estado === 'congelada',
+                                        }" :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
                                     </div>
                                     <span class="text-right text-[0.62rem] font-semibold text-gray-400">
                                         {{ porcentajeVigencia(mensualidadAccion) }}% del periodo
                                     </span>
                                 </div>
                             </div>
-                            <div class="modal-section">
+                            <!-- Vehículos -->
+                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <div class="flex items-center justify-between">
-                                    <p class="modal-section__title" style="margin:0;flex:1">Vehículos registrados</p>
+                                    <p
+                                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full flex-1 m-0">
+                                        Vehículos registrados
+                                    </p>
                                     <button @click="abrirModalPlacas"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
-                                        :class="placaCambiada ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
+                                        :class="placaCambiada
+                                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
                                         :disabled="placaCambiada">
                                         {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
                                     </button>
-
                                     <button @click="abrirModalCambioTipo"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all flex-shrink-0 bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
@@ -444,14 +615,13 @@
                                         </svg>
                                         Cambiar tipo
                                     </button>
-
                                 </div>
                                 <div v-if="placasDetalle.length" class="flex flex-col gap-2 mt-1">
                                     <div v-for="(placa, idx) in placasDetalle" :key="idx"
                                         class="flex items-center gap-2.5 px-3 py-2 rounded-xl border-2"
                                         :class="idx === 0 ? 'bg-[#f0fdf4] border-[#c8e6c9]' : 'bg-gray-50 border-gray-200'">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            :fill="idx === 0 ? '#299261' : '#9ca3af'" viewBox="0 0 24 24">
+                                            viewBox="0 0 24 24" :fill="idx === 0 ? '#299261' : '#9ca3af'">
                                             <path
                                                 d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
                                         </svg>
@@ -463,8 +633,12 @@
                                 </div>
                                 <p v-else class="text-xs font-semibold text-gray-400 mt-1">Sin vehículos registrados</p>
                             </div>
-                            <div class="modal-section">
-                                <p class="modal-section__title">Sede</p>
+                            <!-- Sede -->
+                            <div class="px-5 py-4 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Sede
+                                </p>
                                 <div
                                     class="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-white border-2 border-gray-200">
                                     <div
@@ -475,26 +649,33 @@
                                                 d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                         </svg>
                                     </div>
-                                    <p class="text-[0.85rem] font-bold text-[#0D291C]">{{
-                                        detalleCompleto?.T_Estacionamiento?.Nombre ??
-                                        mensualidadAccion?._raw?.T_Estacionamiento?.Nombre ?? '—' }}</p>
+                                    <p class="text-[0.85rem] font-bold text-[#0D291C]">
+                                        {{ detalleCompleto?.T_Estacionamiento?.Nombre ??
+                                            mensualidadAccion?._raw?.T_Estacionamiento?.Nombre ?? '—' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-foot det-foot">
-                            <button @click="modalDetalle = false" class="btn-modal btn-modal--cancel">Cerrar</button>
+                        <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-[#e8f5e9]">
+                            <button @click="modalDetalle = false"
+                                class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                                Cerrar
+                            </button>
                         </div>
                     </template>
                 </div>
             </div>
         </Transition>
 
-        <!-- Modal: Cambio de placas -->
+        <!-- ───────────────── MODAL: CAMBIO DE PLACAS ───────────────── -->
         <Transition name="modal">
-            <div v-if="modalPlacas" class="modal-overlay" style="z-index:60">
-                <div class="modal-card modal-card--placas">
-                    <div class="modal-head">
-                        <div class="modal-head__left">
+            <div v-if="modalPlacas"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+                <div
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px] flex flex-col overflow-y-auto">
+                    <!-- Head -->
+                    <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
+                        <div class="flex items-center gap-3">
                             <div class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
                                     viewBox="0 0 24 24">
@@ -503,42 +684,56 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="modal-head__name">Cambio de placas</p>
-                                <p class="modal-head__sub">{{ mensualidadAccion?.sede }} · 1 cambio por mes</p>
+                                <p class="text-[0.9rem] font-extrabold text-white">Cambio de placas</p>
+                                <p class="text-[0.65rem] text-white/50 font-semibold">{{ mensualidadAccion?.sede }} · 1
+                                    cambio
+                                    por mes</p>
                             </div>
                         </div>
-                        <button @click="modalPlacas = false" class="modal-close-btn">✕</button>
+                        <button @click="modalPlacas = false"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
-                    <div class="modal-body">
-                        <div class="modal-section">
-                            <div class="placa-aviso">
+                    <!-- Body -->
+                    <div class="flex flex-col bg-white">
+                        <!-- Warning -->
+                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                            <div
+                                class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-[1.5px] border-amber-200 rounded-[10px] text-[0.72rem] font-semibold text-amber-800 leading-relaxed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706"
                                     viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                     <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                 </svg>
                                 <p>Solo se permite <strong>1 cambio de placas por mes</strong>. Una vez confirmado, no
-                                    podrás realizar otro cambio hasta el próximo mes.</p>
+                                    podrás
+                                    realizar otro cambio hasta el próximo mes.</p>
                             </div>
                         </div>
-                        <div class="modal-section">
-                            <p class="modal-section__title">Editar placas</p>
+                        <!-- Plate inputs -->
+                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                            <p
+                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                Editar placas
+                            </p>
                             <div class="flex flex-col gap-3">
-                                <div v-for="(_, idx) in nuevasPlacas" :key="idx" class="placa-row">
-                                    <div class="placa-row__label">
-                                        <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">{{
-                                            idx === 0 ? 'Principal' : `Placa ${idx + 1}` }}</span>
+                                <div v-for="(_, idx) in nuevasPlacas" :key="idx"
+                                    class="flex flex-col gap-1 px-3 py-2.5 rounded-[14px] bg-gray-50 border border-[1.5px] border-gray-200">
+                                    <div class="flex items-center mb-0.5">
+                                        <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">
+                                            {{ idx === 0 ? 'Principal' : `Placa ${idx + 1}` }}
+                                        </span>
                                         <span v-if="idx === 0"
                                             class="text-[0.55rem] font-black px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344] ml-1.5">Requerida</span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <div class="placa-input-wrap">
+                                        <div
+                                            class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-all focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                                :fill="nuevasPlacas[idx] ? '#299261' : '#d1d5db'" viewBox="0 0 24 24">
+                                                viewBox="0 0 24 24" :fill="nuevasPlacas[idx] ? '#299261' : '#d1d5db'">
                                                 <path
                                                     d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
                                             </svg>
                                             <input v-model="nuevasPlacas[idx]" type="text" maxlength="7"
-                                                class="placa-input"
+                                                class="flex-1 bg-transparent border-none outline-none font-mono font-black text-[0.95rem] tracking-[0.15em] uppercase text-[#0D291C] min-w-0 placeholder:text-gray-300 placeholder:font-semibold placeholder:tracking-[0.05em]"
                                                 :placeholder="placasDetalle[idx] || (idx === 0 ? 'ABC123' : 'Opcional')"
                                                 @input="nuevasPlacas[idx] = nuevasPlacas[idx].toUpperCase()" />
                                         </div>
@@ -557,13 +752,16 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Error -->
                         <div v-if="errPlacas"
                             class="mx-5 mb-1 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
-                            {{ errPlacas }}</div>
+                            {{ errPlacas }}
+                        </div>
                     </div>
-                    <!-- Banner: upgrade moto→carro requiere pago -->
+
+                    <!-- Excedente banner -->
                     <Transition name="modal">
-                        <div v-if="infoExcedente" class="modal-section">
+                        <div v-if="infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                             <div class="flex flex-col gap-3 rounded-2xl border-2 border-[#c8e6c9] bg-[#f0fdf4] p-4">
                                 <div class="flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#299261"
@@ -585,12 +783,11 @@
                                 <div
                                     class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                     <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
-                                        <span>Subtotal</span>
-                                        <span>{{ formatPrecio(infoExcedente.excedente?.subtotal) }}</span>
+                                        <span>Subtotal</span><span>{{ formatPrecio(infoExcedente.excedente?.subtotal)
+                                        }}</span>
                                     </div>
                                     <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
-                                        <span>IVA</span>
-                                        <span>{{ formatPrecio(infoExcedente.excedente?.iva) }}</span>
+                                        <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva) }}</span>
                                     </div>
                                     <div
                                         class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
@@ -607,20 +804,21 @@
                         </div>
                     </Transition>
 
-
-                    <div class="modal-foot">
+                    <!-- Foot -->
+                    <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
                         <button @click="infoExcedente ? (infoExcedente = null) : (modalPlacas = false)"
-                            class="btn-modal btn-modal--cancel">
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             {{ infoExcedente ? 'Volver' : 'Cancelar' }}
                         </button>
                         <button v-if="!infoExcedente" @click="confirmarCambioPlacas"
-                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-2"
-                            :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas">
-                            <div v-if="guardandoPlacas" class="btn-spinner" />
+                            :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas"
+                            class="flex-1 flex items-center justify-center gap-2 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            <div v-if="guardandoPlacas"
+                                class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
                             Confirmar cambio
                         </button>
                         <button v-else @click="confirmarPagoExcedente"
-                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5">
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 viewBox="0 0 24 24">
                                 <path
@@ -633,12 +831,15 @@
             </div>
         </Transition>
 
-        <!-- Modal: Consentimiento -->
+        <!-- ───────────────── MODAL: CONSENTIMIENTO ───────────────── -->
         <Transition name="modal">
-            <div v-if="modalConsentimiento" class="modal-overlay" style="z-index:55">
-                <div class="modal-card modal-card--consentimiento">
-                    <div class="modal-head">
-                        <div class="modal-head__left">
+            <div v-if="modalConsentimiento"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[55] p-4">
+                <div
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[400px] flex flex-col overflow-y-auto">
+                    <!-- Head -->
+                    <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
+                        <div class="flex items-center gap-3">
                             <div class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
                                     viewBox="0 0 24 24">
@@ -647,41 +848,46 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="modal-head__name">Antes de continuar</p>
-                                <p class="modal-head__sub">Tratamiento de datos personales</p>
+                                <p class="text-[0.9rem] font-extrabold text-white">Antes de continuar</p>
+                                <p class="text-[0.65rem] text-white/50 font-semibold">Tratamiento de datos personales
+                                </p>
                             </div>
                         </div>
-                        <button @click="cerrarModales" class="modal-close-btn">✕</button>
+                        <button @click="cerrarModales"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
-                    <div class="modal-body">
-                        <div class="modal-section" style="align-items:center; padding-top:28px; padding-bottom:20px;">
-                            <img src="@/assets/img/logo-avalpay-center.webp" alt="AvalPay"
-                                style="height:48px; object-fit:contain;"
+                    <!-- Body -->
+                    <div class="flex flex-col bg-white">
+                        <!-- Logo AvalPay -->
+                        <div class="px-5 py-7 border-b border-gray-100 flex flex-col items-center gap-1">
+                            <img src="@/assets/img/logo-avalpay-center.webp" alt="AvalPay" class="h-12 object-contain"
                                 @error="$event.target.style.display = 'none'" />
-                            <p
-                                style="font-size:0.72rem; color:#6b7280; font-weight:600; text-align:center; line-height:1.5; margin-top:4px;">
-                                El proceso de pago es gestionado de forma segura por
-                                <strong style="color:#0D291C;">AvalPay</strong>
+                            <p class="text-[0.72rem] text-gray-500 font-semibold text-center leading-relaxed mt-1">
+                                El proceso de pago es gestionado de forma segura por <strong
+                                    class="text-[#0D291C]">AvalPay</strong>
                             </p>
                         </div>
-                        <div class="modal-section">
-                            <div class="consentimiento-box">
+                        <!-- Policy box -->
+                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                            <div
+                                class="flex items-start gap-3 p-4 bg-[#f0fdf4] border border-[1.5px] border-[#c8e6c9] rounded-2xl">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#299261"
                                     viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                     <path
                                         d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                                 </svg>
                                 <div>
-                                    <p style="font-size:0.8rem; font-weight:800; color:#0D291C; margin-bottom:3px;">
-                                        Política de Tratamiento de Datos
-                                    </p>
-                                    <p style="font-size:0.7rem; color:#6b7280; font-weight:600; line-height:1.55;">
+                                    <p class="text-[0.8rem] font-extrabold text-[#0D291C] mb-[3px]">Política de
+                                        Tratamiento de
+                                        Datos</p>
+                                    <p class="text-[0.7rem] text-gray-500 font-semibold leading-[1.55]">
                                         Al realizar este pago, tus datos personales serán tratados conforme a nuestra
-                                        política de privacidad y las normas de la Ley 1581 de 2012.
+                                        política
+                                        de privacidad y las normas de la Ley 1581 de 2012.
                                     </p>
                                     <a href="https://parquearse.com/pdf/politicadetratamientosdedatos.pdf"
                                         target="_blank"
-                                        style="display:inline-flex; align-items:center; gap:5px; margin-top:8px; font-size:0.7rem; font-weight:800; color:#299261; text-decoration:none; padding:5px 10px; border-radius:8px; border:1.5px solid #c8e6c9; background:#f0fdf4; transition:background 0.15s;">
+                                        class="inline-flex items-center gap-[5px] mt-2 text-[0.7rem] font-extrabold text-[#299261] no-underline px-2.5 py-[5px] rounded-lg border border-[1.5px] border-[#c8e6c9] bg-[#f0fdf4] hover:bg-[#e0f8ec] transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path
@@ -692,11 +898,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-section">
-                            <label class="consentimiento-check"
-                                :class="{ 'consentimiento-check--on': consentimientoAceptado }">
-                                <input type="checkbox" v-model="consentimientoAceptado" style="display:none;" />
-                                <div class="check-box" :class="{ 'check-box--on': consentimientoAceptado }">
+                        <!-- Checkbox -->
+                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                            <label
+                                class="flex items-start gap-2.5 p-3 rounded-[14px] border-2 cursor-pointer text-[0.78rem] font-semibold text-gray-700 leading-relaxed transition-all select-none"
+                                :class="consentimientoAceptado ? 'border-[#299261] bg-[#f0fdf4]' : 'border-gray-200 bg-gray-50'">
+                                <input type="checkbox" v-model="consentimientoAceptado" class="hidden" />
+                                <div class="w-5 h-5 rounded-[6px] border-2 flex items-center justify-center flex-shrink-0 mt-[1px] transition-all"
+                                    :class="consentimientoAceptado ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-white border-gray-300'">
                                     <svg v-if="consentimientoAceptado" xmlns="http://www.w3.org/2000/svg" width="12"
                                         height="12" fill="#7FD344" viewBox="0 0 24 24">
                                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
@@ -707,11 +916,14 @@
                             </label>
                         </div>
                     </div>
-                    <div class="modal-foot">
-                        <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
-                        <button @click="confirmarConsentimiento"
-                            class="btn-modal btn-modal--confirm flex items-center justify-center gap-1.5"
-                            :disabled="!consentimientoAceptado">
+                    <!-- Foot -->
+                    <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
+                        <button @click="cerrarModales"
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            Cancelar
+                        </button>
+                        <button @click="confirmarConsentimiento" :disabled="!consentimientoAceptado"
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             Continuar al pago
                         </button>
                     </div>
@@ -1374,633 +1586,6 @@ const cerrarModales = () => {
     }
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg)
-    }
-}
-
-.mensualidad-card {
-    background: white;
-    border-radius: 24px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    border: 2px solid #e8f5e9;
-    box-shadow: 0 4px 0 #e2ede7, 0 2px 16px rgba(13, 41, 28, 0.06);
-    position: relative;
-    overflow: hidden;
-    animation: cardIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
-    transition: box-shadow 0.18s, transform 0.18s
-}
-
-.mensualidad-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #c8ddd1, 0 4px 20px rgba(13, 41, 28, 0.1)
-}
-
-.card--congelada {
-    background: linear-gradient(145deg, #eff6ff 0%, #f0f9ff 100%);
-    border-color: #bfdbfe;
-    box-shadow: 0 4px 0 #93c5fd, 0 2px 16px rgba(59, 130, 246, 0.1)
-}
-
-.card--congelada:hover {
-    box-shadow: 0 6px 0 #7db8f7, 0 4px 20px rgba(59, 130, 246, 0.15)
-}
-
-.card-band {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    border-radius: 24px 24px 0 0
-}
-
-.card-band--activa {
-    background: #7FD344
-}
-
-.card-band--por_vencer {
-    background: #f59e0b
-}
-
-.card-band--vencida {
-    background: #dc2626
-}
-
-.card-band--congelada {
-    background: #60a5fa
-}
-
-.card-estado-badge {
-    display: inline-block;
-    font-size: 0.6rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    padding: 2px 8px;
-    border-radius: 999px;
-    margin-top: 3px;
-    border: 1px solid
-}
-
-.badge--activa {
-    background: #dcfce7;
-    color: #16a34a;
-    border-color: #bbf7d0
-}
-
-.badge--por_vencer {
-    background: #fef3c7;
-    color: #d97706;
-    border-color: #fde68a
-}
-
-.badge--vencida {
-    background: #fee2e2;
-    color: #dc2626;
-    border-color: #fecaca
-}
-
-.badge--congelada {
-    background: #dbeafe;
-    color: #2563eb;
-    border-color: #bfdbfe
-}
-
-.card-dias--activa .card-dias__num {
-    color: #299261
-}
-
-.card-dias--por_vencer .card-dias__num {
-    color: #d97706
-}
-
-.card-dias--vencida .card-dias__num {
-    color: #dc2626
-}
-
-.card-dias--congelada .card-dias__num {
-    color: #3b82f6
-}
-
-.fill--activa {
-    background: #7FD344
-}
-
-.fill--por_vencer {
-    background: #f59e0b
-}
-
-.fill--vencida {
-    background: #dc2626
-}
-
-.fill--congelada {
-    background: #60a5fa
-}
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(2px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    padding: 16px
-}
-
-.modal-card {
-    background: white;
-    border: 2px solid #0D291C;
-    border-radius: 24px;
-    box-shadow: 0 6px 0 #000;
-    width: 100%;
-    max-width: 420px;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto
-}
-
-.modal-card--detalle {
-    max-width: 440px
-}
-
-.modal-card--placas {
-    max-width: 460px
-}
-
-.modal-card--consentimiento {
-    max-width: 400px
-}
-
-.modal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px 14px;
-    background: #0D291C;
-    border-bottom: 2px solid #0a1f15
-}
-
-.modal-head__left {
-    display: flex;
-    align-items: center;
-    gap: 12px
-}
-
-.modal-head__name {
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: white
-}
-
-.modal-head__sub {
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 600
-}
-
-.det-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px 14px;
-    background: #f8fafb;
-    border-bottom: 2px solid #e2e8f0
-}
-
-.modal-close-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.82rem;
-    font-weight: 900;
-    cursor: pointer;
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    transition: background 0.12s, color 0.12s, border-color 0.12s
-}
-
-.modal-close-btn:hover {
-    background: rgba(255, 255, 255, 0.22);
-    color: white;
-    border-color: rgba(255, 255, 255, 0.45)
-}
-
-.modal-close-btn--light {
-    background: #f1f5f9;
-    color: #64748b;
-    border-color: #cbd5e1
-}
-
-.modal-close-btn--light:hover {
-    background: #fee2e2;
-    color: #dc2626;
-    border-color: #fca5a5
-}
-
-.modal-body {
-    display: flex;
-    flex-direction: column;
-    background: white
-}
-
-.det-body {
-    max-height: 62vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #c8e6c9 transparent
-}
-
-.modal-section {
-    padding: 16px 20px;
-    border-bottom: 1.5px solid #f1f5f9;
-    display: flex;
-    flex-direction: column;
-    gap: 10px
-}
-
-.modal-section:last-child {
-    border-bottom: none
-}
-
-.modal-section__title {
-    font-size: 0.6rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #299261;
-    display: flex;
-    align-items: center;
-    gap: 8px
-}
-
-.modal-section__title::after {
-    content: '';
-    flex: 1;
-    height: 1.5px;
-    background: linear-gradient(90deg, #c8e6c9, transparent);
-    border-radius: 99px
-}
-
-.modal-notice {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 10px 12px;
-    background: #f0fdf4;
-    border: 1.5px solid #c8e6c9;
-    border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #166534;
-    line-height: 1.5
-}
-
-.modal-foot {
-    display: flex;
-    gap: 10px;
-    padding: 12px 20px 18px;
-    background: white;
-    border-top: 2px solid #e2e8f0
-}
-
-.det-foot {
-    border-top: 2px solid #e8f5e9
-}
-
-.btn-modal {
-    flex: 1;
-    padding: 11px 14px;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    border: 2px solid;
-    box-shadow: 0 1px 0;
-    transition: transform 0.1s, box-shadow 0.1s
-}
-
-.btn-modal:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 !important
-}
-
-.btn-modal:disabled {
-    opacity: 0.4;
-    cursor: not-allowed
-}
-
-.btn-modal--cancel {
-    background: white;
-    color: #232B3A;
-    border-color: #000;
-    box-shadow: 0 1px 0 #000
-}
-
-.btn-modal--confirm {
-    background: #0D291C;
-    color: #7FD344;
-    border-color: #0D291C;
-    box-shadow: 0 1px 0 #051510
-}
-
-.btn-modal--confirm:hover:not(:disabled) {
-    background: #132e21
-}
-
-.btn-spinner {
-    display: inline-block;
-    width: 13px;
-    height: 13px;
-    flex-shrink: 0;
-    border: 2px solid rgba(127, 211, 68, 0.3);
-    border-top-color: #7FD344;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite
-}
-
-.meses-selector {
-    display: flex;
-    gap: 10px
-}
-
-.mes-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 12px 10px;
-    border-radius: 14px;
-    border: 2px solid #e2e8f0;
-    background: #f8fafb;
-    cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: 0 2px 0 #e2e8f0
-}
-
-.mes-btn:hover {
-    border-color: #c8e6c9;
-    background: #f0fdf4
-}
-
-.mes-btn--on {
-    border-color: #299261 !important;
-    background: #0D291C !important;
-    box-shadow: 0 3px 0 #051510 !important
-}
-
-.mes-btn__num {
-    font-size: 1.6rem;
-    font-weight: 900;
-    line-height: 1;
-    color: #0D291C;
-    transition: color 0.15s
-}
-
-.mes-btn--on .mes-btn__num {
-    color: #7FD344
-}
-
-.mes-btn__label {
-    font-size: 0.6rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #9ca3af;
-    transition: color 0.15s
-}
-
-.mes-btn--on .mes-btn__label {
-    color: rgba(127, 211, 68, 0.6)
-}
-
-.meses-aviso {
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: #166534;
-    background: #f0fdf4;
-    border: 1.5px solid #c8e6c9;
-    border-radius: 10px;
-    padding: 8px 12px;
-    line-height: 1.5
-}
-
-.pago-opcion {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    border: 2px solid #e2e8f0;
-    background: #f8fafb;
-    cursor: pointer;
-    text-align: left;
-    width: 100%;
-    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-    box-shadow: 0 2px 0 #e2e8f0
-}
-
-.pago-opcion:hover {
-    border-color: #c8e6c9;
-    background: #f0fdf4
-}
-
-.pago-opcion--selected {
-    border-color: #299261 !important;
-    background: #f0fdf4 !important;
-    box-shadow: 0 2px 0 #c8e6c9 !important
-}
-
-.pago-desglose {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding-top: 10px;
-    border-top: 1.5px solid #e2e8f0
-}
-
-.pago-desglose__row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #6b7280
-}
-
-.pago-desglose__row--total {
-    font-size: 0.92rem;
-    font-weight: 900;
-    color: #0D291C;
-    padding-top: 5px;
-    border-top: 1.5px solid #e2e8f0;
-    margin-top: 2px
-}
-
-.pago-desglose__row--total span:last-child {
-    color: #299261
-}
-
-.det-field {
-    display: flex;
-    flex-direction: column;
-    gap: 3px
-}
-
-.det-label {
-    font-size: 0.6rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: #9ca3af
-}
-
-.det-val {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #0D291C
-}
-
-.det-loader {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 3px solid #e8f5e9;
-    border-top-color: #299261;
-    animation: spin 0.7s linear infinite
-}
-
-.placa-aviso {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 10px 12px;
-    background: #fffbeb;
-    border: 1.5px solid #fde68a;
-    border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #92400e;
-    line-height: 1.5
-}
-
-.placa-row {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: #f8fafb;
-    border: 1.5px solid #e2e8f0
-}
-
-.placa-row__label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2px
-}
-
-.placa-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    background: white;
-    border: 2px solid #d1d5db;
-    border-radius: 10px;
-    padding: 8px 12px;
-    transition: border-color 0.15s, box-shadow 0.15s
-}
-
-.placa-input-wrap:focus-within {
-    border-color: #299261;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.12)
-}
-
-.placa-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-family: monospace;
-    font-weight: 900;
-    font-size: 0.95rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #0D291C;
-    min-width: 0
-}
-
-.placa-input::placeholder {
-    color: #d1d5db;
-    font-weight: 600;
-    letter-spacing: 0.05em
-}
-
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px
-}
-
-.field-label {
-    font-size: 0.63rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #374151;
-    padding-left: 2px
-}
-
-.field-hint {
-    font-size: 0.7rem;
-    color: #6b7280;
-    line-height: 1.5;
-    padding-left: 2px
-}
-
-.field-input {
-    background: white !important;
-    border: 2px solid #d1d5db !important;
-    border-radius: 12px !important;
-    padding: 10px 14px !important;
-    font-size: 0.875rem !important;
-    color: #0D291C !important;
-    outline: none !important;
-    box-shadow: none !important;
-    width: 100%;
-    transition: border-color 0.15s, box-shadow 0.15s
-}
-
-.field-input:focus {
-    border-color: #299261 !important;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.15) !important
-}
-
-.field-input--code {
-    font-family: monospace;
-    letter-spacing: 0.1em;
-    font-size: 1rem !important;
-    text-align: center
-}
-
 .modal-enter-active {
     transition: opacity 0.2s ease
 }
@@ -2020,234 +1605,5 @@ const cerrarModales = () => {
 
 .modal-leave-active .modal-card {
     animation: popOut 0.18s ease-in both
-}
-
-.mensualidades-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    align-content: start
-}
-
-@media (max-width: 700px) {
-    .mensualidades-grid {
-        grid-template-columns: 1fr
-    }
-
-    .card-actions {
-        grid-template-columns: repeat(3, 1fr)
-    }
-
-    .card-actions:has(> :nth-child(3))> :first-child {
-        grid-column: auto
-    }
-}
-
-.card-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 6px
-}
-
-.card-head__info {
-    flex: 1;
-    min-width: 0
-}
-
-.card-nombre {
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #0D291C;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis
-}
-
-.card-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: #0D291C;
-    color: #7FD344;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    border: 2px solid #e8f5e9
-}
-
-.card-dias {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-shrink: 0;
-    background: #f8fafb;
-    border-radius: 12px;
-    padding: 8px 12px;
-    border: 1.5px solid #e2e8f0
-}
-
-.card-dias__num {
-    font-size: 1.4rem;
-    font-weight: 900;
-    line-height: 1
-}
-
-.card-dias__label {
-    font-size: 0.58rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    opacity: 0.5;
-    color: black
-}
-
-.card-data {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    background: #f8fafb;
-    border-radius: 14px;
-    padding: 12px 14px;
-    border: 1.5px solid #e2e8f0
-}
-
-.card-data__item {
-    display: flex;
-    align-items: center;
-    gap: 8px
-}
-
-.card-data__item svg {
-    color: #9ca3af;
-    flex-shrink: 0
-}
-
-.card-data__label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    min-width: 44px
-}
-
-.card-data__val {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #0D291C
-}
-
-.card-progress-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 5px
-}
-
-.card-progress-bar {
-    height: 6px;
-    background: #e5e7eb;
-    border-radius: 999px;
-    overflow: hidden
-}
-
-.card-progress-fill {
-    height: 100%;
-    border-radius: 999px;
-    transition: width 0.6s ease
-}
-
-.card-progress-label {
-    font-size: 0.62rem;
-    font-weight: 600;
-    color: #9ca3af;
-    text-align: right
-}
-
-.card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    width: 100%
-}
-
-.card-actions:has(> :nth-child(3))> :first-child {
-    grid-column: 1 / -1
-}
-
-.consentimiento-box {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-    background: #f0fdf4;
-    border: 1.5px solid #c8e6c9;
-    border-radius: 16px
-}
-
-.consentimiento-check {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    border: 2px solid #e2e8f0;
-    background: #f8fafb;
-    cursor: pointer;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #374151;
-    line-height: 1.5;
-    transition: border-color 0.15s, background 0.15s;
-    user-select: none
-}
-
-.consentimiento-check--on {
-    border-color: #299261 !important;
-    background: #f0fdf4 !important
-}
-
-.check-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    border: 2px solid #d1d5db;
-    background: white;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.15s, background 0.15s;
-    margin-top: 1px
-}
-
-.check-box--on {
-    background: #0D291C;
-    border-color: #0D291C
-}
-
-.modal-pago .modal-card {
-    max-height: calc(100vh - 32px)
-}
-
-.modal-pago .modal-body {
-    overflow-y: auto;
-    flex: 1;
-    min-height: 0;
-    scrollbar-width: thin;
-    scrollbar-color: #c8e6c9 transparent
-}
-
-.modal-pago .modal-foot {
-    flex-shrink: 0
-}
-
-@media (max-width: 720px) {
-    .modal-pago .modal-card {
-        max-height: 95%;
-    }
 }
 </style>
