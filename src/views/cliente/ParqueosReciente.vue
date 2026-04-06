@@ -21,7 +21,7 @@
 
             <div class="flex flex-col gap-1 flex-[2] min-w-[180px]">
                 <label class="filter-label">Buscar placa</label>
-                <input v-model="busqueda" type="text" placeholder="Ej: ABC-123" class="field-pill" />
+                <input v-model="busqueda" type="text" placeholder="Ej: ABC123" class="field-pill" />
             </div>
 
             <div class="flex flex-col gap-1 flex-1 min-w-[140px]">
@@ -224,21 +224,21 @@ import { ref, computed, watch } from 'vue'
 // ── Mock data ─────────────────────────────────────────────────────
 // TODO: reemplazar con → await AccesosService.getMisAccesos({ meses: 3 })
 const mockRegistros = ref([
-    { id: 1, placa: 'ABC-123', sede: 'Digital6G', entrada: '2026-01-27T08:14:00', salida: '2026-01-27T10:45:00', tipo: 'mensualidad' },
-    { id: 2, placa: 'XYZ-456', sede: 'CSU', entrada: '2026-01-27T09:00:00', salida: null, tipo: 'turno' },
-    { id: 3, placa: 'DEF-789', sede: 'Norte', entrada: '2026-01-26T07:30:00', salida: '2026-01-26T09:00:00', tipo: 'mensualidad' },
-    { id: 4, placa: 'ABC-123', sede: 'Digital6G', entrada: '2026-01-25T08:10:00', salida: '2026-01-25T11:20:00', tipo: 'mensualidad' },
-    { id: 5, placa: 'GHI-321', sede: 'CSU', entrada: '2026-01-24T14:00:00', salida: '2026-01-24T15:30:00', tipo: 'turno' },
-    { id: 6, placa: 'JKL-654', sede: 'Norte', entrada: '2026-01-23T06:55:00', salida: '2026-01-23T08:10:00', tipo: 'mensualidad' },
-    { id: 7, placa: 'ABC-123', sede: 'Digital6G', entrada: '2026-01-22T08:05:00', salida: '2026-01-22T10:00:00', tipo: 'mensualidad' },
-    { id: 8, placa: 'XYZ-456', sede: 'CSU', entrada: '2026-01-21T11:00:00', salida: '2026-01-21T13:45:00', tipo: 'turno' },
-    { id: 9, placa: 'MNO-987', sede: 'Digital6G', entrada: '2026-01-20T08:30:00', salida: null, tipo: 'mensualidad' },
-    { id: 10, placa: 'DEF-789', sede: 'Norte', entrada: '2026-01-19T07:00:00', salida: '2026-01-19T08:30:00', tipo: 'mensualidad' },
-    { id: 11, placa: 'GHI-321', sede: 'CSU', entrada: '2026-01-18T16:00:00', salida: '2026-01-18T17:00:00', tipo: 'turno' },
-    { id: 12, placa: 'JKL-654', sede: 'Digital6G', entrada: '2026-01-17T08:00:00', salida: '2026-01-17T10:30:00', tipo: 'mensualidad' },
-    { id: 13, placa: 'ABC-123', sede: 'Norte', entrada: '2025-12-20T08:00:00', salida: '2025-12-20T09:45:00', tipo: 'mensualidad' },
-    { id: 14, placa: 'XYZ-456', sede: 'Digital6G', entrada: '2025-12-15T09:30:00', salida: '2025-12-15T11:00:00', tipo: 'turno' },
-    { id: 15, placa: 'MNO-987', sede: 'CSU', entrada: '2025-11-10T07:45:00', salida: '2025-11-10T09:15:00', tipo: 'mensualidad' },
+    { id: 1, placa: 'ABC123', sede: 'Digital6G', entrada: '2026-01-27T08:14:00', salida: '2026-01-27T10:45:00', tipo: 'mensualidad' },
+    { id: 2, placa: 'XYZ456', sede: 'CSU', entrada: '2026-01-27T09:00:00', salida: null, tipo: 'turno' },
+    { id: 3, placa: 'DEF789', sede: 'Norte', entrada: '2026-01-26T07:30:00', salida: '2026-01-26T09:00:00', tipo: 'mensualidad' },
+    { id: 4, placa: 'ABC123', sede: 'Digital6G', entrada: '2026-01-25T08:10:00', salida: '2026-01-25T11:20:00', tipo: 'mensualidad' },
+    { id: 5, placa: 'GHI321', sede: 'CSU', entrada: '2026-01-24T14:00:00', salida: '2026-01-24T15:30:00', tipo: 'turno' },
+    { id: 6, placa: 'JKL654', sede: 'Norte', entrada: '2026-01-23T06:55:00', salida: '2026-01-23T08:10:00', tipo: 'mensualidad' },
+    { id: 7, placa: 'ABC123', sede: 'Digital6G', entrada: '2026-01-22T08:05:00', salida: '2026-01-22T10:00:00', tipo: 'mensualidad' },
+    { id: 8, placa: 'XYZ456', sede: 'CSU', entrada: '2026-01-21T11:00:00', salida: '2026-01-21T13:45:00', tipo: 'turno' },
+    { id: 9, placa: 'MNO987', sede: 'Digital6G', entrada: '2026-01-20T08:30:00', salida: null, tipo: 'mensualidad' },
+    { id: 10, placa: 'DEF789', sede: 'Norte', entrada: '2026-01-19T07:00:00', salida: '2026-01-19T08:30:00', tipo: 'mensualidad' },
+    { id: 11, placa: 'GHI321', sede: 'CSU', entrada: '2026-01-18T16:00:00', salida: '2026-01-18T17:00:00', tipo: 'turno' },
+    { id: 12, placa: 'JKL654', sede: 'Digital6G', entrada: '2026-01-17T08:00:00', salida: '2026-01-17T10:30:00', tipo: 'mensualidad' },
+    { id: 13, placa: 'ABC123', sede: 'Norte', entrada: '2025-12-20T08:00:00', salida: '2025-12-20T09:45:00', tipo: 'mensualidad' },
+    { id: 14, placa: 'XYZ456', sede: 'Digital6G', entrada: '2025-12-15T09:30:00', salida: '2025-12-15T11:00:00', tipo: 'turno' },
+    { id: 15, placa: 'MNO987', sede: 'CSU', entrada: '2025-11-10T07:45:00', salida: '2025-11-10T09:15:00', tipo: 'mensualidad' },
 ])
 
 // ── Filtros ───────────────────────────────────────────────────────

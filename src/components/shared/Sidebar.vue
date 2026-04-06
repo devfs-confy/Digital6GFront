@@ -65,7 +65,9 @@ onMounted(() => {
 const navigate = (ruta) => {
     router.push(ruta)
 
-    if (props.isOpen) {
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches
+
+    if (isMobile && props.isOpen) {
         emit('toggle')
     }
 }
