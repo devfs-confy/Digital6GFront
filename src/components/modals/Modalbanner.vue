@@ -12,25 +12,54 @@
                     </svg>
                 </button>
 
-                <!-- Imagen del banner -->
+                <!-- Carousel de imágenes -->
                 <div class="banner-img-wrap">
-                    <!-- Skeleton mientras carga -->
-                    <div v-if="!imgCargada && !imgError" class="banner-skeleton" />
+                    <div class="carousel-track" :style="{ transform: `translateX(-${indiceActual * 100}%)` }">
+                        <div v-for="(img, i) in imagenes" :key="i" class="carousel-slide">
+                            <!-- Skeleton mientras carga -->
+                            <div v-if="!imgEstados[i]?.cargada && !imgEstados[i]?.error" class="banner-skeleton" />
 
-                    <!-- Error de carga -->
-                    <div v-else-if="imgError" class="banner-error">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#d1d5db"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                        </svg>
-                        <span>Imagen no disponible</span>
+                            <!-- Error de carga -->
+                            <div v-else-if="imgEstados[i]?.error" class="banner-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#d1d5db"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                                </svg>
+                                <span>Imagen no disponible</span>
+                            </div>
+
+                            <!-- Imagen real (base64 o URL) -->
+                            <img v-show="imgEstados[i]?.cargada && !imgEstados[i]?.error"
+                                :src="img"
+                                :alt="`${altTexto} ${i + 1}`"
+                                class="banner-img"
+                                @load="imgEstados[i].cargada = true"
+                                @error="imgEstados[i].error = true" />
+                        </div>
                     </div>
-
-                    <!-- Imagen real -->
-                    <img v-show="imgCargada && !imgError" :src="imagenUrl" :alt="altTexto" class="banner-img"
-                        @load="imgCargada = true" @error="imgError = true" />
                 </div>
+
+                <!-- Controles del carousel (solo si hay más de 1 imagen) -->
+                <template v-if="imagenes.length > 1">
+                    <button class="carousel-btn carousel-btn-prev" @click="anterior" aria-label="Anterior">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                        </svg>
+                    </button>
+                    <button class="carousel-btn carousel-btn-next" @click="siguiente" aria-label="Siguiente">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Indicadores (dots) -->
+                    <div class="carousel-dots">
+                        <button v-for="(_, i) in imagenes" :key="i"
+                            class="carousel-dot" :class="{ active: i === indiceActual }"
+                            @click="indiceActual = i" :aria-label="`Ir a imagen ${i + 1}`" />
+                    </div>
+                </template>
 
             </div>
         </div>
@@ -38,38 +67,54 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, reactive } from 'vue'
 
 const props = defineProps({
-    // URL de la imagen — vendrá del endpoint cuando esté listo
-    imagenUrl: { type: String, default: '' },
+    // Array de imágenes en base64 (ej: ['data:image/png;base64,...', ...]) o URLs
+    imagenes: { type: Array, default: () => [] },
     altTexto: { type: String, default: 'Publicidad' },
-    // Mostrar automáticamente al montar
     autoshow: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['cerrar'])
 
 const visible = ref(false)
-const imgCargada = ref(false)
-const imgError = ref(false)
+const indiceActual = ref(0)
+const imgEstados = reactive([])
+
+const inicializarEstados = () => {
+    imgEstados.length = 0
+    props.imagenes.forEach(() => {
+        imgEstados.push({ cargada: false, error: false })
+    })
+}
 
 const cerrar = () => {
     visible.value = false
     emit('cerrar')
 }
 
-// Resetear estado de imagen cuando cambia la URL
-watch(() => props.imagenUrl, () => {
-    imgCargada.value = false
-    imgError.value = false
-})
+const siguiente = () => {
+    indiceActual.value = (indiceActual.value + 1) % props.imagenes.length
+}
+
+const anterior = () => {
+    indiceActual.value = (indiceActual.value - 1 + props.imagenes.length) % props.imagenes.length
+}
+
+// Resetear cuando cambian las imágenes y mostrar si hay data
+watch(() => props.imagenes, (nuevas) => {
+    indiceActual.value = 0
+    inicializarEstados()
+    if (props.autoshow && nuevas.length > 0) {
+        visible.value = true
+    }
+}, { immediate: true })
 
 onMounted(() => {
-    if (props.autoshow) visible.value = true
+    if (props.autoshow && props.imagenes.length > 0) visible.value = true
 })
 
-// Exponer para abrir desde el padre cuando llegue el endpoint
 defineExpose({ abrir: () => { visible.value = true } })
 </script>
 
@@ -88,11 +133,13 @@ defineExpose({ abrir: () => { visible.value = true } })
     padding: 16px;
 }
 
-/* ── Card 300×250 ── */
+/* ── Card responsive ── */
 .banner-card {
     position: relative;
-    width: 320px;
-    height: 480px;
+    width: 90vw;
+    max-width: 380px;
+    aspect-ratio: 9 / 16;
+    max-height: 60vh;
     border-radius: 20px;
     overflow: visible;
     border: 2.5px solid #0D291C;
@@ -132,7 +179,7 @@ defineExpose({ abrir: () => { visible.value = true } })
     box-shadow: 0 1px 0 #dc2626;
 }
 
-/* ── Imagen ── */
+/* ── Imagen / Carousel ── */
 .banner-img-wrap {
     width: 100%;
     height: 100%;
@@ -141,11 +188,86 @@ defineExpose({ abrir: () => { visible.value = true } })
     background: #f3f4f6;
 }
 
+.carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+}
+
 .banner-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
+    background: #f3f4f6;
+}
+
+/* ── Botones prev/next ── */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #0D291C;
+    box-shadow: 0 2px 0 #0D291C;
+    color: #0D291C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+}
+
+.carousel-btn:hover {
+    background: white;
+}
+
+.carousel-btn:active {
+    transform: translateY(calc(-50% + 2px));
+    box-shadow: 0 0 0 #0D291C;
+}
+
+.carousel-btn-prev {
+    left: -15px;
+}
+
+.carousel-btn-next {
+    right: -15px;
+}
+
+/* ── Dots indicadores ── */
+.carousel-dots {
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: 1.5px solid #0D291C;
+    background: white;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s;
+}
+
+.carousel-dot.active {
+    background: #0D291C;
 }
 
 /* ── Skeleton ── */
@@ -227,11 +349,24 @@ defineExpose({ abrir: () => { visible.value = true } })
     }
 }
 
-/* ── Mobile ── */
-@media (max-width: 360px) {
+/* ── Tablet / Desktop ── */
+@media (min-width: 768px) {
     .banner-card {
-        width: 300px;
-        height: 450px;
+        max-width: 420px;
+    }
+}
+
+/* ── Landscape mobile ── */
+@media (max-height: 500px) {
+    .banner-card {
+        max-height: 80vh;
+        aspect-ratio: auto;
+        width: auto;
+        height: 80vh;
+    }
+
+    .banner-card .banner-img {
+        object-fit: contain;
     }
 }
 </style>

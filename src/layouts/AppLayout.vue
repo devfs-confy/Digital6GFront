@@ -16,7 +16,7 @@
 
     </div>
 
-    <ModalBanner :imagen-url="bannerUrl" />
+    <ModalBanner :imagenes="bannerUrl" :autoshow="true" />
 
 
 </template>
@@ -28,25 +28,17 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import Sidebar from '../components/shared/Sidebar.vue'
 import Navbar from '../components/shared/Navbar.vue'
 import ModalBanner from '@/components/modals/ModalBanner.vue'
+import publicidadService from '@/api/services/publicidad.service'
+const bannerUrl = ref([])
 
-const bannerUrl = ref('')
 
 onMounted(async () => {
-    try {
-        const res = await BannerService.getBanner()
-        bannerUrl.value = res?.data?.url ?? res?.url ?? ''
-    } catch {
-
+    const publicidad =  await publicidadService.getMiPublicidad()
+    if(publicidad?.data?.length > 0) {
+        bannerUrl.value = publicidad.data.map(item => item.Imagen)
     }
+    console.log('Publicidad obtenida:', bannerUrl.value)
 })
-
-// onMounted(() => {
-//     const yaVisto = sessionStorage.getItem('banner_visto')
-//     if (!yaVisto) {
-//         bannerUrl.value = 'https://tu-url-de-imagen.com/banner.jpg'
-//         sessionStorage.setItem('banner_visto', '1')
-//     }
-// })
 
 defineProps({
     menuItems: Array,
