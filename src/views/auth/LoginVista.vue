@@ -129,7 +129,7 @@ async function handleLogin() {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 </style>
 
 <style scoped>
@@ -143,7 +143,7 @@ async function handleLogin() {
     background-color: #0D291C;
     overflow: hidden;
     position: relative;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
 }
 
 /* ── Background blobs ─────────────────────────── */
@@ -357,7 +357,7 @@ async function handleLogin() {
     border: 1.5px solid #e8ecf0;
     border-radius: 12px;
     font-size: 0.875rem;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
     color: #232B3A;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -431,7 +431,7 @@ async function handleLogin() {
     border-radius: 14px;
     font-size: 0.875rem;
     font-weight: 700;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
     cursor: pointer;
     transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
     letter-spacing: 0.01em;

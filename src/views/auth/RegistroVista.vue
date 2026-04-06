@@ -700,7 +700,7 @@ const submit = async () => {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 </style>
 
 <style scoped>
@@ -757,7 +757,7 @@ const submit = async () => {
     outline: none !important;
     box-shadow: none !important;
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
 }
 
 .field-input:focus {
@@ -816,7 +816,7 @@ const submit = async () => {
     border: 1.5px solid #d1d5db;
     background: white;
     color: #6b7280;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
     transition: all 0.15s;
 }
 
@@ -842,7 +842,7 @@ const submit = async () => {
     border-radius: 14px;
     font-size: 0.88rem;
     font-weight: 900;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
     cursor: pointer;
     display: flex;
     align-items: center;
