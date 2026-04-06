@@ -138,8 +138,7 @@
                 </div>
 
                 <!-- Card actions -->
-                <div class="grid gap-2 w-full"
-                    :class="m.conPago && m.estado !== 'congelada' ? 'grid-cols-3' : 'grid-cols-2'">
+                <div class="grid gap-2 w-full" :class="mostrarCongelar(m) ? 'grid-cols-3' : 'grid-cols-2'">
                     <!-- Pay -->
                     <button @click="abrirPago(m)" :class="m.conPago && m.estado !== 'congelada' ? 'col-span-1' : ''"
                         class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21]">
@@ -161,7 +160,7 @@
                         Ver
                     </button>
                     <!-- Freeze -->
-                    <button v-if="m.conPago && m.estado !== 'congelada'" @click="abrirCongelar(m)"
+                    <button v-if="mostrarCongelar(m)" @click="abrirCongelar(m)"
                         class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
@@ -592,43 +591,46 @@
                                 </div>
                             </div>
                             <!-- Vehículos -->
+                            <!-- Vehículos -->
                             <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                                <div class="flex items-center justify-between">
-                                    <p
-                                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full flex-1 m-0">
+                                <div class="flex flex-col gap-2">
+                                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261]
+                  flex items-center gap-2
+                  after:content-[''] after:flex-1 after:h-[1.5px]
+                  after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                                         Vehículos registrados
                                     </p>
-                                    <button @click="abrirModalPlacas"
-                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all ml-3 flex-shrink-0"
-                                        :class="placaCambiada
-                                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
-                                        :disabled="placaCambiada">
-                                        {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
-                                    </button>
-                                    <button @click="abrirModalCambioTipo"
-                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all flex-shrink-0 bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                            fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M7.5 21.5l-5-5 5-5 1.41 1.41L6.33 15.5H13v2H6.33l2.58 2.59L7.5 21.5zm9-9l-1.41-1.41 2.58-2.59H11v-2h6.67l-2.58-2.59L16.5 2.5l5 5-5 5z" />
-                                        </svg>
-                                        Cambiar tipo
-                                    </button>
+                                    <!-- Botones con flex-wrap para móvil -->
+                                    <div class="flex flex-wrap gap-2">
+                                        <button @click="abrirModalPlacas"
+                                            class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all"
+                                            :class="placaCambiada
+                                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                                : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
+                                            :disabled="placaCambiada">
+                                            {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
+                                        </button>
+                                        <button @click="abrirModalCambioTipo"
+                                            class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
+                                            <AppIcon name="swap_driving_apps" :size="12" />
+                                            Cambiar tipo
+                                        </button>
+                                    </div>
                                 </div>
+
+                                <!-- Lista de placas -->
                                 <div v-if="placasDetalle.length" class="flex flex-col gap-2 mt-1">
                                     <div v-for="(placa, idx) in placasDetalle" :key="idx"
                                         class="flex items-center gap-2.5 px-3 py-2 rounded-xl border-2"
                                         :class="idx === 0 ? 'bg-[#f0fdf4] border-[#c8e6c9]' : 'bg-gray-50 border-gray-200'">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            viewBox="0 0 24 24" :fill="idx === 0 ? '#299261' : '#9ca3af'">
-                                            <path
-                                                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                                        </svg>
+                                        <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'"
+                                            :size="14" :style="{ color: idx === 0 ? '#299261' : '#9ca3af' }" />
                                         <span class="text-[0.8rem] font-black tracking-widest uppercase flex-1"
                                             :class="idx === 0 ? 'text-[#0D291C]' : 'text-gray-500'">{{ placa }}</span>
                                         <span v-if="idx === 0"
-                                            class="text-[0.55rem] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344]">Principal</span>
+                                            class="text-[0.55rem] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344]">
+                                            Principal
+                                        </span>
                                     </div>
                                 </div>
                                 <p v-else class="text-xs font-semibold text-gray-400 mt-1">Sin vehículos registrados</p>
@@ -677,11 +679,8 @@
                     <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
                         <div class="flex items-center gap-3">
                             <div class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                        d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                                </svg>
+                                <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'" :size="18"
+                                    class="text-[#0D291C]" />
                             </div>
                             <div>
                                 <p class="text-[0.9rem] font-extrabold text-white">Cambio de placas</p>
@@ -727,11 +726,8 @@
                                     <div class="flex items-center gap-2">
                                         <div
                                             class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-all focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
-                                                viewBox="0 0 24 24" :fill="nuevasPlacas[idx] ? '#299261' : '#d1d5db'">
-                                                <path
-                                                    d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                                            </svg>
+                                            <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'"
+                                                :size="14" :style="{ color: idx === 0 ? '#299261' : '#9ca3af' }" />
                                             <input v-model="nuevasPlacas[idx]" type="text" maxlength="7"
                                                 class="flex-1 bg-transparent border-none outline-none font-mono font-black text-[0.95rem] tracking-[0.15em] uppercase text-[#0D291C] min-w-0 placeholder:text-gray-300 placeholder:font-semibold placeholder:tracking-[0.05em]"
                                                 :placeholder="placasDetalle[idx] || (idx === 0 ? 'ABC123' : 'Opcional')"
@@ -1010,6 +1006,9 @@ const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINCENA')
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
 
+const mostrarCongelar = (m) =>
+    m.conPago && m.estado !== 'congelada' && !m.esQuincena
+
 // ── Helpers de fecha ──────────────────────────────────────────
 const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null
 
@@ -1105,6 +1104,12 @@ const cargarMisMensualidades = async () => {
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),
             conPago: !!(m.FechaFin && parseLocal(m.FechaFin) > new Date()),
+            esQuincena: !!(m.T_Autorizaciones?.NombreAutorizacion?.toUpperCase().includes('QUINCENA')
+                || m.T_Autorizaciones?.Modalidad?.toUpperCase() === 'QUINCENA'),
+            esMoto: (() => {
+                const placa = (PLACA_KEYS.map(k => m[k]).filter(Boolean)[0] ?? '').toUpperCase().trim()
+                return /^[A-Z]{3}\d{2}[A-Z]$/.test(placa)
+            })(),
         }))
     } catch {
         mensualidades.value = []
@@ -1128,6 +1133,11 @@ const abrirDetalle = async (m) => {
         const data = res?.data ?? res
         detalleCompleto.value = data
         placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
+        const placaPrincipal = (placasDetalle.value[0] ?? '').toUpperCase().trim()
+        mensualidadAccion.value = {
+            ...mensualidadAccion.value,
+            esMoto: /^[A-Z]{3}\d{2}[A-Z]$/.test(placaPrincipal),
+        }
     } catch {
         errDetalle.value = 'No se pudo cargar el detalle. Mostrando datos parciales.'
         placasDetalle.value = m.placas ?? []
@@ -1249,6 +1259,12 @@ const _aplicarCambioPlacasLocal = () => {
     if (idx !== -1) mensualidades.value[idx].placas = [...nuevas]
     marcarCambioMensual(mensualidadAccion.value.id)
     placaCambiada.value = true
+
+    // ← Recalcular esMoto con la nueva placa principal
+    const placaPrincipal = (nuevas[0] ?? '').toUpperCase().trim()
+    const esMotoNuevo = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaPrincipal)
+    mensualidadAccion.value = { ...mensualidadAccion.value, esMoto: esMotoNuevo }
+    if (idx !== -1) mensualidades.value[idx].esMoto = esMotoNuevo
 }
 
 const confirmarPagoExcedente = () => {
