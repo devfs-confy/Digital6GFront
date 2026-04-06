@@ -58,10 +58,10 @@
                         <div class="field-box" :class="{ 'field-box--editing': editing.nombre }">
                             <input v-model="form.nombre" :disabled="!editing.nombre" class="field-input"
                                 placeholder="Tu nombre" />
-                            <!-- <button @click="toggleEdit('nombre')" class="field-edit-btn">
+                            <button @click="toggleEdit('nombre')" class="field-edit-btn">
                                 <span v-if="!editing.nombre" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
-                            </button> -->
+                            </button>
                         </div>
                     </div>
 
@@ -70,10 +70,10 @@
                         <div class="field-box" :class="{ 'field-box--editing': editing.apellido }">
                             <input v-model="form.apellido" :disabled="!editing.apellido" class="field-input"
                                 placeholder="Tu apellido" />
-                            <!-- <button @click="toggleEdit('apellido')" class="field-edit-btn">
+                            <button @click="toggleEdit('apellido')" class="field-edit-btn">
                                 <span v-if="!editing.apellido" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
-                            </button> -->
+                            </button>
                         </div>
                     </div>
 
@@ -336,8 +336,12 @@ const errCambios = ref('')
 const descartarCambios = () => {
     form.correo = original.correo
     form.telefono = original.telefono
+    form.apellido = original.apellido
+    form.nombre = original.nombre
     editing.correo = false
     editing.telefono = false
+    editing.apellido = false
+    editing.nombre = false
     errCambios.value = ''
 }
 
@@ -348,6 +352,8 @@ const guardarCambios = async () => {
         const dto = {
             Email: form.correo,
             Telefono: form.telefono,
+            Nombres: form.nombre,
+            Apellidos: form.apellido,
         }
         const res = await ClientService.updateOwnProfile(dto)
 
@@ -360,12 +366,18 @@ const guardarCambios = async () => {
         // Actualiza snapshot y store
         original.correo = form.correo
         original.telefono = form.telefono
+        original.apellido = form.apellido
+        original.nombre = form.nombre
         if (auth.user) {
             auth.user.Email = form.correo
             auth.user.Telefono = form.telefono
+            auth.user.Nombres = form.nombre
+            auth.user.Apellidos = form.apellido
         }
         editing.correo = false
         editing.telefono = false
+        editing.apellido = false
+        editing.nombre = false
     } catch (e) {
         const msg = e.response?.data?.message
         errCambios.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')

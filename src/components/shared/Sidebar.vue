@@ -44,12 +44,13 @@ import icoconfynormal from '@/assets/img/confyaside.svg?raw'
 
 const logoRef = ref(null)
 
-defineProps({
+
+const props = defineProps({
     menuItems: Array,
     isOpen: Boolean
 })
 
-const emit = defineEmits(['toggle'])
+const emit = defineEmits(['toggle', 'select'])
 const router = useRouter()
 const route = useRoute()
 
@@ -61,7 +62,13 @@ onMounted(() => {
     }
 })
 
-const navigate = (ruta) => router.push(ruta)
+const navigate = (ruta) => {
+    router.push(ruta)
+
+    if (props.isOpen) {
+        emit('toggle')
+    }
+}
 
 const isActive = (item) => {
     if (item.activeFor) return item.activeFor.some(r => route.path.startsWith(r))

@@ -206,7 +206,7 @@
                                 <div v-if="notifDetalle.FechaExpiracion" class="modal-detail-row">
                                     <span class="modal-detail-key">Expira</span>
                                     <span class="modal-detail-val">{{ formatFecha(notifDetalle.FechaExpiracion)
-                                    }}</span>
+                                        }}</span>
                                 </div>
                                 <div v-if="notifDetalle.DocumentoUsuario" class="modal-detail-row">
                                     <span class="modal-detail-key">Usuario</span>
@@ -998,5 +998,64 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 
 .modal-leave-active .modal-card {
     animation: popOut 0.18s ease-in both;
+}
+
+/* Después de .panel-enter-active / .panel-leave-active */
+
+@media (max-width: 600px) {
+    .panel-enter-active {
+        animation: slideUp 0.32s cubic-bezier(0.34, 1.1, 0.64, 1) both;
+    }
+
+    .panel-leave-active {
+        animation: slideDown 0.2s ease-in both;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(0);
+        opacity: 1
+    }
+
+    to {
+        transform: translateY(100%);
+        opacity: 0
+    }
+}
+
+@media (max-width: 600px) {
+    .notif-panel {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: 85dvh;
+        border-radius: 28px 28px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        border-top: 2px solid #0D291C;
+        box-shadow: 0 -1px 0 #051510;
+        z-index: 999;
+    }
+
+    .notif-list {
+        max-height: 55dvh;
+    }
 }
 </style>

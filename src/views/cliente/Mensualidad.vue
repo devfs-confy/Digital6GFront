@@ -168,7 +168,7 @@
                             <div>
                                 <p class="modal-head__name">Renovar mensualidad</p>
                                 <p class="modal-head__sub">{{ mensualidadAccion?.nombre }} · {{ mensualidadAccion?.sede
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales" class="modal-close-btn">✕</button>
@@ -203,7 +203,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -239,7 +239,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -325,7 +325,11 @@
                         </template>
                     </div>
 
-                    <!-- Transacción pendiente -->
+                    <!-- Transacción pendiente
+                    
+                    (${mesesExtra} ${mesesExtra === 1 ? 'mes' : 'meses'})
+                    
+                    -->
 
                     <div class="modal-foot">
                         <button @click="cerrarModales" class="btn-modal btn-modal--cancel">Cancelar</button>
@@ -334,8 +338,7 @@
                             :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago || (!mensualidadAccion?.fechaFin && !fechaInicioManual)">
                             <div v-if="iniciandoPago" class="btn-spinner" />
                             {{ iniciandoPago ? 'Redirigiendo...' : esSoloTarjeta ? 'Ir a pagar (solo tarjeta)' : `Ir a
-                            pagar
-                            (${mesesExtra} ${mesesExtra === 1 ? 'mes' : 'meses'})` }}
+                            pagar` }}
                         </button>
                     </div>
                 </div>
@@ -378,7 +381,7 @@
                                         estadoLabel(mensualidadAccion?.estado) }}</span>
                                     <span class="text-xs font-semibold text-gray-400">
                                         <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                        }}</strong>
+                                            }}</strong>
                                         días restantes
                                     </span>
                                 </div>
@@ -593,7 +596,7 @@
                                         class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                         <span>Total a pagar</span>
                                         <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                 </div>
                                 <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -2240,5 +2243,11 @@ const cerrarModales = () => {
 
 .modal-pago .modal-foot {
     flex-shrink: 0
+}
+
+@media (max-width: 720px) {
+    .modal-pago .modal-card {
+        max-height: 95%;
+    }
 }
 </style>
