@@ -28,7 +28,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import Sidebar from '../components/shared/Sidebar.vue'
 import Navbar from '../components/shared/Navbar.vue'
 import ModalBanner from '@/components/modals/ModalBanner.vue'
-import publicidadService from '@/api/services/ads.service'
+import publicidadService from '@/api/services/banner.service'
 const bannerUrl = ref([])
 
 

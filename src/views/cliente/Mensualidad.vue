@@ -672,9 +672,9 @@
         <!-- ───────────────── MODAL: CAMBIO DE PLACAS ───────────────── -->
         <Transition name="modal">
             <div v-if="modalPlacas"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-                <div
-                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px] flex flex-col overflow-y-auto">
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[60] p-4 ">
+                <div class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px]  flex flex-col overflow-y-auto"
+                    style="max-height: 100%;">
                     <!-- Head -->
                     <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
                         <div class="flex items-center gap-3">
@@ -693,7 +693,7 @@
                             class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
                     <!-- Body -->
-                    <div class="flex flex-col bg-white">
+                    <div class="flex flex-col bg-white overflow-y-auto">
                         <!-- Warning -->
                         <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                             <div
@@ -747,6 +747,58 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <Transition name="modal">
+                                <div v-if="infoExcedente"
+                                    class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                    <div
+                                        class="flex flex-col gap-3 rounded-2xl border-2 border-[#c8e6c9] bg-[#f0fdf4] p-4">
+                                        <div class="flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                fill="#299261" viewBox="0 0 24 24" class="shrink-0">
+                                                <path
+                                                    d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                            </svg>
+                                            <span class="text-[0.82rem] font-black text-[#0D291C]">Cambio de
+                                                autorización</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between text-[0.72rem] font-semibold text-gray-500">
+                                            <span>{{ infoExcedente.autorizacionAnterior }}</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                fill="#299261" viewBox="0 0 24 24">
+                                                <path d="M8 5v14l11-7z" />
+                                            </svg>
+                                            <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
+                                            }}</span>
+                                        </div>
+                                        <div
+                                            class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
+                                            <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
+                                                <span>Subtotal</span><span>{{
+                                                    formatPrecio(infoExcedente.excedente?.subtotal)
+                                                }}</span>
+                                            </div>
+                                            <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
+                                                <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
+                                                }}</span>
+                                            </div>
+                                            <div
+                                                class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
+                                                <span>Total a pagar</span>
+                                                <span class="text-[#299261]">{{
+                                                    formatPrecio(infoExcedente.excedente?.total)
+                                                }}</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
+                                            Al confirmar serás redirigido a la pasarela de pago para cubrir el excedente
+                                            por la
+                                            diferencia de autorización.
+                                        </p>
+                                    </div>
+                                </div>
+                            </Transition>
                         </div>
                         <!-- Error -->
                         <div v-if="errPlacas"
@@ -756,49 +808,7 @@
                     </div>
 
                     <!-- Excedente banner -->
-                    <Transition name="modal">
-                        <div v-if="infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                            <div class="flex flex-col gap-3 rounded-2xl border-2 border-[#c8e6c9] bg-[#f0fdf4] p-4">
-                                <div class="flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#299261"
-                                        viewBox="0 0 24 24" class="shrink-0">
-                                        <path
-                                            d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                                    </svg>
-                                    <span class="text-[0.82rem] font-black text-[#0D291C]">Cambio de autorización</span>
-                                </div>
-                                <div
-                                    class="flex items-center justify-between text-[0.72rem] font-semibold text-gray-500">
-                                    <span>{{ infoExcedente.autorizacionAnterior }}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#299261"
-                                        viewBox="0 0 24 24">
-                                        <path d="M8 5v14l11-7z" />
-                                    </svg>
-                                    <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva }}</span>
-                                </div>
-                                <div
-                                    class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
-                                    <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
-                                        <span>Subtotal</span><span>{{ formatPrecio(infoExcedente.excedente?.subtotal)
-                                        }}</span>
-                                    </div>
-                                    <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
-                                        <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva) }}</span>
-                                    </div>
-                                    <div
-                                        class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
-                                        <span>Total a pagar</span>
-                                        <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
-                                        }}</span>
-                                    </div>
-                                </div>
-                                <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
-                                    Al confirmar serás redirigido a la pasarela de pago para cubrir el excedente por la
-                                    diferencia de autorización.
-                                </p>
-                            </div>
-                        </div>
-                    </Transition>
+
 
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
