@@ -138,11 +138,11 @@
                     </div>
                 </div>
 
-                <div class="flex justify-center bg-[#f8fafb] border-t-[1.5px] border-[#f1f5f9] px-[18px] py-3">
+                <!-- <div class="flex justify-center bg-[#f8fafb] border-t-[1.5px] border-[#f1f5f9] px-[18px] py-3">
                     <button class="btn-confy btn-confy--confirm w-full" @click="$router.push('/notificaciones')">
                         Ver todas las notificaciones
                     </button>
-                </div>
+                </div> -->
 
             </div>
         </Transition>
@@ -210,7 +210,7 @@
                                 <div v-if="notifDetalle.FechaExpiracion" class="modal-detail-row">
                                     <span class="modal-detail-key">Expira</span>
                                     <span class="modal-detail-val">{{ formatFecha(notifDetalle.FechaExpiracion)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div v-if="notifDetalle.DocumentoUsuario" class="modal-detail-row">
                                     <span class="modal-detail-key">Usuario</span>
