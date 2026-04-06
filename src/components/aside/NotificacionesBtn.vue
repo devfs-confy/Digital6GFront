@@ -12,6 +12,10 @@
             </span>
         </button>
 
+        <Transition name="overlay">
+            <div v-if="isOpen" class="fixed inset-0 bg-black/40 z-[998] sm:hidden" @click="isOpen = false" />
+        </Transition>
+
         <!-- ── Panel dropdown ── -->
         <Transition name="panel">
             <div v-if="isOpen" class="notif-panel">
