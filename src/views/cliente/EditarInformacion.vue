@@ -357,6 +357,8 @@ const guardarCambios = async () => {
         }
         const res = await ClientService.updateOwnProfile(dto)
 
+        console.log(res)
+
         if (res?.error === true || res?.success === false) {
             const msg = res?.data?.message ?? res?.message ?? 'Error al guardar.'
             errCambios.value = Array.isArray(msg) ? msg.join(', ') : msg
@@ -374,6 +376,9 @@ const guardarCambios = async () => {
             auth.user.Nombres = form.nombre
             auth.user.Apellidos = form.apellido
         }
+
+        console.log('Cambios guardados.')
+
         editing.correo = false
         editing.telefono = false
         editing.apellido = false

@@ -38,7 +38,7 @@ class ClientService {
     }
   }
 
-  // PUT /v1/usuarios/clientes — cliente autenticado, actualiza su propio Email y Telefono
+  // PUT /v1/usuarios/clientes — cliente autenticado, actualiza su propio Email, Telefono, Nombre y Apellido
   async updateOwnProfile(dto) {
     try {
       const response = await api.put(this.nameRoute, dto);

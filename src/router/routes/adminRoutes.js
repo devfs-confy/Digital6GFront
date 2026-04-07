@@ -64,19 +64,19 @@ export const adminMenuItems = [
     permission: "VER-ROLES",
   },
   {
-    label: "Ver disponibilidad",
+    label: "Ver<br> disponibilidad",
     icon: icoDisponibilidad,
     route: "/admin/disponibilidad",
     permission: "CREAR-CODIGOS",
   },
   {
-    label: "Codigo verificacion",
+    label: "Codigo<br> verificacion",
     icon: IcoVerificacion,
     route: "/admin/verificacion",
     permission: "CREAR-CODIGOS",
   },
   {
-    label: "Ver tarifas",
+    label: "Ver<br> tarifas",
     icon: icoTarifas,
     route: "/admin/tarifas",
     permission: "CREAR-CODIGOS",

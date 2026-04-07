@@ -140,8 +140,12 @@
                 <!-- Card actions -->
                 <div class="grid gap-2 w-full" :class="mostrarCongelar(m) ? 'grid-cols-3' : 'grid-cols-2'">
                     <!-- Pay -->
-                    <button @click="abrirPago(m)" :class="m.conPago && m.estado !== 'congelada' ? 'col-span-1' : ''"
-                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21]">
+                    <button @click="m.estado === 'activa' ? null : abrirPago(m)"
+                        :disabled="m.estado === 'activa' || m.estado === 'congelada'" :class="[m.conPago && m.estado !== 'congelada' ? 'col-span-1' : '', m.estado === 'activa' || m.estado === 'congelada'
+                            ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
+                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'
+                        ]"
+                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -1544,7 +1548,7 @@ const cerrarModales = () => {
     modalCongelar.value = false
     modalConsentimiento.value = false
     modalFacturacion.value = false
-    modalPlacas.value = false          // ← asegurarse que también cierra este
+    modalPlacas.value = false
     pagoPendiente.value = null
     codigoInput.value = ''
     mensualidadAccion.value = null

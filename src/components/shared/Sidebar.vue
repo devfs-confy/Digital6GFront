@@ -237,6 +237,7 @@ const colorearSVG = (svgRaw, color) =>
     flex: 1;
     transition: color 0.2s;
     letter-spacing: 0.005em;
+    text-align: left;
 }
 
 .menu-item:hover:not(.menu-item--active) .menu-label {
