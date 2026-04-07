@@ -41,6 +41,7 @@
                     'bg-amber-400': m.estado === 'por_vencer',
                     'bg-red-600': m.estado === 'vencida',
                     'bg-blue-400': m.estado === 'congelada',
+                    'bg-[#b45309]': m.estado === 'pendiente',   // ← agregar
                 }" />
 
                 <!-- Card head -->
@@ -62,6 +63,7 @@
                                 'bg-amber-100 text-amber-600 border-amber-200': m.estado === 'por_vencer',
                                 'bg-red-100   text-red-600   border-red-200': m.estado === 'vencida',
                                 'bg-blue-100  text-blue-600  border-blue-200': m.estado === 'congelada',
+                                'bg-[#fde68a] text-[#b45309] border-[#b45309]': m.estado === 'pendiente'
                             }">
                             {{ estadoLabel(m.estado) }}
                         </span>
@@ -74,6 +76,7 @@
                             'text-amber-600': m.estado === 'por_vencer',
                             'text-red-600': m.estado === 'vencida',
                             'text-blue-500': m.estado === 'congelada',
+                            'text-[#b45309]': m.estado === 'pendiente',
                         }">
                             {{ diasRestantes(m) }}
                         </span>
@@ -140,10 +143,12 @@
                 <!-- Card actions -->
                 <div class="grid gap-2 w-full" :class="mostrarCongelar(m) ? 'grid-cols-3' : 'grid-cols-2'">
                     <!-- Pay -->
-                    <button @click="m.estado === 'activa' ? null : abrirPago(m)"
-                        :disabled="m.estado === 'activa' || m.estado === 'congelada'" :class="[m.conPago && m.estado !== 'congelada' ? 'col-span-1' : '', m.estado === 'activa' || m.estado === 'congelada'
-                            ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
-                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'
+                    <button @click="(m.estado === 'activa' || m.estado === 'congelada') ? null : abrirPago(m)"
+                        :disabled="m.estado === 'none' || m.estado === 'congelada'" :class="[
+                            m.conPago && m.estado !== 'congelada' ? 'col-span-1' : '',
+                            (m.estado === 'none' || m.estado === 'congelada')
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
+                                : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'
                         ]"
                         class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
@@ -528,6 +533,7 @@
                                             'bg-amber-100 text-amber-600 border-amber-200': mensualidadAccion?.estado === 'por_vencer',
                                             'bg-red-100   text-red-600   border-red-200': mensualidadAccion?.estado === 'vencida',
                                             'bg-blue-100  text-blue-600  border-blue-200': mensualidadAccion?.estado === 'congelada',
+                                            'bg-purple-100 text-purple-600 border-purple-200': mensualidadAccion?.estado === 'pendiente'
                                         }">
                                         {{ estadoLabel(mensualidadAccion?.estado) }}
                                     </span>
@@ -727,6 +733,24 @@
                                         <span v-if="idx === 0"
                                             class="text-[0.55rem] font-black px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344] ml-1.5">Requerida</span>
                                     </div>
+
+                                    <div v-if="usandoCambioAutorizacion && idx === 0 && nuevasPlacas[0]?.trim().length >= 6"
+                                        class="flex items-center gap-1.5 mt-1 text-[0.65rem] font-bold" :class="placaPrincipalEsMoto !== mensualidadAccion?.esMoto
+                                            ? 'text-green-600'
+                                            : 'text-amber-600'">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                                            fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                        </svg>
+                                        <span v-if="placaPrincipalEsMoto !== mensualidadAccion?.esMoto">
+                                            ✓ Se detectó cambio de tipo: {{ mensualidadAccion?.esMoto ?
+                                                'Moto → Carro' : 'Carro → Moto' }}
+                                        </span>
+                                        <span v-else>
+                                            Esta placa es del mismo tipo actual. Usa "Cambiar placa" en su lugar.
+                                        </span>
+                                    </div>
+
                                     <div class="flex items-center gap-2">
                                         <div
                                             class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-all focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
@@ -749,6 +773,7 @@
                                         </svg>
                                         <span class="font-black text-[#299261]">{{ nuevasPlacas[idx] }}</span>
                                     </div>
+
                                 </div>
                             </div>
 
@@ -821,7 +846,8 @@
                             {{ infoExcedente ? 'Volver' : 'Cancelar' }}
                         </button>
                         <button v-if="!infoExcedente" @click="confirmarCambioPlacas"
-                            :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas"
+                            :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas || cambioPlacaBloqueado ||
+                                (usandoCambioAutorizacion && nuevasPlacas[0]?.trim().length >= 6 && placaPrincipalEsMoto === mensualidadAccion?.esMoto)"
                             class="flex-1 flex items-center justify-center gap-2 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="guardandoPlacas"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
@@ -989,7 +1015,8 @@ const nuevasPlacas = ref(['', '', '', '', ''])
 const guardandoPlacas = ref(false)
 const errPlacas = ref('')
 const placaCambiada = ref(false)
-const usandoCambioAutorizacion = ref(false)  // ← agregar aquí
+const usandoCambioAutorizacion = ref(false)
+const cambioPlacaBloqueado = ref(false)
 
 // ── Cambio de autorización (moto↔carro) ───────────────────
 const infoAutorizacion = ref(null)      // respuesta de getChangesByPersona
@@ -1019,7 +1046,10 @@ const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 // ── Computeds ─────────────────────────────────────────────────
 const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINCENA')
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
-
+const placaPrincipalEsMoto = computed(() => {
+    const placa = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
+    return /^[A-Z]{3}\d{2}[A-Z]$/.test(placa)
+})
 const mostrarCongelar = (m) =>
     m.conPago && m.estado !== 'congelada' && !m.esQuincena
 
@@ -1040,14 +1070,9 @@ const formatPrecio = (v) =>
     (!v && v !== 0) ? '—' : new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(v)
 
 const estadoLabel = (e) =>
-    ({ activa: 'Activa', por_vencer: 'Por vencer', vencida: 'Vencida', congelada: 'Congelada' })[e] ?? e
+    ({ activa: 'Activa', por_vencer: 'Por vencer', vencida: 'Vencida', congelada: 'Congelada', pendiente: 'Pendiente' })[e] ?? e
 
-const estadoClase = (m) => ({
-    'card--activa': m.estado === 'activa',
-    'card--por_vencer': m.estado === 'por_vencer',
-    'card--vencida': m.estado === 'vencida',
-    'card--congelada': m.estado === 'congelada',
-})
+
 
 const mesActual = () => {
     const d = new Date()
@@ -1084,7 +1109,6 @@ const porcentajeVigencia = (m) => {
 const resolverEstado = (m) => {
     if (m.Congelado === true || m.EstadoCongelamiento === 'CONGELADO') return 'congelada'
 
-    // FechaInicio futura = congelamiento programado, la vigencia aún no arrancó
     if (m.FechaInicio && m.FechaFin) {
         const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
         const inicio = parseLocal(m.FechaInicio)
@@ -1092,7 +1116,9 @@ const resolverEstado = (m) => {
     }
 
     if (!m.Estado) return 'vencida'
-    if (!m.FechaFin) return 'activa'
+
+    if (!m.FechaFin) return 'pendiente'
+
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
     const fin = parseLocal(m.FechaFin)
     const dias = (fin - hoy) / 86400000
@@ -1161,6 +1187,7 @@ const abrirDetalle = async (m) => {
 }
 
 const abrirModalCambioTipo = () => {
+    cambioPlacaBloqueado.value = false
     errPlacas.value = ''
     infoExcedente.value = null
     usandoCambioAutorizacion.value = true
@@ -1171,6 +1198,7 @@ const abrirModalCambioTipo = () => {
 // ── Placas ────────────────────────────────────────────────────
 const abrirModalPlacas = () => {
     if (placaCambiada.value) return
+    cambioPlacaBloqueado.value = false
     errPlacas.value = ''
     infoExcedente.value = null
     infoAutorizacion.value = null
@@ -1205,6 +1233,16 @@ const confirmarCambioPlacas = async () => {
     guardandoPlacas.value = true
     try {
         if (usandoCambioAutorizacion.value) {
+            const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
+            const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
+            const esMotoActual = mensualidadAccion.value.esMoto
+
+            if (esMotoIngresada === esMotoActual) {
+                errPlacas.value = esMotoIngresada
+                    ? 'La placa ingresada es de moto. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
+                    : 'La placa ingresada es de carro. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
+                return
+            }
 
             const placasPayload = nuevasPlacas.value
                 .map((val, i) => {
@@ -1248,7 +1286,6 @@ const confirmarCambioPlacas = async () => {
         const status = e?.response?.status
         const responseData = e?.response?.data
 
-        console.log('[cambioTipo] status:', status, 'data:', JSON.stringify(responseData))
 
         if (usandoCambioAutorizacion.value && status === 409 && responseData?.data?.requierePago) {
             console.log('[cambioTipo] infoExcedente seteado:', JSON.stringify(responseData.data))
@@ -1256,8 +1293,10 @@ const confirmarCambioPlacas = async () => {
             return
         }
         const msg = responseData?.message
-        if (status === 409) errPlacas.value = 'Ya existe una solicitud de cambio de placas para este mes.'
-        else if (status === 404) errPlacas.value = 'Persona autorizada no encontrada.'
+        if (status === 409) {
+            errPlacas.value = 'Ya existe una solicitud de cambio de placas para este mes.'
+            cambioPlacaBloqueado.value = true  // ← agregar
+        } else if (status === 404) errPlacas.value = 'Persona autorizada no encontrada.'
         else if (status === 400) errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Datos inválidos.')
         else errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al procesar el cambio.')
     } finally {
@@ -1565,7 +1604,7 @@ const cerrarModales = () => {
     errPlacas.value = ''
     nuevasPlacas.value = ['', '', '', '', '']
     usandoCambioAutorizacion.value = false
-
+    cambioPlacaBloqueado.value = false
 }
 </script>
 

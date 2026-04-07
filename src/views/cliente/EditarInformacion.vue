@@ -11,35 +11,46 @@
             </button>
             <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Información Personal</h2>
             <button
-                class=" cursor-none pointer-events-none flex items-center gap-1.5 bg-transparent text-transparent text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full">
+                class="cursor-none pointer-events-none flex items-center gap-1.5 bg-transparent text-transparent text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full">
                 <AppIcon name="add" :size="14" />
                 <span class="hidden sm:inline"></span>
             </button>
         </div>
 
         <!-- Avatar + nombre -->
-        <div class="profile-hero">
-            <div class="profile-avatar">
-                <span class="profile-avatar__initials">{{ iniciales }}</span>
-                <div class="profile-avatar__ring" />
+        <div
+            class="relative overflow-hidden bg-[#0D291C] rounded-3xl p-7 flex items-center gap-5 flex-wrap
+                    before:content-[''] before:absolute before:-top-10 before:-right-10 before:w-[180px] before:h-[180px] before:rounded-full before:bg-[rgba(127,211,68,0.07)]
+                    after:content-[''] after:absolute after:-bottom-[60px] after:-left-5 after:w-[200px] after:h-[200px] after:rounded-full after:bg-[rgba(127,211,68,0.05)]">
+            <div class="relative flex-shrink-0">
+                <span
+                    class="w-[72px] h-[72px] rounded-[22px] bg-[#7FD344] text-[#0D291C] text-[1.6rem] font-black flex items-center justify-center relative z-10">
+                    {{ iniciales }}
+                </span>
+                <div
+                    class="absolute -inset-1 rounded-[26px] border-2 border-[rgba(127,211,68,0.3)] pointer-events-none" />
             </div>
-            <div class="profile-hero__info">
-                <h3 class="profile-hero__name">{{ form.nombre }} {{ form.apellido }}</h3>
-                <span class="profile-hero__doc">{{ form.tipoDoc }} · {{ form.documento }}</span>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-xl font-black text-white leading-tight">{{ form.nombre }} {{ form.apellido }}</h3>
+                <span class="block text-xs font-bold text-white/45 mt-1">{{ form.tipoDoc }} · {{ form.documento
+                    }}</span>
             </div>
-            <div class="profile-hero__badge">
-                <span class="profile-badge-dot" />
+            <div
+                class="inline-flex items-center gap-1.5 bg-[rgba(127,211,68,0.12)] border border-[rgba(127,211,68,0.25)] rounded-full px-3.5 py-1.5 text-[0.72rem] font-extrabold text-[#7FD344] whitespace-nowrap">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#7FD344] animate-pulse" />
                 Cliente activo
             </div>
         </div>
 
         <!-- Secciones -->
-        <div class="sections-grid">
+        <div class="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1">
 
             <!-- Datos personales -->
-            <div class="section-card card-anim" style="animation-delay:0s">
-                <div class="section-header">
-                    <div class="section-icon section-icon--green">
+            <div class="bg-white rounded-[22px] p-[22px] flex flex-col gap-[18px] border-2 border-gray-100"
+                style="box-shadow: 0 4px 0 #e8f5e9; animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both; animation-delay: 0s">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-[42px] h-[42px] rounded-[14px] bg-green-100 text-green-700 flex items-center justify-center flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -47,70 +58,63 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="section-title">Datos personales</h4>
-                        <p class="section-sub">Nombre, apellido e identificación</p>
+                        <h4 class="text-[0.95rem] font-black text-[#0D291C]">Datos personales</h4>
+                        <p class="text-[0.68rem] text-gray-400 font-semibold mt-0.5">Nombre, apellido e identificación
+                        </p>
                     </div>
                 </div>
 
-                <div class="fields-grid">
-                    <div class="field-wrap">
-                        <label class="field-lbl">Nombre</label>
-                        <div class="field-box" :class="{ 'field-box--editing': editing.nombre }">
-                            <input v-model="form.nombre" :disabled="!editing.nombre" class="field-input"
+                <div class="grid grid-cols-2 gap-3.5 max-[560px]:grid-cols-1">
+                    <div class="flex flex-col gap-1.5">
+                        <label
+                            class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Nombre</label>
+                        <div class="flex items-center bg-gray-50 border-2 border-gray-200 rounded-[14px] px-3.5 py-0.5 transition-all duration-200"
+                            :class="editing.nombre ? 'border-[#299261] bg-white shadow-[0_0_0_3px_rgba(41,146,97,0.1)]' : ''">
+                            <input v-model="form.nombre" :disabled="!editing.nombre"
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full disabled:text-gray-500 disabled:cursor-default"
                                 placeholder="Tu nombre" />
-                            <button @click="toggleEdit('nombre')" class="field-edit-btn">
+                            <button @click="toggleEdit('nombre')"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="!editing.nombre" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="field-wrap">
-                        <label class="field-lbl">Apellido</label>
-                        <div class="field-box" :class="{ 'field-box--editing': editing.apellido }">
-                            <input v-model="form.apellido" :disabled="!editing.apellido" class="field-input"
+                    <div class="flex flex-col gap-1.5">
+                        <label
+                            class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Apellido</label>
+                        <div class="flex items-center bg-gray-50 border-2 border-gray-200 rounded-[14px] px-3.5 py-0.5 transition-all duration-200"
+                            :class="editing.apellido ? 'border-[#299261] bg-white shadow-[0_0_0_3px_rgba(41,146,97,0.1)]' : ''">
+                            <input v-model="form.apellido" :disabled="!editing.apellido"
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full disabled:text-gray-500 disabled:cursor-default"
                                 placeholder="Tu apellido" />
-                            <button @click="toggleEdit('apellido')" class="field-edit-btn">
+                            <button @click="toggleEdit('apellido')"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="!editing.apellido" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- <div class="field-wrap">
-                        <label class="field-lbl">Tipo de documento</label>
-                        <div class="field-box" :class="{ 'field-box--editing': editing.tipoDoc }">
-                            <select v-model="form.tipoDoc" :disabled="!editing.tipoDoc" class="field-input">
-                                <option value="CC">Cédula de ciudadanía</option>
-                                <option value="CE">Cédula de extranjería</option>
-                                <option value="PA">Pasaporte</option>
-                                <option value="TI">Tarjeta de identidad</option>
-                            </select>
-                            <button @click="toggleEdit('tipoDoc')" class="field-edit-btn">
-                                <span v-if="!editing.tipoDoc" v-html="icoeditsquare"></span>
-                                <span v-else class="text-[#299261] font-black text-sm">✓</span>
-                            </button>
-                        </div>
-                    </div> -->
-
-                    <div class="field-wrap">
-                        <label class="field-lbl">Número de documento</label>
-                        <div class="field-box" :class="{ 'field-box--editing': editing.documento }">
-                            <input v-model="form.documento" :disabled="!editing.documento" class="field-input"
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Número de
+                            documento</label>
+                        <div class="flex items-center bg-gray-50 border-2 border-gray-200 rounded-[14px] px-3.5 py-0.5">
+                            <input v-model="form.documento" :disabled="!editing.documento"
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full disabled:text-gray-500 disabled:cursor-default"
                                 placeholder="Número de documento" />
-                            <!-- <button @click="toggleEdit('documento')" class="field-edit-btn">
-                                <span v-if="!editing.documento" v-html="icoeditsquare"></span>
-                                <span v-else class="text-[#299261] font-black text-sm">✓</span>
-                            </button> -->
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Contacto -->
-            <div class="section-card card-anim" style="animation-delay:0.08s">
-                <div class="section-header">
-                    <div class="section-icon section-icon--blue">
+            <div class="bg-white rounded-[22px] p-[22px] flex flex-col gap-[18px] border-2 border-gray-100"
+                style="box-shadow: 0 4px 0 #e8f5e9; animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both; animation-delay: 0.08s">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-[42px] h-[42px] rounded-[14px] bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -118,31 +122,40 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="section-title">Contacto</h4>
-                        <p class="section-sub">Correo electrónico y teléfono</p>
+                        <h4 class="text-[0.95rem] font-black text-[#0D291C]">Contacto</h4>
+                        <p class="text-[0.68rem] text-gray-400 font-semibold mt-0.5">Correo electrónico y teléfono</p>
                     </div>
                 </div>
 
-                <div class="fields-grid">
-                    <div class="field-wrap field-wrap--full">
-                        <label class="field-lbl">Correo electrónico</label>
-                        <div class="field-box" :class="{ 'field-box--editing': editing.correo }">
-                            <input v-model="form.correo" :disabled="!editing.correo" type="email" class="field-input"
+                <div class="grid grid-cols-2 gap-3.5 max-[560px]:grid-cols-1">
+                    <div class="flex flex-col gap-1.5 col-span-2">
+                        <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Correo
+                            electrónico</label>
+                        <div class="flex items-center bg-gray-50 border-2 border-gray-200 rounded-[14px] px-3.5 py-0.5 transition-all duration-200"
+                            :class="editing.correo ? 'border-[#299261] bg-white shadow-[0_0_0_3px_rgba(41,146,97,0.1)]' : ''">
+                            <input v-model="form.correo" :disabled="!editing.correo" type="email"
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full disabled:text-gray-500 disabled:cursor-default"
                                 placeholder="correo@ejemplo.com" />
-                            <button @click="toggleEdit('correo')" class="field-edit-btn">
+                            <button @click="toggleEdit('correo')"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="!editing.correo" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="field-wrap field-wrap--full">
-                        <label class="field-lbl">Teléfono</label>
-                        <div class="field-box" :class="{ 'field-box--editing': editing.telefono }">
-                            <span class="field-prefix">+57</span>
+                    <div class="flex flex-col gap-1.5 col-span-2">
+                        <label
+                            class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Teléfono</label>
+                        <div class="flex items-center bg-gray-50 border-2 border-gray-200 rounded-[14px] px-3.5 py-0.5 transition-all duration-200"
+                            :class="editing.telefono ? 'border-[#299261] bg-white shadow-[0_0_0_3px_rgba(41,146,97,0.1)]' : ''">
+                            <span
+                                class="text-[0.82rem] font-extrabold text-gray-400 pr-2 border-r border-r-gray-200 flex-shrink-0">+57</span>
                             <input v-model="form.telefono" :disabled="!editing.telefono" type="tel"
-                                class="field-input field-input--prefixed" placeholder="300 000 0000" maxlength="10" />
-                            <button @click="toggleEdit('telefono')" class="field-edit-btn">
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 pl-1.5 min-w-0 w-full disabled:text-gray-500 disabled:cursor-default"
+                                placeholder="300 000 0000" maxlength="10" />
+                            <button @click="toggleEdit('telefono')"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="!editing.telefono" v-html="icoeditsquare"></span>
                                 <span v-else class="text-[#299261] font-black text-sm">✓</span>
                             </button>
@@ -152,9 +165,11 @@
             </div>
 
             <!-- Contraseña -->
-            <div class="section-card section-card--pass card-anim" style="animation-delay:0.16s">
-                <div class="section-header">
-                    <div class="section-icon section-icon--dark">
+            <div class="col-span-2 bg-white rounded-[22px] p-[22px] flex flex-col gap-[18px] border-2 border-[#e8f5e9] max-[700px]:col-span-1"
+                style="box-shadow: 0 4px 0 #c8e6c9; animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both; animation-delay: 0.16s">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-[42px] h-[42px] rounded-[14px] bg-[#0D291C] text-[#7FD344] flex items-center justify-center flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -162,75 +177,90 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="section-title">Contraseña</h4>
-                        <p class="section-sub">Cambia tu contraseña de acceso</p>
+                        <h4 class="text-[0.95rem] font-black text-[#0D291C]">Contraseña</h4>
+                        <p class="text-[0.68rem] text-gray-400 font-semibold mt-0.5">Cambia tu contraseña de acceso</p>
                     </div>
                 </div>
 
                 <!-- Locked -->
-                <div v-if="!showPassForm" class="pass-locked">
-                    <p class="pass-locked__text">••••••••••••</p>
-                    <button @click="showPassForm = true" class="btn-3d">
+                <div v-if="!showPassForm"
+                    class="flex items-center justify-between gap-4 bg-gray-50 rounded-2xl px-5 py-4 flex-wrap">
+                    <p class="text-[1.4rem] tracking-[0.15em] text-gray-400 font-black">••••••••••••</p>
+                    <button @click="showPassForm = true"
+                        class="text-[0.78rem] font-extrabold text-[#0D291C] bg-[#7FD344] border-2 border-black rounded-full px-5 py-2.5 cursor-pointer transition-all active:translate-y-0.5"
+                        style="box-shadow: 0 3px 0 #000">
                         Cambiar contraseña
                     </button>
                 </div>
 
                 <!-- Formulario -->
-                <div v-else class="fields-grid">
-                    <div class="field-wrap field-wrap--full">
-                        <label class="field-lbl">Contraseña actual</label>
-                        <div class="field-box field-box--editing">
+                <div v-else class="grid grid-cols-2 gap-3.5 max-[560px]:grid-cols-1">
+                    <div class="flex flex-col gap-1.5 col-span-2">
+                        <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Contraseña
+                            actual</label>
+                        <div
+                            class="flex items-center bg-white border-2 border-[#299261] rounded-[14px] px-3.5 py-0.5 shadow-[0_0_0_3px_rgba(41,146,97,0.1)]">
                             <input v-model="passForm.actual" :type="showPass.actual ? 'text' : 'password'"
-                                class="field-input" placeholder="Tu contraseña actual" />
-                            <button @click="showPass.actual = !showPass.actual" class="field-edit-btn">
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full"
+                                placeholder="Tu contraseña actual" />
+                            <button @click="showPass.actual = !showPass.actual"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="showPass.actual" v-html="visibility"></span>
                                 <span v-else v-html="visibilityoff"></span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="field-wrap field-wrap--full">
-                        <label class="field-lbl">Nueva contraseña</label>
-                        <div class="field-box field-box--editing">
+                    <div class="flex flex-col gap-1.5 col-span-2">
+                        <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Nueva
+                            contraseña</label>
+                        <div
+                            class="flex items-center bg-white border-2 border-[#299261] rounded-[14px] px-3.5 py-0.5 shadow-[0_0_0_3px_rgba(41,146,97,0.1)]">
                             <input v-model="passForm.nueva" :type="showPass.nueva ? 'text' : 'password'"
-                                class="field-input" placeholder="Mínimo 8 caracteres" />
-                            <button @click="showPass.nueva = !showPass.nueva" class="field-edit-btn">
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full"
+                                placeholder="Mínimo 8 caracteres" />
+                            <button @click="showPass.nueva = !showPass.nueva"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="showPass.nueva" v-html="visibility"></span>
                                 <span v-else v-html="visibilityoff"></span>
                             </button>
                         </div>
-                        <div v-if="passForm.nueva" class="pass-strength">
-                            <div class="pass-strength__bars">
-                                <div v-for="n in 4" :key="n" class="pass-strength__bar"
-                                    :class="passStrength >= n ? `pass-bar--${passStrengthLabel.key}` : 'pass-bar--empty'" />
+                        <div v-if="passForm.nueva" class="flex items-center gap-2 pt-1 px-0.5">
+                            <div class="flex gap-1 flex-1">
+                                <div v-for="n in 4" :key="n"
+                                    class="flex-1 h-[5px] rounded-full transition-colors duration-300"
+                                    :class="passStrength >= n ? passBarClass : 'bg-gray-200'" />
                             </div>
-                            <span class="pass-strength__label" :class="`pass-lbl--${passStrengthLabel.key}`">
+                            <span class="text-[0.65rem] font-extrabold whitespace-nowrap" :class="passLabelClass">
                                 {{ passStrengthLabel.text }}
                             </span>
                         </div>
                     </div>
 
-                    <div class="field-wrap field-wrap--full">
-                        <label class="field-lbl">Confirmar contraseña</label>
-                        <div class="field-box"
-                            :class="passForm.confirmar && !passMatch ? 'field-box--error' : 'field-box--editing'">
+                    <div class="flex flex-col gap-1.5 col-span-2">
+                        <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Confirmar
+                            contraseña</label>
+                        <div class="flex items-center rounded-[14px] px-3.5 py-0.5 border-2 transition-all duration-200"
+                            :class="passForm.confirmar && !passMatch
+                                ? 'border-red-600 bg-white shadow-[0_0_0_3px_rgba(220,38,38,0.1)]'
+                                : 'border-[#299261] bg-white shadow-[0_0_0_3px_rgba(41,146,97,0.1)]'">
                             <input v-model="passForm.confirmar" :type="showPass.confirmar ? 'text' : 'password'"
-                                class="field-input" placeholder="Repite la nueva contraseña" />
-                            <button @click="showPass.confirmar = !showPass.confirmar" class="field-edit-btn">
+                                class="flex-1 border-none bg-transparent outline-none text-[0.88rem] font-bold text-[#0D291C] py-2.5 min-w-0 w-full"
+                                placeholder="Repite la nueva contraseña" />
+                            <button @click="showPass.confirmar = !showPass.confirmar"
+                                class="w-[34px] h-[34px] rounded-[10px] border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0 hover:bg-gray-100 transition-colors">
                                 <span v-if="showPass.confirmar" v-html="visibility"></span>
                                 <span v-else v-html="visibilityoff"></span>
                             </button>
                         </div>
-                        <p v-if="passForm.confirmar && !passMatch" class="field-error">
+                        <p v-if="passForm.confirmar && !passMatch" class="text-[0.65rem] font-bold text-red-600 pl-1">
                             Las contraseñas no coinciden
                         </p>
                     </div>
 
-                    <!-- Error API contraseña -->
                     <Transition name="err-slide">
                         <div v-if="passError"
-                            class="field-wrap--full flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5"
-                            style="grid-column: 1 / -1">
+                            class="col-span-2 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#dc2626"
                                 viewBox="0 0 24 24" class="shrink-0">
                                 <path
@@ -240,9 +270,15 @@
                         </div>
                     </Transition>
 
-                    <div class="field-wrap field-wrap--full flex gap-3">
-                        <button @click="cancelarPass" class="btn-cancel">Cancelar</button>
-                        <button @click="guardarPass" :disabled="!passValida || passLoading" class="btn-save">
+                    <div class="col-span-2 flex gap-3">
+                        <button @click="cancelarPass"
+                            class="text-[0.78rem] font-extrabold text-gray-700 bg-white border-2 border-black rounded-full px-5 py-2.5 cursor-pointer transition-all hover:bg-gray-100 active:translate-y-0.5"
+                            style="box-shadow: 0 1px 0 #000">
+                            Cancelar
+                        </button>
+                        <button @click="guardarPass" :disabled="!passValida || passLoading"
+                            class="text-[0.78rem] font-extrabold text-[#0D291C] bg-[#7FD344] border-2 border-black rounded-full px-5 py-2.5 cursor-pointer transition-all hover:bg-[#6fc23a] active:translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0"
+                            style="box-shadow: 0 3px 0 #000">
                             <span v-if="passLoading">Guardando...</span>
                             <span v-else>Guardar contraseña</span>
                         </button>
@@ -252,9 +288,11 @@
 
         </div>
 
-        <!-- Barra guardar cambios (aparece si hay cambios pendientes) -->
-        <div v-if="hayCambios" class="save-bar card-anim">
-            <div class="save-bar__text">
+        <!-- Barra guardar cambios -->
+        <div v-if="hayCambios"
+            class="sticky bottom-0 bg-[#0D291C] rounded-[20px] px-[22px] py-4 flex items-center justify-between gap-4 flex-wrap border-2 border-[rgba(127,211,68,0.2)]"
+            style="box-shadow: 0 -4px 24px rgba(13,41,28,0.25); animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both">
+            <div class="flex items-center gap-2 text-[0.82rem] font-bold text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#7FD344" viewBox="0 0 24 24">
                     <path
                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
@@ -262,8 +300,14 @@
                 {{ errCambios || 'Tienes cambios sin guardar' }}
             </div>
             <div class="flex gap-3">
-                <button @click="descartarCambios" class="btn-cancel" :disabled="guardandoCambios">Descartar</button>
-                <button @click="guardarCambios" class="btn-save" :disabled="guardandoCambios">
+                <button @click="descartarCambios" :disabled="guardandoCambios"
+                    class="text-[0.78rem] font-extrabold text-gray-700 bg-white border-2 border-black rounded-full px-5 py-2.5 cursor-pointer transition-all hover:bg-gray-100 active:translate-y-0.5 disabled:opacity-50"
+                    style="box-shadow: 0 1px 0 #000">
+                    Descartar
+                </button>
+                <button @click="guardarCambios" :disabled="guardandoCambios"
+                    class="text-[0.78rem] font-extrabold text-[#0D291C] bg-[#7FD344] border-2 border-black rounded-full px-5 py-2.5 cursor-pointer transition-all hover:bg-[#6fc23a] active:translate-y-0.5 disabled:opacity-50"
+                    style="box-shadow: 0 3px 0 #000">
                     <span v-if="guardandoCambios">Guardando...</span>
                     <span v-else>Guardar cambios</span>
                 </button>
@@ -284,7 +328,6 @@ import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 
-// ── Datos del usuario ──────────────────────────────────────────────
 const form = reactive({
     nombre: '',
     apellido: '',
@@ -310,7 +353,6 @@ onMounted(() => {
     Object.assign(original, { ...form })
 })
 
-// ── Edición campo a campo ──────────────────────────────────────────
 const editing = reactive({
     nombre: false, apellido: false,
     tipoDoc: false, documento: false,
@@ -319,17 +361,17 @@ const editing = reactive({
 
 const toggleEdit = (campo) => { editing[campo] = !editing[campo] }
 
-// ── Computed ───────────────────────────────────────────────────────
 const iniciales = computed(() =>
     `${form.nombre?.[0] ?? ''}${form.apellido?.[0] ?? ''}`.toUpperCase()
 )
 
-// Solo correo y teléfono son editables vía API
 const hayCambios = computed(() =>
-    form.correo !== original.correo || form.telefono !== original.telefono
+    form.correo !== original.correo ||
+    form.telefono !== original.telefono ||
+    form.nombre !== original.nombre ||
+    form.apellido !== original.apellido
 )
 
-// ── Guardar / descartar cambios ────────────────────────────────────
 const guardandoCambios = ref(false)
 const errCambios = ref('')
 
@@ -357,15 +399,12 @@ const guardarCambios = async () => {
         }
         const res = await ClientService.updateOwnProfile(dto)
 
-        console.log(res)
-
         if (res?.error === true || res?.success === false) {
             const msg = res?.data?.message ?? res?.message ?? 'Error al guardar.'
             errCambios.value = Array.isArray(msg) ? msg.join(', ') : msg
             return
         }
 
-        // Actualiza snapshot y store
         original.correo = form.correo
         original.telefono = form.telefono
         original.apellido = form.apellido
@@ -376,8 +415,6 @@ const guardarCambios = async () => {
             auth.user.Nombres = form.nombre
             auth.user.Apellidos = form.apellido
         }
-
-        console.log('Cambios guardados.')
 
         editing.correo = false
         editing.telefono = false
@@ -391,8 +428,7 @@ const guardarCambios = async () => {
     }
 }
 
-// ── Contraseña ─────────────────────────────────────────────────────
-// ── Contraseña ─────────────────────────────────────────────────────
+// ── Contraseña
 const showPassForm = ref(false)
 const passForm = reactive({ actual: '', nueva: '', confirmar: '' })
 const showPass = reactive({ actual: false, nueva: false, confirmar: false })
@@ -425,6 +461,20 @@ const passStrengthLabel = computed(() => {
     return map[passStrength.value] ?? map[0]
 })
 
+const passBarClass = computed(() => ({
+    weak: 'bg-red-600',
+    fair: 'bg-amber-400',
+    good: 'bg-blue-500',
+    strong: 'bg-green-600',
+}[passStrengthLabel.value.key] ?? 'bg-red-600'))
+
+const passLabelClass = computed(() => ({
+    weak: 'text-red-600',
+    fair: 'text-amber-600',
+    good: 'text-blue-600',
+    strong: 'text-green-600',
+}[passStrengthLabel.value.key] ?? 'text-red-600'))
+
 const cancelarPass = () => {
     showPassForm.value = false
     Object.assign(passForm, { actual: '', nueva: '', confirmar: '' })
@@ -455,136 +505,6 @@ const guardarPass = async () => {
 </script>
 
 <style scoped>
-/* ── Hero ─────────────────────────────────────────────────────────── */
-.profile-hero {
-    background-color: #0D291C;
-    border-radius: 24px;
-    padding: 28px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    position: relative;
-    overflow: hidden;
-}
-
-.profile-hero::before {
-    content: '';
-    position: absolute;
-    top: -40px;
-    right: -40px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: rgba(127, 211, 68, 0.07);
-}
-
-.profile-hero::after {
-    content: '';
-    position: absolute;
-    bottom: -60px;
-    left: -20px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: rgba(127, 211, 68, 0.05);
-}
-
-.profile-avatar {
-    position: relative;
-    flex-shrink: 0;
-}
-
-.profile-avatar__initials {
-    width: 72px;
-    height: 72px;
-    border-radius: 22px;
-    background-color: #7FD344;
-    color: #0D291C;
-    font-size: 1.6rem;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 1;
-}
-
-.profile-avatar__ring {
-    position: absolute;
-    inset: -4px;
-    border-radius: 26px;
-    border: 2px solid rgba(127, 211, 68, 0.3);
-    pointer-events: none;
-}
-
-.profile-hero__info {
-    flex: 1;
-    min-width: 0;
-}
-
-.profile-hero__name {
-    font-size: 1.25rem;
-    font-weight: 900;
-    color: white;
-    line-height: 1.2;
-}
-
-.profile-hero__doc {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.45);
-    margin-top: 4px;
-    display: block;
-}
-
-.profile-hero__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background-color: rgba(127, 211, 68, 0.12);
-    border: 1.5px solid rgba(127, 211, 68, 0.25);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    color: #7FD344;
-    white-space: nowrap;
-}
-
-.profile-badge-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: #7FD344;
-    animation: blink 1.6s infinite;
-}
-
-@keyframes blink {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.3;
-    }
-}
-
-/* ── Grid secciones ───────────────────────────────────────────────── */
-.sections-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
-@media (max-width: 700px) {
-    .sections-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 @keyframes card-anim-kf {
     from {
         opacity: 0;
@@ -595,344 +515,5 @@ const guardarPass = async () => {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-}
-
-.card-anim {
-    animation: card-anim-kf 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) both;
-}
-
-/* ── Tarjeta sección ──────────────────────────────────────────────── */
-.section-card {
-    background-color: white;
-    border-radius: 22px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    border: 2px solid #f3f4f6;
-    box-shadow: 0 4px 0 #e8f5e9;
-}
-
-.section-card--pass {
-    grid-column: 1 / -1;
-    border-color: #e8f5e9;
-    box-shadow: 0 4px 0 #c8e6c9;
-}
-
-.section-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.section-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.section-icon--green {
-    background-color: #dcfce7;
-    color: #16a34a;
-}
-
-.section-icon--blue {
-    background-color: #dbeafe;
-    color: #2563eb;
-}
-
-.section-icon--dark {
-    background-color: #0D291C;
-    color: #7FD344;
-}
-
-.section-title {
-    font-size: 0.95rem;
-    font-weight: 900;
-    color: #0D291C;
-}
-
-.section-sub {
-    font-size: 0.68rem;
-    color: #9ca3af;
-    font-weight: 600;
-    margin-top: 2px;
-}
-
-/* ── Campos ───────────────────────────────────────────────────────── */
-.fields-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-}
-
-@media (max-width: 560px) {
-    .fields-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.field-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.field-wrap--full {
-    grid-column: 1 / -1;
-}
-
-.field-lbl {
-    font-size: 0.62rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #9ca3af;
-    padding-left: 4px;
-}
-
-.field-box {
-    display: flex;
-    align-items: center;
-    background-color: #f9fafb;
-    border: 2px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 2px 4px 2px 14px;
-    transition: border-color 0.18s, box-shadow 0.18s, background-color 0.18s;
-}
-
-.field-box--editing {
-    border-color: #299261;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.1);
-}
-
-.field-box--error {
-    border-color: #dc2626;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-}
-
-.field-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #0D291C;
-    padding: 9px 0;
-    min-width: 0;
-    width: 100%;
-}
-
-.field-input:disabled {
-    color: #6b7280;
-    cursor: default;
-}
-
-.field-input--prefixed {
-    padding-left: 6px;
-}
-
-.field-prefix {
-    font-size: 0.82rem;
-    font-weight: 800;
-    color: #9ca3af;
-    padding-right: 8px;
-    border-right: 1.5px solid #e5e7eb;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.field-edit-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    transition: background-color 0.15s;
-}
-
-.field-edit-btn:hover {
-    background-color: #f3f4f6;
-}
-
-.field-error {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #dc2626;
-    padding-left: 4px;
-}
-
-/* Contraseña bloqueada */
-.pass-locked {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    background-color: #f9fafb;
-    border-radius: 16px;
-    padding: 16px 20px;
-    flex-wrap: wrap;
-}
-
-.pass-locked__text {
-    font-size: 1.4rem;
-    letter-spacing: 0.15em;
-    color: #9ca3af;
-    font-weight: 900;
-}
-
-
-
-/* Fortaleza de contraseña */
-.pass-strength {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 2px 0;
-}
-
-.pass-strength__bars {
-    display: flex;
-    gap: 4px;
-    flex: 1;
-}
-
-.pass-strength__bar {
-    flex: 1;
-    height: 5px;
-    border-radius: 999px;
-    transition: background-color 0.3s;
-}
-
-.pass-bar--empty {
-    background-color: #e5e7eb;
-}
-
-.pass-bar--weak {
-    background-color: #dc2626;
-}
-
-.pass-bar--fair {
-    background-color: #f59e0b;
-}
-
-.pass-bar--good {
-    background-color: #3b82f6;
-}
-
-.pass-bar--strong {
-    background-color: #16a34a;
-}
-
-.pass-strength__label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    white-space: nowrap;
-}
-
-.pass-lbl--weak {
-    color: #dc2626;
-}
-
-.pass-lbl--fair {
-    color: #d97706;
-}
-
-.pass-lbl--good {
-    color: #2563eb;
-}
-
-.pass-lbl--strong {
-    color: #16a34a;
-}
-
-/* ── Save bar ─────────────────────────────────────────────────────── */
-.save-bar {
-    position: sticky;
-    bottom: 0;
-    background-color: #0D291C;
-    border-radius: 20px;
-    padding: 16px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    box-shadow: 0 -4px 24px rgba(13, 41, 28, 0.25);
-    border: 2px solid rgba(127, 211, 68, 0.2);
-}
-
-.save-bar__text {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: white;
-}
-
-/* Botones */
-.btn-cancel {
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: #374151;
-    background-color: white;
-    border: 2px solid #000;
-    border-radius: 999px;
-    padding: 9px 20px;
-    cursor: pointer;
-    box-shadow: 0 1px 0 #000;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.btn-cancel:hover {
-    background-color: #f3f4f6;
-}
-
-.btn-cancel:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #000;
-}
-
-.btn-save {
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: #0D291C;
-    background-color: #7FD344;
-    border: 2px solid #000;
-    border-radius: 999px;
-    padding: 9px 20px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #000;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.btn-save:hover {
-    background-color: #6fc23a;
-}
-
-.btn-save:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #000;
-}
-
-.btn-save:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
 }
 </style>
