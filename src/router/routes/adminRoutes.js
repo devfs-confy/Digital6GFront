@@ -149,11 +149,11 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/Codigo.vue"),
       meta: { permission: "CREAR-CODIGOS" },
     },
-    {
-      path: "tarifas",
-      component: () => import("@/views/administrador/Tarifas.vue"),
-      meta: { permission: "CREAR-CODIGOS" },
-    },
+    // {
+    //   path: "tarifas",
+    //   component: () => import("@/views/administrador/Tarifas.vue"),
+    //   meta: { permission: "CREAR-CODIGOS" },
+    // },
     {
       path: "tarjetas",
       component: () => import("@/views/administrador/Tarjetas.vue"),
