@@ -120,7 +120,7 @@ const continuar = () => {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 </style>
 
 <style scoped>
@@ -136,7 +136,7 @@ const continuar = () => {
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
 }
 
 /* ── Background blobs ─────────────────────────── */
@@ -419,7 +419,7 @@ const continuar = () => {
     color: #fff;
     font-size: 0.9rem;
     font-weight: 700;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Funnel Display', 'Roboto', sans-serif;
     padding: 13px 28px;
     border-radius: 14px;
     border: none;

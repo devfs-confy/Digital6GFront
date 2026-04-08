@@ -22,7 +22,7 @@ export const adminMenuItems = [
     permission: "VER-USUARIOS",
   },
   {
-    label: "Solicitudes",
+    label: "Solicitudes <br> PQRS",
     icon: icoSolicitudes,
     route: "/admin/solicitudes",
     permission: "VER-MENSUALIDADES",

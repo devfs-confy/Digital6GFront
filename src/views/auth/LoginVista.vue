@@ -91,8 +91,7 @@
                         </p>
 
                         <!-- Botón -->
-                        <button @click="handleLogin" :disabled="auth.loading || !documento || !password"
-                            class="submit-btn">
+                        <button @click="handleLogin" class="submit-btn">
                             <span v-if="auth.loading" class="spinner" />
                             <span>{{ auth.loading ? 'Ingresando...' : 'Ingresar' }}</span>
                             <svg v-if="!auth.loading" xmlns="http://www.w3.org/2000/svg" width="16" height="16"

@@ -58,6 +58,18 @@ class ClientService {
     }
   }
 
+  async updateDocClientByDoc(dto) {
+    try {
+      const response = await api.patch(
+        `${this.nameRoute}/cambio-documento`,
+        dto,
+      );
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
   // PUT /v1/usuarios/clientes/{doc}/estado — admin, activa o inactiva, requiere INACTIVAR-USUARIOS
   async updateClientEstado(doc, estado) {
     try {

@@ -38,7 +38,7 @@
                     <option v-for="t in catTiposVehiculo" :key="t.id" :value="t.id">{{ t.nombre }}</option>
                 </select>
             </div>
-
+            <!-- 
             <div class="flex flex-col gap-1 flex-1 min-w-[130px]">
                 <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Tipo
                     pago</label>
@@ -47,7 +47,7 @@
                     <option :value="null">Todos</option>
                     <option v-for="t in catTiposPago" :key="t.id" :value="t.id">{{ t.nombre }}</option>
                 </select>
-            </div>
+            </div> -->
 
             <div class="flex flex-col gap-1 flex-1 min-w-[130px]">
                 <label
@@ -82,9 +82,9 @@
                             <th
                                 class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Vehículo</th>
-                            <th
+                            <!-- <th
                                 class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Tipo pago</th>
+                                Tipo pago</th> -->
                             <th
                                 class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Autorización</th>
@@ -94,9 +94,13 @@
                             <th
                                 class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
                                 Estado</th>
+                            <th
+                                class="px-5 py-3.5 text-center text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
+
 
                         <!-- Loading -->
                         <tr v-if="loading">
@@ -147,14 +151,14 @@
                                 </div>
                             </td>
 
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <!-- <td class="px-5 py-3 text-sm whitespace-nowrap">
                                 <div
                                     class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-yellow-50 text-yellow-800 border border-yellow-200">
                                     <AppIcon name="payment_card" :size="12" />
 
                                     {{ t.TipoCobro }}
                                 </div>
-                            </td>
+                            </td> -->
 
                             <td class="px-5 py-3 text-sm whitespace-nowrap">
                                 <span
@@ -175,6 +179,13 @@
                                     Activo</span>
                                 <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
+                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                                <button @click="abrirEditar(t)"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-bold text-[#0D291C]  transition-all">
+                                    <AppIcon name="car_tag" :size="30" />
+
+                                </button>
+                            </td>
                         </tr>
 
                     </tbody>
@@ -182,12 +193,136 @@
             </div>
 
             <!-- Paginación -->
-            <!-- Paginación -->
             <TablePagination :pagina-actual="paginaActual" :total-paginas="totalPaginas"
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
-
     </div>
+
+
+    <AsideEditar v-model="modalEditar" :titulo="`Tarifa #${tarifaActual?.IdTarifa ?? ''}`" subtitulo="Configurar valor"
+        label-guardar="Guardar tarifa" :loading="guardando" :error="errEditar" @guardar="guardarTarifa"
+        @update:modelValue="v => { if (!v) { modalEditar = false; errEditar = '' } }">
+
+        <div class="flex flex-wrap gap-2 pb-3 border-b border-gray-100">
+            <span
+                class="px-2.5 py-1 rounded-full text-[0.72rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9]">
+                {{sedes.find(s => String(s.IdEstacionamiento) === String(tarifaActual?.IdEstacionamiento))?.Nombre ??
+                    '—'}}
+            </span>
+            <span
+                class="px-2.5 py-1 rounded-full text-[0.72rem] font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                {{ String(tarifaActual?.IdTipoVehiculo) === '1' ? 'Carro' : 'Moto' }}
+            </span>
+            <span
+                class="px-2.5 py-1 rounded-full text-[0.72rem] font-bold bg-violet-50 text-violet-800 border border-violet-200">
+                {{ tarifaActual?.T_Autorizacion?.NombreAutorizacion ?? '—' }}
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">
+                Valor <span class="text-red-400">*</span>
+            </label>
+            <input v-model.number="formEditar.Valor" type="number" min="0" placeholder="50000"
+                class="aside-field-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+        </div>
+
+        <div class="flex flex-col gap-[3px] px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+            <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">Valor actual</span>
+            <span class="text-[1rem] font-black text-[#0D291C] font-mono">
+                ${{ Number(tarifaActual?.Valor ?? 0).toLocaleString('es-CO') }}
+            </span>
+        </div>
+
+    </AsideEditar>
+    <!-- ───── MODAL: CONFIRMAR ACTUALIZACIÓN ───── -->
+    <Transition name="modal">
+        <div v-if="modalConfirmar"
+            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+            @click.self="modalConfirmar = false">
+            <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[400px] flex flex-col overflow-hidden"
+                style="box-shadow: 0 7px 0 #0D291C">
+
+                <!-- Head -->
+                <div
+                    class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div
+                            class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
+                            <AppIcon name="warning" :size="20" />
+                        </div>
+                        <div>
+                            <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Confirmar
+                                actualización</p>
+                            <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                Tarifa #{{ tarifaActual?.IdTarifa }} · {{sedes.find(s => String(s.IdEstacionamiento)
+                                    === String(tarifaActual?.IdEstacionamiento))?.Nombre ?? '—'}}
+                            </p>
+                        </div>
+                    </div>
+                    <button @click="modalConfirmar = false"
+                        class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                </div>
+
+                <!-- Body -->
+                <div class="px-6 py-5 flex flex-col gap-4">
+                    <p class="text-[0.9rem] font-semibold text-[#0D291C] text-center leading-relaxed">
+                        ¿Estás seguro que deseas realizar la actualización de la tarifa?
+                    </p>
+
+                    <!-- Comparativa de valores -->
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div
+                            class="flex flex-col gap-[3px] px-3.5 py-2.5 bg-[#f0faf4] rounded-[14px] border-[1.5px] border-[#e8f5e9]">
+                            <span
+                                class="text-[0.6rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50">Valor
+                                actual</span>
+                            <span class="text-[1rem] font-black text-[#0D291C] font-mono">
+                                ${{ Number(tarifaActual?.Valor ?? 0).toLocaleString('es-CO') }}
+                            </span>
+                        </div>
+                        <div
+                            class="flex flex-col gap-[3px] px-3.5 py-2.5 bg-[#0D291C] rounded-[14px] border-[1.5px] border-[#0D291C]">
+                            <span
+                                class="text-[0.6rem] font-black uppercase tracking-wide text-[#7FD344] opacity-70">Nuevo
+                                valor</span>
+                            <span class="text-[1rem] font-black text-[#7FD344] font-mono">
+                                ${{ Number(formEditar.Valor ?? 0).toLocaleString('es-CO') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Pills de contexto -->
+                    <div class="flex flex-wrap gap-1.5">
+                        <span
+                            class="px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9]">
+                            {{sedes.find(s => String(s.IdEstacionamiento) ===
+                                String(tarifaActual?.IdEstacionamiento))?.Nombre ?? '—'}}
+                        </span>
+                        <span
+                            class="px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                            {{ String(tarifaActual?.IdTipoVehiculo) === '1' ? 'Carro' : 'Moto' }}
+                        </span>
+                        <span
+                            class="px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-violet-50 text-violet-800 border border-violet-200">
+                            {{ tarifaActual?.T_Autorizacion?.NombreAutorizacion ?? '—' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Foot -->
+                <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
+                    <button @click="modalConfirmar = false"
+                        class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                    <button @click="confirmarGuardarTarifa" :disabled="guardando" class="btn-modal-dark">
+                        <span v-if="guardando"
+                            class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+                        {{ guardando ? 'Guardando...' : 'Confirmar' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </Transition>
 </template>
 
 <script setup>
@@ -195,6 +330,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import TarifasService from '@/api/services/tarifas.service'
 import SedesService from '@/api/services/sedes.service'
 import TablePagination from '@/components/shared/Paginacion.vue'
+import AsideEditar from '@/components/aside/AsideEditar.vue'
 
 const tarifas = ref([])
 const todasLasTarifas = ref([])
@@ -206,19 +342,63 @@ const limit = ref(10)
 const sedes = ref([])
 
 const catTiposVehiculo = ref([])
-const catTiposPago = ref([])
 const catAutorizaciones = ref([])
 
 const filtros = reactive({
     idSede: null,
     idTipoVehiculo: null,
-    idTipoPago: null,
     idAutorizacion: null,
 })
 
+const modalEditar = ref(false)
+const tarifaActual = ref(null)
+const guardando = ref(false)
+const errEditar = ref('')
+const formEditar = reactive({ Valor: 0 })
+
+
+const modalConfirmar = ref(false)
+
+// El AsideEditar ahora abre el modal de confirmación
+
+
+// Este es el que realmente llama a la API
+const confirmarGuardarTarifa = async () => {
+    guardando.value = true
+    try {
+        await TarifasService.update(tarifaActual.value.IdTarifa, formEditar.Valor)
+        modalConfirmar.value = false
+        cargarTarifas()
+    } catch (e) {
+        errEditar.value = e?.response?.data?.message ?? 'Error al guardar'
+        modalConfirmar.value = false
+        modalEditar.value = true  // reabre el aside con el error
+    } finally {
+        guardando.value = false
+    }
+}
+const abrirEditar = (tarifa) => {
+    tarifaActual.value = tarifa
+    formEditar.Valor = tarifa.Valor
+    errEditar.value = ''
+    modalEditar.value = true
+}
+
+
+const guardarTarifa = async () => {
+    if (!formEditar.Valor || formEditar.Valor <= 0) {
+        errEditar.value = 'El valor debe ser mayor a 0'
+        return
+    }
+    errEditar.value = ''
+    modalEditar.value = false
+    modalConfirmar.value = true
+}
+
+
+
 const hayFiltros = computed(() =>
-    filtros.idSede || filtros.idTipoVehiculo ||
-    filtros.idTipoPago || filtros.idAutorizacion
+    filtros.idSede || filtros.idTipoVehiculo || filtros.idAutorizacion
 )
 
 const catAutorizacionesFiltradas = computed(() => {
@@ -253,7 +433,6 @@ const cargarCatalogos = async () => {
         todasLasTarifas.value = data
 
         const vehiculosMap = new Map()
-        const pagosMap = new Map()
         const authMap = new Map()
 
         data.forEach(t => {
@@ -261,12 +440,6 @@ const cargarCatalogos = async () => {
                 vehiculosMap.set(t.IdTipoVehiculo, {
                     id: t.IdTipoVehiculo,
                     nombre: String(t.IdTipoVehiculo) === '1' ? 'Carro' : 'Moto',
-                })
-
-            if (!pagosMap.has(t.IdTipoPago))
-                pagosMap.set(t.IdTipoPago, {
-                    id: t.IdTipoPago,
-                    nombre: t.TipoCobro,
                 })
 
             if (t.IdAutorizacion && !authMap.has(t.IdAutorizacion))
@@ -277,7 +450,6 @@ const cargarCatalogos = async () => {
         })
 
         catTiposVehiculo.value = [...vehiculosMap.values()]
-        catTiposPago.value = [...pagosMap.values()]
         catAutorizaciones.value = [...authMap.values()]
     } catch (e) {
         console.error('[cargarCatalogos]', e.response?.data ?? e.message)
@@ -290,7 +462,6 @@ const cargarTarifas = async () => {
         const params = { page: paginaActual.value, limit: limit.value }
         if (filtros.idSede) params.idSede = filtros.idSede
         if (filtros.idTipoVehiculo) params.idTipoVehiculo = filtros.idTipoVehiculo
-        if (filtros.idTipoPago) params.idTipoPago = filtros.idTipoPago
         if (filtros.idAutorizacion) params.idAutorizacion = filtros.idAutorizacion
 
         const res = await TarifasService.getAll(params)
@@ -330,7 +501,7 @@ const onLimitChange = (val) => {
 }
 
 const limpiarFiltros = () => {
-    Object.assign(filtros, { idSede: null, idTipoVehiculo: null, idTipoPago: null, idAutorizacion: null })
+    Object.assign(filtros, { idSede: null, idTipoVehiculo: null, idAutorizacion: null })
     paginaActual.value = 1
     cargarTarifas()
 }
@@ -345,6 +516,81 @@ onMounted(() => {
 </script>
 
 <style>
+.aside-field-input {
+    border: 2px solid #d1d5db !important;
+    border-radius: 0.75rem !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.88rem !important;
+    color: #0D291C !important;
+    outline: none !important;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white !important;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.aside-field-input:focus {
+    border-color: #299261 !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.15) !important;
+}
+
+.btn-modal-dark {
+    flex: 1;
+    background-color: #0D291C;
+    color: #7FD344;
+    border: 2.5px solid #0D291C;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 0.88rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #050e09;
+    transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-modal-dark:hover:not(:disabled) {
+    background-color: #1a4a2e;
+}
+
+.btn-modal-dark:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #050e09;
+}
+
+.btn-modal-dark:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-modal-dark--cancel {
+    background-color: rgba(13, 41, 28, 0.12);
+    color: #0D291C;
+    box-shadow: 0 4px 0 rgba(13, 41, 28, 0.2);
+}
+
+.btn-modal-dark--cancel:hover {
+    background-color: rgba(13, 41, 28, 0.2);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+}
+
+.modal-enter-from .modal-card,
+.modal-leave-to .modal-card {
+    transform: scale(0.93) translateY(12px);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity 0.2s;
+}
+
 @media (max-width:780px) {
     .shadow-sm {
         height: auto;

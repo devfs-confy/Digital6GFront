@@ -120,7 +120,7 @@
                                     <button @click="abrirEditar(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all"
                                         title="Editar">
-                                        <AppIcon name="person_edit" :size="35" style="color:black;" />
+                                        <AppIcon name="person_edit" :size="30" style="color:black;" />
                                     </button>
                                     <button @click="abrirCambioEstado(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent transition-all"
@@ -128,7 +128,7 @@
                                             ? 'text-gray-400 hover:bg-red-100 hover:text-red-500'
                                             : 'text-gray-400 hover:bg-green-100 hover:text-[#299261]'"
                                         :title="cliente.Estado ? 'Inhabilitar' : 'Activar'">
-                                        <AppIcon :name="cliente.Estado ? 'account_circle_off' : 'how_to_reg'" :size="35"
+                                        <AppIcon :name="cliente.Estado ? 'account_circle_off' : 'how_to_reg'" :size="30"
                                             style="color:black;" />
                                     </button>
                                 </div>
@@ -325,27 +325,53 @@
                     <label
                         class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Nombres
                         <span class="text-red-400">*</span></label>
-                    <input v-model="fE.Nombres" type="text" placeholder="Juan Felipe" class="aside-field-input" />
+                    <input v-model="fE.Nombres" type="text" placeholder="Jua..." class="aside-field-input" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label
                         class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Apellidos
                         <span class="text-red-400">*</span></label>
-                    <input v-model="fE.Apellidos" type="text" placeholder="García Ospina" class="aside-field-input" />
+                    <input v-model="fE.Apellidos" type="text" placeholder="Gar..." class="aside-field-input" />
                 </div>
             </div>
             <div class="flex flex-col gap-1.5">
                 <label class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Correo
                     electrónico
                     <span class="text-red-400">*</span></label>
-                <input v-model="fE.Email" type="email" placeholder="correo@ejemplo.com" class="aside-field-input" />
+                <input v-model="fE.Email" type="email" placeholder="cor@..." class="aside-field-input" />
             </div>
             <div class="flex flex-col gap-1.5">
                 <label class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Teléfono
                     <span class="text-red-400">*</span></label>
-                <input v-model="fE.Telefono" type="text" placeholder="3001234567" class="aside-field-input"
+                <input v-model="fE.Telefono" type="text" placeholder="310..." class="aside-field-input"
                     @keypress="(e) => !/\d/.test(e.key) && e.preventDefault()" />
             </div>
+
+            <div class="flex flex-col gap-2 pt-3 border-t border-gray-100">
+                <div class="flex flex-col gap-[3px] px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                    <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">Documento actual</span>
+                    <span class="text-[1rem] font-black text-[#0D291C] font-mono tracking-widest">{{
+                        clienteAccion?.Documento }}</span>
+                </div>
+                <p class="text-[0.65rem] font-black uppercase tracking-[0.08em] text-gray-400">Cambiar documento</p>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">
+                        Nuevo documento
+                    </label>
+                    <input v-model="fE.DocumentoNuevo" type="number" placeholder="1098..." class="aside-field-input"
+                        @keypress="(e) => !/\d/.test(e.key) && e.preventDefault()" />
+                </div>
+                <div class="flex items-start gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#d97706" viewBox="0 0 24 24"
+                        class="shrink-0 mt-[1px]">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                    </svg>
+                    <span class="text-[0.68rem] font-semibold text-amber-800 leading-relaxed">
+                        Solo completa este campo si deseas cambiar el documento. Se actualizará en todas las tablas.
+                    </span>
+                </div>
+            </div>
+
         </AsideEditar>
 
         <!-- MODAL INHABILITAR / ACTIVAR -->
@@ -398,6 +424,7 @@ const fN = reactive({
 
 const fE = reactive({
     Nombres: '', Apellidos: '', Email: '', Telefono: '', Estado: true,
+    DocumentoNuevo: '',
 })
 
 // ── Computed ───────────────────────────────────────────────────────
@@ -535,6 +562,7 @@ const crearCliente = async () => {
 }
 
 // ── Modal Editar ───────────────────────────────────────────────────
+
 const abrirEditar = (c) => {
     clienteAccion.value = c
     Object.assign(fE, {
@@ -543,6 +571,7 @@ const abrirEditar = (c) => {
         Email: c.Email ?? '',
         Telefono: String(c.Telefono ?? ''),
         Estado: c.Estado ?? true,
+        DocumentoNuevo: '',  // ← siempre vacío al abrir
     })
     errEditar.value = ''
     modalEditar.value = true
@@ -553,9 +582,15 @@ const editarCliente = async () => {
     if (!fE.Nombres || !fE.Apellidos || !fE.Email || !fE.Telefono) {
         errEditar.value = 'Nombres, Apellidos, Email y Teléfono son obligatorios.'; return
     }
+    if (fE.DocumentoNuevo && String(fE.DocumentoNuevo) === String(clienteAccion.value?.Documento)) {
+        errEditar.value = 'El nuevo documento debe ser diferente al actual.'; return
+    }
+
     guardandoE.value = true
     try {
         const doc = clienteAccion.value?.Documento
+
+        // ── 1. Editar datos básicos ──
         await ClientService.updateClientByDoc(doc, {
             Nombres: fE.Nombres,
             Apellidos: fE.Apellidos,
@@ -563,12 +598,34 @@ const editarCliente = async () => {
             Telefono: fE.Telefono,
             Estado: fE.Estado,
         })
-        const idx = listaClientes.value.findIndex(c => c.Documento === doc)
-        if (idx !== -1) listaClientes.value[idx] = { ...listaClientes.value[idx], ...fE }
+
+        // ── 2. Cambiar documento si se indicó ──
+        if (fE.DocumentoNuevo) {
+            await ClientService.updateDocClientByDoc({
+                DocumentoActual: Number(doc),
+                DocumentoNuevo: Number(fE.DocumentoNuevo),
+            })
+            // actualizar local con nuevo documento
+            const idx = clientes.value.findIndex(c => c.Documento === doc)
+            if (idx !== -1) {
+                clientes.value[idx] = {
+                    ...clientes.value[idx],
+                    ...fE,
+                    Documento: String(fE.DocumentoNuevo),
+                }
+            }
+        } else {
+            const idx = clientes.value.findIndex(c => c.Documento === doc)
+            if (idx !== -1) clientes.value[idx] = { ...clientes.value[idx], ...fE }
+        }
+
         modalEditar.value = false
     } catch (e) {
+        const status = e.response?.status
         const msg = e.response?.data?.message
-        errEditar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al editar el cliente.')
+        if (status === 409) errEditar.value = 'El nuevo documento ya existe en el sistema.'
+        else if (status === 404) errEditar.value = 'Cliente no encontrado.'
+        else errEditar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al editar el cliente.')
     } finally {
         guardandoE.value = false
     }
@@ -619,6 +676,14 @@ input.search-input {
     background-position: right 10px center;
     background-repeat: no-repeat;
 }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
 
 /* ── field-input modal nuevo (sobreescribe reset) ── */
 .field-input {

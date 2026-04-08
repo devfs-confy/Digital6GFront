@@ -34,11 +34,9 @@ const bannerUrl = ref([])
 
 onMounted(async () => {
     const publicidad = await publicidadService.getMiPublicidad()
-    console.log('Publicidad obtenida:', publicidad)
     if (publicidad?.data?.length > 0) {
         bannerUrl.value = publicidad.data.map(item => item.Imagen)
     }
-    console.log('Publicidad obtenida:', bannerUrl.value)
 })
 
 defineProps({
