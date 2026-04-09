@@ -258,6 +258,7 @@ const tabs = [
     { key: 'todas', label: 'Todas' },
     { key: 'pago', label: 'Pagos' },
     { key: 'sistema', label: 'Sistema' },
+    { key: 'pqrs', label: 'pqrs' },
 ]
 
 const bandColor = { Pago: '#7FD344', Alerta: '#f59e0b', Sistema: '#60a5fa' }
@@ -268,7 +269,9 @@ const badgeClass = { Pago: 'badge-pago', Sistema: 'badge-sistema', Alerta: 'badg
 const unreadCount = computed(() => notificaciones.value.filter(n => !n.EsLeida).length)
 const itemsFiltrados = computed(() => {
     if (tabActual.value === 'pago') return notificaciones.value.filter(n => n.Tipo === 'Pago')
+    if (tabActual.value === 'pqrs') return notificaciones.value.filter(n => n.Tipo === 'RESPUESTA_PQRS')
     if (tabActual.value === 'sistema') return notificaciones.value.filter(n => n.Tipo === 'Sistema' || n.Tipo === 'Alerta')
+
     return notificaciones.value
 })
 

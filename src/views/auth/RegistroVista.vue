@@ -499,9 +499,11 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { showError, showSuccess, showConfirm } from '@/utils/swal'
 import { useRoute, useRouter } from 'vue-router'
 import ClientService from '@/api/services/client.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
+
 
 const route = useRoute()
 const router = useRouter()
@@ -601,6 +603,8 @@ const buscarDocumento = async (doc) => {
             IdTarjeta: d.idTarjeta ?? null,
             Apellidos: partes.slice(mitad).join(' '),
             IdAutorizacion: d.idAutorizacion,
+            FechaInicio: d.fechaInicio,
+            FechaFin: d.fechaFin,
             Telefono: d.telefono ?? '',
             Email: d.email ?? '',
             Password: '',
@@ -608,6 +612,9 @@ const buscarDocumento = async (doc) => {
             EstudianteUcc: false,
             placas: [d.placa1, d.placa2, d.placa3, d.placa4, d.placa5].filter(Boolean),
         })
+
+        console.log('Datos de mensualidad encontrados:', mensualidadData.value)
+
         if (form.placas.length === 0) form.placas = ['']
         msgDoc.value = '✓ Mensualidad encontrada — completa los datos faltantes'
         formularioListo.value = true
@@ -623,7 +630,7 @@ const buscarDocumento = async (doc) => {
 }
 
 const limpiarCampos = () => {
-    Object.assign(form, { Nombres: '', IdTarjeta:'', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
+    Object.assign(form, { Nombres: '', IdTarjeta: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
 }
 
@@ -642,19 +649,31 @@ const validarFormulario = () => {
     return true
 }
 
+
 const buildPayload = (esOld) => {
     const m = mensualidadData.value
     const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
+
     return {
-        Documento: rest.Documento, Nombres: rest.Nombres, Apellidos: rest.Apellidos,
-        IdTarjeta: rest.IdTarjeta, Telefono: rest.Telefono, Email: rest.Email, Password: rest.Password,
-        IdEstacionamiento: idSede.value, Estado: true,
-        Sincronizacion: m?.sincronizacion ?? false, Old: esOld,
-        ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
-        ...(esOld && m?.fechaInicio ? { FechaInicio: m.fechaInicio } : {}),
-        ...(esOld && m?.fechaFin ? { FechaFin: m.fechaFin } : {}),
-        Placa1: placas[0] || null, Placa2: placas[1] || null,
-        Placa3: placas[2] || null, Placa4: placas[3] || null, Placa5: placas[4] || null,
+        Documento: rest.Documento,
+        Nombres: rest.Nombres,
+        Apellidos: rest.Apellidos,
+        IdTarjeta: m?.idTarjeta ?? rest.IdTarjeta ?? null,
+        Telefono: rest.Telefono,
+        Email: rest.Email,
+        Password: rest.Password,
+        IdEstacionamiento: idSede.value,
+        Estado: true,
+        Sincronizacion: m?.sincronizacion ?? false,
+        Old: esOld,
+        IdAutorizacion: m?.idAutorizacion ?? null,
+        FechaInicio: esOld ? (m?.fechaInicio ?? null) : null,
+        FechaFin: esOld ? (m?.fechaFin ?? null) : null,
+        Placa1: placas[0] || null,
+        Placa2: placas[1] || null,
+        Placa3: placas[2] || null,
+        Placa4: placas[3] || null,
+        Placa5: placas[4] || null,
         EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
         CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
     }
@@ -665,11 +684,12 @@ const manejarRespuesta = (res) => {
         const status = res?.status ?? res?.data?.statusCode
         const message = res?.data?.message ?? res?.message ?? ''
         const msg = Array.isArray(message) ? message.join(', ') : (message || 'Error al registrar.')
+
         if (status === 409) {
-            // Distinguir: email duplicado vs documento duplicado
             errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
         } else {
             errSubmit.value = msg
+            showError({ status, data: res?.data ?? res })
         }
         return false
     }
@@ -680,23 +700,29 @@ const submit = async () => {
     if (!validarFormulario()) return
     guardando.value = true
     errSubmit.value = ''
-    try {
-        const esOld = !!mensualidadData.value
-        const res = await ClientService.createClient(buildPayload(esOld))
-        if (!manejarRespuesta(res)) return
-        modalExito.value = true
-    } catch (e) {
-        if (e.response?.status === 409) {
-            const rawMsg = e.response?.data?.message ?? ''
-            const msg = Array.isArray(rawMsg) ? rawMsg.join(', ') : rawMsg
-            errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
-            return
+
+    const esOld = !!mensualidadData.value
+    const payload = buildPayload(esOld)
+    const res = await ClientService.createClient(payload)
+
+    guardando.value = false
+
+    // handleError retorna { error: true, status, data }
+    if (res?.error) {
+        const status = res.status
+        const msg = res.data?.message ?? ''
+        const msgStr = Array.isArray(msg) ? msg.join(', ') : msg
+
+        if (status === 409) {
+            errSubmit.value = msgStr.toLowerCase().includes('email') ? '409_email' : '409'
+        } else {
+            errSubmit.value = msgStr || 'Error al registrar. Intenta de nuevo.'
+            showError({ status, data: res.data })
         }
-        const msg = e.response?.data?.message
-        errSubmit.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al registrar. Intenta de nuevo.')
-    } finally {
-        guardando.value = false
+        return
     }
+
+    modalExito.value = true
 }
 </script>
 
