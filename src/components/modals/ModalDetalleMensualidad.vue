@@ -122,18 +122,18 @@
                                     Vehículos registrados
                                 </p>
                                 <div class="flex flex-wrap gap-2">
-                                    <button @click="emit('cambiarPlaca')"
+                                    <!-- <button @click="emit('cambiarPlaca')"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all"
                                         :class="placaCambiada
                                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                             : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
                                         :disabled="placaCambiada">
                                         {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
-                                    </button>
+                                    </button> -->
                                     <button @click="emit('cambiarTipo')"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
                                         <AppIcon name="swap_driving_apps" :size="12" />
-                                        Cambiar mensualidad
+                                        Cambiar placa
                                     </button>
                                 </div>
                             </div>
@@ -196,12 +196,12 @@ const props = defineProps({
     mensualidad: { type: Object, default: null },
     detalle: { type: Object, default: null },
     placas: { type: Array, default: () => [] },
-    placaCambiada: { type: Boolean, default: false },
+    // placaCambiada: { type: Boolean, default: false }, 'cambiarPlaca',
     loading: { type: Boolean, default: false },
     error: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'cambiarPlaca', 'cambiarTipo'])
+const emit = defineEmits(['update:modelValue', 'cambiarTipo'])
 
 const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null
 const formatFecha = (f) => {

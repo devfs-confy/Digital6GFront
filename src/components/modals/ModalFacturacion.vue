@@ -350,8 +350,8 @@ const onDocInput = () => {
     clearTimeout(searchTimer)
     const val = docBusqueda.value.replace(/\D/g, '')
     docBusqueda.value = val
-    if (val.length >= 5) {
-        searchTimer = setTimeout(() => buscarCliente(val), 700)
+    if (val.length >= 8) {
+        searchTimer = setTimeout(() => buscarCliente(val), 900)
     }
 }
 

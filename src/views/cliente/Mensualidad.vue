@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -253,7 +253,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -300,7 +300,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -324,7 +324,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -333,7 +333,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -501,7 +501,7 @@
                                             class="text-[0.55rem] font-black px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344] ml-1.5">Requerida</span>
                                     </div>
 
-                                    <!--<div v-if="usandoCambioAutorizacion && idx === 0 && nuevasPlacas[0]?.trim().length >= 6"
+                                    <!-- <div v-if="usandoCambioAutorizacion && idx === 0 && nuevasPlacas[0]?.trim().length >= 6"
                                         class="flex items-center gap-1.5 mt-1 text-[0.65rem] font-bold" :class="placaPrincipalEsMoto !== mensualidadAccion?.esMoto
                                             ? 'text-green-600'
                                             : 'text-amber-600'">
@@ -509,13 +509,13 @@
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                         </svg>
-                                         <span v-if="placaPrincipalEsMoto !== mensualidadAccion?.esMoto">
+                                        <span v-if="placaPrincipalEsMoto !== mensualidadAccion?.esMoto">
                                             ✓ Se detectó cambio de tipo: {{ mensualidadAccion?.esMoto ?
                                                 'Moto → Carro' : 'Carro → Moto' }}
-                                        </span> 
-                                         <span v-else>
+                                        </span>
+                                        <span v-else>
                                             Esta placa es del mismo tipo actual. Usa "Cambiar placa" en su lugar.
-                                        </span> 
+                                        </span>
                                     </div> -->
 
                                     <div class="flex items-center gap-2">
@@ -566,25 +566,25 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -604,8 +604,8 @@
                     </div>
 
                     <!-- Excedente banner -->
-                    <!-- 
-                    :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas || cambioPlacaBloqueado ||
+
+                    <!-- :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas || cambioPlacaBloqueado ||
                                 (usandoCambioAutorizacion && nuevasPlacas[0]?.trim().length >= 6 && placaPrincipalEsMoto === mensualidadAccion?.esMoto)" -->
 
                     <!-- Foot -->
@@ -614,8 +614,6 @@
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             {{ infoExcedente ? 'Volver' : 'Cancelar' }}
                         </button>
-
-                        <!-- aca -->
                         <button v-if="!infoExcedente" @click="confirmarCambioPlacas"
                             class="flex-1 flex items-center justify-center gap-2 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="guardandoPlacas"
@@ -1006,17 +1004,17 @@ const confirmarCambioPlacas = async () => {
     guardandoPlacas.value = true
 
     if (usandoCambioAutorizacion.value) {
-        const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
-        const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
-        const esMotoActual = mensualidadAccion.value.esMoto
+        // const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
+        // const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
+        // const esMotoActual = mensualidadAccion.value.esMoto
 
-        if (esMotoIngresada === esMotoActual) {
-            errPlacas.value = esMotoIngresada
-                ? 'La placa ingresada es de moto. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
-                : 'La placa ingresada es de carro. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
-            guardandoPlacas.value = false
-            return
-        }
+        // if (esMotoIngresada === esMotoActual) {
+        //     errPlacas.value = esMotoIngresada
+        //         ? 'La placa ingresada es de moto. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
+        //         : 'La placa ingresada es de carro. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
+        //     guardandoPlacas.value = false
+        //     return
+        // }
 
         const placasPayload = nuevasPlacas.value
             .map((val, i) => {
