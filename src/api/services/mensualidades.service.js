@@ -27,36 +27,39 @@ class MensualidadesService {
       return handleError(error);
     }
   }
-
   // POST /v1/mensualidades/clientes/cambio-placas
-  // Body: { IdPersonaAutorizada, Detalles: [{ ColumnaPlaca, PlacaNueva }] }
-  // 202 sin body | 400 tipo incompatible | 404 no encontrada | 409 límite mensual o placa duplicada
   async cambiarPlacas(payload) {
-    const { data } = await api.post(`${BASE_CLIENT}/cambio-placas`, payload);
-    return data;
+    try {
+      const { data } = await api.post(`${BASE_CLIENT}/cambio-placas`, payload);
+      return data;
+    } catch (error) {
+      handleError(error, "MensualidadesService.cambiarPlacas");
+    }
   }
 
   // POST /v1/mensualidades/clientes/cambio-autorizacion
-  // Body: { IdPersonaAutorizada, Placas, Email?, IdentificacionCliente?, Telefono? }
-  // 200 con datos de pago si es upgrade (moto→carro) | 200 aplicado si es downgrade (carro→moto)
-  // 400 validación fallida | 404 persona no encontrada | 409 placas duplicadas
-  // mensualidades.service.js
   async cambiarAutorizacion({ IdPersonaAutorizada, Placas }) {
-    const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
-      IdPersonaAutorizada,
-      Placas,
-    });
-    return data;
+    try {
+      const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
+        IdPersonaAutorizada,
+        Placas,
+      });
+      return data;
+    } catch (error) {
+      handleError(error, "MensualidadesService.cambiarAutorizacion");
+    }
   }
 
   // GET /v1/autorizaciones-mensuales/changes?IdPersona={id}
-  // 200 con autorización actual y complementaria
-  // GET /v1/autorizaciones-mensuales/changes?IdPersona={id}
   async getChangesByPersona(idPersona) {
-    const { data } = await api.get("v1/autorizaciones-mensuales/changes", {
-      params: { IdPersona: idPersona },
-    });
-    return data;
+    try {
+      const { data } = await api.get("v1/autorizaciones-mensuales/changes", {
+        params: { IdPersona: idPersona },
+      });
+      return data;
+    } catch (error) {
+      handleError(error, "MensualidadesService.getChangesByPersona");
+    }
   }
 
   // GET /v1/mensualidades/clientes/congelamientos/{idPersona}

@@ -75,6 +75,7 @@ export const adminMenuItems = [
     route: "/admin/verificacion",
     permission: "CREAR-CODIGOS",
   },
+
   // {
   //   label: "Ver<br> tarifas",
   //   icon: icoTarifas,

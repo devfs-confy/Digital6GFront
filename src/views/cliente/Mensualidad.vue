@@ -18,7 +18,6 @@
         </div>
 
         <!-- Grid -->
-        <!-- Grid -->
         <div class="grid grid-cols-2 max-[700px]:grid-cols-1 gap-5 content-start items-start">
             <!-- Skeleton -->
             <template v-if="loading">
@@ -28,12 +27,12 @@
 
             <!-- Card -->
             <div v-for="(m, i) in mensualidades" :key="m.id"
-                class="bg-white rounded-3xl p-[22px] flex flex-col gap-4 relative overflow-hidden border-2 transition-all duration-200 hover:-translate-y-0.5"
+                class="bg-white rounded-3xl p-[22px] flex flex-col gap-4 relative overflow-hidden border-2 transition-all duration-200 hover:-translate-y-0.5 max-h-max"
                 :class="[
                     m.estado === 'congelada'
                         ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 shadow-[0_4px_0_#93c5fd,0_2px_16px_rgba(59,130,246,0.10)] hover:shadow-[0_6px_0_#7db8f7,0_4px_20px_rgba(59,130,246,0.15)]'
-                        : 'border-[#e8f5e9] shadow-[0_4px_0_#e2ede7,0_2px_16px_rgba(13,41,28,0.06)] hover:shadow-[0_6px_0_#c8ddd1,0_4px_20px_rgba(13,41,28,0.10)]'
-                ]" :style="{ animationDelay: `${i * 0.08}s` }">
+                        : 'border-[#e8f5e9] shadow-[0_4px_0_#e2ede7,0_2px_16px_rgba(13,41,28,0.06)] hover:shadow-[0_6px_0_#c8ddd1,0_4px_20px_rgba(13,41,28,0.10)] '
+                ]" :style="{ animationDelay: `${i * 0.08}s`, }">
 
                 <!-- Top band -->
                 <div class="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" :class="{
@@ -53,8 +52,9 @@
                     </div>
                     <!-- Info -->
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-[0.95rem] font-extrabold text-[#0D291C] truncate">{{ m.sede }}</h3>
-                        <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5">{{ m.mensualidad }}</p>
+                        <h3 class="text-[0.95rem] font-extrabold text-[#0D291C] truncate">{{ m.sede }} - {{
+                            m.mensualidad }}</h3>
+                        <!-- <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5"></p> -->
                         <!-- Badge -->
                         <span
                             class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full mt-[3px] border"
@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -253,7 +253,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -300,7 +300,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -324,7 +324,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -333,7 +333,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -566,25 +566,25 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -1187,7 +1187,6 @@ const abrirPago = async (m) => {
             }
         } catch (e) {
             console.warn('[abrirPago] No se pudo verificar historial:', e)
-            // ✅ Fix 4: no dejar loadingOpciones colgado si el bloque interno falla
         }
 
         // ── 2. Sin pendiente — cargar opciones normalmente
@@ -1204,7 +1203,6 @@ const abrirPago = async (m) => {
         const msg = e?.response?.data?.message
         errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'No se pudieron cargar las opciones de pago.')
     } finally {
-        // ✅ Fix 5: el finally siempre apaga el spinner, incluso si ya se apagó antes
         loadingOpciones.value = false
     }
 }

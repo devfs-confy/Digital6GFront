@@ -26,6 +26,13 @@ export const clienteMenuItems = [
     icon: icoParqueos,
     route: "/cliente/parqueos",
   },
+
+  {
+    label: "Historia de<br> transacciones",
+    icon: icoPagos,
+    route: "/cliente/transacciones",
+    permission: "CREAR-CODIGOS",
+  },
   {
     label: "PQRS",
     icon: icoPQRS,
@@ -61,6 +68,10 @@ export const clienteRoutes = {
     {
       path: "mensualidad",
       component: () => import("@/views/cliente/Mensualidad.vue"),
+    },
+    {
+      path: "transacciones",
+      component: () => import("@/views/cliente/Transacciones.vue"),
     },
     // {
     //   path: "notificaciones",

@@ -1,4 +1,5 @@
 import { api } from "../axios";
+import { handleError } from "@/utils/error.handler";
 
 class RolService {
   constructor() {
@@ -7,38 +8,42 @@ class RolService {
     this.rolPermisoRoute = "v1/rol-permiso";
   }
 
-  // Obtener todos los roles (1-8, etc.)
   async getAll() {
-    const { data } = await api.get(this.rolesRoute);
-    return data;
+    try {
+      const { data } = await api.get(this.rolesRoute);
+      return data;
+    } catch (error) {
+      handleError(error, "RolService.getAll");
+    }
   }
 
-  // Obtener el catálogo completo de permisos disponibles
   async getAllPermisos() {
-    const { data } = await api.get(this.permisosRoute);
-    return data;
+    try {
+      const { data } = await api.get(this.permisosRoute);
+      return data;
+    } catch (error) {
+      handleError(error, "RolService.getAllPermisos");
+    }
   }
 
-  // Obtener permisos de la "plantilla" del rol
   async getPermisosRol(idRol) {
-    const { data } = await api.get(`${this.rolPermisoRoute}/${idRol}`);
-    return data;
+    try {
+      const { data } = await api.get(`${this.rolPermisoRoute}/${idRol}`);
+      return data;
+    } catch (error) {
+      handleError(error, "RolService.getPermisosRol");
+    }
   }
 
-  // ASIGNAR A ROL: Solo usar si quieres cambiar el permiso globalmente
   async assignPermisos(idRol, permisosIds) {
     try {
-      const response = await api.put(this.rolPermisoRoute, {
+      const { data } = await api.put(this.rolPermisoRoute, {
         IdRol: parseInt(idRol),
         Permisos: permisosIds,
       });
-      return response.data;
+      return data;
     } catch (error) {
-      console.error(
-        "RolService.assignPermisos:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      handleError(error, "RolService.assignPermisos");
     }
   }
 }

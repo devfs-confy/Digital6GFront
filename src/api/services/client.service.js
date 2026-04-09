@@ -1,6 +1,5 @@
 // src/api/services/client.service.js
 import { handleError } from "@/utils/error.handler";
-
 import { api } from "../axios";
 
 class ClientService {

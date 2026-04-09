@@ -2,9 +2,10 @@
     <BaseModal v-model="isOpen" :title="paso === 1 ? 'Elige tu sede' : 'Añadir mensualidad'"
         :subtitle="paso === 1 ? 'Selecciona donde tienes tu mensualidad' : sedeSeleccionada?.Nombre ?? ''"
         :size="paso === 1 ? 'lg' : 'md'" :confirm-label="paso === 1 ? 'Continuar' : 'Agregar mensualidad'"
-        :confirm-disabled="(paso === 1 && !sedeSeleccionada) || (paso === 2 && (!fC.Codigo.trim() || !fC.Placa1.trim())) || guardando"
-        :loading="guardando" :show-cancel="true" cancel-label="Cancelar" @confirm="paso === 1 ? irPaso2() : confirmar"
-        @update:modelValue="v => { if (!v) resetear() }">
+        :confirm-disabled="(paso === 1 && !sedeSeleccionada) ||
+            (paso === 2 && (!fC.Codigo.trim() || !fC.Placa1.trim() || !fC.NombreApellidos.trim() || !fC.Telefono.trim() || !fC.Email.trim())) ||
+            guardando" :loading="guardando" :show-cancel="true" cancel-label="Cancelar"
+        @confirm="() => paso === 1 ? irPaso2() : confirmar()" @update:modelValue="v => { if (!v) resetear() }">
 
         <template #icon>
             <div
@@ -111,8 +112,40 @@
                     </label>
                     <input v-model="fC.Codigo" type="text"
                         class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-base text-center font-mono tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full uppercase"
-                        placeholder="Ej: PROMO2026" maxlength="30" @input="fC.Codigo = fC.Codigo.toUpperCase()" />
+                        placeholder="265..." maxlength="30" @input="fC.Codigo = fC.Codigo.toUpperCase()" />
                     <p class="text-[0.7rem] text-gray-500 pl-0.5">El código es entregado por el administrador.</p>
+                </div>
+
+                <!-- Datos personales (prellenados del auth, editables) -->
+                <p
+                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-gray-200 pb-[5px]">
+                    Tus datos
+                </p>
+
+                <div class="flex flex-col gap-[5px]">
+                    <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Nombre y
+                        apellidos *</label>
+                    <input v-model="fC.NombreApellidos" type="text"
+                        class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                        placeholder="Jua..." maxlength="100" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-[5px]">
+                        <label
+                            class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Teléfono
+                            *</label>
+                        <input v-model="fC.Telefono" type="tel"
+                            class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                            placeholder="300..." maxlength="15" />
+                    </div>
+                    <div class="flex flex-col gap-[5px]">
+                        <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Email
+                            *</label>
+                        <input v-model="fC.Email" type="email"
+                            class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                            placeholder="cor..." maxlength="100" />
+                    </div>
                 </div>
 
                 <p
@@ -127,7 +160,7 @@
                             principal *</label>
                         <input v-model="fC.Placa1" type="text" maxlength="7"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-black tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full uppercase"
-                            placeholder="ABC123" @input="fC.Placa1 = fC.Placa1.toUpperCase()" />
+                            placeholder="ABC..." @input="fC.Placa1 = fC.Placa1.toUpperCase()" />
                     </div>
                     <div class="flex flex-col gap-[5px]">
                         <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">
@@ -135,7 +168,7 @@
                         </label>
                         <input v-model="fC.Placa2" type="text" maxlength="7"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-black tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full uppercase"
-                            placeholder="XYZ789" @input="fC.Placa2 = fC.Placa2.toUpperCase()" />
+                            placeholder="XYZ..." @input="fC.Placa2 = fC.Placa2.toUpperCase()" />
                     </div>
                 </div>
 
@@ -150,14 +183,14 @@
                             class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">NIT</label>
                         <input v-model="fC.Nit" type="text"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
-                            placeholder="900.123.456-7" maxlength="20" />
+                            placeholder="900...." maxlength="20" />
                     </div>
                     <div class="flex flex-col gap-[5px]">
                         <label
                             class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Empresa</label>
                         <input v-model="fC.NombreEmpresa" type="text"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
-                            placeholder="Empresa S.A.S" maxlength="80" />
+                            placeholder="Empr..." maxlength="80" />
                     </div>
                 </div>
 
@@ -206,11 +239,15 @@ const isOpen = computed({
 
 const fC = reactive({
     Codigo: '',
+    NombreApellidos: '',
+    Telefono: '',
+    Email: '',
     Placa1: '',
     Placa2: '',
     Nit: '',
     NombreEmpresa: '',
 })
+
 
 // ── Cargar sedes al abrir ──────────────────────
 watch(() => props.modelValue, async (v) => {
@@ -238,14 +275,18 @@ const cargarSedes = async () => {
 const irPaso2 = () => {
     if (!sedeSeleccionada.value) return
     error.value = ''
+    // Prellenar con datos del auth
+    const u = authStore.user
+    fC.NombreApellidos = `${u?.nombres ?? u?.Nombres ?? ''} ${u?.apellidos ?? u?.Apellidos ?? ''}`.trim()
+    fC.Telefono = String(u?.telefono ?? u?.Telefono ?? '')
+    fC.Email = String(u?.email ?? u?.Email ?? '')
     paso.value = 2
 }
-
 // ── Reset ──────────────────────────────────────
 const resetear = () => {
     paso.value = 1
     sedeSeleccionada.value = null
-    Object.assign(fC, { Codigo: '', Placa1: '', Placa2: '', Nit: '', NombreEmpresa: '' })
+    Object.assign(fC, { Codigo: '', NombreApellidos: '', Telefono: '', Email: '', Placa1: '', Placa2: '', Nit: '', NombreEmpresa: '' })
     error.value = ''
     exito.value = ''
 }
@@ -257,32 +298,43 @@ const confirmar = async () => {
 
     if (!fC.Codigo.trim()) { error.value = 'El código es obligatorio.'; return }
     if (!fC.Placa1.trim()) { error.value = 'La placa principal es obligatoria.'; return }
+    if (!fC.NombreApellidos.trim()) { error.value = 'El nombre es obligatorio.'; return }
+    if (!fC.Telefono.trim()) { error.value = 'El teléfono es obligatorio.'; return }
+    if (!fC.Email.trim()) { error.value = 'El email es obligatorio.'; return }
 
     const u = authStore.user
     const payload = {
         Codigo: fC.Codigo.trim().toUpperCase(),
         Documento: Number(u?.documento ?? u?.Documento),
-        Email: String(u?.email ?? u?.Email ?? ''),
+        Email: fC.Email.trim(),
         IdEstacionamiento: Number(sedeSeleccionada.value.IdEstacionamiento),
-        NombreApellidos: `${u?.nombres ?? u?.Nombres ?? ''} ${u?.apellidos ?? u?.Apellidos ?? ''}`.trim(),
+        NombreApellidos: fC.NombreApellidos.trim(),
         Placa1: fC.Placa1.trim().toUpperCase(),
-        Telefono: String(u?.telefono ?? u?.Telefono ?? ''),
+        Telefono: fC.Telefono.trim(),
         ...(fC.Placa2.trim() && { Placa2: fC.Placa2.trim().toUpperCase() }),
         ...(fC.Nit.trim() && { Nit: fC.Nit.trim() }),
         ...(fC.NombreEmpresa.trim() && { NombreEmpresa: fC.NombreEmpresa.trim() }),
     }
 
+    console.log('Payload a enviar:', payload)
+
     guardando.value = true
     try {
-        await MensualidadesService.agregarMensualidad(payload)
+        const res = await MensualidadesService.agregarMensualidad(payload)
+
+        // handleError devuelve objeto con error en lugar de lanzar
+        if (res?.success === false || res?.error || res?.statusCode >= 400) {
+            const msg = res?.message ?? res?.error
+            error.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al agregar la mensualidad.')
+            return
+        }
+
         exito.value = '¡Mensualidad agregada exitosamente!'
         emit('confirmado')
         setTimeout(() => { isOpen.value = false }, 1200)
     } catch (e) {
-        const status = e?.response?.status
-        const msg = e?.response?.data?.message
-        if (status === 400) error.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Código no reconocido o datos inválidos.')
-        else error.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al agregar la mensualidad.')
+        const msg = e?.response?.data?.message ?? e?.message
+        error.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al agregar la mensualidad.')
     } finally {
         guardando.value = false
     }

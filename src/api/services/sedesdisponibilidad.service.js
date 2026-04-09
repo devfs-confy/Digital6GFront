@@ -1,5 +1,6 @@
 // src/api/services/sedes-disponibilidad.services.js
 import { api } from "../axios";
+import { handleError } from "@/utils/error.handler";
 
 class SedesDisponibilidadService {
   constructor() {
@@ -13,11 +14,7 @@ class SedesDisponibilidadService {
       const response = await api.get(this.detalleRoute, { params });
       return response.data?.data ?? response.data ?? [];
     } catch (error) {
-      console.error(
-        "SedesDisponibilidadService.getDisponibilidadDetalle:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      handleError(error, "SedesDisponibilidadService.getDisponibilidadDetalle");
     }
   }
 
@@ -30,11 +27,7 @@ class SedesDisponibilidadService {
       );
       return response.data;
     } catch (error) {
-      console.error(
-        "SedesDisponibilidadService.updateDisponibilidad:",
-        error.response?.data || error.message,
-      );
-      throw error;
+      handleError(error, "SedesDisponibilidadService.updateDisponibilidad");
     }
   }
 }
