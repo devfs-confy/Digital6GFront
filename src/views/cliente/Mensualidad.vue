@@ -18,8 +18,8 @@
         </div>
 
         <!-- Grid -->
-        <div class="grid grid-cols-2 max-[700px]:grid-cols-1 gap-5 content-start">
-
+        <!-- Grid -->
+        <div class="grid grid-cols-2 max-[700px]:grid-cols-1 gap-5 content-start items-start">
             <!-- Skeleton -->
             <template v-if="loading">
                 <div v-for="n in 2" :key="n" class="h-80 rounded-3xl animate-pulse"
@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -126,6 +126,16 @@
                             {{ porcentajeVigencia(m) }}% del periodo
                         </span>
                     </div>
+
+                    <button v-if="m.estado === 'activa' && !m.cobroTarjetaPermitido" @click="abrirModalTarjeta(m)"
+                        class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                        </svg>
+                        Perdí mi tarjeta
+                    </button>
                 </template>
 
                 <!-- Pending payment notice -->
@@ -143,10 +153,10 @@
                 <!-- Card actions -->
                 <div class="grid gap-2 w-full" :class="mostrarCongelar(m) ? 'grid-cols-3' : 'grid-cols-2'">
                     <!-- Pay -->
-                    <button @click="(m.estado === 'none' || m.estado === 'congelada') ? null : abrirPago(m)"
-                        :disabled="m.estado === 'none' || m.estado === 'congelada'" :class="[
+                    <button @click="pagarDeshabilitado(m) ? null : abrirPago(m)" :disabled="pagarDeshabilitado(m)"
+                        :class="[
                             m.conPago && m.estado !== 'congelada' ? 'col-span-1' : '',
-                            (m.estado === 'none' || m.estado === 'congelada')
+                            pagarDeshabilitado(m)
                                 ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
                                 : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'
                         ]"
@@ -178,68 +188,13 @@
                         </svg>
                         Congelar
                     </button>
+
                 </div>
             </div>
         </div>
 
         <!-- ───────────────── MODAL: AÑADIR CÓDIGO ───────────────── -->
-        <Transition name="modal">
-            <div v-if="modalCodigo"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                <div
-                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-y-auto">
-                    <!-- Head -->
-                    <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-9 h-9 rounded-xl bg-[#0D291C] border border-[#7FD344]/30 flex items-center justify-center flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#7FD344"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                        d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-[0.9rem] font-extrabold text-white">Añadir mensualidad</p>
-                                <p class="text-[0.65rem] text-white/50 font-semibold">Ingresa el código que te
-                                    proporcionó la
-                                    sede</p>
-                            </div>
-                        </div>
-                        <button @click="cerrarModales"
-                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white hover:border-white/45 transition-all">✕</button>
-                    </div>
-                    <!-- Body -->
-                    <div class="flex flex-col bg-white">
-                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                            <div class="flex flex-col gap-1.5">
-                                <label
-                                    class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Código
-                                    de verificación</label>
-                                <input v-model="codigoInput" type="text"
-                                    class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-base text-center font-mono tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
-                                    placeholder="Ej: PARK-2024-XXXX" maxlength="20" @keyup.enter="cerrarModales"
-                                    autofocus />
-                                <p class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">El código es entregado por
-                                    el
-                                    administrador de la sede.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Foot -->
-                    <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
-                        <button @click="cerrarModales"
-                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
-                            Cancelar
-                        </button>
-                        <button @click="cerrarModales" :disabled="!codigoInput.trim()"
-                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-                            Aceptar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Transition>
+        <ModalCodigoMensualidad v-model="modalCodigo" @confirmado="cargarMisMensualidades" />
 
         <!-- ───────────────── MODAL: PAGO ───────────────── -->
         <Transition name="modal">
@@ -298,7 +253,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -345,7 +300,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -369,7 +324,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -378,7 +333,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -487,197 +442,9 @@
             @confirmar="confirmarCongelar" @cerrar="errCongelar = ''" />
 
         <!-- ───────────────── MODAL: DETALLE ───────────────── -->
-        <Transition name="modal">
-            <div v-if="modalDetalle"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                <div
-                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[440px] flex flex-col overflow-y-auto">
-                    <!-- Head -->
-                    <div class="flex items-center justify-between px-5 py-4 bg-gray-50 border-b-2 border-gray-200">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0">
-                                {{ iniciales(mensualidadAccion?.nombre) }}
-                            </div>
-                            <div>
-                                <p class="text-[0.92rem] font-black text-[#0D291C]">{{ mensualidadAccion?.nombre }}</p>
-                                <p class="text-[0.65rem] font-semibold text-gray-400">{{ mensualidadAccion?.sede }}</p>
-                            </div>
-                        </div>
-                        <button @click="modalDetalle = false"
-                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 bg-gray-100 text-gray-500 border-gray-300 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all">✕</button>
-                    </div>
-
-                    <!-- Loading -->
-                    <div v-if="loadingDetalle" class="flex flex-col items-center justify-center gap-3 py-14">
-                        <div
-                            class="w-8 h-8 rounded-full border-[3px] border-[#e8f5e9] border-t-[#299261] animate-spin" />
-                        <span class="text-xs text-gray-400 font-semibold">Cargando información...</span>
-                    </div>
-
-                    <template v-else>
-                        <div v-if="errDetalle"
-                            class="mx-5 mt-3 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[0.72rem] font-semibold text-amber-700">
-                            {{ errDetalle }}
-                        </div>
-                        <!-- Body -->
-                        <div
-                            class="flex flex-col bg-white max-h-[62vh] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
-                            <!-- Estado + días -->
-                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                                <div class="flex items-center justify-between gap-2">
-                                    <span
-                                        class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full border"
-                                        :class="{
-                                            'bg-green-100 text-green-700 border-green-200': mensualidadAccion?.estado === 'activa',
-                                            'bg-amber-100 text-amber-600 border-amber-200': mensualidadAccion?.estado === 'por_vencer',
-                                            'bg-red-100   text-red-600   border-red-200': mensualidadAccion?.estado === 'vencida',
-                                            'bg-blue-100  text-blue-600  border-blue-200': mensualidadAccion?.estado === 'congelada',
-                                            'bg-purple-100 text-purple-600 border-purple-200': mensualidadAccion?.estado === 'pendiente'
-                                        }">
-                                        {{ estadoLabel(mensualidadAccion?.estado) }}
-                                    </span>
-                                    <span class="text-xs font-semibold text-gray-400">
-                                        <strong class="font-black text-[#0D291C]">{{ diasRestantes(mensualidadAccion)
-                                            }}</strong> días restantes
-                                    </span>
-                                </div>
-                            </div>
-                            <!-- Datos personales -->
-                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                                <p
-                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
-                                    Datos personales
-                                </p>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div class="flex flex-col gap-[3px]">
-                                        <span
-                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Documento</span>
-                                        <span class="text-[0.85rem] font-bold text-[#0D291C] font-mono">{{
-                                            detalleCompleto?.Documento ?? mensualidadAccion?._raw?.Documento ?? '—'
-                                            }}</span>
-                                    </div>
-                                    <div class="flex flex-col gap-[3px]">
-                                        <span
-                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Nombre</span>
-                                        <span class="text-[0.78rem] font-bold text-[#0D291C]">{{
-                                            detalleCompleto?.NombreApellidos ?? mensualidadAccion?._raw?.NombreApellidos
-                                            ?? '—' }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Vigencia -->
-                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                                <p
-                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
-                                    Vigencia
-                                </p>
-                                <div class="grid grid-cols-2 gap-3 mb-3">
-                                    <div class="flex flex-col gap-[3px]">
-                                        <span
-                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Inicio</span>
-                                        <span class="text-[0.85rem] font-bold text-[#0D291C]">{{
-                                            formatFecha(mensualidadAccion?.fechaInicio) }}</span>
-                                    </div>
-                                    <div class="flex flex-col gap-[3px]">
-                                        <span
-                                            class="text-[0.6rem] font-extrabold uppercase tracking-[0.07em] text-gray-400">Fin</span>
-                                        <span class="text-[0.85rem] font-bold text-[#0D291C]">{{
-                                            formatFecha(mensualidadAccion?.fechaFin) }}</span>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-1.5">
-                                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
-                                        <div class="h-full rounded-full transition-all duration-500" :class="{
-                                            'bg-[#7FD344]': mensualidadAccion?.estado === 'activa',
-                                            'bg-amber-400': mensualidadAccion?.estado === 'por_vencer',
-                                            'bg-red-600': mensualidadAccion?.estado === 'vencida',
-                                            'bg-blue-400': mensualidadAccion?.estado === 'congelada',
-                                        }" :style="{ width: `${porcentajeVigencia(mensualidadAccion)}%` }" />
-                                    </div>
-                                    <span class="text-right text-[0.62rem] font-semibold text-gray-400">
-                                        {{ porcentajeVigencia(mensualidadAccion) }}% del periodo
-                                    </span>
-                                </div>
-                            </div>
-                            <!-- Vehículos -->
-                            <!-- Vehículos -->
-                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                                <div class="flex flex-col gap-2">
-                                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261]
-                  flex items-center gap-2
-                  after:content-[''] after:flex-1 after:h-[1.5px]
-                  after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
-                                        Vehículos registrados
-                                    </p>
-                                    <!-- Botones con flex-wrap para móvil -->
-                                    <div class="flex flex-wrap gap-2">
-                                        <button @click="abrirModalPlacas"
-                                            class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all"
-                                            :class="placaCambiada
-                                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                                                : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
-                                            :disabled="placaCambiada">
-                                            {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
-                                        </button>
-                                        <button @click="abrirModalCambioTipo"
-                                            class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
-                                            <AppIcon name="swap_driving_apps" :size="12" />
-                                            Cambiar tipo
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Lista de placas -->
-                                <div v-if="placasDetalle.length" class="flex flex-col gap-2 mt-1">
-                                    <div v-for="(placa, idx) in placasDetalle" :key="idx"
-                                        class="flex items-center gap-2.5 px-3 py-2 rounded-xl border-2"
-                                        :class="idx === 0 ? 'bg-[#f0fdf4] border-[#c8e6c9]' : 'bg-gray-50 border-gray-200'">
-                                        <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'"
-                                            :size="14" :style="{ color: idx === 0 ? '#299261' : '#9ca3af' }" />
-                                        <span class="text-[0.8rem] font-black tracking-widest uppercase flex-1"
-                                            :class="idx === 0 ? 'text-[#0D291C]' : 'text-gray-500'">{{ placa }}</span>
-                                        <span v-if="idx === 0"
-                                            class="text-[0.55rem] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344]">
-                                            Principal
-                                        </span>
-                                    </div>
-                                </div>
-                                <p v-else class="text-xs font-semibold text-gray-400 mt-1">Sin vehículos registrados</p>
-                            </div>
-                            <!-- Sede -->
-                            <div class="px-5 py-4 flex flex-col gap-2.5">
-                                <p
-                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
-                                    Sede
-                                </p>
-                                <div
-                                    class="flex items-center gap-3 rounded-xl px-3.5 py-3 bg-white border-2 border-gray-200">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-[#0D291C] flex items-center justify-center flex-shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#7FD344"
-                                            viewBox="0 0 24 24">
-                                            <path
-                                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                        </svg>
-                                    </div>
-                                    <p class="text-[0.85rem] font-bold text-[#0D291C]">
-                                        {{ detalleCompleto?.T_Estacionamiento?.Nombre ??
-                                            mensualidadAccion?._raw?.T_Estacionamiento?.Nombre ?? '—' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-[#e8f5e9]">
-                            <button @click="modalDetalle = false"
-                                class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
-                                Cerrar
-                            </button>
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </Transition>
+        <ModalDetalleMensualidad v-model="modalDetalle" :mensualidad="mensualidadAccion" :detalle="detalleCompleto"
+            :placas="placasDetalle" :placa-cambiada="placaCambiada" :loading="loadingDetalle" :error="errDetalle"
+            @cambiar-placa="abrirModalPlacas" @cambiar-tipo="abrirModalCambioTipo" />
 
         <!-- ───────────────── MODAL: CAMBIO DE PLACAS ───────────────── -->
         <Transition name="modal">
@@ -799,25 +566,25 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -867,105 +634,79 @@
             </div>
         </Transition>
 
-        <!-- ───────────────── MODAL: CONSENTIMIENTO ───────────────── -->
+        <!-- ───────────────── MODAL: TARJETA PERDIDA ───────────────── -->
         <Transition name="modal">
-            <div v-if="modalConsentimiento"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[55] p-4">
+            <div v-if="modalTarjeta"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                 <div
-                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[400px] flex flex-col overflow-y-auto">
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[400px] flex flex-col overflow-hidden">
+
                     <!-- Head -->
                     <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
+                            <div
+                                class="w-9 h-9 rounded-xl bg-red-500/20 border border-red-400/30 flex items-center justify-center flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#f87171"
                                     viewBox="0 0 24 24">
                                     <path
-                                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z" />
+                                        d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[0.9rem] font-extrabold text-white">Antes de continuar</p>
-                                <p class="text-[0.65rem] text-white/50 font-semibold">Tratamiento de datos personales
-                                </p>
+                                <p class="text-[0.9rem] font-extrabold text-white">¿Perdiste tu tarjeta?</p>
+                                <p class="text-[0.65rem] text-white font-semibold">{{ mensualidadAccion?.sede }}</p>
                             </div>
                         </div>
-                        <button @click="cerrarModales"
+                        <button @click="modalTarjeta = false"
                             class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
+
                     <!-- Body -->
-                    <div class="flex flex-col bg-white">
-                        <!-- Logo AvalPay -->
-                        <div class="px-5 py-7 border-b border-gray-100 flex flex-col items-center gap-1">
-                            <img src="@/assets/img/logo-avalpay-center.webp" alt="AvalPay" class="h-12 object-contain"
-                                @error="$event.target.style.display = 'none'" />
-                            <p class="text-[0.72rem] text-gray-500 font-semibold text-center leading-relaxed mt-1">
-                                El proceso de pago es gestionado de forma segura por <strong
-                                    class="text-[#0D291C]">AvalPay</strong>
+                    <div class="px-5 py-5 flex flex-col gap-4">
+                        <div class="flex flex-col gap-3 p-4 bg-red-50 border-2 border-red-100 rounded-2xl">
+                            <p class="text-[0.85rem] font-bold text-red-800 leading-relaxed">
+                                Al confirmar, se habilitará el cobro de tarjeta de acceso para tu mensualidad en
+                                <strong>{{ mensualidadAccion?.sede }}</strong>.
+                            </p>
+                            <p class="text-[0.75rem] font-semibold text-red-600 leading-relaxed">
+                                Después podrás usar el botón <strong>Pagar</strong> para tramitar una nueva tarjeta.
                             </p>
                         </div>
-                        <!-- Policy box -->
-                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                            <div
-                                class="flex items-start gap-3 p-4 bg-[#f0fdf4] border border-[1.5px] border-[#c8e6c9] rounded-2xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#299261"
-                                    viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
-                                    <path
-                                        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                                </svg>
-                                <div>
-                                    <p class="text-[0.8rem] font-extrabold text-[#0D291C] mb-[3px]">Política de
-                                        Tratamiento de
-                                        Datos</p>
-                                    <p class="text-[0.7rem] text-gray-500 font-semibold leading-[1.55]">
-                                        Al realizar este pago, tus datos personales serán tratados conforme a nuestra
-                                        política
-                                        de privacidad y las normas de la Ley 1581 de 2012.
-                                    </p>
-                                    <a href="https://parquearse.com/pdf/politicadetratamientosdedatos.pdf"
-                                        target="_blank"
-                                        class="inline-flex items-center gap-[5px] mt-2 text-[0.7rem] font-extrabold text-[#299261] no-underline px-2.5 py-[5px] rounded-lg border border-[1.5px] border-[#c8e6c9] bg-[#f0fdf4] hover:bg-[#e0f8ec] transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                            fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V9H10c.83 0 1.5.67 1.5 1.5v.5zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V9H15c.83 0 1.5.67 1.5 1.5v2zm4-3H19v1h1.5V11H19v2h-1.5V9h3v1zM9 10.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-2h-1v2z" />
-                                        </svg>
-                                        Ver política completa (PDF)
-                                    </a>
-                                </div>
-                            </div>
+
+                        <div class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706"
+                                viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                            </svg>
+                            <span class="text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
+                                Esta acción no se puede deshacer. Asegúrate de haber perdido realmente tu tarjeta.
+                            </span>
                         </div>
-                        <!-- Checkbox -->
-                        <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                            <label
-                                class="flex items-start gap-2.5 p-3 rounded-[14px] border-2 cursor-pointer text-[0.78rem] font-semibold text-gray-700 leading-relaxed transition-all select-none"
-                                :class="consentimientoAceptado ? 'border-[#299261] bg-[#f0fdf4]' : 'border-gray-200 bg-gray-50'">
-                                <input type="checkbox" v-model="consentimientoAceptado" class="hidden" />
-                                <div class="w-5 h-5 rounded-[6px] border-2 flex items-center justify-center flex-shrink-0 mt-[1px] transition-all"
-                                    :class="consentimientoAceptado ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-white border-gray-300'">
-                                    <svg v-if="consentimientoAceptado" xmlns="http://www.w3.org/2000/svg" width="12"
-                                        height="12" fill="#7FD344" viewBox="0 0 24 24">
-                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                    </svg>
-                                </div>
-                                <span>He leído y acepto la <strong>Política de Tratamiento de Datos
-                                        Personales</strong></span>
-                            </label>
+
+                        <div v-if="errTarjeta"
+                            class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
+                            ⚠ {{ errTarjeta }}
                         </div>
                     </div>
+
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
-                        <button @click="cerrarModales"
+                        <button @click="modalTarjeta = false"
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             Cancelar
                         </button>
-                        <button @click="confirmarConsentimiento" :disabled="!consentimientoAceptado"
-                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-                            Continuar al pago
+                        <button @click="confirmarTarjetaPerdida" :disabled="guardandoTarjeta"
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-red-600 bg-red-600 text-white shadow-[0_1px_0_#991b1b] hover:bg-red-700 active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            <div v-if="guardandoTarjeta"
+                                class="w-[13px] h-[13px] flex-shrink-0 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            {{ guardandoTarjeta ? 'Procesando...' : 'Sí, perdí mi tarjeta' }}
                         </button>
                     </div>
                 </div>
             </div>
         </Transition>
+        <!-- ───────────────── MODAL: CONSENTIMIENTO ───────────────── -->
+        <ModalConsentimiento v-model="modalConsentimiento" @confirmar="confirmarConsentimiento" />
 
         <ModalFacturacion v-model="modalFacturacion"
             :documento-usuario="String(authStore.user?.documento ?? authStore.user?.Documento ?? '')"
@@ -980,6 +721,9 @@
 import { ref, computed, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import PagoService from '@/api/services/pagos.service'
+import ModalCodigoMensualidad from '@/components/modals/ModalCodigoMensualidad.vue'
+import ModalConsentimiento from '@/components/modals/ModalConsentimiento.vue'
+import ModalDetalleMensualidad from '@/components/modals/ModalDetalleMensualidad.vue'
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -1000,7 +744,6 @@ const modalPlacas = ref(false)
 const modalConsentimiento = ref(false)
 const modalFacturacion = ref(false)
 const consentimientoAceptado = ref(false)
-
 // ── Mensualidad en acción ─────────────────────────────────────
 const mensualidadAccion = ref(null)
 
@@ -1038,6 +781,11 @@ const errPago = ref('')
 const fechaInicioManual = ref('')
 const mesesExtra = ref(1)
 const pagoPendiente = ref(null) // { urlPago, referencia, valor, cus }
+
+// ── Tarjeta perdida ───────────────────────────────────────────
+const modalTarjeta = ref(false)
+const guardandoTarjeta = ref(false)
+const errTarjeta = ref('')
 
 // ── Constantes ────────────────────────────────────────────────
 const hoyISO = new Date().toISOString().slice(0, 10)
@@ -1085,6 +833,7 @@ const verificarLimiteMensual = (id) =>
 const marcarCambioMensual = (id) =>
     localStorage.setItem(`placa_changed_${id}_${mesActual()}`, '1')
 
+
 const diasRestantes = (m) => {
     const ff = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
     const fi = typeof m === 'object' ? m?.fechaInicio : null
@@ -1127,6 +876,38 @@ const resolverEstado = (m) => {
     return 'activa'
 }
 
+const pagarDeshabilitado = (m) => {
+    if (m.estado === 'congelada') return true
+    if (m.estado === 'activa' && !m.cobroTarjetaPermitido) return true
+    return false
+}
+
+const abrirModalTarjeta = (m) => {
+    mensualidadAccion.value = m
+    errTarjeta.value = ''
+    modalTarjeta.value = true
+}
+
+const confirmarTarjetaPerdida = async () => {
+    errTarjeta.value = ''
+    guardandoTarjeta.value = true
+    try {
+        await MensualidadesService.permitirCobroTarjeta(mensualidadAccion.value.id)
+        const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
+        if (idx !== -1) {
+            mensualidades.value[idx].conPago = true
+            mensualidades.value[idx].cobroTarjetaPermitido = true
+        }
+        modalTarjeta.value = false
+    } catch (e) {
+        const msg = e?.response?.data?.message
+        errTarjeta.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al procesar la solicitud.')
+    } finally {
+        guardandoTarjeta.value = false
+    }
+}
+
+
 // ── Cargar mensualidades ──────────────────────────────────────
 const cargarMisMensualidades = async () => {
     loading.value = true
@@ -1135,6 +916,7 @@ const cargarMisMensualidades = async () => {
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
         mensualidades.value = raw.map(m => ({
             _raw: m,
+            cobroTarjetaPermitido: !!(m.CobroTarjeta),
             id: m.IdPersonaAutorizada,
             nombre: m.NombreApellidos ?? '—',
             fechaInicio: m.FechaInicio ? m.FechaInicio.slice(0, 10) : null,
@@ -1483,7 +1265,6 @@ const confirmarPago = () => {
 }
 
 const confirmarConsentimiento = () => {
-    if (!consentimientoAceptado.value) return
     modalConsentimiento.value = false
     modalFacturacion.value = true
 }
@@ -1597,7 +1378,6 @@ const cerrarModales = () => {
     mesesExtra.value = 1
     errPago.value = ''
     errCongelar.value = ''
-    consentimientoAceptado.value = false
     iniciandoPago.value = false
     infoExcedente.value = null
     infoAutorizacion.value = null
@@ -1605,6 +1385,9 @@ const cerrarModales = () => {
     nuevasPlacas.value = ['', '', '', '', '']
     usandoCambioAutorizacion.value = false
     cambioPlacaBloqueado.value = false
+    modalTarjeta.value = false
+    errTarjeta.value = ''
+    guardandoTarjeta.value = false
 }
 </script>
 

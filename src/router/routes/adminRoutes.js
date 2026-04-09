@@ -1,7 +1,7 @@
 // src/router/adminRoutes.js
 import icoClientes from "@/assets/img/account_box.svg?raw";
 import icoSolicitudes from "@/assets/img/receipt_long.svg?raw";
-import icoReportes from "@/assets/img/assignment.svg?raw";
+import icoArqueos from "@/assets/img/assignment.svg?raw";
 import icoSedes from "@/assets/img/emoji_transportation.svg?raw";
 import icoMensual2 from "@/assets/img/calendar_add_on.svg?raw";
 import icoUsuarios from "@/assets/img/manage_accounts.svg?raw";
@@ -28,9 +28,9 @@ export const adminMenuItems = [
     permission: "VER-MENSUALIDADES",
   },
   {
-    label: "Reportes",
-    icon: icoReportes,
-    route: "/admin/reportes",
+    label: "Arqueos",
+    icon: icoArqueos,
+    route: "/admin/arqueos",
     permission: "EDITAR-SEDES",
   },
   {
@@ -75,12 +75,12 @@ export const adminMenuItems = [
     route: "/admin/verificacion",
     permission: "CREAR-CODIGOS",
   },
-  {
-    label: "Ver<br> tarifas",
-    icon: icoTarifas,
-    route: "/admin/tarifas",
-    permission: "CREAR-CODIGOS",
-  },
+  // {
+  //   label: "Ver<br> tarifas",
+  //   icon: icoTarifas,
+  //   route: "/admin/tarifas",
+  //   permission: "CREAR-CODIGOS",
+  // },
   {
     label: "Tarjetas",
     icon: icoTarjetas,
@@ -110,8 +110,8 @@ export const adminRoutes = {
       meta: { permission: "VER-MENSUALIDADES" },
     },
     {
-      path: "reportes",
-      component: () => import("@/views/administrador/Reportes.vue"),
+      path: "arqueos",
+      component: () => import("@/views/administrador/Arqueos.vue"),
       meta: { permission: "EDITAR-SEDES" },
     },
     {

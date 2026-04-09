@@ -312,13 +312,12 @@ const copiado = ref(null)
 const copiadoResultado = ref(false)
 
 const form = reactive({
-    idSede: null,
-    idAutorizacion: null,
+    idSede: '',
+    idAutorizacion: '',
 })
 
 // ── Abrir modal y cargar sedes ─────────────────────────────────────
 const abrirModal = async () => {
-    console.log('🟢 abrirModal called')
     modalGenerar.value = true  // ← mueve esta línea AL INICIO, antes del await
     errModal.value = ''
 
@@ -328,7 +327,6 @@ const abrirModal = async () => {
     try {
         const res = await SedesService.getAll()
         sedes.value = Array.isArray(res) ? res : (res?.data ?? [])
-        console.log('🏢 Sedes cargadas:', sedes.value)
     } catch (e) {
         console.error('[CodigoVerificacion] Error cargando sedes:', e)
         sedes.value = []

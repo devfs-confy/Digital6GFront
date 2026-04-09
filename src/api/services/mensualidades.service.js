@@ -90,6 +90,32 @@ class MensualidadesService {
     }
   }
 
+  // POST /v1/mensualidades/clientes/agregar-mensualidad
+  // Body: { Codigo, Documento, Email, IdEstacionamiento, NombreApellidos, Placa1, Telefono, Nit?, NombreEmpresa?, Placa2? }
+  // 201 éxito | 400 datos inválidos o código no reconocido | 401 no autorizado
+  async agregarMensualidad(payload) {
+    try {
+      const { data } = await api.post(
+        `${BASE_CLIENT}/agregar-mensualidad`,
+        payload,
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  async permitirCobroTarjeta(id) {
+    try {
+      const response = await api.patch(
+        `${this.nameRoute}/permitir-cobro-tarjeta/${id}`,
+      );
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
   // ── Admin ─────────────────────────────────────────────────
 
   // GET /v1/mensualidades/admin?sede={id}&page&limit&search
