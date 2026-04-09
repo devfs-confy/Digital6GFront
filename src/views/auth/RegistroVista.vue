@@ -234,7 +234,7 @@
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                        }}</label>
+                                            }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
                                                 class="field-input placa-input flex-1" placeholder="" maxlength="7" />
@@ -679,23 +679,6 @@ const buildPayload = (esOld) => {
     }
 }
 
-const manejarRespuesta = (res) => {
-    if (res?.error === true || res?.success === false) {
-        const status = res?.status ?? res?.data?.statusCode
-        const message = res?.data?.message ?? res?.message ?? ''
-        const msg = Array.isArray(message) ? message.join(', ') : (message || 'Error al registrar.')
-
-        if (status === 409) {
-            errSubmit.value = msg.toLowerCase().includes('email') ? '409_email' : '409'
-        } else {
-            errSubmit.value = msg
-            showError({ status, data: res?.data ?? res })
-        }
-        return false
-    }
-    return true
-}
-
 const submit = async () => {
     if (!validarFormulario()) return
     guardando.value = true
@@ -707,14 +690,20 @@ const submit = async () => {
 
     guardando.value = false
 
-    // handleError retorna { error: true, status, data }
     if (res?.error) {
         const status = res.status
         const msg = res.data?.message ?? ''
         const msgStr = Array.isArray(msg) ? msg.join(', ') : msg
 
         if (status === 409) {
-            errSubmit.value = msgStr.toLowerCase().includes('email') ? '409_email' : '409'
+            if (msgStr.toLowerCase().includes('email')) {
+                errSubmit.value = '409_email'
+            } else if (msgStr.toLowerCase().includes('documento') || msgStr.toLowerCase().includes('usuario')) {
+                errSubmit.value = '409'
+            } else {
+                // 409 genérico (placas, otros) → SweetAlert
+                showError({ status, data: res.data })
+            }
         } else {
             errSubmit.value = msgStr || 'Error al registrar. Intenta de nuevo.'
             showError({ status, data: res.data })
