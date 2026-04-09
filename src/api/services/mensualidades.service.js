@@ -22,14 +22,8 @@ class MensualidadesService {
   async cambiarPlacas(payload) {
     try {
       const { data } = await api.post(`${BASE_CLIENT}/cambio-placas`, payload);
-      console.log("[cambiarPlacas] success:", data);
       return data;
     } catch (error) {
-      console.log(
-        "[cambiarPlacas] error:",
-        error?.response?.status,
-        error?.response?.data,
-      );
       return handleError(error);
     }
   }
@@ -40,14 +34,8 @@ class MensualidadesService {
         IdPersonaAutorizada,
         Placas,
       });
-      console.log("[cambiarAutorizacion] success:", data);
       return data;
     } catch (error) {
-      console.log(
-        "[cambiarAutorizacion] error:",
-        error?.response?.status,
-        error?.response?.data,
-      );
       return handleError(error);
     }
   }

@@ -106,7 +106,7 @@
                             <td class="td-cell">
                                 <div class="flex flex-col">
                                     <span class="font-semibold text-[#0D291C] text-[0.85rem]">{{ pqrs.NombreCliente
-                                        }}</span>
+                                    }}</span>
                                     <span class="text-[0.72rem] text-gray-400">{{ pqrs.Email }}</span>
                                 </div>
                             </td>
@@ -121,7 +121,7 @@
                             </td>
                             <td class="td-cell max-w-[180px]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Asunto ?? '—'
-                                    }}</span>
+                                }}</span>
                             </td>
                             <td class="td-cell">
                                 <span class="inline-flex items-center gap-1 text-[0.8rem] font-extrabold" :class="{
@@ -209,7 +209,7 @@
                                 <span
                                     class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
                                 <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ tipoLabel(pqrsAccion?.Tipo)
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="flex flex-col gap-[3px] px-3 py-2 rounded-xl border" :class="{
                                 'bg-red-50 border-red-100': pqrsAccion?.Prioridad === 'ALTA',
@@ -461,13 +461,13 @@
                             </p>
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Nombre *</label>
-                                <input v-model="fMotivo.Nombre" type="text" class="field-input"
-                                    placeholder="Ej: Problema de acceso" maxlength="70" />
+                                <input v-model="fMotivo.Nombre" type="text" class="field-input" placeholder="Prob..."
+                                    maxlength="70" />
                             </div>
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Descripción</label>
                                 <input v-model="fMotivo.Descripcion" type="text" class="field-input"
-                                    placeholder="Descripción opcional..." maxlength="200" />
+                                    placeholder="Descripción..." maxlength="200" />
                             </div>
                             <div class="flex items-center gap-2">
                                 <label
@@ -683,12 +683,12 @@
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Documento usuario admin *</label>
                                 <input v-model="fAsignar.DocumentoUsuario" type="number" class="field-input"
-                                    placeholder="Ej: 1098617878" />
+                                    placeholder="1098..." />
                             </div>
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Departamento *</label>
                                 <input v-model="fAsignar.Departamento" type="text" class="field-input"
-                                    placeholder="Ej: Soporte Técnico" maxlength="50" />
+                                    placeholder="Soporte..." maxlength="50" />
                             </div>
                             <div class="flex flex-col gap-[5px]">
                                 <div class="flex items-center justify-between">
@@ -697,7 +697,7 @@
                                         fAsignar.Observacion.length }}/250</span>
                                 </div>
                                 <textarea v-model="fAsignar.Observacion" class="field-input resize-y min-h-[80px]"
-                                    placeholder="Ej: Revisar con prioridad..." maxlength="250" />
+                                    placeholder="Prioridad..." maxlength="250" />
                             </div>
                         </div>
 

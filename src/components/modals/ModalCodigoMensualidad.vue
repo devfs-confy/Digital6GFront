@@ -122,12 +122,24 @@
                     Tus datos
                 </p>
 
-                <div class="flex flex-col gap-[5px]">
-                    <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Nombre y
-                        apellidos *</label>
-                    <input v-model="fC.NombreApellidos" type="text"
-                        class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
-                        placeholder="Jua..." maxlength="100" />
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-[5px]">
+                        <label
+                            class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Documento
+                            *</label>
+                        <input v-model="fC.Documento" type="text"
+                            class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                            placeholder="1096..." maxlength="20" />
+                    </div>
+
+                    <div class="flex flex-col gap-[5px]">
+                        <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Nombre
+                            y
+                            apellidos *</label>
+                        <input v-model="fC.NombreApellidos" type="text"
+                            class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                            placeholder="Jua..." maxlength="100" />
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -242,6 +254,7 @@ const isOpen = computed({
 const fC = reactive({
     Codigo: '',
     NombreApellidos: '',
+    Documento: '',
     Telefono: '',
     Email: '',
     Placa1: '',
@@ -277,9 +290,9 @@ const cargarSedes = async () => {
 const irPaso2 = () => {
     if (!sedeSeleccionada.value) return
     error.value = ''
-    // Prellenar con datos del auth
     const u = authStore.user
     fC.NombreApellidos = `${u?.nombres ?? u?.Nombres ?? ''} ${u?.apellidos ?? u?.Apellidos ?? ''}`.trim()
+    fC.Documento = String(u?.documento ?? u?.Documento ?? '')
     fC.Telefono = String(u?.telefono ?? u?.Telefono ?? '')
     fC.Email = String(u?.email ?? u?.Email ?? '')
     paso.value = 2
@@ -288,7 +301,7 @@ const irPaso2 = () => {
 const resetear = () => {
     paso.value = 1
     sedeSeleccionada.value = null
-    Object.assign(fC, { Codigo: '', NombreApellidos: '', Telefono: '', Email: '', Placa1: '', Placa2: '', Nit: '', NombreEmpresa: '' })
+    Object.assign(fC, { Codigo: '', NombreApellidos: '', Documento: '', Telefono: '', Email: '', Placa1: '', Placa2: '', Nit: '', NombreEmpresa: '' })
     error.value = ''
     exito.value = ''
 }
@@ -298,6 +311,7 @@ const confirmar = async () => {
     error.value = ''
     exito.value = ''
 
+    if (!fC.Documento.trim()) { error.value = 'El documento es obligatorio.'; return }
     if (!fC.Codigo.trim()) { error.value = 'El código es obligatorio.'; return }
     if (!fC.Placa1.trim()) { error.value = 'La placa principal es obligatoria.'; return }
     if (!fC.NombreApellidos.trim()) { error.value = 'El nombre es obligatorio.'; return }
@@ -307,7 +321,7 @@ const confirmar = async () => {
     const u = authStore.user
     const payload = {
         Codigo: fC.Codigo.trim().toUpperCase(),
-        Documento: Number(u?.documento ?? u?.Documento),
+        Documento: Number(fC.Documento),
         Email: fC.Email.trim(),
         IdEstacionamiento: Number(sedeSeleccionada.value.IdEstacionamiento),
         NombreApellidos: fC.NombreApellidos.trim(),
@@ -318,7 +332,6 @@ const confirmar = async () => {
         ...(fC.NombreEmpresa.trim() && { NombreEmpresa: fC.NombreEmpresa.trim() }),
     }
 
-    console.log('Payload a enviar:', payload)
 
     guardando.value = true
     try {

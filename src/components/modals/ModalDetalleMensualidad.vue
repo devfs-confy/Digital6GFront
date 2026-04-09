@@ -133,7 +133,7 @@
                                     <button @click="emit('cambiarTipo')"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
                                         <AppIcon name="swap_driving_apps" :size="12" />
-                                        Cambiar tipo
+                                        Cambiar mensualidad
                                     </button>
                                 </div>
                             </div>

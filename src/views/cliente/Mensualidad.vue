@@ -501,7 +501,7 @@
                                             class="text-[0.55rem] font-black px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344] ml-1.5">Requerida</span>
                                     </div>
 
-                                    <div v-if="usandoCambioAutorizacion && idx === 0 && nuevasPlacas[0]?.trim().length >= 6"
+                                    <!--<div v-if="usandoCambioAutorizacion && idx === 0 && nuevasPlacas[0]?.trim().length >= 6"
                                         class="flex items-center gap-1.5 mt-1 text-[0.65rem] font-bold" :class="placaPrincipalEsMoto !== mensualidadAccion?.esMoto
                                             ? 'text-green-600'
                                             : 'text-amber-600'">
@@ -509,14 +509,14 @@
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                         </svg>
-                                        <span v-if="placaPrincipalEsMoto !== mensualidadAccion?.esMoto">
+                                         <span v-if="placaPrincipalEsMoto !== mensualidadAccion?.esMoto">
                                             ✓ Se detectó cambio de tipo: {{ mensualidadAccion?.esMoto ?
                                                 'Moto → Carro' : 'Carro → Moto' }}
-                                        </span>
-                                        <span v-else>
+                                        </span> 
+                                         <span v-else>
                                             Esta placa es del mismo tipo actual. Usa "Cambiar placa" en su lugar.
-                                        </span>
-                                    </div>
+                                        </span> 
+                                    </div> -->
 
                                     <div class="flex items-center gap-2">
                                         <div
@@ -604,7 +604,9 @@
                     </div>
 
                     <!-- Excedente banner -->
-
+                    <!-- 
+                    :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas || cambioPlacaBloqueado ||
+                                (usandoCambioAutorizacion && nuevasPlacas[0]?.trim().length >= 6 && placaPrincipalEsMoto === mensualidadAccion?.esMoto)" -->
 
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
@@ -612,9 +614,9 @@
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             {{ infoExcedente ? 'Volver' : 'Cancelar' }}
                         </button>
+
+                        <!-- aca -->
                         <button v-if="!infoExcedente" @click="confirmarCambioPlacas"
-                            :disabled="!nuevasPlacas[0]?.trim() || guardandoPlacas || cambioPlacaBloqueado ||
-                                (usandoCambioAutorizacion && nuevasPlacas[0]?.trim().length >= 6 && placaPrincipalEsMoto === mensualidadAccion?.esMoto)"
                             class="flex-1 flex items-center justify-center gap-2 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="guardandoPlacas"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
@@ -956,7 +958,6 @@ const abrirDetalle = async (m) => {
             esMoto: /^[A-Z]{3}\d{2}[A-Z]$/.test(placaPrincipal),
         }
     } catch {
-        errDetalle.value = 'No se pudo cargar el detalle. Mostrando datos parciales.'
         placasDetalle.value = m.placas ?? []
     } finally {
         loadingDetalle.value = false
