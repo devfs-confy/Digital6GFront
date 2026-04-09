@@ -719,6 +719,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { showError, showSuccess } from '@/utils/swal'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import PagoService from '@/api/services/pagos.service'
 import ModalCodigoMensualidad from '@/components/modals/ModalCodigoMensualidad.vue'
@@ -726,7 +728,7 @@ import ModalConsentimiento from '@/components/modals/ModalConsentimiento.vue'
 import ModalDetalleMensualidad from '@/components/modals/ModalDetalleMensualidad.vue'
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
-import { useAuthStore } from '@/stores/auth'
+
 
 // ── Stores ────────────────────────────────────────────────────
 const authStore = useAuthStore()
@@ -827,12 +829,6 @@ const mesActual = () => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
-const verificarLimiteMensual = (id) =>
-    localStorage.getItem(`placa_changed_${id}_${mesActual()}`) === '1'
-
-const marcarCambioMensual = (id) =>
-    localStorage.setItem(`placa_changed_${id}_${mesActual()}`, '1')
-
 
 const diasRestantes = (m) => {
     const ff = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
@@ -889,7 +885,6 @@ const abrirModalTarjeta = (m) => {
 }
 
 const confirmarTarjetaPerdida = async () => {
-    errTarjeta.value = ''
     guardandoTarjeta.value = true
     try {
         await MensualidadesService.permitirCobroTarjeta(mensualidadAccion.value.id)
@@ -899,9 +894,9 @@ const confirmarTarjetaPerdida = async () => {
             mensualidades.value[idx].cobroTarjetaPermitido = true
         }
         modalTarjeta.value = false
+        showSuccess('¡Tarjeta reportada!', 'Ya puedes usar el botón Pagar para tramitar una nueva.')
     } catch (e) {
-        const msg = e?.response?.data?.message
-        errTarjeta.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al procesar la solicitud.')
+        showError({ status: e?.response?.status, data: e?.response?.data })
     } finally {
         guardandoTarjeta.value = false
     }
@@ -947,7 +942,7 @@ const abrirDetalle = async (m) => {
     detalleCompleto.value = null
     placasDetalle.value = []
     errDetalle.value = ''
-    placaCambiada.value = verificarLimiteMensual(m.id)
+    placaCambiada.value = false
     loadingDetalle.value = true
     modalDetalle.value = true
     try {
@@ -1006,83 +1001,95 @@ const confirmarCambioPlacas = async () => {
         return
     }
 
-    // ← Verificar límite mensual para AMBOS flujos antes de cualquier llamada
-    if (verificarLimiteMensual(mensualidadAccion.value.id)) {
-        errPlacas.value = 'Ya realizaste un cambio de placas o autorización este mes.'
-        return
-    }
 
     guardandoPlacas.value = true
-    try {
-        if (usandoCambioAutorizacion.value) {
-            const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
-            const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
-            const esMotoActual = mensualidadAccion.value.esMoto
 
-            if (esMotoIngresada === esMotoActual) {
-                errPlacas.value = esMotoIngresada
-                    ? 'La placa ingresada es de moto. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
-                    : 'La placa ingresada es de carro. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
-                return
-            }
+    if (usandoCambioAutorizacion.value) {
+        const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
+        const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
+        const esMotoActual = mensualidadAccion.value.esMoto
 
-            const placasPayload = nuevasPlacas.value
-                .map((val, i) => {
-                    const placa = val?.trim().toUpperCase() || null
-                    return placa ? [{ ColumnaPlaca: PLACA_KEYS[i], PlacaNueva: placa }] : []
-                })
-                .filter(arr => arr.length > 0)
-
-            await MensualidadesService.cambiarAutorizacion({
-                IdPersonaAutorizada: Number(mensualidadAccion.value.id),
-                Placas: placasPayload,
-                // ← sin Email, Telefono, IdentificacionCliente
-            })
-
-            // 200 = downgrade carro→moto, aplicado directo
-            _aplicarCambioPlacasLocal()
-            await cargarMisMensualidades()
-            modalPlacas.value = false
-            modalDetalle.value = false
-
-        } else {
-            // ── Cambio de placas normal (mismo tipo) → cambio-placas
-
-            const Detalles = PLACA_KEYS.map((columna, i) => {
-                const nueva = nuevasPlacas.value[i]?.trim().toUpperCase() || null
-                const actual = placasDetalle.value[i] ?? null
-                return nueva !== actual ? { ColumnaPlaca: columna, PlacaNueva: nueva ?? '' } : null
-            }).filter(Boolean)
-
-            if (!Detalles.length) { errPlacas.value = 'No hay cambios para guardar.'; return }
-
-            await MensualidadesService.cambiarPlacas({
-                IdPersonaAutorizada: Number(mensualidadAccion.value.id),
-                Detalles,
-            })
-            _aplicarCambioPlacasLocal()
-            modalPlacas.value = false
-        }
-
-    } catch (e) {
-        const status = e?.response?.status
-        const responseData = e?.response?.data
-
-
-        if (usandoCambioAutorizacion.value && status === 409 && responseData?.data?.requierePago) {
-            console.log('[cambioTipo] infoExcedente seteado:', JSON.stringify(responseData.data))
-            infoExcedente.value = responseData.data
+        if (esMotoIngresada === esMotoActual) {
+            errPlacas.value = esMotoIngresada
+                ? 'La placa ingresada es de moto. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
+                : 'La placa ingresada es de carro. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
+            guardandoPlacas.value = false
             return
         }
-        const msg = responseData?.message
-        if (status === 409) {
-            errPlacas.value = 'Ya existe una solicitud de cambio de placas para este mes.'
-            cambioPlacaBloqueado.value = true  // ← agregar
-        } else if (status === 404) errPlacas.value = 'Persona autorizada no encontrada.'
-        else if (status === 400) errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Datos inválidos.')
-        else errPlacas.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al procesar el cambio.')
-    } finally {
+
+        const placasPayload = nuevasPlacas.value
+            .map((val, i) => {
+                const placa = val?.trim().toUpperCase() || null
+                return placa ? [{ ColumnaPlaca: PLACA_KEYS[i], PlacaNueva: placa }] : []
+            })
+            .filter(arr => arr.length > 0)
+
+        console.log('[cambiarAutorizacion] payload:', JSON.stringify({
+            IdPersonaAutorizada: Number(mensualidadAccion.value.id),
+            Placas: placasPayload,
+        }))
+
+        const res = await MensualidadesService.cambiarAutorizacion({
+            IdPersonaAutorizada: Number(mensualidadAccion.value.id),
+            Placas: placasPayload,
+        })
+        console.log('[cambiarAutorizacion] res:', JSON.stringify(res))
         guardandoPlacas.value = false
+
+        if (res?.error) {
+            // 409 con requierePago → mostrar banner de excedente
+            if (res.status === 409 && res.data?.data?.requierePago) {
+                infoExcedente.value = res.data.data
+                return
+            }
+            errPlacas.value = Array.isArray(res.data?.message)
+                ? res.data.message.join(', ')
+                : (res.data?.message ?? 'Error al procesar el cambio.')
+            showError({ status: res.status, data: res.data })
+            return
+        }
+
+        _aplicarCambioPlacasLocal()
+        await cargarMisMensualidades()
+        modalPlacas.value = false
+        modalDetalle.value = false
+
+    } else {
+        const Detalles = PLACA_KEYS.map((columna, i) => {
+            const nueva = nuevasPlacas.value[i]?.trim().toUpperCase() || null
+            const actual = placasDetalle.value[i] ?? null
+            return nueva !== actual ? { ColumnaPlaca: columna, PlacaNueva: nueva ?? '' } : null
+        }).filter(Boolean)
+
+        if (!Detalles.length) {
+            errPlacas.value = 'No hay cambios para guardar.'
+            guardandoPlacas.value = false
+            return
+        }
+
+        const res = await MensualidadesService.cambiarPlacas({
+            IdPersonaAutorizada: Number(mensualidadAccion.value.id),
+            Detalles,
+        })
+
+        guardandoPlacas.value = false
+
+        if (res?.error) {
+            if (res.status === 409) {
+                errPlacas.value = 'Ya realizaste un cambio de placas este mes.'
+                cambioPlacaBloqueado.value = true
+                showError({ status: res.status, data: res.data })
+                return
+            }
+            errPlacas.value = Array.isArray(res.data?.message)
+                ? res.data.message.join(', ')
+                : (res.data?.message ?? 'Error al procesar el cambio.')
+            showError({ status: res.status, data: res.data })
+            return
+        }
+
+        _aplicarCambioPlacasLocal()
+        modalPlacas.value = false
     }
 }
 
@@ -1092,7 +1099,6 @@ const _aplicarCambioPlacasLocal = () => {
     placasDetalle.value = nuevas
     const idx = mensualidades.value.findIndex(m => m.id === mensualidadAccion.value.id)
     if (idx !== -1) mensualidades.value[idx].placas = [...nuevas]
-    marcarCambioMensual(mensualidadAccion.value.id)
     placaCambiada.value = true
 
     // ← Recalcular esMoto con la nueva placa principal
@@ -1128,22 +1134,25 @@ const abrirCongelar = async (m) => {
 const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     guardandoCongelar.value = true
     errCongelar.value = ''
-    try {
-        const res = await MensualidadesService.crearCongelamiento(mensualidadAccion.value.id, {
-            FechaInicioPeriodoNvo,
-            Observacion,
-        })
-        cerrarModales()
-        await cargarMisMensualidades()
-    } catch (e) {
-        const status = e?.response?.status
-        const msg = e?.response?.data?.message
-        console.error('[Congelar] crearCongelamiento error:', status, e?.response?.data)
-        if (status === 409) errCongelar.value = 'Ya existe un congelamiento activo que se solapa.'
-        else errCongelar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al congelar.')
-    } finally {
-        guardandoCongelar.value = false
+
+    const res = await MensualidadesService.crearCongelamiento(mensualidadAccion.value.id, {
+        FechaInicioPeriodoNvo,
+        Observacion,
+    })
+
+    guardandoCongelar.value = false
+
+    if (res?.error) {
+        errCongelar.value = Array.isArray(res.data?.message)
+            ? res.data.message.join(', ')
+            : (res.data?.message ?? 'Error al congelar.')
+        showError({ status: res.status, data: res.data })
+        return
     }
+
+    cerrarModales()
+    await cargarMisMensualidades()
+    showSuccess('¡Congelado!', 'Tu mensualidad ha sido congelada exitosamente.')
 }
 
 // ── Pago ──────────────────────────────────────────────────────
@@ -1387,6 +1396,11 @@ const cerrarModales = () => {
     errTarjeta.value = ''
     guardandoTarjeta.value = false
 }
+
+
+
+
+
 </script>
 
 <style scoped>

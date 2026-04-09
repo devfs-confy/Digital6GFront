@@ -211,6 +211,8 @@
 
 <script setup>
 import { ref, computed, watch, reactive, onMounted } from 'vue'
+import { showError, showSuccess } from '@/utils/swal'
+
 import BaseModal from '@/components/modals/BaseModal.vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
@@ -322,19 +324,17 @@ const confirmar = async () => {
     try {
         const res = await MensualidadesService.agregarMensualidad(payload)
 
-        // handleError devuelve objeto con error en lugar de lanzar
-        if (res?.success === false || res?.error || res?.statusCode >= 400) {
-            const msg = res?.message ?? res?.error
-            error.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al agregar la mensualidad.')
+        if (res?.error) {
+            showError({ status: res.status, data: res.data })
             return
         }
 
-        exito.value = '¡Mensualidad agregada exitosamente!'
+        await showSuccess('¡Mensualidad agregada!', 'Ya aparece en tu listado.')
         emit('confirmado')
-        setTimeout(() => { isOpen.value = false }, 1200)
+        isOpen.value = false
+
     } catch (e) {
-        const msg = e?.response?.data?.message ?? e?.message
-        error.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al agregar la mensualidad.')
+        showError({ status: e?.response?.status, data: e?.response?.data })
     } finally {
         guardando.value = false
     }

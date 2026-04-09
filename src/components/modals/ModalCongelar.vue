@@ -167,15 +167,24 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
+
+
+// ── Estado interno ─────────────────────────────────────────────────
+
 const props = defineProps({
     modelValue: Boolean,
     cliente: Object,
-    infoCongelamiento: Object,   // { EstadoCongelamiento, DiasRestantes, FechaFin, FechaInicio, DiasTotalPeriodo, DiasUsados }
-    errExterno: String,   // error que viene del backend tras intentar congelar
+    infoCongelamiento: Object,
+    errExterno: String,
     guardandoExterno: Boolean,
 })
 
-const emit = defineEmits(['update:modelValue', 'confirmar'])
+
+watch(() => props.guardandoExterno, (v) => {
+    if (!v) guardando.value = false
+})
+
+const emit = defineEmits(['update:modelValue', 'confirmar', 'cerrar'])
 
 // ── Estado interno ─────────────────────────────────────────────────
 const observacion = ref('')

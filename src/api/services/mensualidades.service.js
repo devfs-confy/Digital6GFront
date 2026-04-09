@@ -19,21 +19,36 @@ class MensualidadesService {
 
   // GET /v1/mensualidades/clientes/mis-mensualidades/{id}
   // 404 si no existe o no pertenece al usuario autenticado
-  async getMiMensualidadById(id) {
-    try {
-      const { data } = await api.get(`${BASE_CLIENT}/mis-mensualidades/${id}`);
-      return data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-  // POST /v1/mensualidades/clientes/cambio-placas
   async cambiarPlacas(payload) {
     try {
       const { data } = await api.post(`${BASE_CLIENT}/cambio-placas`, payload);
+      console.log("[cambiarPlacas] success:", data);
       return data;
     } catch (error) {
-      handleError(error, "MensualidadesService.cambiarPlacas");
+      console.log(
+        "[cambiarPlacas] error:",
+        error?.response?.status,
+        error?.response?.data,
+      );
+      return handleError(error);
+    }
+  }
+
+  async cambiarAutorizacion({ IdPersonaAutorizada, Placas }) {
+    try {
+      const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
+        IdPersonaAutorizada,
+        Placas,
+      });
+      console.log("[cambiarAutorizacion] success:", data);
+      return data;
+    } catch (error) {
+      console.log(
+        "[cambiarAutorizacion] error:",
+        error?.response?.status,
+        error?.response?.data,
+      );
+      return handleError(error);
     }
   }
 
@@ -45,8 +60,11 @@ class MensualidadesService {
         Placas,
       });
       return data;
+
+      console.log(data);
     } catch (error) {
-      handleError(error, "MensualidadesService.cambiarAutorizacion");
+      return handleError(error);
+      console.log(error);
     }
   }
 
@@ -58,7 +76,7 @@ class MensualidadesService {
       });
       return data;
     } catch (error) {
-      handleError(error, "MensualidadesService.getChangesByPersona");
+      return handleError(error);
     }
   }
 

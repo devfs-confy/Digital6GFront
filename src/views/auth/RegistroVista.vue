@@ -598,6 +598,7 @@ const buscarDocumento = async (doc) => {
         Object.assign(form, {
             Documento: String(d.documento ?? doc),
             Nombres: partes.slice(0, mitad).join(' '),
+            IdTarjeta: d.idTarjeta ?? null,
             Apellidos: partes.slice(mitad).join(' '),
             IdAutorizacion: d.idAutorizacion,
             Telefono: d.telefono ?? '',
@@ -622,7 +623,7 @@ const buscarDocumento = async (doc) => {
 }
 
 const limpiarCampos = () => {
-    Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
+    Object.assign(form, { Nombres: '', IdTarjeta:'', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
 }
 
@@ -646,7 +647,7 @@ const buildPayload = (esOld) => {
     const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
     return {
         Documento: rest.Documento, Nombres: rest.Nombres, Apellidos: rest.Apellidos,
-        Telefono: rest.Telefono, Email: rest.Email, Password: rest.Password,
+        IdTarjeta: rest.IdTarjeta, Telefono: rest.Telefono, Email: rest.Email, Password: rest.Password,
         IdEstacionamiento: idSede.value, Estado: true,
         Sincronizacion: m?.sincronizacion ?? false, Old: esOld,
         ...(m?.idAutorizacion ? { IdAutorizacion: m.idAutorizacion } : {}),
