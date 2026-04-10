@@ -75,6 +75,7 @@ contract
 contract_edit
 contract_edit_green
 contract_green
+contact_support
 credit_card_gear
 credit_card_off
 credit_score

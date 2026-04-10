@@ -4,7 +4,7 @@
         <!-- Izquierda: botón colapsar + título -->
         <div class="flex items-center gap-7 min-w-0">
             <span v-html="colapsenobg" @click="emit('toggle')" :class="[
-                'cursor-pointer transition-all duration-300 flex-shrink-0',
+                'cursor-pointer transition-all duration-300 flex-shrink-0 max-w-max',
                 isOpen ? 'w-0 opacity-0 pointer-events-none hidden' : 'w-8 opacity-100'
             ]" />
 
@@ -22,7 +22,6 @@
             </div>
 
             <NotificacionesBtn />
-
 
             <!-- Botón avatar con inicial + ícono -->
             <button @click="dropdownOpen = !dropdownOpen" class="avatar-btn"

@@ -79,7 +79,7 @@
                             </td>
                             <td class="px-4 py-3 max-w-[220px]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Descripcion ?? '—'
-                                    }}</span>
+                                }}</span>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1 text-[0.8rem] font-extrabold" :class="{
@@ -108,8 +108,7 @@
         <!-- ───── MODAL: NUEVA PQRS ───── -->
         <Transition name="pqrs-modal">
             <div v-if="modalNuevo"
-                class="fixed inset-0 z-[999] flex items-center justify-end-mobile justify-center p-4 bg-[#0D291C]/60 backdrop-blur-[6px]"
-                @click.self="modalNuevo = false">
+                class="fixed inset-0 z-[999] flex items-center justify-end-mobile justify-center p-4 bg-[#0D291C]/60 backdrop-blur-[6px]">
                 <div
                     class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[500px] max-h-[90vh] flex flex-col overflow-hidden pqrs-card-shadow">
 
@@ -184,7 +183,7 @@
                                     class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">Asunto
                                     *</label>
                                 <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{ fN.Asunto.length
-                                    }}/50</span>
+                                }}/50</span>
                             </div>
                             <input v-model="fN.Asunto" type="text" class="pqrs-input"
                                 placeholder="Ej: Problema con el acceso al parqueadero" maxlength="50" />
@@ -301,8 +300,7 @@
         <!-- ───── MODAL: DETALLE PQRS ───── -->
         <Transition name="pqrs-modal">
             <div v-if="modalDetalle"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[#0D291C]/60 backdrop-blur-[6px]"
-                @click.self="modalDetalle = false">
+                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[#0D291C]/60 backdrop-blur-[6px]">
                 <div
                     class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[500px] max-h-[90vh] flex flex-col overflow-hidden pqrs-card-shadow">
 
@@ -327,7 +325,6 @@
                             class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center text-[0.85rem] font-black cursor-pointer flex-shrink-0 bg-[#f1f5f9] border border-[#cbd5e1] text-[#64748b] hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all">✕</button>
                     </div>
 
-                    <!-- Body -->
                     <!-- Body -->
                     <div
                         class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-[14px] bg-white [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
@@ -355,7 +352,7 @@
                                         <span
                                             class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
                                         <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ detalleActivo.Tipo
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">

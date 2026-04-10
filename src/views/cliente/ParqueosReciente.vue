@@ -9,7 +9,7 @@
                 <AppIcon name="arrow_left_alt" :size="14" />
                 <span class="hidden sm:inline">Volver</span>
             </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Accesos</h2>
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Parqueos recientes</h2>
             <div class="w-[72px] sm:w-[88px]" />
         </div>
 
@@ -35,14 +35,7 @@
                 <label class="text-[0.62rem] font-black uppercase tracking-[0.08em] text-gray-400 pl-1">Hasta</label>
                 <input v-model="filtroHasta" type="date" class="filter-pill" />
             </div>
-            <div class="flex flex-col gap-1 flex-1 min-w-[120px]">
-                <label class="text-[0.62rem] font-black uppercase tracking-[0.08em] text-gray-400 pl-1">Tipo</label>
-                <select v-model="filtroTipo" class="filter-pill">
-                    <option value="">Todos</option>
-                    <option value="mensualidad">Mensualidad</option>
-                    <option value="turno">Turno</option>
-                </select>
-            </div>
+
             <button v-if="hayFiltros" @click="limpiarFiltros"
                 class="self-end text-[0.75rem] font-bold text-red-600 bg-transparent border-2 border-red-300 rounded-full px-[14px] py-[7px] cursor-pointer whitespace-nowrap transition-colors hover:bg-red-50">
                 ✕ Limpiar
@@ -50,7 +43,7 @@
         </div>
 
         <!-- Resumen -->
-        <!-- <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="bg-white rounded-[18px] px-[18px] py-4 flex flex-col gap-1 shadow-[0_3px_0_#e2ede7] border-2 border-gray-100 card-in"
                 style="animation-delay:0s">
                 <span class="text-[1.3rem] font-black leading-none text-[#0D291C]">{{ registrosFiltrados.length
@@ -73,7 +66,7 @@
                 <span class="text-[1.3rem] font-black leading-none text-blue-600">{{ placasUnicas }}</span>
                 <span class="text-[0.65rem] font-bold uppercase tracking-[0.07em] text-gray-400">Placas distintas</span>
             </div>
-        </div> -->
+        </div>
 
         <!-- Loading -->
         <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
@@ -131,7 +124,7 @@
                             <td class="px-4 py-[13px] border-b border-gray-100 whitespace-nowrap">
                                 <div
                                     class="inline-flex items-center gap-1.5 bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-[10px] py-1">
-                                    <span class="text-[0.85rem] leading-none">🇨🇴</span>
+
                                     <span
                                         class="font-mono text-[0.82rem] font-black text-[#0D291C] tracking-[0.06em]">{{
                                             r.placa }}</span>
@@ -147,7 +140,7 @@
                                         {{ r.sede.slice(0, 2).toUpperCase() }}
                                     </div>
                                     <span class="font-semibold text-[#0D291C] text-sm truncate max-w-[110px]">{{ r.sede
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </td>
 
@@ -176,7 +169,7 @@
                                     <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.entrada) }} · {{
                                         fmtHora(r.entrada) }}</span>
                                     <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloEntrada
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </td>
 
@@ -186,7 +179,7 @@
                                     <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.salida) }} · {{
                                         fmtHora(r.salida) }}</span>
                                     <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloSalida ?? '—'
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <span v-else
                                     class="inline-flex items-center gap-1.5 text-[0.68rem] font-black uppercase tracking-[0.07em] text-[#299261]">
@@ -223,7 +216,7 @@
             <div class="flex items-center justify-between flex-wrap gap-3 px-4 py-3 border-t border-gray-100 bg-white">
                 <span class="text-xs text-gray-400">
                     <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ registrosFiltrados.length
-                    }}</strong>
+                        }}</strong>
                 </span>
                 <div class="flex items-center gap-1">
                     <button @click="pagina--" :disabled="pagina === 1" class="page-btn">
@@ -264,6 +257,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { showError } from '@/utils/swal'
 import ParqueosService from '@/api/services/parqueos.service'
+import MensualidadesService from '@/api/services/mensualidades.service'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
@@ -273,29 +267,44 @@ const registros = ref([])
 const loading = ref(false)
 
 // ── Carga ─────────────────────────────────────────────────────────
+// ── Carga ─────────────────────────────────────────────────────────
 const cargarAccesos = async () => {
-    const id = authStore.user?.documento ?? authStore.user?.Documento
-    if (!id) return
-
     loading.value = true
-    const res = await ParqueosService.getallParqueos(id)
-    loading.value = false
 
-    if (res?.error) {
-        showError({ status: res.status, data: res.data })
+    // 1. Obtener mensualidades para extraer IdPersonaAutorizada
+    const misMensualidades = await MensualidadesService.getMisMensualidades()
+
+    if (misMensualidades?.error || !Array.isArray(misMensualidades?.data ?? misMensualidades)) {
+        loading.value = false
         return
     }
 
-    const raw = Array.isArray(res?.data) ? res.data : []
+    const lista = misMensualidades?.data ?? misMensualidades
+    const idPersona = lista[0]?.IdPersonaAutorizada
+    if (!idPersona) {
+        loading.value = false
+        return
+    }
+
+    // 2. Cargar parqueos con ese id
+    const res = await ParqueosService.getallParqueos(idPersona)
+    loading.value = false
+
+    if (res?.error) return
+
+    const raw = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : [])
+
+    console.log('Parqueos formateados:', raw)
+
     registros.value = raw.map(r => ({
-        id: `${r.IdEstacionamiento}-${r.FechaEntrada}`,
-        placa: r.PlacaEntrada ?? r.PlacaSalida ?? '—',
-        sede: r.NombreEstacionamiento ?? '—',
-        entrada: r.FechaEntrada,
-        salida: r.FechaSalida ?? null,
-        moduloEntrada: r.ModuloEntrada ?? '—',
-        moduloSalida: r.ModuloSalida ?? null,
-        tipoVehiculo: r.IdTipoVehiculo === 1 ? 'carro' : 'moto',
+        id: `${r.idEstacionamiento}-${r.fechaEntrada}`,
+        placa: r.placaEntrada ?? r.placaSalida ?? '—',
+        sede: r.nombreEstacionamiento ?? '—',
+        entrada: r.fechaEntrada,
+        salida: r.fechaSalida ?? null,
+        moduloEntrada: r.moduloEntrada ?? '—',
+        moduloSalida: r.moduloSalida ?? null,
+        tipoVehiculo: r.idTipoVehiculo === 1 ? 'carro' : 'moto',
     }))
 }
 

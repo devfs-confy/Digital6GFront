@@ -149,7 +149,7 @@
 
         <!-- ── Modal detalle ── -->
         <Transition name="modal">
-            <div v-if="notifDetalle" class="modal-overlay" @click.self="cerrarDetalle">
+            <div v-if="notifDetalle" class="modal-overlay">
                 <div class="modal-card">
 
                     <div class="modal-head">
@@ -210,7 +210,7 @@
                                 <div v-if="notifDetalle.FechaExpiracion" class="modal-detail-row">
                                     <span class="modal-detail-key">Expira</span>
                                     <span class="modal-detail-val">{{ formatFecha(notifDetalle.FechaExpiracion)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div v-if="notifDetalle.DocumentoUsuario" class="modal-detail-row">
                                     <span class="modal-detail-key">Usuario</span>

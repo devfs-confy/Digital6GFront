@@ -68,7 +68,7 @@ const props = defineProps({
     modelValue: { type: Boolean, default: false },
     title: { type: String, default: '' },
     subtitle: { type: String, default: '' },
-    closeOnBackdrop: { type: Boolean, default: true },
+    closeOnBackdrop: { type: Boolean, default: false },
 
     // Tamaño
     size: {

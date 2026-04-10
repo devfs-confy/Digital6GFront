@@ -6,6 +6,7 @@ import icoPagos from "@/assets/img/receipt_long.svg?raw";
 import icoParqueos from "@/assets/img/parking_sign.svg?raw";
 import icoPQRS from "@/assets/img/contract_edit.svg?raw";
 import icoPerfil from "@/assets/img/account_circle.svg?raw";
+import icofaqs from "@/assets/img/contact_support.svg?raw";
 
 export const clienteMenuItems = [
   { label: "Inicio", icon: icoInicio, route: "/cliente/inicio" },
@@ -42,6 +43,12 @@ export const clienteMenuItems = [
     label: "Información </br> personal",
     icon: icoPerfil,
     route: "/cliente/informacion",
+  },
+
+  {
+    label: "Faqs",
+    icon: icofaqs,
+    route: "/cliente/faqs",
   },
 
   // {
@@ -104,6 +111,11 @@ export const clienteRoutes = {
     {
       path: "mensualidad/pago/:rquid",
       component: () => import("@/views/cliente/EstadoTransaccion.vue"),
+    },
+
+    {
+      path: "faqs",
+      component: () => import("@/views/cliente/Faqs.vue"),
     },
 
     { path: "", redirect: "inicio" }, // /cliente → /cliente/inicio
