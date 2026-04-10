@@ -938,23 +938,27 @@ onMounted(cargarMisMensualidades)
 
 // ── Detalle ───────────────────────────────────────────────────
 const abrirDetalle = async (m) => {
+    modalDetalle.value = true
     mensualidadAccion.value = m
     detalleCompleto.value = null
     placasDetalle.value = []
     errDetalle.value = ''
-    placaCambiada.value = false
     loadingDetalle.value = true
-    modalDetalle.value = true
+    
     try {
         const res = await MensualidadesService.getMiMensualidadById(m.id)
         const data = res?.data ?? res
+         placaCambiada.value = data?.solictud
         detalleCompleto.value = data
+        console.log("DETALLE", detalleCompleto.value)
         placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
         const placaPrincipal = (placasDetalle.value[0] ?? '').toUpperCase().trim()
         mensualidadAccion.value = {
             ...mensualidadAccion.value,
             esMoto: /^[A-Z]{3}\d{2}[A-Z]$/.test(placaPrincipal),
         }
+        
+       
     } catch {
         placasDetalle.value = m.placas ?? []
     } finally {

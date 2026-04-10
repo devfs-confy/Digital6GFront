@@ -409,12 +409,9 @@ const guardarCambios = async () => {
         original.telefono = form.telefono
         original.apellido = form.apellido
         original.nombre = form.nombre
-        if (auth.user) {
-            auth.user.Email = form.correo
-            auth.user.Telefono = form.telefono
-            auth.user.Nombres = form.nombre
-            auth.user.Apellidos = form.apellido
-        }
+
+        // Refrescar token para que el JWT contenga los datos actualizados
+        await auth.refreshAccessToken()
 
         editing.correo = false
         editing.telefono = false

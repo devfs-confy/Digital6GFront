@@ -12,6 +12,7 @@ export const useAuthStore = defineStore(
   () => {
     const user = ref(null);
     const token = ref(null);
+    const refreshToken = ref(null);
     const role = ref(null);
     const loading = ref(false);
     const errorMsg = ref(null);
@@ -43,6 +44,7 @@ export const useAuthStore = defineStore(
         }
 
         token.value = data.data?.token ?? null;
+        refreshToken.value = data.data?.refreshToken ?? null;
 
         const payload = JSON.parse(atob(token.value.split(".")[1]));
         role.value = payload.tipoUsuario?.toLowerCase() ?? null;
@@ -87,6 +89,7 @@ export const useAuthStore = defineStore(
     async function logout() {
       user.value = null;
       token.value = null;
+      refreshToken.value = null;
       role.value = null;
       errorMsg.value = null;
     }
@@ -125,12 +128,18 @@ export const useAuthStore = defineStore(
     // Llamado desde el interceptor de axios cuando hay un 401.
     async function refreshAccessToken() {
       try {
-        const { data } = await api.post("/api/auth/refresh");
-        const newToken = data.data?.token ?? data.access_token ?? null;
+        const response = await api.post("/auth/refresh", {
+          refreshToken: refreshToken.value,
+        });
+        const result = await response.data;
+        console.log({result})
+        const newToken = result.data?.token ?? null;
+        const newRefresh = result.data?.refreshToken ?? null;
 
         if (!newToken) throw new Error("No se recibió nuevo token");
 
         token.value = newToken;
+        if (newRefresh) refreshToken.value = newRefresh;
 
         // Restaurar user/role desde el nuevo JWT
         const payload = JSON.parse(atob(newToken.split(".")[1]));
@@ -141,6 +150,8 @@ export const useAuthStore = defineStore(
           email: payload.email,
           documento: payload.documento,
           telefono: payload.telefono,
+          permisos: payload.permisos ?? [],
+          rol: payload.rol,
         };
 
         return newToken;
@@ -250,6 +261,7 @@ export const useAuthStore = defineStore(
     return {
       user,
       token,
+      refreshToken,
       role,
       loading,
       errorMsg,
@@ -270,7 +282,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      pick: ["token", "role", "user"],
+      pick: ["token", "refreshToken", "role", "user"],
     },
   },
 );

@@ -130,8 +130,11 @@
                                         :disabled="placaCambiada">
                                         {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
                                     </button> -->
-                                    <button @click="emit('cambiarTipo')"
-                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80">
+                                    <button @click="emit('cambiarTipo')" :disabled="detalle?.solicitud"
+                                        class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all"
+                                        :class="detalle?.solicitud
+                                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                            : 'bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80'">
                                         <AppIcon name="swap_driving_apps" :size="12" />
                                         Cambiar placa
                                     </button>
@@ -196,7 +199,7 @@ const props = defineProps({
     mensualidad: { type: Object, default: null },
     detalle: { type: Object, default: null },
     placas: { type: Array, default: () => [] },
-    // placaCambiada: { type: Boolean, default: false }, 'cambiarPlaca',
+    placaCambiada: { type: Boolean, default: false },
     loading: { type: Boolean, default: false },
     error: { type: String, default: '' },
 })

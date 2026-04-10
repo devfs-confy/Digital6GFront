@@ -17,6 +17,16 @@ class MensualidadesService {
     }
   }
 
+
+  async getMiMensualidadById(id) {
+    try {
+      const { data } = await api.get(`${BASE_CLIENT}/detalle/${id}`);
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
   // GET /v1/mensualidades/clientes/mis-mensualidades/{id}
   // 404 si no existe o no pertenece al usuario autenticado
   async cambiarPlacas(payload) {
