@@ -147,7 +147,7 @@
                                         {{ r.sede.slice(0, 2).toUpperCase() }}
                                     </div>
                                     <span class="font-semibold text-[#0D291C] text-sm truncate max-w-[110px]">{{ r.sede
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </td>
 
@@ -176,7 +176,7 @@
                                     <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.entrada) }} · {{
                                         fmtHora(r.entrada) }}</span>
                                     <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloEntrada
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </td>
 
@@ -186,7 +186,7 @@
                                     <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.salida) }} · {{
                                         fmtHora(r.salida) }}</span>
                                     <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloSalida ?? '—'
-                                    }}</span>
+                                        }}</span>
                                 </div>
                                 <span v-else
                                     class="inline-flex items-center gap-1.5 text-[0.68rem] font-black uppercase tracking-[0.07em] text-[#299261]">
@@ -223,7 +223,7 @@
             <div class="flex items-center justify-between flex-wrap gap-3 px-4 py-3 border-t border-gray-100 bg-white">
                 <span class="text-xs text-gray-400">
                     <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ registrosFiltrados.length
-                        }}</strong>
+                    }}</strong>
                 </span>
                 <div class="flex items-center gap-1">
                     <button @click="pagina--" :disabled="pagina === 1" class="page-btn">

@@ -51,10 +51,8 @@ class PublicidadService {
 
   async getimgpublicidad(id) {
     try {
-      const { data } = await api.get(`${this.nameRoute}/imagen/${id}`, {
-        responseType: "blob",
-      });
-      return data;
+      const { data } = await api.get(`${this.nameRoute}/imagen/${id}`);
+      return data; // ← sin responseType: 'blob'
     } catch (error) {
       return handleError(error);
     }

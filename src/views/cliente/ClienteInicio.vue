@@ -18,10 +18,15 @@
         </div>
 
     </div>
+
+    <ModalBanner :imagenes="bannerUrl" :autoshow="true" />
+
+
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import mensualidades from '@/assets/img/calendar_month.svg?raw'
 import peticiones from '@/assets/img/contract_green.svg?raw'
 import notificaciones from '@/assets/img/stacked_email.svg?raw'
@@ -29,6 +34,39 @@ import parqueos from '@/assets/img/parking_sign_green.svg?raw'
 import pagos from '@/assets/img/receipt_long_green.svg?raw'
 import informacion from '@/assets/img/account_circle_green.svg?raw'
 import pqrs from '@/assets/img/contract_edit_green.svg?raw'
+import publicidadService from '@/api/services/banner.service'
+import ModalBanner from '@/components/modals/ModalBanner.vue'
+
+
+const bannerUrl = ref([])
+
+onMounted(async () => {
+    const res = await publicidadService.getMiPublicidad()
+
+    if (res?.error) return
+
+    const items = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+    if (!items.length) return
+
+    const urls = await Promise.all(
+        items.map(async (item) => {
+            const resultado = await publicidadService.getimgpublicidad(item.IdPublicidad)
+
+            // ← el base64 está en resultado.data.data
+            const base64 = resultado?.data?.data
+            const contentType = resultado?.data?.contentType ?? 'image/webp'
+
+            if (base64) return `data:${contentType};base64,${base64}`
+
+            return null
+        })
+    )
+
+    // Opción más simple — usar el campo Imagen que ya viene en el listado
+    bannerUrl.value = items
+        .map(item => item.Imagen)
+        .filter(Boolean)
+})
 
 const router = useRouter()
 

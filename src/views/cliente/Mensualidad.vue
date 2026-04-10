@@ -127,7 +127,8 @@
                         </span>
                     </div>
 
-                    <button v-if="m.estado === 'activa' && !m.cobroTarjetaPermitido" @click="abrirModalTarjeta(m)"
+                    <button v-if="m.estado === 'activa' || m.estado === 'por_vencer' && !m.cobroTarjetaPermitido"
+                        @click="abrirModalTarjeta(m)"
                         class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
                             viewBox="0 0 24 24">
@@ -523,7 +524,7 @@
                                             class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-all focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
                                             <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'"
                                                 :size="14" :style="{ color: idx === 0 ? '#299261' : '#9ca3af' }" />
-                                            <input v-model="nuevasPlacas[idx]" type="text" maxlength="7"
+                                            <input v-model="nuevasPlacas[idx]" type="text" maxlength="6"
                                                 class="flex-1 bg-transparent border-none outline-none font-mono font-black text-[0.95rem] tracking-[0.15em] uppercase text-[#0D291C] min-w-0 placeholder:text-gray-300 placeholder:font-semibold placeholder:tracking-[0.05em]"
                                                 :placeholder="placasDetalle[idx] || (idx === 0 ? 'ABC123' : 'Opcional')"
                                                 @input="nuevasPlacas[idx] = nuevasPlacas[idx].toUpperCase()" />
@@ -796,10 +797,7 @@ const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 // ── Computeds ─────────────────────────────────────────────────
 const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINCENA')
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
-const placaPrincipalEsMoto = computed(() => {
-    const placa = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
-    return /^[A-Z]{3}\d{2}[A-Z]$/.test(placa)
-})
+
 const mostrarCongelar = (m) =>
     m.conPago && m.estado !== 'congelada' && !m.esQuincena
 
@@ -822,12 +820,6 @@ const formatPrecio = (v) =>
 const estadoLabel = (e) =>
     ({ activa: 'Activa', por_vencer: 'Por vencer', vencida: 'Vencida', congelada: 'Congelada', pendiente: 'Pendiente' })[e] ?? e
 
-
-
-const mesActual = () => {
-    const d = new Date()
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-}
 
 
 const diasRestantes = (m) => {
