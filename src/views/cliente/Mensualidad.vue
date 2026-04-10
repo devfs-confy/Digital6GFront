@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -127,7 +127,7 @@
                         </span>
                     </div>
 
-                    <button v-if="m.estado === 'activa' || m.estado === 'por_vencer' && !m.cobroTarjetaPermitido"
+                    <button v-if="(m.estado === 'activa' || m.estado === 'por_vencer') && m.cobroTarjetaPermitido"
                         @click="abrirModalTarjeta(m)"
                         class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
@@ -254,7 +254,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -301,7 +301,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -325,7 +325,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -334,7 +334,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -567,25 +567,25 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -824,13 +824,11 @@ const estadoLabel = (e) =>
 
 const diasRestantes = (m) => {
     const ff = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
-    const fi = typeof m === 'object' ? m?.fechaInicio : null
     if (!ff) return 0
     const fin = parseLocal(ff)
-    const ini = fi ? parseLocal(fi) : null
     if (!fin) return 0
-    if (ini) return Math.max(0, Math.round((fin - ini) / 86400000))
-    const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
     return Math.max(0, Math.round((fin - hoy) / 86400000))
 }
 
@@ -1391,10 +1389,6 @@ const cerrarModales = () => {
     errTarjeta.value = ''
     guardandoTarjeta.value = false
 }
-
-
-
-
 
 </script>
 

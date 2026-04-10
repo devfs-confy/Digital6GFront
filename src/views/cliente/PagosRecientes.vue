@@ -63,17 +63,28 @@
                 class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
 
                 <!-- Header de sede -->
-                <div class="sede-header">
-                    <div class="sede-header__avatar">
-                        {{ sede.pagos[0]?.idModulo ?? sede.idEstacionamiento }}
+                <div class="sede-header flex justify-between">
+                    <div class="flex gap-5 align-center items-center">
+                        <div class="sede-header__avatar">
+                        </div>
+                        <p class="sede-header__title">{{ sede.NombreEstacionamiento }}</p>
+
                     </div>
-                    <div>
-                        <p class="sede-header__title">{{ sede.nombre }}</p>
-                        <p class="sede-header__sub">
-                            {{ sede.pagos.length }} pago{{ sede.pagos.length !== 1 ?
-                                's' : '' }}
-                        </p>
+                    <div class="flex gap-5">
+
+                        <div>
+                            <p class="sede-header__title">{{ sede.nombre }}</p>
+                            <p class="sede-header__sub">
+                                {{ sede.pagos.length }} pago{{ sede.pagos.length !== 1 ?
+                                    's' : '' }}
+                            </p>
+                        </div>
+                        <div class="sede-header__avatar">
+                        </div>
                     </div>
+
+
+
                 </div>
 
                 <div class="table-scroll-wrapper">
@@ -126,7 +137,7 @@
                                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                                         </svg>
                                         <span>{{ descargando === pago.numeroFactura ? 'Descargando...' : 'Factura'
-                                            }}</span>
+                                        }}</span>
                                     </button>
                                     <span v-else class="sin-factura">—</span>
                                 </td>
@@ -182,6 +193,7 @@ const cargarHistorial = async () => {
         sedes.value = raw.map(sede => ({
             idPersona: sede.IdPersonaAutorizada,
             idEstacionamiento: sede.IdEstacionamiento,
+            NombreEstacionamiento: sede.NombreEstacionamiento,
             nombre: sede.NombreApellidos ?? '—',
             pagos: (sede.pagos ?? []).map(p => ({
                 id: p.NumeroFactura,
@@ -194,6 +206,8 @@ const cargarHistorial = async () => {
                 tokenFactura: p.Token || null,
             }))
         }))
+
+        console.log('[HistorialPagos] Cargado', raw)
     } catch (e) {
         console.error('[HistorialPagos]', e)
         errorCarga.value = 'No se pudo cargar el historial de pagos.'

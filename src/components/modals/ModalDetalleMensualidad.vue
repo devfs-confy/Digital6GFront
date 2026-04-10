@@ -215,12 +215,12 @@ const formatFecha = (f) => {
 const iniciales = (n = '') => n.trim().split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
 const estadoLabel = (e) => ({ activa: 'Activa', por_vencer: 'Por vencer', vencida: 'Vencida', congelada: 'Congelada', pendiente: 'Pendiente' })[e] ?? e
 const diasRestantes = (m) => {
-    if (!m?.fechaFin) return 0
-    const fin = parseLocal(m.fechaFin)
-    const ini = m.fechaInicio ? parseLocal(m.fechaInicio) : null
+    const ff = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
+    if (!ff) return 0
+    const fin = parseLocal(ff)
     if (!fin) return 0
-    if (ini) return Math.max(0, Math.round((fin - ini) / 86400000))
-    const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
     return Math.max(0, Math.round((fin - hoy) / 86400000))
 }
 const porcentajeVigencia = (m) => {
