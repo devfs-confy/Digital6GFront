@@ -137,7 +137,7 @@
                                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                                         </svg>
                                         <span>{{ descargando === pago.numeroFactura ? 'Descargando...' : 'Factura'
-                                        }}</span>
+                                            }}</span>
                                     </button>
                                     <span v-else class="sin-factura">—</span>
                                 </td>
@@ -372,7 +372,7 @@ const formatMes = (fecha) => {
 }
 
 .sede-header__avatar {
-    width: 44px;
+    width: max-content;
     height: 44px;
     border-radius: 14px;
     background-color: #0D291C;

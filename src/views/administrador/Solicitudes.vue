@@ -103,11 +103,11 @@
                         <tr v-else v-for="pqrs in listaPqrs" :key="pqrs.Id"
                             class="border-b border-[#e8f5e9] last:border-b-0 transition-colors duration-150 hover:bg-[#f0faf4] group">
                             <td class="td-cell font-mono text-[0.8rem] text-gray-400">#{{ pqrs.Id }}</td>
-                            <td class="td-cell">
-                                <div class="flex flex-col">
-                                    <span class="font-semibold text-[#0D291C] text-[0.85rem]">{{ pqrs.NombreCliente
-                                    }}</span>
-                                    <span class="text-[0.72rem] text-gray-400">{{ pqrs.Email }}</span>
+                            <td class="td-cell max-w-[8vw]">
+                                <div class="flex flex-col min-w-0">
+                                    <span class="font-semibold text-[#0D291C] text-[0.85rem] truncate">{{
+                                        pqrs.NombreCliente }}</span>
+                                    <span class="text-[0.72rem] text-gray-400 truncate">{{ pqrs.Email }}</span>
                                 </div>
                             </td>
                             <td class="td-cell">
@@ -119,9 +119,9 @@
                                     <span class="text-[0.72rem] text-gray-400">{{ pqrs.Motivo?.Nombre ?? '—' }}</span>
                                 </div>
                             </td>
-                            <td class="td-cell max-w-[180px]">
+                            <td class="td-cell max-w-[8vw]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Asunto ?? '—'
-                                }}</span>
+                                    }}</span>
                             </td>
                             <td class="td-cell">
                                 <span class="inline-flex items-center gap-1 text-[0.8rem] font-extrabold" :class="{
@@ -141,585 +141,611 @@
                             </td>
                             <td class="td-cell text-[0.82rem] text-gray-500 whitespace-nowrap">{{
                                 formatFecha(pqrs.FechaCreacion) }}</td>
-                            <td class="td-cell text-center">
-                                <div class="flex items-center justify-center gap-1">
-                                    <button @click="abrirDetalle(pqrs)" title="Ver y responder"
-                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
-                                        <AppIcon name="visibility" :size="30" />
-                                    </button>
-                                    <button @click="abrirCambioEstado(pqrs)" title="Cambiar estado"
-                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-blue-50 hover:text-blue-500 transition-all border-0">
-                                        <AppIcon name="gpp_maybe" :size="30" />
-                                    </button>
-                                    <button @click="abrirCambioPrioridad(pqrs)" title="Cambiar prioridad"
-                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-amber-50 hover:text-amber-500 transition-all border-0">
-                                        <AppIcon name="arrow_shape_up_stack" :size="30" />
-                                    </button>
-                                    <button @click="abrirAsignar(pqrs)" title="Asignar"
-                                        class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-purple-50 hover:text-purple-500 transition-all border-0">
-                                        <AppIcon name="manage_accounts" :size="30" />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
-                :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
-        </div>
-
-        <!-- ───── MODAL: DETALLE + RESPONDER ───── -->
-        <Transition name="modal">
-            <div v-if="modalDetalle"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalDetalle = false">
-                <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[520px] max-h-[90vh] flex flex-col overflow-hidden modal-card"
-                    style="box-shadow: 0 7px 0 #0D291C">
-
-                    <!-- Head -->
-                    <div
-                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div
-                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344] font-black text-[0.72rem]">
-                                #{{ pqrsAccion?.Id }}
-                            </div>
-                            <div>
-                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">
-                                    {{ pqrsAccion?.Motivo?.Nombre ?? 'PQRS' }}
-                                </p>
-                                <p
-                                    class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
-                                    {{ pqrsAccion?.NombreCliente }} · {{ formatFecha(pqrsAccion?.FechaCreacion) }}
-                                </p>
-                            </div>
-                        </div>
-                        <button @click="modalDetalle = false"
-                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
-                    </div>
-
-                    <!-- Body -->
-                    <div
-                        class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
-
-                        <!-- Info pills -->
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                <span
-                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
-                                <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ tipoLabel(pqrsAccion?.Tipo)
-                                }}</span>
-                            </div>
-                            <div class="flex flex-col gap-[3px] px-3 py-2 rounded-xl border" :class="{
-                                'bg-red-50 border-red-100': pqrsAccion?.Prioridad === 'ALTA',
-                                'bg-amber-50 border-amber-100': pqrsAccion?.Prioridad === 'MEDIA',
-                                'bg-gray-50 border-gray-100': pqrsAccion?.Prioridad === 'BAJA',
-                            }">
-                                <span
-                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Prioridad</span>
-                                <span class="text-[0.8rem] font-bold" :class="{
-                                    'text-red-600': pqrsAccion?.Prioridad === 'ALTA',
-                                    'text-amber-600': pqrsAccion?.Prioridad === 'MEDIA',
-                                    'text-gray-500': pqrsAccion?.Prioridad === 'BAJA',
-                                }">{{ pqrsAccion?.Prioridad ?? '—' }}</span>
-                            </div>
-                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                <span
-                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Estado</span>
-                                <span class="text-[0.8rem] font-bold" :class="{
-                                    'text-[#299261]': pqrsAccion?.Estado === 'CERRADO',
-                                    'text-amber-500': pqrsAccion?.Estado === 'EN_PROCESO',
-                                    'text-blue-500': pqrsAccion?.Estado === 'ABIERTO',
-                                }">{{ estadoLabel(pqrsAccion?.Estado) }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Asunto -->
-                        <div class="flex flex-col gap-2">
-                            <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
-                                Asunto</p>
-                            <p class="text-[0.88rem] font-semibold text-[#0D291C]">{{ pqrsAccion?.Asunto ?? '—' }}</p>
-                        </div>
-
-                        <!-- Descripción -->
-                        <div class="flex flex-col gap-2">
-                            <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
-                                Descripción del cliente</p>
-                            <p class="text-[0.88rem] text-gray-600 leading-relaxed font-medium whitespace-pre-wrap">{{
-                                pqrsAccion?.Descripcion ?? '—' }}</p>
-                        </div>
-
-                        <!-- Imagen adjunta -->
-                        <div v-if="detalleActivo.Imagen" class="flex flex-col gap-2">
-                            <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
-                                Imagen adjunta
-                            </p>
-                            <!-- Loading imagen -->
-                            <div v-if="loadingImagen"
-                                class="flex items-center justify-center gap-2 py-6 bg-gray-50 rounded-2xl border-2 border-gray-100">
-                                <div
-                                    class="w-5 h-5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
-                                <span class="text-[0.72rem] font-semibold text-gray-400">Cargando imagen...</span>
-                            </div>
-                            <!-- Imagen cargada -->
-                            <div v-else-if="imagenDetalle"
-                                class="rounded-2xl overflow-hidden border-2 border-[#c8e6c9]">
-                                <img :src="`data:${imagenDetalle.contentType};base64,${imagenDetalle.data}`"
-                                    alt="Imagen adjunta" class="w-full max-h-[220px] object-cover" />
-                                <div
-                                    class="px-3 py-1.5 bg-[#f0faf4] border-t border-[#c8e6c9] flex items-center justify-between">
-                                    <span class="text-[0.65rem] font-semibold text-gray-400">
-                                        {{ imagenDetalle.contentType }} · {{ (imagenDetalle.contentLength /
-                                            1024).toFixed(0) }}KB
-                                    </span>
-                                    <a :href="`data:${imagenDetalle.contentType};base64,${imagenDetalle.data}`"
-                                        :download="`pqrs-${detalleActivo.Id}.${imagenDetalle.contentType.split('/')[1]}`"
-                                        class="text-[0.65rem] font-black text-[#299261] hover:underline cursor-pointer">
-                                        Descargar
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- Error cargando -->
-                            <div v-else
-                                class="flex items-center gap-2 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl text-[0.78rem] font-semibold text-gray-400">
-                                No se pudo cargar la imagen.
-                            </div>
-                        </div>
-
-                        <!-- Respuesta existente -->
-                        <div v-if="pqrsAccion?.Respuesta" class="flex flex-col gap-2">
-                            <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
-                                Respuesta enviada</p>
-                            <div
-                                class="px-4 py-3 bg-[#f0faf4] border-2 border-[#c8e6c9] rounded-2xl text-[0.88rem] text-[#0D291C] font-medium leading-relaxed whitespace-pre-wrap">
-                                {{ pqrsAccion.Respuesta }}
-                            </div>
-                        </div>
-
-                        <!-- Formulario responder -->
-                        <div class="flex flex-col gap-3 mt-1">
-                            <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
-                                {{ pqrsAccion?.Respuesta ? 'Actualizar respuesta' : 'Responder' }}
-                            </p>
-                            <div class="flex flex-col gap-[5px]">
-                                <div class="flex items-center justify-between">
-                                    <label class="field-label">Respuesta *</label>
-                                    <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{
-                                        fR.Respuesta.length }}/250</span>
-                                </div>
-                                <textarea v-model="fR.Respuesta" class="field-input resize-y min-h-[100px]"
-                                    placeholder="Escribe la respuesta para el cliente..." maxlength="250" />
-                            </div>
-                            <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Estado al responder</label>
-                                <select v-model="fR.Estado" class="field-input">
-                                    <option value="ABIERTO">Abierto</option>
-                                    <option value="EN_PROCESO">En proceso</option>
-                                    <option value="CERRADO">Cerrado</option>
-                                </select>
-                            </div>
-                            <div v-if="errResponder"
-                                class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
-                                ⚠ {{ errResponder }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Foot -->
-                    <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
-                        <button @click="modalDetalle = false"
-                            class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="responderPqrs" :disabled="guardandoR" class="btn-modal-dark">
-                            <span v-if="guardandoR"
-                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
-                            {{ guardandoR ? 'Enviando...' : 'Enviar respuesta' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-
-        <!-- ───── MODAL: CAMBIO DE ESTADO ───── -->
-        <Transition name="modal">
-            <div v-if="modalEstado"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalEstado = false">
-                <div class="bg-[#B8E19E] border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[380px] flex flex-col overflow-hidden modal-card"
-                    style="box-shadow: 0 7px 0 #0D291C">
-
-                    <div
-                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div
-                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
-                                <AppIcon name="gpp_maybe" :size="20" />
-                            </div>
-                            <div>
-                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Cambiar
-                                    estado</p>
-                                <p
-                                    class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
-                                    #{{ pqrsAccion?.Id }} · {{ pqrsAccion?.NombreCliente }}
-                                </p>
-                            </div>
-                        </div>
-                        <button @click="modalEstado = false"
-                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
-                    </div>
-                    <div class="px-6 py-5 flex flex-col gap-3">
-                        <div class="flex flex-col gap-2">
-                            <button v-for="est in ['ABIERTO', 'EN_PROCESO', 'CERRADO']" :key="est"
-                                @click="fEstado = est"
-                                class="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all"
-                                :class="fEstado === est
-                                    ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#050e09]'
-                                    : 'bg-white text-[#0D291C] border-[#0D291C]/15 hover:border-[#0D291C]/40 hover:bg-[#f0faf4]'">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
-                                    :class="fEstado === est ? 'bg-[#7FD344]/20' : 'bg-gray-100'">
-                                    <AppIcon name="gpp_maybe" :size="16"
-                                        :class="fEstado === est ? 'text-[#7FD344]' : 'text-gray-400'" />
-                                </div>
-                                <div class="flex flex-col items-start gap-[2px]">
-                                    <span class="text-[0.85rem] font-black">{{ estadoLabel(est) }}</span>
-                                    <span class="text-[0.62rem] font-semibold opacity-50">
-                                        {{ {
-                                            ABIERTO: 'Sin gestión aún', EN_PROCESO: 'En seguimiento', CERRADO:
-                                                'Resuelto y cerrado'
-                                        }[est] }}
-                                    </span>
-                                </div>
-                                <span v-if="pqrsAccion?.Estado === est"
-                                    class="ml-auto text-[0.6rem] font-black uppercase tracking-wide px-2 py-[2px] rounded-full"
-                                    :class="fEstado === est ? 'bg-[#7FD344]/20 text-[#7FD344]' : 'bg-gray-100 text-gray-400'">
-                                    actual
-                                </span>
-                            </button>
-                        </div>
-
-                        <div v-if="errEstado"
-                            class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
-                            ⚠ {{ errEstado }}
-                        </div>
-                    </div>
-                    <!-- Foot -->
-                    <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
-                        <button @click="modalEstado = false"
-                            class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="cambiarEstado" :disabled="guardandoEstado || fEstado === pqrsAccion?.Estado"
-                            class="btn-modal-dark">
-                            <span v-if="guardandoEstado"
-                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
-                            {{ guardandoEstado ? 'Guardando...' : 'Confirmar' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-
-        <!-- ───── MODAL: GESTIÓN DE MOTIVOS ───── -->
-        <Transition name="modal">
-            <div v-if="modalMotivos"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalMotivos = false">
-                <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[500px] max-h-[90vh] flex flex-col overflow-hidden modal-card"
-                    style="box-shadow: 0 7px 0 #0D291C">
-
-                    <!-- Head -->
-                    <div
-                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div
-                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
-                                <AppIcon name="assignment" :size="18" />
-                            </div>
-                            <div>
-                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Motivos
-                                    PQRS</p>
-                                <p
-                                    class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
-                                    Gestiona los motivos disponibles</p>
-                            </div>
-                        </div>
-                        <button @click="modalMotivos = false"
-                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
-                    </div>
-
-                    <!-- Body -->
-                    <div
-                        class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
-
-                        <!-- Formulario crear/editar -->
-                        <div class="flex flex-col gap-3 p-4 rounded-2xl border-2 border-[#e8f5e9] bg-[#f0faf4]">
-                            <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60">
-                                {{ motivoEditando ? 'Editar motivo' : 'Nuevo motivo' }}
-                            </p>
-                            <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Nombre *</label>
-                                <input v-model="fMotivo.Nombre" type="text" class="field-input" placeholder="Prob..."
-                                    maxlength="70" />
-                            </div>
-                            <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Descripción</label>
-                                <input v-model="fMotivo.Descripcion" type="text" class="field-input"
-                                    placeholder="Descripción..." maxlength="200" />
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <label
-                                    class="flex items-center gap-2 cursor-pointer text-[0.8rem] font-bold text-[#0D291C]">
-                                    <input type="checkbox" v-model="fMotivo.Estado" class="check" />
-                                    <span>Activo</span>
-                                </label>
-                            </div>
-                            <div v-if="errMotivo" class="text-[0.76rem] font-bold text-red-700">⚠ {{ errMotivo }}</div>
-                            <div class="flex gap-2">
-                                <button v-if="motivoEditando" @click="cancelarEditarMotivo"
-                                    class="btn-modal-dark btn-modal-dark--cancel flex-none px-4">
-                                    Cancelar
+                            <td class="td-cell text-center max-w-[8vw]"">
+                                <div class=" flex items-center justify-center gap-1">
+                                <button @click="abrirDetalle(pqrs)" title="Ver y responder"
+                                    class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
+                                    <AppIcon name="visibility" :size="30" />
                                 </button>
-                                <button @click="guardarMotivo" :disabled="guardandoMotivo" class="btn-modal-dark">
-                                    <span v-if="guardandoMotivo"
-                                        class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
-                                    {{ guardandoMotivo ? 'Guardando...' : motivoEditando ?
-                                        'Guardar cambios' : 'Crear motivo' }} </button>
-                            </div>
-                        </div>
-
-                        <!-- Lista de motivos -->
-                        <div class="flex flex-col gap-2">
-                            <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
-                                Motivos registrados
-                            </p>
-                            <div v-if="loadingMotivos" class="flex items-center justify-center gap-2 py-6">
-                                <div
-                                    class="w-5 h-5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
-                                <span class="text-[0.72rem] font-semibold text-gray-400">Cargando...</span>
-                            </div>
-                            <div v-else-if="motivos.length === 0"
-                                class="text-center py-6 text-[0.8rem] text-gray-400 font-semibold">
-                                No hay motivos registrados.
-                            </div>
-                            <div v-else v-for="m in motivos" :key="m.IdMotivo"
-                                class="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 transition-all"
-                                :class="m.Estado ? 'border-[#e8f5e9] bg-white' : 'border-gray-100 bg-gray-50 opacity-60'">
-                                <div class="flex flex-col gap-[2px] min-w-0">
-                                    <span class="text-[0.85rem] font-bold text-[#0D291C] truncate">{{ m.Nombre }}</span>
-                                    <span v-if="m.Descripcion" class="text-[0.7rem] text-gray-400 truncate">{{
-                                        m.Descripcion }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    <span class="text-[0.65rem] font-black px-2 py-[2px] rounded-full border"
-                                        :class="m.Estado ? 'bg-green-50 text-green-600 border-green-200' : 'bg-gray-100 text-gray-400 border-gray-200'">
-                                        {{ m.Estado ? 'Activo' : 'Inactivo' }}
-                                    </span>
-                                    <button @click="editarMotivo(m)"
-                                        class="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
-                                        <AppIcon name="edit_square" :size="16" />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Foot -->
-                    <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex-shrink-0">
-                        <button @click="modalMotivos = false" class="btn-modal-dark btn-modal-dark--cancel w-full">
-                            Cerrar
-                        </button>
-                    </div>
-                </div>
+                                <button @click="abrirCambioEstado(pqrs)" title="Cambiar estado"
+                                    class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-blue-50 hover:text-blue-500 transition-all border-0">
+                                    <AppIcon name="gpp_maybe" :size="30" />
+                                </button>
+                                <button @click="abrirCambioPrioridad(pqrs)" title="Cambiar prioridad"
+                                    class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-amber-50 hover:text-amber-500 transition-all border-0">
+                                    <AppIcon name="arrow_shape_up_stack" :size="30" />
+                                </button>
+                                <button @click="abrirAsignar(pqrs)" title="Asignar"
+                                    class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-purple-50 hover:text-purple-500 transition-all border-0">
+                                    <AppIcon name="manage_accounts" :size="30" />
+                                </button>
             </div>
-        </Transition>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+        </div>
+        <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas" :total-registros="totalRegistros"
+            :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
+    </div>
 
-        <!-- ───── MODAL: CAMBIO DE PRIORIDAD ───── -->
-        <Transition name="modal">
-            <div v-if="modalPrioridad"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalPrioridad = false">
-                <div class="bg-[#B8E19E] border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[380px] flex flex-col overflow-hidden modal-card"
-                    style="box-shadow: 0 7px 0 #0D291C">
+    <!-- ───── MODAL: DETALLE + RESPONDER ───── -->
+    <Transition name="modal">
+        <div v-if="modalDetalle"
+            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+            @click.self="modalDetalle = false">
+            <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[520px] max-h-[90vh] flex flex-col overflow-hidden modal-card"
+                style="box-shadow: 0 7px 0 #0D291C">
 
-                    <div
-                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div
-                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
-                                <AppIcon name="arrow_shape_up_stack" :size="20" />
-                            </div>
-                            <div>
-                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Cambiar
-                                    prioridad</p>
-                                <p
-                                    class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
-                                    #{{ pqrsAccion?.Id }} · {{ pqrsAccion?.NombreCliente }}
-                                </p>
-                            </div>
-                        </div>
-                        <button @click="modalPrioridad = false"
-                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
-                    </div>
-                    <div class="px-6 py-5 flex flex-col gap-3">
-                        <div class="flex flex-col gap-2">
-                            <button v-for="pri in ['ALTA', 'MEDIA', 'BAJA']" :key="pri" @click="fPrioridad = pri"
-                                class="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all"
-                                :class="fPrioridad === pri
-                                    ? {
-                                        'bg-red-600 text-white border-red-700 shadow-[0_3px_0_#991b1b]': pri === 'ALTA',
-                                        'bg-amber-500 text-white border-amber-600 shadow-[0_3px_0_#b45309]': pri === 'MEDIA',
-                                        'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#050e09]': pri === 'BAJA',
-                                    }
-                                    : 'bg-white text-[#0D291C] border-[#0D291C]/15 hover:border-[#0D291C]/40 hover:bg-[#f0faf4]'">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
-                                    :class="fPrioridad === pri
-                                        ? 'bg-white/20'
-                                        : {
-                                            'bg-red-50': pri === 'ALTA',
-                                            'bg-amber-50': pri === 'MEDIA',
-                                            'bg-gray-100': pri === 'BAJA',
-                                        }">
-                                    <AppIcon name="arrow_shape_up_stack" :size="16" :class="fPrioridad === pri
-                                        ? 'text-white'
-                                        : {
-                                            'text-red-500': pri === 'ALTA',
-                                            'text-amber-500': pri === 'MEDIA',
-                                            'text-gray-400': pri === 'BAJA',
-                                        }" />
-                                </div>
-                                <div class="flex flex-col items-start gap-[2px]">
-                                    <span class="text-[0.85rem] font-black">{{ pri }}</span>
-                                    <span class="text-[0.62rem] font-semibold opacity-60">
-                                        {{ {
-                                            ALTA: 'Atención inmediata', MEDIA: 'Seguimiento normal',
-                                            BAJA: 'Sin urgencia'
-                                        }[pri] }}
-                                    </span>
-                                </div>
-                                <span v-if="pqrsAccion?.Prioridad === pri"
-                                    class="ml-auto text-[0.6rem] font-black uppercase tracking-wide px-2 py-[2px] rounded-full"
-                                    :class="fPrioridad === pri ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400'">
-                                    actual
-                                </span>
-                            </button>
-                        </div>
-                        <div v-if="errPrioridad"
-                            class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
-                            ⚠ {{ errPrioridad }}
-                        </div>
-                    </div>
-                    <!-- Foot -->
-                    <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
-                        <button @click="modalPrioridad = false"
-                            class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="cambiarPrioridad"
-                            :disabled="guardandoPrioridad || fPrioridad === pqrsAccion?.Prioridad"
-                            class="btn-modal-dark">
-                            <span v-if="guardandoPrioridad"
-                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
-                            {{ guardandoPrioridad ? 'Guardando...' : 'Confirmar' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-
-        <!-- ───── MODAL: ASIGNAR PQRS ───── -->
-        <Transition name="modal">
-            <div v-if="modalAsignar"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalAsignar = false">
-                <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[440px] flex flex-col overflow-hidden modal-card"
-                    style="box-shadow: 0 7px 0 #0D291C">
-
-                    <!-- Head -->
-                    <div
-                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div
-                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
-                                <AppIcon name="manage_accounts" :size="20" />
-                            </div>
-                            <div>
-                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Asignar
-                                    PQRS</p>
-                                <p
-                                    class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
-                                    #{{ pqrsAccion?.Id }} · {{ pqrsAccion?.NombreCliente }}
-                                </p>
-                            </div>
-                        </div>
-                        <button @click="modalAsignar = false"
-                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin]">
-
-                        <!-- Info PQRS -->
+                <!-- Head -->
+                <div
+                    class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                    <div class="flex items-center gap-3 min-w-0">
                         <div
-                            class="flex items-center gap-3 px-4 py-3 bg-[#f0faf4] border-2 border-[#e8f5e9] rounded-2xl">
-                            <div class="flex flex-col gap-[2px] min-w-0">
-                                <span
-                                    class="text-[0.7rem] font-black uppercase tracking-wide text-gray-400">Asunto</span>
-                                <span class="text-[0.85rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Asunto ??
-                                    '—' }}</span>
-                            </div>
+                            class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344] font-black text-[0.72rem]">
+                            #{{ pqrsAccion?.Id }}
+                        </div>
+                        <div>
+                            <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">
+                                {{ pqrsAccion?.Motivo?.Nombre ?? 'PQRS' }}
+                            </p>
+                            <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                {{ pqrsAccion?.NombreCliente }} · {{ formatFecha(pqrsAccion?.FechaCreacion) }}
+                            </p>
+                        </div>
+                    </div>
+                    <button @click="modalDetalle = false"
+                        class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                </div>
+
+                <!-- Body -->
+                <div
+                    class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
+
+                    <!-- Info pills -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                            <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
+                            <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ tipoLabel(pqrsAccion?.Tipo)
+                                }}</span>
+                        </div>
+                        <div class="flex flex-col gap-[3px] px-3 py-2 rounded-xl border" :class="{
+                            'bg-red-50 border-red-100': pqrsAccion?.Prioridad === 'ALTA',
+                            'bg-amber-50 border-amber-100': pqrsAccion?.Prioridad === 'MEDIA',
+                            'bg-gray-50 border-gray-100': pqrsAccion?.Prioridad === 'BAJA',
+                        }">
                             <span
-                                class="ml-auto flex-shrink-0 inline-block px-2 py-[2px] rounded-full text-[0.65rem] font-bold border"
-                                :class="{
-                                    'bg-red-50 text-red-600 border-red-200': pqrsAccion?.Prioridad === 'ALTA',
-                                    'bg-amber-50 text-amber-600 border-amber-200': pqrsAccion?.Prioridad === 'MEDIA',
-                                    'bg-gray-50 text-gray-500 border-gray-200': pqrsAccion?.Prioridad === 'BAJA',
-                                }">{{ pqrsAccion?.Prioridad }}</span>
+                                class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Prioridad</span>
+                            <span class="text-[0.8rem] font-bold" :class="{
+                                'text-red-600': pqrsAccion?.Prioridad === 'ALTA',
+                                'text-amber-600': pqrsAccion?.Prioridad === 'MEDIA',
+                                'text-gray-500': pqrsAccion?.Prioridad === 'BAJA',
+                            }">{{ pqrsAccion?.Prioridad ?? '—' }}</span>
                         </div>
-
-                        <!-- Formulario -->
-                        <div class="flex flex-col gap-3">
-                            <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Documento usuario admin *</label>
-                                <input v-model="fAsignar.DocumentoUsuario" type="number" class="field-input"
-                                    placeholder="1098..." />
+                        <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                            <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Estado</span>
+                            <span class="text-[0.8rem] font-bold" :class="{
+                                'text-[#299261]': pqrsAccion?.Estado === 'CERRADO',
+                                'text-amber-500': pqrsAccion?.Estado === 'EN_PROCESO',
+                                'text-blue-500': pqrsAccion?.Estado === 'ABIERTO',
+                            }">{{ estadoLabel(pqrsAccion?.Estado) }}</span>
+                        </div>
+                    </div>
+                    <!-- Datos del cliente -->
+                    <div class="flex flex-col gap-2">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            Datos del cliente
+                        </p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
+                                <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{
+                                    pqrsAccion?.NombreCliente ?? '—' }}</span>
                             </div>
-                            <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Departamento *</label>
-                                <input v-model="fAsignar.Departamento" type="text" class="field-input"
-                                    placeholder="Soporte..." maxlength="50" />
+                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Documento</span>
+                                <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Documento ?? '—'
+                                    }}</span>
                             </div>
-                            <div class="flex flex-col gap-[5px]">
-                                <div class="flex items-center justify-between">
-                                    <label class="field-label">Observación</label>
-                                    <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{
-                                        fAsignar.Observacion.length }}/250</span>
-                                </div>
-                                <textarea v-model="fAsignar.Observacion" class="field-input resize-y min-h-[80px]"
-                                    placeholder="Prioridad..." maxlength="250" />
+                            <div
+                                class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
+                                <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Email
+                                    ?? '—' }}</span>
+                            </div>
+                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
+                                <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—'
+                                    }}</span>
+                            </div>
+                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Sede</span>
+                                <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Sede ??
+                                    pqrsAccion?.NombreSede ?? '—' }}</span>
                             </div>
                         </div>
+                    </div>
+                    <!-- Asunto -->
+                    <div class="flex flex-col gap-2">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            Asunto</p>
+                        <p class="text-[0.88rem] font-semibold text-[#0D291C]">{{ pqrsAccion?.Asunto ?? '—' }}</p>
+                    </div>
 
-                        <div v-if="errAsignar"
-                            class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
-                            ⚠ {{ errAsignar }}
+                    <!-- Descripción -->
+                    <div class="flex flex-col gap-2">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            Descripción del cliente</p>
+                        <p class="text-[0.88rem] text-gray-600 leading-relaxed font-medium whitespace-pre-wrap">{{
+                            pqrsAccion?.Descripcion ?? '—' }}</p>
+                    </div>
+
+                    <!-- Imagen adjunta -->
+                    <div v-if="detalleActivo.Imagen" class="flex flex-col gap-2">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            Imagen adjunta
+                        </p>
+                        <!-- Loading imagen -->
+                        <div v-if="loadingImagen"
+                            class="flex items-center justify-center gap-2 py-6 bg-gray-50 rounded-2xl border-2 border-gray-100">
+                            <div
+                                class="w-5 h-5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                            <span class="text-[0.72rem] font-semibold text-gray-400">Cargando imagen...</span>
+                        </div>
+                        <!-- Imagen cargada -->
+                        <div v-else-if="imagenDetalle" class="rounded-2xl overflow-hidden border-2 border-[#c8e6c9]">
+                            <img :src="`data:${imagenDetalle.contentType};base64,${imagenDetalle.data}`"
+                                alt="Imagen adjunta" class="w-full max-h-[220px] object-cover" />
+                            <div
+                                class="px-3 py-1.5 bg-[#f0faf4] border-t border-[#c8e6c9] flex items-center justify-between">
+                                <span class="text-[0.65rem] font-semibold text-gray-400">
+                                    {{ imagenDetalle.contentType }} · {{ (imagenDetalle.contentLength /
+                                        1024).toFixed(0) }}KB
+                                </span>
+                                <a :href="`data:${imagenDetalle.contentType};base64,${imagenDetalle.data}`"
+                                    :download="`pqrs-${detalleActivo.Id}.${imagenDetalle.contentType.split('/')[1]}`"
+                                    class="text-[0.65rem] font-black text-[#299261] hover:underline cursor-pointer">
+                                    Descargar
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Error cargando -->
+                        <div v-else
+                            class="flex items-center gap-2 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl text-[0.78rem] font-semibold text-gray-400">
+                            No se pudo cargar la imagen.
                         </div>
                     </div>
 
-                    <!-- Foot -->
-                    <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
-                        <button @click="modalAsignar = false"
-                            class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="asignarPqrs" :disabled="guardandoAsignar" class="btn-modal-dark">
-                            <span v-if="guardandoAsignar"
-                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
-                            {{ guardandoAsignar ? 'Asignando...' : 'Asignar' }}
-                        </button>
+                    <!-- Respuesta existente -->
+                    <div v-if="pqrsAccion?.Respuesta" class="flex flex-col gap-2">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            Respuesta enviada</p>
+                        <div
+                            class="px-4 py-3 bg-[#f0faf4] border-2 border-[#c8e6c9] rounded-2xl text-[0.88rem] text-[#0D291C] font-medium leading-relaxed whitespace-pre-wrap">
+                            {{ pqrsAccion.Respuesta }}
+                        </div>
+                    </div>
+
+                    <!-- Formulario responder -->
+                    <div class="flex flex-col gap-3 mt-1">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            {{ pqrsAccion?.Respuesta ? 'Actualizar respuesta' : 'Responder' }}
+                        </p>
+                        <div class="flex flex-col gap-[5px]">
+                            <div class="flex items-center justify-between">
+                                <label class="field-label">Respuesta *</label>
+                                <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{
+                                    fR.Respuesta.length }}/250</span>
+                            </div>
+                            <textarea v-model="fR.Respuesta" class="field-input resize-y min-h-[100px]"
+                                placeholder="Escribe la respuesta para el cliente..." maxlength="250" />
+                        </div>
+                        <div class="flex flex-col gap-[5px]">
+                            <label class="field-label">Estado al responder</label>
+                            <select v-model="fR.Estado" class="field-input">
+                                <option value="ABIERTO">Abierto</option>
+                                <option value="EN_PROCESO">En proceso</option>
+                                <option value="CERRADO">Cerrado</option>
+                            </select>
+                        </div>
+                        <div v-if="errResponder"
+                            class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
+                            ⚠ {{ errResponder }}
+                        </div>
                     </div>
                 </div>
+
+                <!-- Foot -->
+                <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
+                    <button @click="modalDetalle = false"
+                        class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                    <button @click="responderPqrs" :disabled="guardandoR" class="btn-modal-dark">
+                        <span v-if="guardandoR"
+                            class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+                        {{ guardandoR ? 'Enviando...' : 'Enviar respuesta' }}
+                    </button>
+                </div>
             </div>
-        </Transition>
+        </div>
+    </Transition>
+
+    <!-- ───── MODAL: CAMBIO DE ESTADO ───── -->
+    <Transition name="modal">
+        <div v-if="modalEstado"
+            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+            @click.self="modalEstado = false">
+            <div class="bg-[#B8E19E] border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[380px] flex flex-col overflow-hidden modal-card"
+                style="box-shadow: 0 7px 0 #0D291C">
+
+                <div
+                    class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div
+                            class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
+                            <AppIcon name="gpp_maybe" :size="20" />
+                        </div>
+                        <div>
+                            <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Cambiar
+                                estado</p>
+                            <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                #{{ pqrsAccion?.Id }} · {{ pqrsAccion?.NombreCliente }}
+                            </p>
+                        </div>
+                    </div>
+                    <button @click="modalEstado = false"
+                        class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                </div>
+                <div class="px-6 py-5 flex flex-col gap-3">
+                    <div class="flex flex-col gap-2">
+                        <button v-for="est in ['ABIERTO', 'EN_PROCESO', 'CERRADO']" :key="est" @click="fEstado = est"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all"
+                            :class="fEstado === est
+                                ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#050e09]'
+                                : 'bg-white text-[#0D291C] border-[#0D291C]/15 hover:border-[#0D291C]/40 hover:bg-[#f0faf4]'">
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                                :class="fEstado === est ? 'bg-[#7FD344]/20' : 'bg-gray-100'">
+                                <AppIcon name="gpp_maybe" :size="16"
+                                    :class="fEstado === est ? 'text-[#7FD344]' : 'text-gray-400'" />
+                            </div>
+                            <div class="flex flex-col items-start gap-[2px]">
+                                <span class="text-[0.85rem] font-black">{{ estadoLabel(est) }}</span>
+                                <span class="text-[0.62rem] font-semibold opacity-50">
+                                    {{ {
+                                        ABIERTO: 'Sin gestión aún', EN_PROCESO: 'En seguimiento', CERRADO:
+                                            'Resuelto y cerrado'
+                                    }[est] }}
+                                </span>
+                            </div>
+                            <span v-if="pqrsAccion?.Estado === est"
+                                class="ml-auto text-[0.6rem] font-black uppercase tracking-wide px-2 py-[2px] rounded-full"
+                                :class="fEstado === est ? 'bg-[#7FD344]/20 text-[#7FD344]' : 'bg-gray-100 text-gray-400'">
+                                actual
+                            </span>
+                        </button>
+                    </div>
+
+                    <div v-if="errEstado"
+                        class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
+                        ⚠ {{ errEstado }}
+                    </div>
+                </div>
+                <!-- Foot -->
+                <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
+                    <button @click="modalEstado = false" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                    <button @click="cambiarEstado" :disabled="guardandoEstado || fEstado === pqrsAccion?.Estado"
+                        class="btn-modal-dark">
+                        <span v-if="guardandoEstado"
+                            class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+                        {{ guardandoEstado ? 'Guardando...' : 'Confirmar' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </Transition>
+
+    <!-- ───── MODAL: GESTIÓN DE MOTIVOS ───── -->
+    <Transition name="modal">
+        <div v-if="modalMotivos"
+            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+            @click.self="modalMotivos = false">
+            <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[500px] max-h-[90vh] flex flex-col overflow-hidden modal-card"
+                style="box-shadow: 0 7px 0 #0D291C">
+
+                <!-- Head -->
+                <div
+                    class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div
+                            class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
+                            <AppIcon name="assignment" :size="18" />
+                        </div>
+                        <div>
+                            <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Motivos
+                                PQRS</p>
+                            <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                Gestiona los motivos disponibles</p>
+                        </div>
+                    </div>
+                    <button @click="modalMotivos = false"
+                        class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                </div>
+
+                <!-- Body -->
+                <div
+                    class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
+
+                    <!-- Formulario crear/editar -->
+                    <div class="flex flex-col gap-3 p-4 rounded-2xl border-2 border-[#e8f5e9] bg-[#f0faf4]">
+                        <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60">
+                            {{ motivoEditando ? 'Editar motivo' : 'Nuevo motivo' }}
+                        </p>
+                        <div class="flex flex-col gap-[5px]">
+                            <label class="field-label">Nombre *</label>
+                            <input v-model="fMotivo.Nombre" type="text" class="field-input" placeholder="Prob..."
+                                maxlength="70" />
+                        </div>
+                        <div class="flex flex-col gap-[5px]">
+                            <label class="field-label">Descripción</label>
+                            <input v-model="fMotivo.Descripcion" type="text" class="field-input"
+                                placeholder="Descripción..." maxlength="200" />
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label
+                                class="flex items-center gap-2 cursor-pointer text-[0.8rem] font-bold text-[#0D291C]">
+                                <input type="checkbox" v-model="fMotivo.Estado" class="check" />
+                                <span>Activo</span>
+                            </label>
+                        </div>
+                        <div v-if="errMotivo" class="text-[0.76rem] font-bold text-red-700">⚠ {{ errMotivo }}</div>
+                        <div class="flex gap-2">
+                            <button v-if="motivoEditando" @click="cancelarEditarMotivo"
+                                class="btn-modal-dark btn-modal-dark--cancel flex-none px-4">
+                                Cancelar
+                            </button>
+                            <button @click="guardarMotivo" :disabled="guardandoMotivo" class="btn-modal-dark">
+                                <span v-if="guardandoMotivo"
+                                    class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+                                {{ guardandoMotivo ? 'Guardando...' : motivoEditando ?
+                                    'Guardar cambios' : 'Crear motivo' }} </button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de motivos -->
+                    <div class="flex flex-col gap-2">
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            Motivos registrados
+                        </p>
+                        <div v-if="loadingMotivos" class="flex items-center justify-center gap-2 py-6">
+                            <div
+                                class="w-5 h-5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                            <span class="text-[0.72rem] font-semibold text-gray-400">Cargando...</span>
+                        </div>
+                        <div v-else-if="motivos.length === 0"
+                            class="text-center py-6 text-[0.8rem] text-gray-400 font-semibold">
+                            No hay motivos registrados.
+                        </div>
+                        <div v-else v-for="m in motivos" :key="m.IdMotivo"
+                            class="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 transition-all"
+                            :class="m.Estado ? 'border-[#e8f5e9] bg-white' : 'border-gray-100 bg-gray-50 opacity-60'">
+                            <div class="flex flex-col gap-[2px] min-w-0">
+                                <span class="text-[0.85rem] font-bold text-[#0D291C] truncate">{{ m.Nombre }}</span>
+                                <span v-if="m.Descripcion" class="text-[0.7rem] text-gray-400 truncate">{{
+                                    m.Descripcion }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <span class="text-[0.65rem] font-black px-2 py-[2px] rounded-full border"
+                                    :class="m.Estado ? 'bg-green-50 text-green-600 border-green-200' : 'bg-gray-100 text-gray-400 border-gray-200'">
+                                    {{ m.Estado ? 'Activo' : 'Inactivo' }}
+                                </span>
+                                <button @click="editarMotivo(m)"
+                                    class="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
+                                    <AppIcon name="edit_square" :size="16" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Foot -->
+                <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex-shrink-0">
+                    <button @click="modalMotivos = false" class="btn-modal-dark btn-modal-dark--cancel w-full">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </Transition>
+
+    <!-- ───── MODAL: CAMBIO DE PRIORIDAD ───── -->
+    <Transition name="modal">
+        <div v-if="modalPrioridad"
+            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+            @click.self="modalPrioridad = false">
+            <div class="bg-[#B8E19E] border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[380px] flex flex-col overflow-hidden modal-card"
+                style="box-shadow: 0 7px 0 #0D291C">
+
+                <div
+                    class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div
+                            class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
+                            <AppIcon name="arrow_shape_up_stack" :size="20" />
+                        </div>
+                        <div>
+                            <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Cambiar
+                                prioridad</p>
+                            <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                #{{ pqrsAccion?.Id }} · {{ pqrsAccion?.NombreCliente }}
+                            </p>
+                        </div>
+                    </div>
+                    <button @click="modalPrioridad = false"
+                        class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                </div>
+                <div class="px-6 py-5 flex flex-col gap-3">
+                    <div class="flex flex-col gap-2">
+                        <button v-for="pri in ['ALTA', 'MEDIA', 'BAJA']" :key="pri" @click="fPrioridad = pri"
+                            class="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all"
+                            :class="fPrioridad === pri
+                                ? {
+                                    'bg-red-600 text-white border-red-700 shadow-[0_3px_0_#991b1b]': pri === 'ALTA',
+                                    'bg-amber-500 text-white border-amber-600 shadow-[0_3px_0_#b45309]': pri === 'MEDIA',
+                                    'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#050e09]': pri === 'BAJA',
+                                }
+                                : 'bg-white text-[#0D291C] border-[#0D291C]/15 hover:border-[#0D291C]/40 hover:bg-[#f0faf4]'">
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                                :class="fPrioridad === pri
+                                    ? 'bg-white/20'
+                                    : {
+                                        'bg-red-50': pri === 'ALTA',
+                                        'bg-amber-50': pri === 'MEDIA',
+                                        'bg-gray-100': pri === 'BAJA',
+                                    }">
+                                <AppIcon name="arrow_shape_up_stack" :size="16" :class="fPrioridad === pri
+                                    ? 'text-white'
+                                    : {
+                                        'text-red-500': pri === 'ALTA',
+                                        'text-amber-500': pri === 'MEDIA',
+                                        'text-gray-400': pri === 'BAJA',
+                                    }" />
+                            </div>
+                            <div class="flex flex-col items-start gap-[2px]">
+                                <span class="text-[0.85rem] font-black">{{ pri }}</span>
+                                <span class="text-[0.62rem] font-semibold opacity-60">
+                                    {{ {
+                                        ALTA: 'Atención inmediata', MEDIA: 'Seguimiento normal',
+                                        BAJA: 'Sin urgencia'
+                                    }[pri] }}
+                                </span>
+                            </div>
+                            <span v-if="pqrsAccion?.Prioridad === pri"
+                                class="ml-auto text-[0.6rem] font-black uppercase tracking-wide px-2 py-[2px] rounded-full"
+                                :class="fPrioridad === pri ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400'">
+                                actual
+                            </span>
+                        </button>
+                    </div>
+                    <div v-if="errPrioridad"
+                        class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
+                        ⚠ {{ errPrioridad }}
+                    </div>
+                </div>
+                <!-- Foot -->
+                <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
+                    <button @click="modalPrioridad = false"
+                        class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                    <button @click="cambiarPrioridad"
+                        :disabled="guardandoPrioridad || fPrioridad === pqrsAccion?.Prioridad" class="btn-modal-dark">
+                        <span v-if="guardandoPrioridad"
+                            class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+                        {{ guardandoPrioridad ? 'Guardando...' : 'Confirmar' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </Transition>
+
+    <!-- ───── MODAL: ASIGNAR PQRS ───── -->
+    <Transition name="modal">
+        <div v-if="modalAsignar"
+            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+            @click.self="modalAsignar = false">
+            <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[440px] flex flex-col overflow-hidden modal-card"
+                style="box-shadow: 0 7px 0 #0D291C">
+
+                <!-- Head -->
+                <div
+                    class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div
+                            class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30 text-[#7FD344]">
+                            <AppIcon name="manage_accounts" :size="20" />
+                        </div>
+                        <div>
+                            <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">Asignar
+                                PQRS</p>
+                            <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                #{{ pqrsAccion?.Id }} · {{ pqrsAccion?.NombreCliente }}
+                            </p>
+                        </div>
+                    </div>
+                    <button @click="modalAsignar = false"
+                        class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                </div>
+
+                <!-- Body -->
+                <div class="px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin]">
+
+                    <!-- Info PQRS -->
+                    <div class="flex items-center gap-3 px-4 py-3 bg-[#f0faf4] border-2 border-[#e8f5e9] rounded-2xl">
+                        <div class="flex flex-col gap-[2px] min-w-0">
+                            <span class="text-[0.7rem] font-black uppercase tracking-wide text-gray-400">Asunto</span>
+                            <span class="text-[0.85rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Asunto ??
+                                '—' }}</span>
+                        </div>
+                        <span
+                            class="ml-auto flex-shrink-0 inline-block px-2 py-[2px] rounded-full text-[0.65rem] font-bold border"
+                            :class="{
+                                'bg-red-50 text-red-600 border-red-200': pqrsAccion?.Prioridad === 'ALTA',
+                                'bg-amber-50 text-amber-600 border-amber-200': pqrsAccion?.Prioridad === 'MEDIA',
+                                'bg-gray-50 text-gray-500 border-gray-200': pqrsAccion?.Prioridad === 'BAJA',
+                            }">{{ pqrsAccion?.Prioridad }}</span>
+                    </div>
+
+                    <!-- Formulario -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-col gap-[5px]">
+                            <label class="field-label">Documento usuario admin *</label>
+                            <input v-model="fAsignar.DocumentoUsuario" type="number" class="field-input"
+                                placeholder="1098..." />
+                        </div>
+                        <div class="flex flex-col gap-[5px]">
+                            <label class="field-label">Departamento *</label>
+                            <input v-model="fAsignar.Departamento" type="text" class="field-input"
+                                placeholder="Soporte..." maxlength="50" />
+                        </div>
+                        <div class="flex flex-col gap-[5px]">
+                            <div class="flex items-center justify-between">
+                                <label class="field-label">Observación</label>
+                                <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{
+                                    fAsignar.Observacion.length }}/250</span>
+                            </div>
+                            <textarea v-model="fAsignar.Observacion" class="field-input resize-y min-h-[80px]"
+                                placeholder="Prioridad..." maxlength="250" />
+                        </div>
+                    </div>
+
+                    <div v-if="errAsignar"
+                        class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
+                        ⚠ {{ errAsignar }}
+                    </div>
+                </div>
+
+                <!-- Foot -->
+                <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
+                    <button @click="modalAsignar = false"
+                        class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                    <button @click="asignarPqrs" :disabled="guardandoAsignar" class="btn-modal-dark">
+                        <span v-if="guardandoAsignar"
+                            class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+                        {{ guardandoAsignar ? 'Asignando...' : 'Asignar' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </Transition>
 
     </div>
 </template>

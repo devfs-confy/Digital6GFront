@@ -46,7 +46,7 @@ export const clienteMenuItems = [
   },
 
   {
-    label: "Faqs",
+    label: "FAQS",
     icon: icofaqs,
     route: "/cliente/faqs",
   },

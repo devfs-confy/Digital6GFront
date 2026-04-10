@@ -77,7 +77,7 @@
                                 </span>
                             </td>
                             <td class="px-5 py-3 text-sm text-gray-600 whitespace-nowrap">{{ formatFecha(a.FechaInicio)
-                                }}</td>
+                            }}</td>
                             <td class="px-5 py-3 text-sm text-gray-600 whitespace-nowrap">{{ a.FechaFin ?
                                 formatFecha(a.FechaFin) : '—' }}</td>
                             <td class="px-5 py-3 text-sm font-bold text-[#0D291C] whitespace-nowrap">{{
@@ -133,7 +133,7 @@
                             <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Valor
                                 total</span>
                             <span class="text-[0.95rem] font-black text-[#0D291C]">{{ formatPrecio(arqueoActivo.Valor)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div
                             class="flex flex-col gap-[3px] px-3 py-2.5 bg-[#f0faf4] rounded-xl border-2 border-[#c8e6c9]">
@@ -164,7 +164,7 @@
                         <AppIcon name="receipt_long" :size="20" class="text-[#299261] flex-shrink-0" />
                         <div class="flex flex-col">
                             <span class="text-[1.1rem] font-black text-[#0D291C]">{{ arqueoActivo.CantTransacciones ?? 0
-                                }}</span>
+                            }}</span>
                             <span class="text-[0.65rem] font-semibold text-gray-400">transacciones registradas</span>
                         </div>
                     </div>
@@ -181,7 +181,7 @@
                         <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-200">
                             <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Módulo</span>
                             <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ arqueoActivo.IdModulo ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                         <div
                             class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-200 col-span-2">
@@ -263,6 +263,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { showError, showSuccess } from '@/utils/swal'
 import ArqueosService from '@/api/services/arqueos.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 
@@ -300,32 +301,35 @@ const formatPrecio = (v) =>
 // ── Carga ──────────────────────────────────────────────────────────
 const cargarArqueos = async () => {
     loadingArqueos.value = true
-    try {
-        const res = await ArqueosService.getAllArqueos()
-        arqueos.value = Array.isArray(res) ? res : (res?.data ?? [])
-    } catch (e) {
-        console.error('[Arqueos]', e)
+    const res = await ArqueosService.getAllArqueos()
+    loadingArqueos.value = false
+
+    if (res?.error) {
+        showError({ status: res.status, data: res.data })
         arqueos.value = []
-    } finally {
-        loadingArqueos.value = false
+        return
     }
+
+    arqueos.value = Array.isArray(res) ? res : (res?.data ?? [])
 }
 
 onMounted(cargarArqueos)
 
 // ── Ver detalle ────────────────────────────────────────────────────
 const verArqueo = async (a) => {
-    arqueoActivo.value = a          // muestra datos inmediato
+    arqueoActivo.value = a
     asideDetalle.value = true
     loadingDetalle.value = true
-    try {
-        const res = await ArqueosService.getArqueoById(a.IdArqueo)
-        arqueoActivo.value = res?.data ?? res
-    } catch (e) {
-        console.error('[Arqueo detalle]', e)
-    } finally {
-        loadingDetalle.value = false
+
+    const res = await ArqueosService.getArqueoById(a.IdArqueo)
+    loadingDetalle.value = false
+
+    if (res?.error) {
+        showError({ status: res.status, data: res.data })
+        return
     }
+
+    arqueoActivo.value = res?.data ?? res
 }
 
 // ── Generar arqueo ─────────────────────────────────────────────────
@@ -336,21 +340,24 @@ const abrirGenerarArqueo = () => {
     modalGenerar.value = true
 }
 
+// ── Generar arqueo ─────────────────────────────────────────────────
 const generarArqueo = async () => {
     errGenerar.value = ''
     msgGenerar.value = ''
     if (!fechaGenerar.value) { errGenerar.value = 'Selecciona una fecha.'; return }
+
     generando.value = true
-    try {
-        await ArqueosService.createArqueo(fechaGenerar.value)
-        msgGenerar.value = `Arqueos generados para ${fechaGenerar.value}.`
-        await cargarArqueos()
-    } catch (e) {
-        const msg = e.response?.data?.message
-        errGenerar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al generar el arqueo.')
-    } finally {
-        generando.value = false
+    const res = await ArqueosService.createArqueo(fechaGenerar.value)
+    generando.value = false
+
+    if (res?.error) {
+        showError({ status: res.status, data: res.data })
+        return
     }
+
+    modalGenerar.value = false
+    await showSuccess('¡Arqueos generados!', `Se generaron los arqueos para ${fechaGenerar.value}.`)
+    await cargarArqueos()
 }
 </script>
 
