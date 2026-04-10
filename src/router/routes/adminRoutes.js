@@ -88,6 +88,12 @@ export const adminMenuItems = [
     route: "/admin/tarjetas",
     permission: "CREAR-CODIGOS",
   },
+  {
+    label: "Banner",
+    icon: icoTarjetas,
+    route: "/admin/banner",
+    permission: "CREAR-CODIGOS",
+  },
 ];
 
 // ── Rutas del router ───────────────────────────────────────────────
@@ -160,6 +166,12 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/Tarjetas.vue"),
       meta: { permission: "CREAR-CODIGOS" },
     },
+    {
+      path: "banner",
+      component: () => import("@/views/administrador/Banner.vue"),
+      meta: { permission: "CREAR-CODIGOS" },
+    },
+
     { path: "", redirect: "dashboard" },
   ],
 };
