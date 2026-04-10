@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -253,7 +253,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -300,7 +300,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -324,7 +324,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -333,7 +333,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -566,25 +566,25 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -944,11 +944,11 @@ const abrirDetalle = async (m) => {
     placasDetalle.value = []
     errDetalle.value = ''
     loadingDetalle.value = true
-    
+
     try {
         const res = await MensualidadesService.getMiMensualidadById(m.id)
         const data = res?.data ?? res
-         placaCambiada.value = data?.solictud
+        placaCambiada.value = data?.solictud
         detalleCompleto.value = data
         console.log("DETALLE", detalleCompleto.value)
         placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
@@ -957,8 +957,8 @@ const abrirDetalle = async (m) => {
             ...mensualidadAccion.value,
             esMoto: /^[A-Z]{3}\d{2}[A-Z]$/.test(placaPrincipal),
         }
-        
-       
+
+
     } catch {
         placasDetalle.value = m.placas ?? []
     } finally {
