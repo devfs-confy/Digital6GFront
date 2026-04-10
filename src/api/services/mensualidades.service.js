@@ -117,7 +117,7 @@ class MensualidadesService {
   async permitirCobroTarjeta(id) {
     try {
       const response = await api.patch(
-        `${this.nameRoute}/permitir-cobro-tarjeta/${id}`,
+        `${BASE_CLIENT}/permitir-cobro-tarjeta/${id}`,
       );
       return response.data;
     } catch (error) {
