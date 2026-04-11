@@ -739,7 +739,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { showError, showSuccess, showConfirm } from '@/utils/swal'
+import { showError, showSuccess, showConfirm, showInfo } from '@/utils/swal'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import PagoService from '@/api/services/pagos.service'
 import ModalCodigoMensualidad from '@/components/modals/ModalCodigoMensualidad.vue'
@@ -1017,9 +1017,6 @@ const confirmarCambioPlacas = async () => {
 
     if (usandoCambioAutorizacion.value) {
         const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
-        const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
-        const esMotoActual = mensualidadAccion.value.esMoto
-
 
         const placasPayload = nuevasPlacas.value
             .map((val, i) => {
@@ -1326,7 +1323,10 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
             const url = data?.urlPago ?? null
-            if (url) { window.location.href = url; return }
+            if (url) { 
+                showInfo("Un momento", "Redirigiendo a la página de pago...")
+                window.location.href = url; return 
+            }
 
             infoExcedente.value = excedentePendiente
             nuevasPlacas.value = placasSnapshot
@@ -1345,10 +1345,14 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             IdentificacionCliente,
             ...(!m.fechaFin && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
+        showInfo("Un momento", "Redirigiendo a la página de pago...")
         const res = await PagoService.iniciarPago(m.id, body)
         const data = res?.data ?? res
         const url = data?.urlPago ?? null
-        if (url) { window.location.href = url; return }
+        if (url) { 
+                
+                 window.location.href = url; return 
+        }
         errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
         modalFacturacion.value = false
         modalPago.value = true
