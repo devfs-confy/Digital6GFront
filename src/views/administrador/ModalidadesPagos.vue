@@ -33,15 +33,15 @@
         Cargando sedes…
       </div>
 
-      <!-- Botón habilitar/deshabilitar quincenas -->
+      <!-- Botón abrir modal quincenas -->
       <Transition name="fade-up">
         <div v-if="idSedeSeleccionada" class="flex flex-col gap-1 flex-shrink-0">
           <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">
             Quincenas
           </label>
-          <button v-permission="'HABILITAR-QUINCENAS'" @click="confirmarQuincena" :disabled="habilitandoQuincena"
+          <button v-permission="'HABILITAR-QUINCENAS'" @click="abrirModalQuincena"
             :class="[
-              'flex items-center gap-2 px-4 py-2.5 rounded-full border-2 text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed',
+              'flex items-center gap-2 px-4 py-2.5 rounded-full border-2 text-sm font-black transition-all',
               quincenaHabilitada === true
                 ? 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
                 : quincenaHabilitada === false
@@ -49,17 +49,9 @@
                   : 'bg-[#EAEAEA] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
             ]"
             style="box-shadow: 0 2px 0 rgba(0,0,0,0.12)">
-            <span v-if="habilitandoQuincena"
-              class="inline-block w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-            <template v-else>
-              <span :class="['w-2 h-2 rounded-full flex-shrink-0', quincenaHabilitada === true ? 'bg-red-500' : 'bg-[#299261]']" />
-            </template>
+            <span :class="['w-2 h-2 rounded-full flex-shrink-0', quincenaHabilitada === true ? 'bg-red-500' : 'bg-[#299261]']" />
             <span>
-              {{ habilitandoQuincena
-                  ? 'Procesando…'
-                  : quincenaHabilitada === true
-                    ? 'Deshabilitar quincenas'
-                    : 'Habilitar quincenas' }}
+              {{ quincenaHabilitada === true ? 'Quincenas: ON' : quincenaHabilitada === false ? 'Quincenas: OFF' : 'Quincenas' }}
             </span>
           </button>
         </div>
@@ -327,6 +319,82 @@
     </div>
 
   </div>
+
+  <!-- ── Modal Quincenas ── -->
+  <Transition name="modal-fade">
+    <div v-if="modalQuincena.visible"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style="background: rgba(0,0,0,0.45);"
+      @click.self="modalQuincena.visible = false">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <!-- Header -->
+        <div class="bg-[#0D291C] px-6 py-4 flex items-center justify-between">
+          <h3 class="text-sm font-black uppercase tracking-widest text-white">Configurar quincenas</h3>
+          <button @click="modalQuincena.visible = false"
+            class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+            <AppIcon name="close" :size="14" class="text-white" />
+          </button>
+        </div>
+        <!-- Body -->
+        <div class="px-6 py-5 flex flex-col gap-4">
+          <p class="text-xs text-gray-500">
+            Sede: <span class="font-bold text-[#0D291C]">{{ sedes.find(s => s.IdEstacionamiento === idSedeSeleccionada)?.Nombre }}</span>
+          </p>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A]">
+              Estado de quincenas
+            </label>
+            <div class="flex gap-3">
+              <!-- Opción Habilitar -->
+              <button type="button"
+                @click="modalQuincena.nuevoEstado = true"
+                :class="[
+                  'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-black transition-all',
+                  modalQuincena.nuevoEstado === true
+                    ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C]'
+                    : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-[#299261]/50'
+                ]">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#299261]" />
+                Habilitado
+              </button>
+              <!-- Opción Deshabilitar -->
+              <button type="button"
+                @click="modalQuincena.nuevoEstado = false"
+                :class="[
+                  'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-black transition-all',
+                  modalQuincena.nuevoEstado === false
+                    ? 'bg-red-50 border-red-300 text-red-700'
+                    : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-red-200'
+                ]">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-400" />
+                Deshabilitado
+              </button>
+            </div>
+          </div>
+          <p v-if="modalQuincena.nuevoEstado !== null" class="text-xs text-gray-400 text-center">
+            {{ modalQuincena.nuevoEstado ? 'Se permitirá el pago por quincena en esta sede.' : 'No se permitirá el pago por quincena en esta sede.' }}
+          </p>
+        </div>
+        <!-- Footer -->
+        <div class="px-6 pb-5 flex gap-3">
+          <button @click="modalQuincena.visible = false"
+            class="flex-1 py-2.5 rounded-full border-2 border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
+            Cancelar
+          </button>
+          <button @click="enviarQuincena"
+            :disabled="modalQuincena.nuevoEstado === null || habilitandoQuincena"
+            class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#0D291C] text-[#7FD344] text-sm font-black border-2 border-[#0D291C] transition-all hover:bg-[#1a4a2e] disabled:opacity-40 disabled:cursor-not-allowed"
+            style="box-shadow: 0 3px 0 #050e09">
+            <span v-if="habilitandoQuincena"
+              class="inline-block w-3.5 h-3.5 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
+            <AppIcon v-else name="check" :size="14" />
+            {{ habilitandoQuincena ? 'Aplicando…' : 'Aplicar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
 </template>
 
 <script setup>
@@ -334,7 +402,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import AppIcon from '@/components/shared/AppIcon.vue'
 import SedesService from '@/api/services/sedes.service'
 import ModalidadesPagosService from '@/api/services/modalidades.pagos.js'
-import { showSuccess, showError, showConfirm } from '@/utils/swal'
+import { showSuccess, showError } from '@/utils/swal'
 import { _limitValue } from 'chart.js/helpers'
 
 // ── Estado global ──────────────────────────────────────────────────
@@ -361,6 +429,9 @@ const conteoModalidades = reactive({})
 // Quincenas
 const quincenaHabilitada = ref(null)   // null = desconocido, true = habilitada, false = deshabilitada
 const habilitandoQuincena = ref(false)
+
+// Modal quincenas
+const modalQuincena = reactive({ visible: false, nuevoEstado: null })
 
 // ── Computed ───────────────────────────────────────────────────────
 const cantidadActivos = computed(
@@ -499,26 +570,21 @@ const guardarCambios = async () => {
   }
 }
 
-const confirmarQuincena = async () => {
-  const nuevoEstado = quincenaHabilitada.value !== true  // si está habilitada → deshabilitar, si no → habilitar
-  const accion = nuevoEstado ? 'habilitar' : 'deshabilitar'
+const abrirModalQuincena = () => {
+  modalQuincena.nuevoEstado = quincenaHabilitada.value  // pre-seleccionar el estado actual
+  modalQuincena.visible = true
+}
+
+const enviarQuincena = async () => {
+  if (modalQuincena.nuevoEstado === null) return
   const nombreSede = sedes.value.find(s => s.IdEstacionamiento === idSedeSeleccionada.value)?.Nombre ?? 'esta sede'
-
-  const { isConfirmed } = await showConfirm({
-    title: `¿${nuevoEstado ? 'Habilitar' : 'Deshabilitar'} quincenas?`,
-    text: `Estás a punto de ${accion} las quincenas para ${nombreSede}. ¿Estás seguro de realizar este cambio?`,
-    confirmText: nuevoEstado ? 'Sí, habilitar' : 'Sí, deshabilitar',
-    cancelText: 'Cancelar',
-    icon: 'warning',
-  })
-  if (!isConfirmed) return
-
   habilitandoQuincena.value = true
   try {
-    await ModalidadesPagosService.habilitarQuincena(idSedeSeleccionada.value, nuevoEstado)
-    quincenaHabilitada.value = nuevoEstado
+    await ModalidadesPagosService.habilitarQuincena(idSedeSeleccionada.value, modalQuincena.nuevoEstado)
+    quincenaHabilitada.value = modalQuincena.nuevoEstado
+    modalQuincena.visible = false
     showSuccess(
-      nuevoEstado ? '¡Quincenas habilitadas!' : '¡Quincenas deshabilitadas!',
+      modalQuincena.nuevoEstado ? '¡Quincenas habilitadas!' : '¡Quincenas deshabilitadas!',
       `El cambio se aplicó correctamente para ${nombreSede}.`
     )
   } catch (e) {
@@ -562,5 +628,18 @@ onMounted(() => {
   .maincontainer-mp {
     height: auto;
   }
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.modal-fade-enter-active .bg-white,
+.modal-fade-leave-active .bg-white {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
 }
 </style>
