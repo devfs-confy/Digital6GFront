@@ -7,20 +7,20 @@ class ClientService {
     this.nameRoute = "v1/usuarios/clientes";
   }
 
-  // GET /v1/usuarios/clientes?sede={id} — admin, requiere VER-USUARIOS
-  async getAllClients(params) {
+  // POST /v1/usuarios/clientes — público, crear cliente
+  async createClient(dto) {
     try {
-      const response = await api.get(this.nameRoute, { params });
+      const response = await api.post(this.nameRoute, dto);
       return response.data;
     } catch (error) {
       return handleError(error);
     }
   }
 
-  // POST /v1/usuarios/clientes — público, crear cliente
-  async createClient(dto) {
+  // PUT /v1/usuarios/clientes — cliente autenticado, actualiza su propio Email, Telefono, Nombre y Apellido
+  async updateOwnProfile(dto) {
     try {
-      const response = await api.post(this.nameRoute, dto);
+      const response = await api.put(this.nameRoute, dto);
       return response.data;
     } catch (error) {
       return handleError(error);
@@ -37,10 +37,12 @@ class ClientService {
     }
   }
 
-  // PUT /v1/usuarios/clientes — cliente autenticado, actualiza su propio Email, Telefono, Nombre y Apellido
-  async updateOwnProfile(dto) {
+  // ADMINISTRADOR
+
+  // GET /v1/usuarios/clientes?sede={id} — admin, requiere VER-USUARIOS
+  async getAllClients(params) {
     try {
-      const response = await api.put(this.nameRoute, dto);
+      const response = await api.get(this.nameRoute, { params });
       return response.data;
     } catch (error) {
       return handleError(error);

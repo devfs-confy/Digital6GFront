@@ -170,7 +170,7 @@
                     <div class="flex flex-col gap-[5px]">
                         <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Placa
                             principal *</label>
-                        <input v-model="fC.Placa1" type="text" maxlength="7"
+                        <input v-model="fC.Placa1" type="text" maxlength="6"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-black tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full uppercase"
                             placeholder="ABC..." @input="fC.Placa1 = fC.Placa1.toUpperCase()" />
                     </div>
@@ -178,7 +178,7 @@
                         <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">
                             Placa 2 <span class="normal-case opacity-60 font-semibold">(opcional)</span>
                         </label>
-                        <input v-model="fC.Placa2" type="text" maxlength="7"
+                        <input v-model="fC.Placa2" type="text" maxlength="6"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm font-mono font-black tracking-[0.1em] text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full uppercase"
                             placeholder="XYZ..." @input="fC.Placa2 = fC.Placa2.toUpperCase()" />
                     </div>

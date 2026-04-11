@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -254,7 +254,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -301,7 +301,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -325,7 +325,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -334,7 +334,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -380,7 +380,7 @@
                             </div>
 
                             <!-- Manual start date -->
-                            <div v-if="!mensualidadAccion?.fechaFin"
+                            <div v-if="!mensualidadAccion?.fechaFin && !esSoloTarjeta"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -567,25 +567,42 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                                }}</span>
+                                        </div>
+                                        <div
+                                            class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+                                                fill="#d97706" viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
+                                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                            </svg>
+                                            <span>
+                                                Al confirmar pagarás un excedente por la diferencia de autorización de
+                                                tu
+                                                mensualidad actual.
+                                                Al vencer, se te cobrará el valor completo de
+                                                <strong>{{ infoExcedente.autorizacionNueva }}</strong>.
+                                                Si prefieres no pagar el excedente ahora, espera a que termine tu
+                                                mensualidad
+                                                actual.
+                                            </span>
                                         </div>
                                         <div
                                             class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -596,6 +613,7 @@
                                     </div>
                                 </div>
                             </Transition>
+
                         </div>
                         <!-- Error -->
                         <div v-if="errPlacas"
@@ -721,7 +739,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { showError, showSuccess } from '@/utils/swal'
+import { showError, showSuccess, showConfirm } from '@/utils/swal'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import PagoService from '@/api/services/pagos.service'
 import ModalCodigoMensualidad from '@/components/modals/ModalCodigoMensualidad.vue'
@@ -998,17 +1016,10 @@ const confirmarCambioPlacas = async () => {
     guardandoPlacas.value = true
 
     if (usandoCambioAutorizacion.value) {
-        // const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
-        // const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
-        // const esMotoActual = mensualidadAccion.value.esMoto
+        const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
+        const esMotoIngresada = /^[A-Z]{3}\d{2}[A-Z]$/.test(placaIngresada)
+        const esMotoActual = mensualidadAccion.value.esMoto
 
-        // if (esMotoIngresada === esMotoActual) {
-        //     errPlacas.value = esMotoIngresada
-        //         ? 'La placa ingresada es de moto. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
-        //         : 'La placa ingresada es de carro. Si quieres cambiar la placa sin cambiar el tipo, usa "Cambiar placa".'
-        //     guardandoPlacas.value = false
-        //     return
-        // }
 
         const placasPayload = nuevasPlacas.value
             .map((val, i) => {
@@ -1017,16 +1028,11 @@ const confirmarCambioPlacas = async () => {
             })
             .filter(arr => arr.length > 0)
 
-        console.log('[cambiarAutorizacion] payload:', JSON.stringify({
-            IdPersonaAutorizada: Number(mensualidadAccion.value.id),
-            Placas: placasPayload,
-        }))
 
         const res = await MensualidadesService.cambiarAutorizacion({
             IdPersonaAutorizada: Number(mensualidadAccion.value.id),
             Placas: placasPayload,
         })
-        console.log('[cambiarAutorizacion] res:', JSON.stringify(res))
         guardandoPlacas.value = false
 
         if (res?.error) {
@@ -1257,8 +1263,20 @@ const seleccionarMesesExtra = async (n) => {
     }
 }
 
-const confirmarPago = () => {
+const confirmarPago = async () => {
     if (!opcionSeleccionada.value) return
+
+    if (mensualidadAccion.value?.cobroTarjetaPermitido) {
+        const { isConfirmed } = await showConfirm({
+            title: '¿Recuerdas reclamar tu tarjeta?',
+            text: `Después de completar el pago, dirígete al punto de atención de ${mensualidadAccion.value?.sede ?? 'tu sede'} para reclamar tu tarjeta de acceso.`,
+            confirmText: 'Entendido, continuar',
+            cancelText: 'Volver',
+            icon: 'info',
+        })
+        if (!isConfirmed) return
+    }
+
     modalPago.value = false
     consentimientoAceptado.value = false
     modalConsentimiento.value = true

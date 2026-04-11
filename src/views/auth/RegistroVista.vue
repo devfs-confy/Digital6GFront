@@ -566,7 +566,7 @@ const onDocumentoInput = () => {
     errSubmit.value = ''
     const doc = form.Documento.replace(/\D/g, '')
     form.Documento = doc
-    if (doc.length >= 6) docTimer = setTimeout(() => buscarDocumento(doc), 700)
+    if (doc.length >= 6) docTimer = setTimeout(() => buscarDocumento(doc), 900)
 }
 
 const buscarDocumento = async (doc) => {

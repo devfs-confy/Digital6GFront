@@ -89,7 +89,7 @@
                         <tr v-else v-for="cliente in listaClientes" :key="cliente.Documento"
                             class="border-b border-[#e8f5e9] last:border-b-0 transition-colors duration-150 hover:bg-[#f0faf4] group">
 
-                            <td class="td-cell  group-hover:bg-[#f0faf4]">
+                            <td class="td-cell  group-hover:bg-[#f0faf4] max-w-[155px]">
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-[0.75rem] flex-shrink-0 border-2 border-[#e8f5e9]">

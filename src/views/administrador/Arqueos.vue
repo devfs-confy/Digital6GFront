@@ -265,6 +265,7 @@
 import { ref, onMounted } from 'vue'
 import ArqueosService from '@/api/services/arqueos.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
+import { showSuccess, showError } from '@/utils/swal'
 
 // ── Estado ─────────────────────────────────────────────────────────
 const arqueos = ref([])
@@ -337,21 +338,19 @@ const abrirGenerarArqueo = () => {
 }
 
 const generarArqueo = async () => {
-    errGenerar.value = ''
-    msgGenerar.value = ''
     if (!fechaGenerar.value) { errGenerar.value = 'Selecciona una fecha.'; return }
     generando.value = true
-    try {
-        await ArqueosService.createArqueo(fechaGenerar.value)
-        msgGenerar.value = `Arqueos generados para ${fechaGenerar.value}.`
-        await cargarArqueos()
-    } catch (e) {
-        const msg = e.response?.data?.message
-        errGenerar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al generar el arqueo.')
-    } finally {
-        generando.value = false
-    }
+
+    const res = await ArqueosService.createArqueo(fechaGenerar.value)
+    generando.value = false
+
+    if (res?.error) return
+
+    modalGenerar.value = false
+    await cargarArqueos()
+    showSuccess('¡Arqueos generados!', `Arqueos generados para ${fechaGenerar.value}.`)
 }
+
 </script>
 
 <style scoped>

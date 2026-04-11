@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full flex flex-col gap-6 maincontainer">
+    <div class="h-full flex flex-col gap-6 maincontainer w-full ">
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
@@ -63,8 +63,8 @@
         </div>
 
         <!-- Tabla -->
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-            <div class="table-scroll-wrapper">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col w-full max-w-[100%] ">
+            <div class="table-scroll-wrapper overflow-x-auto">
                 <table class="border-collapse min-w-[800px] w-full">
                     <thead>
                         <tr>
@@ -102,12 +102,13 @@
                         </tr>
                         <tr v-else v-for="pqrs in listaPqrs" :key="pqrs.Id"
                             class="border-b border-[#e8f5e9] last:border-b-0 transition-colors duration-150 hover:bg-[#f0faf4] group">
-                            <td class="td-cell font-mono text-[0.8rem] text-gray-400">#{{ pqrs.Id }}</td>
-                            <td class="td-cell">
+                            <td class="td-cell max-w-[40px] font-mono text-[0.8rem] text-gray-400">#{{ pqrs.Id }}</td>
+                            <td class="td-cell max-w-[155px]">
                                 <div class="flex flex-col">
-                                    <span class="font-semibold text-[#0D291C] text-[0.85rem]">{{ pqrs.NombreCliente
-                                    }}</span>
-                                    <span class="text-[0.72rem] text-gray-400">{{ pqrs.Email }}</span>
+                                    <span class="font-semibold truncate text-[#0D291C] text-[0.85rem]">{{
+                                        pqrs.NombreCliente
+                                        }}</span>
+                                    <span class="text-[0.72rem] truncate text-gray-400">{{ pqrs.Email }}</span>
                                 </div>
                             </td>
                             <td class="td-cell">
@@ -119,7 +120,7 @@
                                     <span class="text-[0.72rem] text-gray-400">{{ pqrs.Motivo?.Nombre ?? '—' }}</span>
                                 </div>
                             </td>
-                            <td class="td-cell max-w-[180px]">
+                            <td class="td-cell max-w-[150px]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Asunto ?? '—'
                                 }}</span>
                             </td>
@@ -186,7 +187,7 @@
                                 #{{ pqrsAccion?.Id }}
                             </div>
                             <div>
-                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none">
+                                <p class="text-[0.95rem] font-black text-white italic uppercase leading-none text-left">
                                     {{ pqrsAccion?.Motivo?.Nombre ?? 'PQRS' }}
                                 </p>
                                 <p
@@ -201,7 +202,7 @@
 
                     <!-- Body -->
                     <div
-                        class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
+                        class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent] pb-[8%]">
 
                         <!-- Info pills -->
                         <div class="grid grid-cols-3 gap-2">
@@ -234,6 +235,38 @@
                                 }">{{ estadoLabel(pqrsAccion?.Estado) }}</span>
                             </div>
                         </div>
+
+                        <!-- Datos del cliente -->
+                        <div class="flex flex-col gap-2">
+                            <p
+                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                                Datos del cliente
+                            </p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{
+                                        pqrsAccion?.NombreCliente ?? '—' }}</span>
+                                </div>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—'
+                                    }}</span>
+                                </div>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">
+                                        {{ pqrsAccion?.Email ?? '—' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <!-- Asunto -->
                         <div class="flex flex-col gap-2">
@@ -335,8 +368,9 @@
                     <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
                         <button @click="modalDetalle = false"
                             class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="responderPqrs" :disabled="guardandoR" class="btn-modal-dark">
-                            <span v-if="guardandoR"
+                        <button @click="responderPqrs"
+                            :disabled="guardandoR || !fR.Respuesta.trim() || fR.Respuesta.trim() === respuestaOriginal.trim()"
+                            class="btn-modal-dark"> <span v-if="guardandoR"
                                 class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
                             {{ guardandoR ? 'Enviando...' : 'Enviar respuesta' }}
                         </button>
@@ -751,6 +785,8 @@ const imagenDetalle = ref(null)
 const loadingImagen = ref(false)
 const detalleActivo = ref(null)
 const loadingDetalle = ref(false)
+const respuestaOriginal = ref('')
+
 
 // ── Formularios ────────────────────────────────────────────────────
 const fR = reactive({ Respuesta: '', Estado: 'ABIERTO' })
@@ -846,12 +882,16 @@ const limpiarFiltros = () => {
     cargarPqrs()
 }
 
+
+
+
 // ── Detalle / Responder ────────────────────────────────────────────
 const abrirDetalle = async (pqrs) => {
     pqrsAccion.value = pqrs
     detalleActivo.value = pqrs        // muestra datos inmediato
     fR.Respuesta = pqrs.Respuesta ?? ''
     fR.Estado = pqrs.Estado ?? 'ABIERTO'
+    respuestaOriginal.value = pqrs.Respuesta ?? ''
     errResponder.value = ''
     imagenDetalle.value = null
     modalDetalle.value = true
@@ -1181,6 +1221,10 @@ input.search-input {
 }
 
 .th-cell {
-    text-align: center;
+    text-align: left;
+}
+
+.td-cell {
+    text-align: left;
 }
 </style>
