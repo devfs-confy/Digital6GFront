@@ -94,6 +94,12 @@ export const adminMenuItems = [
     route: "/admin/banner",
     permission: "CREAR-CODIGOS",
   },
+  {
+    label: "Modalidades<br>de Pago",
+    icon: icoTarifas,
+    route: "/admin/modalidades-pagos",
+    permission: "VER-SEDES",
+  },
 ];
 
 // ── Rutas del router ───────────────────────────────────────────────
@@ -170,6 +176,11 @@ export const adminRoutes = {
       path: "banner",
       component: () => import("@/views/administrador/Banner.vue"),
       meta: { permission: "CREAR-CODIGOS" },
+    },
+    {
+      path: "modalidades-pagos",
+      component: () => import("@/views/administrador/ModalidadesPagos.vue"),
+      meta: { permission: "VER-SEDES" },
     },
 
     { path: "", redirect: "dashboard" },
