@@ -226,21 +226,26 @@
                         </div>
                     </label>
 
-                    <!-- CobroTarjeta solo lectura -->
-                    <div class="flex items-center gap-2.5 flex-1 p-3.5 bg-white rounded-xl border-2 border-gray-200">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                            :class="detalle?.CobroTarjeta ? 'bg-[#dcfce7]' : 'bg-gray-100'">
-                            <AppIcon name="payment_card" :size="16"
-                                :class="detalle?.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'" />
+                    <!-- CobroTarjeta toggle -->
+                    <label @click.prevent="toggleCobroTarjeta"
+                        class="flex items-center gap-3 cursor-pointer select-none flex-1 p-3.5 bg-white rounded-xl border-2 transition-all"
+                        :class="form.CobroTarjeta ? 'border-[#299261]' : 'border-gray-200'">
+                        <div class="relative flex-shrink-0">
+                            <input type="checkbox" :checked="form.CobroTarjeta" class="sr-only" />
+                            <div class="w-11 h-6 rounded-full transition-colors duration-200"
+                                :class="form.CobroTarjeta ? 'bg-[#299261]' : 'bg-gray-300'">
+                                <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                                    :class="form.CobroTarjeta ? 'translate-x-5' : 'translate-x-0'" />
+                            </div>
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[0.78rem] font-black"
-                                :class="detalle?.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'">
-                                {{ detalle?.CobroTarjeta ? 'Con tarjeta' : 'Sin tarjeta' }}
+                                :class="form.CobroTarjeta ? 'text-[#299261]' : 'text-gray-400'">
+                                {{ form.CobroTarjeta ? 'Con tarjeta' : 'Sin tarjeta' }}
                             </span>
                             <span class="text-[0.65rem] text-gray-400 font-medium">Cobro tarjeta</span>
                         </div>
-                    </div>
+                    </label>
                 </div>
 
                 <!-- Nombre titular -->
@@ -302,6 +307,7 @@ import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
+import { showConfirm } from '@/utils/swal'
 
 // ── Estado ─────────────────────────────────────────────────────────
 const mensualidades = ref([])
@@ -329,6 +335,7 @@ const form = reactive({
     FechaInicio: '',
     FechaFin: '',
     Estado: true,
+    CobroTarjeta: false,
     placas: ['', '', '', '', ''],
 })
 
@@ -492,6 +499,7 @@ const abrirDetalle = async (m) => {
             FechaInicio: d.FechaInicio ? d.FechaInicio.slice(0, 10) : '',
             FechaFin: d.FechaFin ? d.FechaFin.slice(0, 10) : '',
             Estado: d.Estado ?? true,
+            CobroTarjeta: d.CobroTarjeta ?? false,
             placas: [d.Placa1 ?? '', d.Placa2 ?? '', d.Placa3 ?? '', d.Placa4 ?? '', d.Placa5 ?? ''],
         })
     } catch (e) {
@@ -508,6 +516,21 @@ const cerrarPanel = () => {
     guardando.value = false
 }
 
+const toggleCobroTarjeta = async () => {
+    const quitando = form.CobroTarjeta
+    const { isConfirmed } = await showConfirm({
+        title: quitando ? '¿Quitar cobro de tarjeta?' : '¿Activar cobro de tarjeta?',
+        text: quitando
+            ? 'El cliente dejará de tener cobro de tarjeta asociado.'
+            : 'Se habilitará el cobro de tarjeta para este cliente.',
+        confirmText: 'Sí, confirmar',
+        cancelText: 'Cancelar',
+        icon: 'warning',
+    })
+    if (!isConfirmed) return
+    form.CobroTarjeta = !form.CobroTarjeta
+}
+
 // ── Guardar ────────────────────────────────────────────────────────
 const guardar = async () => {
     errGuardar.value = ''
@@ -517,6 +540,7 @@ const guardar = async () => {
         const dto = {
             NombreApellidos: form.NombreApellidos || undefined,
             Estado: form.Estado,
+            CobroTarjeta: form.CobroTarjeta,
             Placa1: form.placas[0] || null,
             Placa2: form.placas[1] || null,
             Placa3: form.placas[2] || null,
