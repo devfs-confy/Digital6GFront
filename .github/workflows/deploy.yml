@@ -45,10 +45,26 @@ jobs:
           path: deploy-branch
           fetch-depth: 0
 
+      - name: Add .htaccess to dist
+        run: |
+          cat > dist/.htaccess << 'EOF'
+          Options -MultiViews
+          RewriteEngine On
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteRule ^ index.html [QSA,L]
+          EOF
+
       - name: Copy dist to deploy branch
         run: |
-          rm -rf deploy-branch/*
-          cp -r dist/. deploy-branch/
+          # Limpiar todo en deploy-branch excepto .git
+          find deploy-branch -mindepth 1 -maxdepth 1 \
+            ! -name '.git' \
+            ! -name '.claude' \
+            ! -name '.gemini' \
+            ! -name '.vscode' \
+            -exec rm -rf {} +
+          # Copiar dist (excluye archivos .env por si acaso)
+          rsync -a --exclude='.env' --exclude='.env.*' dist/. deploy-branch/
 
       - name: Commit dist to a temp branch and open PR
         run: |
