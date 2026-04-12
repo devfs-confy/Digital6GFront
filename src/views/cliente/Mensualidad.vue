@@ -916,14 +916,16 @@ const cargarMisMensualidades = async () => {
     loading.value = true
     try {
         const res = await MensualidadesService.getMisMensualidades()
+        console.log(res)
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
+        console.log(raw)
         mensualidades.value = raw.map(m => ({
             _raw: m,
             cobroTarjetaPermitido: !!(m.CobroTarjeta),
             id: m.IdPersonaAutorizada,
             nombre: m.NombreApellidos ?? '—',
-            fechaInicio: m.FechaInicio ? m.FechaInicio.slice(0, 10) : null,
-            fechaFin: m.FechaFin ? m.FechaFin.slice(0, 10) : null,
+            fechaInicio: m.FechaInicio ? m.FechaInicio : null,
+            fechaFin: m.FechaFin ? m.FechaFin : null,
             sede: m.T_Estacionamiento?.Nombre ?? '—',
             mensualidad: m.T_Autorizaciones?.NombreAutorizacion ?? '—',
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),

@@ -554,12 +554,10 @@ const guardar = async () => {
             ...(form.FechaInicio && { FechaInicio: form.FechaInicio }),
             ...(form.FechaFin && { FechaFin: form.FechaFin }),
         }
-        console.log({dto})
         const response = await MensualidadesService.updateById(id, dto)
         if(response?.error){
            return showError({data: response})
         }
-        console.log(response)
         showSuccess('Mensualidad', response.message)
         await cargarMensualidades()
         cerrarPanel()
