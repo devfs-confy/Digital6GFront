@@ -747,7 +747,7 @@ import ModalConsentimiento from '@/components/modals/ModalConsentimiento.vue'
 import ModalDetalleMensualidad from '@/components/modals/ModalDetalleMensualidad.vue'
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
-
+import FormDate from '@/utils/formats.date'
 
 // ── Stores ────────────────────────────────────────────────────
 const authStore = useAuthStore()
@@ -826,6 +826,7 @@ const formatFecha = (f) => {
     if (!f) return '—'
     const d = parseLocal(f)
     return d ? d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
+   
 }
 
 // ── Helpers de UI ─────────────────────────────────────────────
@@ -845,9 +846,9 @@ const diasRestantes = (m) => {
     if (!ff) return 0
     const fin = parseLocal(ff)
     if (!fin) return 0
-    const hoy = new Date()
+    const hoy = FormDate.getDateNow()
     hoy.setHours(0, 0, 0, 0)
-    return Math.max(0, Math.round((fin - hoy) / 86400000))
+    return Math.max(0, Math.ceil((fin - hoy) / 86400000))
 }
 
 const porcentajeVigencia = (m) => {
@@ -916,9 +917,7 @@ const cargarMisMensualidades = async () => {
     loading.value = true
     try {
         const res = await MensualidadesService.getMisMensualidades()
-        console.log(res)
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
-        console.log(raw)
         mensualidades.value = raw.map(m => ({
             _raw: m,
             cobroTarjetaPermitido: !!(m.CobroTarjeta),
@@ -960,7 +959,6 @@ const abrirDetalle = async (m) => {
         const data = res?.data ?? res
         placaCambiada.value = data?.solictud
         detalleCompleto.value = data
-        console.log("DETALLE", detalleCompleto.value)
         placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
         const placaPrincipal = (placasDetalle.value[0] ?? '').toUpperCase().trim()
         mensualidadAccion.value = {

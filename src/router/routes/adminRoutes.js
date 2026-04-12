@@ -11,6 +11,7 @@ import IcoVerificacion from "@/assets/img/verified.svg?raw";
 import icoTarifas from "@/assets/img/car_tag.svg?raw";
 import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
 import icoRoles from "@/assets/img/dashboard_customize_white.svg?raw";
+import icoUCC from "@/assets/img/how_to_reg.svg?raw";
 
 // ── Ítems del menú lateral ─────────────────────────────────────────
 export const adminMenuItems = [
@@ -100,6 +101,12 @@ export const adminMenuItems = [
     route: "/admin/modalidades-pagos",
     permission: "VER-SEDES",
   },
+  {
+    label: "Comunidad<br>UCC",
+    icon: icoUCC,
+    route: "/admin/comunidad-ucc",
+    permission: "VER-USUARIOS",
+  },
 ];
 
 // ── Rutas del router ───────────────────────────────────────────────
@@ -181,6 +188,11 @@ export const adminRoutes = {
       path: "modalidades-pagos",
       component: () => import("@/views/administrador/ModalidadesPagos.vue"),
       meta: { permission: "VER-SEDES" },
+    },
+    {
+      path: "comunidad-ucc",
+      component: () => import("@/views/administrador/ComunidadUCC.vue"),
+      meta: { permission: "VER-USUARIOS" },
     },
 
     { path: "", redirect: "dashboard" },

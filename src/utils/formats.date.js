@@ -32,6 +32,7 @@ function DateTimeLocal(date) {
 }
 
 function FechaSinCeros(fecha) {
+  if (fecha == null) return "---";
   // Dividir la fecha en partes
   const [anio, mes, dia] = fecha.split("-");
 
@@ -60,11 +61,20 @@ function getColombiaDateString(fin) {
     if (fin) return `${yyyy}-${mm}-${dd}`
     return `${yyyy}-${mm}-${dd}`;
 }
+
+//DATETIME LUXON - return en new Date()
+ function getDateNow(){
+
+    return DateTime.local().setZone('America/Bogota').toJSDate();
+   
+
+ }
 export default {
   fechaFormato,
   InputLocal,
   DateTimeLocal,
   FechaSinCeros,
   fechaSinDate,
-  getColombiaDateString
+  getColombiaDateString,
+  getDateNow
 };
