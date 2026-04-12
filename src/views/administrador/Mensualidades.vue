@@ -272,11 +272,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
                         <label class="aside-field-label">Fecha inicio</label>
-                        <input v-model="form.FechaInicio" type="date" class="aside-field-input" />
+                        <input v-model="form.FechaInicio" type="datetime-local" class="aside-field-input" />
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label class="aside-field-label">Fecha fin</label>
-                        <input v-model="form.FechaFin" type="date" class="aside-field-input" />
+                        <input v-model="form.FechaFin" type="datetime-local" class="aside-field-input" />
                     </div>
                 </div>
 
@@ -308,7 +308,8 @@ import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import { showConfirm } from '@/utils/swal'
-
+import formatsDate from '@/utils/formats.date'
+import SwalBase, { showError, showSuccess } from '@/utils/swal'
 // ── Estado ─────────────────────────────────────────────────────────
 const mensualidades = ref([])
 const sedes = ref([])
@@ -380,7 +381,8 @@ const placas = (m) =>
 
 const formatFecha = (f) => {
     if (!f) return '—'
-    return new Date(f).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: '2-digit' })
+    return formatsDate.fechaSinDate(f)
+    //new Date(f).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
 
 const vigenciaClass = (m) => {
@@ -496,12 +498,13 @@ const abrirDetalle = async (m) => {
             NombreApellidos: d.NombreApellidos ?? '',
             Nit: d.Nit ?? '',
             NombreEmpresa: d.NombreEmpresa ?? '',
-            FechaInicio: d.FechaInicio ? d.FechaInicio.slice(0, 10) : '',
-            FechaFin: d.FechaFin ? d.FechaFin.slice(0, 10) : '',
+            FechaInicio: d.FechaInicio ? formatsDate.fechaSinDate(d.FechaInicio) : '',
+            FechaFin: d.FechaFin ? formatsDate.fechaSinDate(d.FechaFin) : '',
             Estado: d.Estado ?? true,
             CobroTarjeta: d.CobroTarjeta ?? false,
             placas: [d.Placa1 ?? '', d.Placa2 ?? '', d.Placa3 ?? '', d.Placa4 ?? '', d.Placa5 ?? ''],
         })
+      
     } catch (e) {
         console.error('[Mensualidades detalle]', e.response?.data ?? e.message)
     } finally {
@@ -551,19 +554,17 @@ const guardar = async () => {
             ...(form.FechaInicio && { FechaInicio: form.FechaInicio }),
             ...(form.FechaFin && { FechaFin: form.FechaFin }),
         }
-        await MensualidadesService.updateById(id, dto)
-
-        const idx = mensualidades.value.findIndex(m => m.IdPersonaAutorizada === id)
-        if (idx !== -1) Object.assign(mensualidades.value[idx], {
-            NombreApellidos: form.NombreApellidos,
-            Estado: form.Estado,
-            Placa1: form.placas[0] || null,
-            Placa2: form.placas[1] || null,
-            FechaInicio: form.FechaInicio || null,
-            FechaFin: form.FechaFin || null,
-        })
+        console.log({dto})
+        const response = await MensualidadesService.updateById(id, dto)
+        if(response?.error){
+           return showError({data: response})
+        }
+        console.log(response)
+        showSuccess('Mensualidad', response.message)
+        await cargarMensualidades()
         cerrarPanel()
     } catch (e) {
+        console.error('[Mensualidades guardar]', e.response?.data ?? e.message)
         const msg = e.response?.data?.message
         errGuardar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')
     } finally {
