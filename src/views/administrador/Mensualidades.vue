@@ -251,8 +251,7 @@
                 <!-- Nombre titular -->
                 <div class="flex flex-col gap-1.5">
                     <label class="aside-field-label">Nombre completo</label>
-                    <input v-model="form.NombreApellidos" type="text" placeholder="JUAN..."
-                        class="aside-field-input" />
+                    <input v-model="form.NombreApellidos" type="text" placeholder="JUAN..." class="aside-field-input" />
                 </div>
 
                 <!-- NIT + Empresa -->
@@ -293,6 +292,20 @@
                         </div>
                     </div>
                 </div>
+                <!-- Autorización -->
+                <div class="flex flex-col gap-1.5">
+                    <label class="aside-field-label">Autorización</label>
+                    <select v-model="form.IdAutorizacion" class="aside-field-input cursor-pointer">
+                        <option :value="null" disabled>Selecciona una autorización</option>
+                        <option v-for="a in autorizaciones" :key="a.IdAutorizacion" :value="Number(a.IdAutorizacion)">
+                            {{ a.NombreAutorizacion }}
+                        </option>
+                    </select>
+                    <p class="text-[0.65rem] text-gray-400 pl-0.5">
+                        Actual: <strong class="text-[#0D291C]">{{ detalle?.T_Autorizaciones?.NombreAutorizacion ?? '—'
+                            }}</strong>
+                    </p>
+                </div>
 
             </template>
 
@@ -310,6 +323,7 @@ import TablePaginacion from '@/components/shared/Paginacion.vue'
 import { showConfirm } from '@/utils/swal'
 import formatsDate from '@/utils/formats.date'
 import SwalBase, { showError, showSuccess } from '@/utils/swal'
+import AutorizacionesService from '@/api/services/autorizaciones.service'
 // ── Estado ─────────────────────────────────────────────────────────
 const mensualidades = ref([])
 const sedes = ref([])
@@ -318,7 +332,7 @@ const paginaActual = ref(1)
 const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
-
+const autorizaciones = ref([])
 // Panel
 const panelAbierto = ref(false)
 const loadingDetalle = ref(false)
@@ -337,6 +351,7 @@ const form = reactive({
     FechaFin: '',
     Estado: true,
     CobroTarjeta: false,
+    IdAutorizacion: null,
     placas: ['', '', '', '', ''],
 })
 
@@ -414,7 +429,11 @@ const cargarTodasLasMensualidades = async () => {
 
         mensualidades.value = resultados.flatMap((res, idx) => {
             const items = res?.data?.data ?? res?.data ?? []
-            return items.map(m => ({ ...m, _sedeName: sedes.value[idx]?.Nombre ?? '' }))
+            return items.map(m => ({
+                ...m,
+                _sedeName: sedes.value[idx]?.Nombre ?? '',
+                _sedeId: sedes.value[idx]?.IdEstacionamiento ?? '',
+            }))
         })
     } catch (e) {
         console.error('[Mensualidades todas]', e.response?.data ?? e.message)
@@ -437,13 +456,16 @@ const cargarMensualidades = async () => {
             search: filtros.search || undefined,
         })
 
-        console.log(res)
-
         mensualidades.value = (res?.data?.data ?? res?.data ?? [])
-            .map(m => ({ ...m, _sedeName: sedeNombre.value }))
+            .map(m => ({
+                ...m,
+                _sedeName: sedeNombre.value,
+                _sedeId: filtros.sede,
+            }))
         totalRegistros.value = res?.data?.total ?? res?.total ?? mensualidades.value.length
         totalPaginas.value = res?.data?.totalPages ?? res?.totalPages ??
             Math.max(1, Math.ceil(totalRegistros.value / limit.value))
+
     } catch (e) {
         console.error('[Mensualidades]', e.response?.data ?? e.message)
         mensualidades.value = []
@@ -483,28 +505,49 @@ onMounted(async () => {
     await cargarTodasLasMensualidades()
 })
 
+
 // ── Panel detalle ──────────────────────────────────────────────────
 const abrirDetalle = async (m) => {
     panelAbierto.value = true
     loadingDetalle.value = true
     errGuardar.value = ''
     detalle.value = null
+    autorizaciones.value = []
+
+    const idSede = m.T_Estacionamiento?.IdEstacionamiento ?? m._sedeId
 
     try {
-        const res = await MensualidadesService.getDetalleById(m.IdPersonaAutorizada)
-        const d = res?.data ?? res
+        const [resDetalle, resAuth] = await Promise.all([
+            MensualidadesService.getDetalleById(m.IdPersonaAutorizada),
+            AutorizacionesService.getBySede(idSede),
+        ])
+
+        const d = resDetalle?.data ?? resDetalle
         detalle.value = d
+
+        const authData = resAuth?.data ?? resAuth ?? []
+        autorizaciones.value = Array.isArray(authData) ? authData : []
+
+        const toInputDate = (f) => {
+            if (!f) return ''
+            const d = new Date(f)
+            if (isNaN(d)) return ''
+            const pad = n => String(n).padStart(2, '0')
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+        }
+
         Object.assign(form, {
             NombreApellidos: d.NombreApellidos ?? '',
             Nit: d.Nit ?? '',
             NombreEmpresa: d.NombreEmpresa ?? '',
-            FechaInicio: d.FechaInicio ? formatsDate.fechaSinDate(d.FechaInicio) : '',
-            FechaFin: d.FechaFin ? formatsDate.fechaSinDate(d.FechaFin) : '',
+            FechaInicio: toInputDate(d.FechaInicio),
+            FechaFin: toInputDate(d.FechaFin),
             Estado: d.Estado ?? true,
             CobroTarjeta: d.CobroTarjeta ?? false,
+            IdAutorizacion: Number(d.T_Autorizaciones?.IdAutorizacion) ?? null,
             placas: [d.Placa1 ?? '', d.Placa2 ?? '', d.Placa3 ?? '', d.Placa4 ?? '', d.Placa5 ?? ''],
         })
-      
+
     } catch (e) {
         console.error('[Mensualidades detalle]', e.response?.data ?? e.message)
     } finally {
@@ -517,6 +560,7 @@ const cerrarPanel = () => {
     detalle.value = null
     errGuardar.value = ''
     guardando.value = false
+    form.IdAutorizacion = null
 }
 
 const toggleCobroTarjeta = async () => {
@@ -540,6 +584,16 @@ const guardar = async () => {
     guardando.value = true
     try {
         const id = detalle.value?.IdPersonaAutorizada
+
+        // Convertir fecha a "YYYY-MM-DD HH:mm:ss"
+        const toApiDate = (f) => {
+            if (!f) return undefined
+            const d = new Date(f)
+            if (isNaN(d)) return undefined
+            const pad = n => String(n).padStart(2, '0')
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+        }
+
         const dto = {
             NombreApellidos: form.NombreApellidos || undefined,
             Estado: form.Estado,
@@ -551,12 +605,14 @@ const guardar = async () => {
             Placa5: form.placas[4] || null,
             ...(form.Nit && { Nit: form.Nit }),
             ...(form.NombreEmpresa && { NombreEmpresa: form.NombreEmpresa }),
-            ...(form.FechaInicio && { FechaInicio: form.FechaInicio }),
-            ...(form.FechaFin && { FechaFin: form.FechaFin }),
+            ...(form.FechaInicio && { FechaInicio: toApiDate(form.FechaInicio) }),
+            ...(form.FechaFin && { FechaFin: toApiDate(form.FechaFin) }),
+            ...(form.IdAutorizacion && { IdAutorizacion: form.IdAutorizacion }), // ← agregar
         }
+
         const response = await MensualidadesService.updateById(id, dto)
-        if(response?.error){
-           return showError({data: response})
+        if (response?.error) {
+            return showError({ data: response })
         }
         showSuccess('Mensualidad', response.message)
         await cargarMensualidades()

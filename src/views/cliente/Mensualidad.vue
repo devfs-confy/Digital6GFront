@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -324,7 +324,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -348,7 +348,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -357,7 +357,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -635,23 +635,6 @@
                                             class="text-[0.55rem] font-black px-1.5 py-0.5 rounded-full bg-[#0D291C] text-[#7FD344] ml-1.5">Requerida</span>
                                     </div>
 
-                                    <!-- <div v-if="usandoCambioAutorizacion && idx === 0 && nuevasPlacas[0]?.trim().length >= 6"
-                                        class="flex items-center gap-1.5 mt-1 text-[0.65rem] font-bold" :class="placaPrincipalEsMoto !== mensualidadAccion?.esMoto
-                                            ? 'text-green-600'
-                                            : 'text-amber-600'">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
-                                            fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                        </svg>
-                                        <span v-if="placaPrincipalEsMoto !== mensualidadAccion?.esMoto">
-                                            ✓ Se detectó cambio de tipo: {{ mensualidadAccion?.esMoto ?
-                                                'Moto → Carro' : 'Carro → Moto' }}
-                                        </span>
-                                        <span v-else>
-                                            Esta placa es del mismo tipo actual. Usa "Cambiar placa" en su lugar.
-                                        </span>
-                                    </div> -->
-
                                     <div class="flex items-center gap-2">
                                         <div
                                             class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-all focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
@@ -700,7 +683,7 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
@@ -724,18 +707,18 @@
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -1111,7 +1094,7 @@ const abrirDetalle = async (m) => {
         const data = res?.data ?? res
         placaCambiada.value = data?.solictud
         detalleCompleto.value = data
-        placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
+        placasDetalle.value = PLACA_KEYS.map(k => data[k] ?? '')
         const placaPrincipal = (placasDetalle.value[0] ?? '').toUpperCase().trim()
         mensualidadAccion.value = {
             ...mensualidadAccion.value,
@@ -1142,12 +1125,14 @@ const abrirModalPlacas = () => {
     errPlacas.value = ''
     infoExcedente.value = null
     infoAutorizacion.value = null
-    usandoCambioAutorizacion.value = false  // ← siempre false al abrir cambio de placas normal
+    usandoCambioAutorizacion.value = false
+
+    // Si no hay placas del endpoint, mostrar 2 filas vacías por defecto
     const totalFilas = Math.max(placasDetalle.value.length, 2)
-    nuevasPlacas.value = PLACA_KEYS.slice(0, totalFilas).map((_, i) => placasDetalle.value[i] ?? '')
+    nuevasPlacas.value = Array.from({ length: totalFilas }, (_, i) => placasDetalle.value[i] ?? '')
+
     modalPlacas.value = true
 
-    // Cargar info de autorización en paralelo (no bloquea apertura del modal)
     loadingAutorizacion.value = true
     MensualidadesService.getChangesByPersona(mensualidadAccion.value.id)
         .then(res => { infoAutorizacion.value = res?.data ?? res })

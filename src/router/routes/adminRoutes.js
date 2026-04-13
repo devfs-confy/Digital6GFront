@@ -12,6 +12,7 @@ import icoTarifas from "@/assets/img/car_tag.svg?raw";
 import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
 import icoRoles from "@/assets/img/dashboard_customize_white.svg?raw";
 import icoUCC from "@/assets/img/how_to_reg.svg?raw";
+import icoAuth from "@/assets/img/fact_check.svg?raw";
 
 // ── Ítems del menú lateral ─────────────────────────────────────────
 export const adminMenuItems = [
@@ -77,12 +78,12 @@ export const adminMenuItems = [
     permission: "CREAR-CODIGOS",
   },
 
-  // {
-  //   label: "Tarjetas",
-  //   icon: icoTarjetas,
-  //   route: "/admin/tarjetas",
-  //   permission: "CREAR-CODIGOS",
-  // },
+  {
+    label: "autorizaciones",
+    icon: icoAuth,
+    route: "/admin/autorizaciones",
+    permission: "CREAR-CODIGOS",
+  },
   {
     label: "Banner",
     icon: icoTarjetas,
@@ -163,11 +164,11 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/Codigo.vue"),
       meta: { permission: "CREAR-CODIGOS" },
     },
-    // {
-    //   path: "tarjetas",
-    //   component: () => import("@/views/administrador/Tarjetas.vue"),
-    //   meta: { permission: "CREAR-CODIGOS" },
-    // },
+    {
+      path: "autorizaciones",
+      component: () => import("@/views/administrador/Autorizaciones.vue"),
+      meta: { permission: "CREAR-CODIGOS" },
+    },
     {
       path: "banner",
       component: () => import("@/views/administrador/Banner.vue"),
