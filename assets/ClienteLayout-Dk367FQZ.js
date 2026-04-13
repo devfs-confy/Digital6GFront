@@ -1,0 +1,1 @@
+import{_ as e}from"./AppLayout-J2onubSR.js";import{o as t,C as o,d as r,D as a}from"./index-D9bj4GMI.js";import"./confyaside-DytD5ohJ.js";import"./colapsenobg-CZViLCuu.js";import"./error.handler-BKrffC5A.js";const l={__name:"ClienteLayout",setup(m){return(s,n)=>(t(),o(e,{menuItems:r(a),titulo:"Dashboard"},null,8,["menuItems"]))}};export{l as default};
