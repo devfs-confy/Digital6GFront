@@ -99,7 +99,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -150,6 +150,10 @@
                         Pago pendiente — sin fechas de vigencia aún
                     </span>
                 </div>
+
+                <!-- Formulario de facturación -->
+
+
 
                 <!-- Card actions -->
                 <div class="grid gap-2 w-full" :class="mostrarCongelar(m) ? 'grid-cols-3' : 'grid-cols-2'">
@@ -233,6 +237,8 @@
                             <span class="text-xs text-gray-400 font-semibold">Verificando estado del pago...</span>
                         </div>
 
+
+
                         <!-- Pending payment -->
                         <template v-else-if="pagoPendiente && !opcionesPago.length">
                             <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
@@ -254,7 +260,7 @@
                                             <span
                                                 class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
                                             <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div v-if="pagoPendiente.cus" class="flex justify-between">
                                             <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
@@ -301,7 +307,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -325,7 +331,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -334,7 +340,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -415,6 +421,104 @@
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
                                     {{ errPago }}
                                 </div>
+                                <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2
+              after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r
+              after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                        Datos de facturación
+                                    </p>
+                                    <div class="flex flex-col gap-2.5">
+
+                                        <!-- Tipo documento -->
+                                        <div class="flex flex-col gap-1">
+                                            <label
+                                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
+                                                Tipo de documento
+                                            </label>
+                                            <select v-model="avalpayinformacion.tipoDocumento" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                       outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                       transition-all w-full appearance-none cursor-pointer">
+                                                <option value="" disabled>Selecciona...</option>
+                                                <option value="CC">Cédula de Ciudadanía</option>
+                                                <option value="CE">Cédula de Extranjería</option>
+                                                <option value="TI">Tarjeta de Identidad</option>
+                                                <option value="NIT">NIT - Identificación Tributaria</option>
+                                                <option value="RUT">RUT - Registro Único Tributario</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Documento -->
+                                        <div class="flex flex-col gap-1">
+                                            <label
+                                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
+                                                Número de documento
+                                            </label>
+                                            <input v-model="avalpayinformacion.documento" type="text"
+                                                placeholder="Ej: 1234567890"
+                                                @input="avalpayinformacion.documento = avalpayinformacion.documento.replace(/[^0-9]/g, '')"
+                                                class="bg-white border-2 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+           outline-none focus:ring-2 transition-all w-full placeholder:text-gray-300" :class="avalpayinformacion.documento && avalpayinformacion.tipoDocumento && !REGEX_DOCUMENTO[avalpayinformacion.tipoDocumento]?.test(avalpayinformacion.documento)
+            ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
+            : 'border-gray-300 focus:border-[#299261] focus:ring-[#299261]/15'" />
+
+                                            <!-- Mensaje inline bajo el input -->
+                                            <p v-if="avalpayinformacion.documento && avalpayinformacion.tipoDocumento && !REGEX_DOCUMENTO[avalpayinformacion.tipoDocumento]?.test(avalpayinformacion.documento)"
+                                                class="text-[0.65rem] font-semibold text-red-500 pl-0.5">
+                                                Formato inválido para {{ avalpayinformacion.tipoDocumento }}.
+                                            </p>
+                                        </div>
+
+                                        <!-- Nombre + Apellido -->
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="flex flex-col gap-1">
+                                                <label
+                                                    class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
+                                                    Nombre
+                                                </label>
+                                                <input v-model="avalpayinformacion.nombre" type="text"
+                                                    placeholder="Ej: Juan" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                           outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                           transition-all w-full placeholder:text-gray-300" />
+                                            </div>
+                                            <div class="flex flex-col gap-1">
+                                                <label
+                                                    class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
+                                                    Apellido
+                                                </label>
+                                                <input v-model="avalpayinformacion.apellido" type="text"
+                                                    placeholder="Ej: Pérez" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                           outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                           transition-all w-full placeholder:text-gray-300" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Teléfono -->
+                                        <div class="flex flex-col gap-1">
+                                            <label
+                                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
+                                                Teléfono
+                                            </label>
+                                            <input v-model="avalpayinformacion.telefono" type="tel"
+                                                @input="avalpayinformacion.telefono = avalpayinformacion.telefono.replace(/[^0-9]/g, '')"
+                                                placeholder="Ej: 3001234567" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                       outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                       transition-all w-full placeholder:text-gray-300" />
+                                        </div>
+
+                                        <!-- Correo -->
+                                        <div class="flex flex-col gap-1">
+                                            <label
+                                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
+                                                Correo electrónico
+                                            </label>
+                                            <input v-model="avalpayinformacion.correo" type="email"
+                                                placeholder="Ej: juan@correo.com" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                       outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                       transition-all w-full placeholder:text-gray-300" />
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -425,8 +529,11 @@
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             Cancelar
                         </button>
-                        <button @click="confirmarPago"
-                            :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago || (!mensualidadAccion?.fechaFin && !fechaInicioManual)"
+                        <button @click="confirmarPago" :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago
+                            || (!mensualidadAccion?.fechaFin && !fechaInicioManual)
+                            || !avalpayinformacion.tipoDocumento || !avalpayinformacion.documento
+                            || !avalpayinformacion.nombre || !avalpayinformacion.apellido
+                            || !avalpayinformacion.telefono || !avalpayinformacion.correo"
                             class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="iniciandoPago"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
@@ -567,7 +674,7 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
@@ -591,18 +698,18 @@
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -727,11 +834,10 @@
         <!-- ───────────────── MODAL: CONSENTIMIENTO ───────────────── -->
         <ModalConsentimiento v-model="modalConsentimiento" @confirmar="confirmarConsentimiento" />
 
-        <ModalFacturacion v-model="modalFacturacion"
-            :documento-usuario="String(authStore.user?.documento ?? authStore.user?.Documento ?? '')"
-            :nombre-usuario="String((authStore.user?.nombres ?? authStore.user?.Nombres ?? '') + ' ' + (authStore.user?.apellidos ?? authStore.user?.Apellidos ?? '')).trim()"
-            :email-usuario="String(authStore.user?.email ?? authStore.user?.Email ?? '')"
-            :telefono-usuario="String(authStore.user?.telefono ?? authStore.user?.Telefono ?? '')"
+        <ModalFacturacion v-model="modalFacturacion" :documento-usuario="avalpayinformacion.documento"
+            :tipo-documento-usuario="avalpayinformacion.tipoDocumento"
+            :nombre-usuario="avalpayinformacion.nombre + ' ' + avalpayinformacion.apellido"
+            :email-usuario="avalpayinformacion.correo" :telefono-usuario="avalpayinformacion.telefono"
             @confirmar="ejecutarPago" />
     </div>
 </template>
@@ -801,7 +907,27 @@ const iniciandoPago = ref(false)
 const errPago = ref('')
 const fechaInicioManual = ref('')
 const mesesExtra = ref(1)
-const pagoPendiente = ref(null) // { urlPago, referencia, valor, cus }
+const pagoPendiente = ref(null)
+
+// ── envio de datos pasarela ────────────────────────────────────────
+const avalpayinformacion = ref({
+    tipoDocumento: '',
+    documento: '',
+    nombre: '',
+    apellido: '',
+    telefono: '',
+    correo: '',
+})
+
+const REGEX_DOCUMENTO = {
+    CC: /^[1-9][0-9]{3,9}$/,
+    CE: /^([a-zA-Z]{1,5})?[1-9][0-9]{3,7}$/,
+    TI: /^[1-9][0-9]{4,11}$/,
+    NIT: /^[1-9]\d{6,9}$/,
+    RUT: /^[1-9]\d{6,9}$/,
+}
+
+
 
 // ── Tarjeta perdida ───────────────────────────────────────────
 const modalTarjeta = ref(false)
@@ -826,7 +952,7 @@ const formatFecha = (f) => {
     if (!f) return '—'
     const d = parseLocal(f)
     return d ? d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
-   
+
 }
 
 // ── Helpers de UI ─────────────────────────────────────────────
@@ -1263,6 +1389,21 @@ const seleccionarMesesExtra = async (n) => {
 const confirmarPago = async () => {
     if (!opcionSeleccionada.value) return
 
+    // Validar formulario
+
+    const f = avalpayinformacion.value
+    if (!f.tipoDocumento || !f.documento || !f.nombre || !f.apellido || !f.telefono || !f.correo) {
+        errPago.value = 'Completa todos los datos de facturación antes de continuar.'
+        return
+    }
+
+    const regexDoc = REGEX_DOCUMENTO[f.tipoDocumento]
+    if (regexDoc && !regexDoc.test(f.documento)) {
+        errPago.value = `El número de documento no es válido para el tipo ${f.tipoDocumento}.`
+        return
+    }
+    errPago.value = ''
+
     if (mensualidadAccion.value?.cobroTarjetaPermitido) {
         const { isConfirmed } = await showConfirm({
             title: '¿Recuerdas reclamar tu tarjeta?',
@@ -1274,10 +1415,11 @@ const confirmarPago = async () => {
         if (!isConfirmed) return
     }
 
+    // Saltar ModalConsentimiento → ir directo a ejecutarPago con los datos
     modalPago.value = false
-    consentimientoAceptado.value = false
-    modalConsentimiento.value = true
+    modalConsentimiento.value = true  // si aún usas consentimiento, si no: ejecutarPagoDirecto()
 }
+
 
 const confirmarConsentimiento = () => {
     modalConsentimiento.value = false
@@ -1294,11 +1436,13 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
 
     try {
         const m = mensualidadAccion.value
+        if (!m) {
+            errPago.value = 'Error interno: no hay mensualidad seleccionada.'
+            iniciandoPago.value = false
+            return
+        }
+        console.log('[ejecutarPago] mensualidadAccion completa:', JSON.stringify(m, null, 2))
         const user = authStore.user
-        const email = String(user?.email ?? user?.Email ?? '')
-        const telefono = String(user?.telefono ?? user?.Telefono ?? '')
-
-        if (!email) { errPago.value = 'No se encontró el email del usuario.'; return }
 
         // ── Caso: pago de excedente por cambio de autorización ──
         if (excedentePendiente) {
@@ -1311,21 +1455,26 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 .map(key => [{ ColumnaPlaca: key, PlacaNueva: placasNuevas[key] }])
 
             const body = {
-                Email: email,
-                Telefono: telefono,
+                Email: avalpayinformacion.value.correo,
+                Telefono: avalpayinformacion.value.telefono,
+                TipoDocumento: avalpayinformacion.value.tipoDocumento,
+                Documento: Number(avalpayinformacion.value.documento),
+                Nombre: avalpayinformacion.value.nombre,
+                Apellidos: avalpayinformacion.value.apellido,
                 CantidadMeses: 1,
                 ModalidadPago: 'CAMBIO_AUTORIZACION',
-                IdentificacionCliente,
                 IdAutorizacionNueva: Number(excedentePendiente.IdAutorizacionNueva),
                 Placas: placasPayload,
             }
 
+
+            console.log('[ejecutarPago] body excedente:', JSON.stringify(body, null, 2))
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
             const url = data?.urlPago ?? null
-            if (url) { 
+            if (url) {
                 showInfo("Un momento", "Redirigiendo a la página de pago...")
-                window.location.href = url; return 
+                window.location.href = url; return
             }
 
             infoExcedente.value = excedentePendiente
@@ -1338,20 +1487,28 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
         // ── Caso normal: renovación de mensualidad ──
         const cantidadMeses = esSoloTarjeta.value ? 1 : (opcionSeleccionada.value?.cantidadMeses ?? 1)
         const body = {
-            Email: email,
-            Telefono: telefono,
+            Email: avalpayinformacion.value.correo,
+            Telefono: avalpayinformacion.value.telefono,
+            TipoDocumento: avalpayinformacion.value.tipoDocumento,
+            Documento: Number(avalpayinformacion.value.documento),
+            Nombre: avalpayinformacion.value.nombre,
+            Apellidos: avalpayinformacion.value.apellido,
             CantidadMeses: cantidadMeses,
             ModalidadPago: opcionSeleccionada.value.modalidad,
-            IdentificacionCliente,
+            IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             ...(!m.fechaFin && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
+
+
         showInfo("Un momento", "Redirigiendo a la página de pago...")
+        console.log('[ejecutarPago] body normal:', JSON.stringify(body, null, 2))
+
         const res = await PagoService.iniciarPago(m.id, body)
         const data = res?.data ?? res
         const url = data?.urlPago ?? null
-        if (url) { 
-                
-                 window.location.href = url; return 
+        if (url) {
+
+            window.location.href = url; return
         }
         errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
         modalFacturacion.value = false
@@ -1410,6 +1567,7 @@ const cerrarModales = () => {
     modalTarjeta.value = false
     errTarjeta.value = ''
     guardandoTarjeta.value = false
+    avalpayinformacion.value = { tipoDocumento: '', documento: '', nombre: '', apellido: '', telefono: '', correo: '' }
 }
 
 </script>

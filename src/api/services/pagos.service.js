@@ -32,6 +32,10 @@ class PagosService {
       IdAutorizacionNueva,
       PlacasNuevas,
       Placas,
+      Documento,
+      TipoDocumento,
+      Nombre,
+      Apellidos,
     } = body;
 
     const payload = {
@@ -44,7 +48,16 @@ class PagosService {
       ...(IdAutorizacionNueva && { IdAutorizacionNueva }),
       ...(PlacasNuevas && { PlacasNuevas }),
       ...(Placas && { Placas }),
+      ...(Documento && { Documento }),
+      ...(TipoDocumento && { TipoDocumento }),
+      ...(Nombre && { Nombre }),
+      ...(Apellidos && { Apellidos }),
     };
+
+    console.log(
+      "[iniciarPago] payload FINAL que se envía:",
+      JSON.stringify(payload, null, 2),
+    );
 
     const { data } = await api.post(
       `${BASE_MENSUALIDAD}/iniciar-pago/${idPersona}`,

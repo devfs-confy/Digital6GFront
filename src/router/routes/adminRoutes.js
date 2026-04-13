@@ -78,17 +78,11 @@ export const adminMenuItems = [
   },
 
   // {
-  //   label: "Ver<br> tarifas",
-  //   icon: icoTarifas,
-  //   route: "/admin/tarifas",
+  //   label: "Tarjetas",
+  //   icon: icoTarjetas,
+  //   route: "/admin/tarjetas",
   //   permission: "CREAR-CODIGOS",
   // },
-  {
-    label: "Tarjetas",
-    icon: icoTarjetas,
-    route: "/admin/tarjetas",
-    permission: "CREAR-CODIGOS",
-  },
   {
     label: "Banner",
     icon: icoTarjetas,
@@ -170,15 +164,10 @@ export const adminRoutes = {
       meta: { permission: "CREAR-CODIGOS" },
     },
     // {
-    //   path: "tarifas",
-    //   component: () => import("@/views/administrador/Tarifas.vue"),
+    //   path: "tarjetas",
+    //   component: () => import("@/views/administrador/Tarjetas.vue"),
     //   meta: { permission: "CREAR-CODIGOS" },
     // },
-    {
-      path: "tarjetas",
-      component: () => import("@/views/administrador/Tarjetas.vue"),
-      meta: { permission: "CREAR-CODIGOS" },
-    },
     {
       path: "banner",
       component: () => import("@/views/administrador/Banner.vue"),
