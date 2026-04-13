@@ -241,35 +241,51 @@
 
                         <!-- Pending payment -->
                         <template v-else-if="pagoPendiente && !opcionesPago.length">
-                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
-                                <div class="flex flex-col gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4">
-                                    <div class="flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#d97706"
-                                            viewBox="0 0 24 24" class="shrink-0">
-                                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                        </svg>
-                                        <span class="text-[0.82rem] font-black text-amber-800">Tienes un pago
-                                            pendiente</span>
-                                    </div>
-                                    <p class="text-[0.72rem] font-semibold text-amber-700 leading-relaxed">
-                                        Encontramos una transacción pendiente para esta mensualidad. Completa el pago
-                                        antes de iniciar uno nuevo.
-                                    </p>
-                                    <div class="flex flex-col gap-1.5 text-[0.72rem] font-semibold text-amber-700">
-                                        <div v-if="pagoPendiente.valor" class="flex justify-between">
-                                            <span
-                                                class="text-amber-500 uppercase tracking-wide text-[0.62rem]">Valor</span>
-                                            <span class="font-black text-amber-800">{{ formatPrecio(pagoPendiente.valor)
-                                            }}</span>
+                            <div class="px-5 py-4 border-b border-gray-100">
+                                <div
+                                    class="flex flex-col gap-4 rounded-2xl border-2 border-amber-300 bg-gradient-to-b from-amber-50 to-white p-4 shadow-[0_3px_0_#fde68a]">
+
+                                    <!-- Header -->
+                                    <!-- Header -->
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                            style="background:#f59e0b;box-shadow:0 2px 0 #b45309">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white"
+                                                viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                            </svg>
                                         </div>
-                                        <div v-if="pagoPendiente.cus" class="flex justify-between">
-                                            <span class="text-amber-500 uppercase tracking-wide text-[0.62rem]">ID
-                                                Transacción</span>
-                                            <span class="font-mono font-black">{{ pagoPendiente.cus }}</span>
+                                        <div>
+                                            <p class="text-[0.85rem] font-black" style="color:#92400e">Tienes un pago
+                                                pendiente</p>
+                                            <p class="text-[0.67rem] font-semibold mt-[1px]" style="color:#d97706">
+                                                Complétalo antes de iniciar uno nuevo</p>
                                         </div>
                                     </div>
+
+                                    <!-- Datos -->
+                                    <div
+                                        class="flex flex-col gap-1.5 bg-white rounded-xl border border-amber-200 px-3.5 py-3">
+                                        <div v-if="pagoPendiente.valor" class="flex items-center justify-between">
+                                            <span class="text-[0.62rem] font-black uppercase tracking-[0.08em]"
+                                                style="color:#d97706">Valor</span>
+                                            <span class="text-[0.85rem] font-black" style="color:#92400e">{{
+                                                formatPrecio(pagoPendiente.valor) }}</span>
+                                        </div>
+                                        <div v-if="pagoPendiente.cus"
+                                            class="flex items-center justify-between border-t border-amber-100 pt-1.5 mt-0.5">
+                                            <span class="text-[0.62rem] font-black uppercase tracking-[0.08em]"
+                                                style="color:#d97706">ID Transacción</span>
+                                            <span class="font-mono text-[0.75rem] font-black" style="color:#92400e">{{
+                                                pagoPendiente.cus }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- CTA -->
                                     <a :href="pagoPendiente.urlPago"
-                                        class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-[14px] text-[0.78rem] font-black border-2 bg-amber-500 text-white border-amber-600 shadow-[0_3px_0_#b45309] hover:bg-amber-600 active:translate-y-[2px] transition-all cursor-pointer no-underline">
+                                        class="flex items-center justify-center gap-2 py-[11px] px-4 rounded-[14px] text-[0.78rem] font-black border-2 text-white active:translate-y-[2px] transition-all cursor-pointer no-underline"
+                                        style="background:#f59e0b;border-color:#d97706;box-shadow:0 3px 0 #b45309">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path
@@ -277,6 +293,7 @@
                                         </svg>
                                         Continuar al pago pendiente
                                     </a>
+
                                 </div>
                             </div>
                         </template>

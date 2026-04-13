@@ -129,7 +129,8 @@
                             *</label>
                         <input v-model="fC.Documento" type="text"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
-                            placeholder="1096..." maxlength="20" />
+                            placeholder="1096..." maxlength="20"
+                            @input="fC.Documento = fC.Documento.replace(/[^0-9]/g, '')" />
                     </div>
 
                     <div class="flex flex-col gap-[5px]">
@@ -149,7 +150,8 @@
                             *</label>
                         <input v-model="fC.Telefono" type="tel"
                             class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
-                            placeholder="300..." maxlength="15" />
+                            placeholder="300..." maxlength="15"
+                            @input="fC.Telefono = fC.Telefono.replace(/[^0-9]/g, '')" />
                     </div>
                     <div class="flex flex-col gap-[5px]">
                         <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">Email

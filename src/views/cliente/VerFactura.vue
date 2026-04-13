@@ -49,6 +49,7 @@
             </button>
         </div>
 
+
         <!-- Contenido principal -->
         <template v-else>
             <div class="sections-grid">
