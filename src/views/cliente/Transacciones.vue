@@ -9,7 +9,8 @@
                 <AppIcon name="arrow_left_alt" :size="14" />
                 <span class="hidden sm:inline">Volver</span>
             </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Transacciones</h2>
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Transacciones - pasarela de pagos
+            </h2>
             <div class="w-[72px] sm:w-[88px]" />
         </div>
 
