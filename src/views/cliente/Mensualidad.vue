@@ -493,9 +493,11 @@
                                                     Nombre
                                                 </label>
                                                 <input v-model="avalpayinformacion.nombre" type="text"
-                                                    placeholder="Ej: Juan" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
-                           outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                           transition-all w-full placeholder:text-gray-300" />
+                                                    placeholder="Ej: Juan"
+                                                    @input="avalpayinformacion.nombre = avalpayinformacion.nombre.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '')"
+                                                    class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                   outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                   transition-all w-full placeholder:text-gray-300" />
                                             </div>
                                             <div class="flex flex-col gap-1">
                                                 <label
@@ -503,9 +505,11 @@
                                                     Apellido
                                                 </label>
                                                 <input v-model="avalpayinformacion.apellido" type="text"
-                                                    placeholder="Ej: Pérez" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
-                           outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                           transition-all w-full placeholder:text-gray-300" />
+                                                    placeholder="Ej: Pérez"
+                                                    @input="avalpayinformacion.apellido = avalpayinformacion.apellido.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '')"
+                                                    class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+                   outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                   transition-all w-full placeholder:text-gray-300" />
                                             </div>
                                         </div>
 
@@ -529,9 +533,14 @@
                                                 Correo electrónico
                                             </label>
                                             <input v-model="avalpayinformacion.correo" type="email"
-                                                placeholder="Ej: juan@correo.com" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
-                       outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                       transition-all w-full placeholder:text-gray-300" />
+                                                placeholder="Ej: juan@correo.com" class="bg-white border-2 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
+               outline-none focus:ring-2 transition-all w-full placeholder:text-gray-300" :class="avalpayinformacion.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(avalpayinformacion.correo)
+                ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
+                : 'border-gray-300 focus:border-[#299261] focus:ring-[#299261]/15'" />
+                                            <p v-if="avalpayinformacion.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(avalpayinformacion.correo)"
+                                                class="text-[0.65rem] font-semibold text-red-500 pl-0.5">
+                                                Ingresa un correo electrónico válido.
+                                            </p>
                                         </div>
 
                                     </div>
@@ -1411,6 +1420,11 @@ const confirmarPago = async () => {
     const f = avalpayinformacion.value
     if (!f.tipoDocumento || !f.documento || !f.nombre || !f.apellido || !f.telefono || !f.correo) {
         errPago.value = 'Completa todos los datos de facturación antes de continuar.'
+        return
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.correo)) {
+        errPago.value = 'El correo electrónico no es válido.'
         return
     }
 
