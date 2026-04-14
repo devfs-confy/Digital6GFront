@@ -1270,6 +1270,14 @@ input[type="range"]::-ms-fill-lower {
   margin-top: auto;
 }
 
+.mb-\[5\%\] {
+  margin-bottom: 5%;
+}
+
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }
@@ -1519,6 +1527,14 @@ input[type="range"]::-ms-fill-lower {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-\[\] {
+  height: ;
+}
+
+.h-\[30\B4x\] {
+  height: 30´x;
 }
 
 .max-h-64 {

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col gap-6 maincontainer-mp">
+  <div class="h-full flex flex-col gap-6 maincontainer-mp ">
 
     <!-- ── Header ── -->
     <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
@@ -39,19 +39,19 @@
           <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">
             Quincenas
           </label>
-          <button v-permission="'HABILITAR-QUINCENAS'" @click="abrirModalQuincena"
-            :class="[
-              'flex items-center gap-2 px-4 py-2.5 rounded-full border-2 text-sm font-black transition-all',
-              quincenaHabilitada === true
-                ? 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
-                : quincenaHabilitada === false
-                  ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
-                  : 'bg-[#EAEAEA] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
-            ]"
-            style="box-shadow: 0 2px 0 rgba(0,0,0,0.12)">
-            <span :class="['w-2 h-2 rounded-full flex-shrink-0', quincenaHabilitada === true ? 'bg-red-500' : 'bg-[#299261]']" />
+          <button v-permission="'HABILITAR-QUINCENAS'" @click="abrirModalQuincena" :class="[
+            'flex items-center gap-2 px-4 py-2.5 rounded-full border-2 text-sm font-black transition-all',
+            quincenaHabilitada === true
+              ? 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
+              : quincenaHabilitada === false
+                ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
+                : 'bg-[#EAEAEA] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
+          ]" style="box-shadow: 0 2px 0 rgba(0,0,0,0.12)">
+            <span
+              :class="['w-2 h-2 rounded-full flex-shrink-0', quincenaHabilitada === true ? 'bg-red-500' : 'bg-[#299261]']" />
             <span>
-              {{ quincenaHabilitada === true ? 'Quincenas: ON' : quincenaHabilitada === false ? 'Quincenas: OFF' : 'Quincenas' }}
+              {{ quincenaHabilitada === true ? 'Quincenas: ON' : quincenaHabilitada === false ? 'Quincenas: OFF' :
+                'Quincenas' }}
             </span>
           </button>
         </div>
@@ -72,7 +72,8 @@
 
         <!-- Skeleton -->
         <div v-if="loadingAutorizaciones" class="p-4 flex flex-col gap-2">
-          <div v-for="i in 5" :key="i" class="animate-pulse flex items-center justify-between p-3 rounded-xl bg-gray-50">
+          <div v-for="i in 5" :key="i"
+            class="animate-pulse flex items-center justify-between p-3 rounded-xl bg-gray-50">
             <div class="flex flex-col gap-1.5">
               <div class="h-3.5 w-36 bg-gray-200 rounded-full" />
               <div class="h-2.5 w-20 bg-gray-100 rounded-full" />
@@ -82,7 +83,8 @@
         </div>
 
         <!-- Empty -->
-        <div v-else-if="autorizaciones.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+        <div v-else-if="autorizaciones.length === 0"
+          class="flex flex-col items-center justify-center py-12 text-center">
           <AppIcon name="lock" :size="36" class="text-gray-200 mb-2" />
           <p class="text-sm font-semibold text-gray-400">Sin autorizaciones</p>
           <p class="text-xs text-gray-300 mt-0.5">Esta sede no tiene autorizaciones registradas</p>
@@ -90,14 +92,12 @@
 
         <!-- Lista -->
         <ul v-else class="divide-y divide-[#f0faf4] overflow-y-auto max-h-80">
-          <li v-for="auth in autorizaciones" :key="auth.IdAutorizacion"
-            @click="seleccionarBase(auth)"
-            :class="[
-              'flex items-center justify-between px-5 py-3.5 cursor-pointer transition-all group',
-              baseSeleccionada?.IdAutorizacion === auth.IdAutorizacion
-                ? 'bg-[#0D291C]'
-                : 'hover:bg-[#f0faf4]'
-            ]">
+          <li v-for="auth in autorizaciones" :key="auth.IdAutorizacion" @click="seleccionarBase(auth)" :class="[
+            'flex items-center justify-between px-5 py-3.5 cursor-pointer transition-all group',
+            baseSeleccionada?.IdAutorizacion === auth.IdAutorizacion
+              ? 'bg-[#0D291C]'
+              : 'hover:bg-[#f0faf4]'
+          ]">
             <div class="flex flex-col min-w-0">
               <span :class="[
                 'text-sm font-bold truncate',
@@ -150,11 +150,13 @@
 
         <!-- Vacío sin base seleccionada -->
         <div v-if="!baseSeleccionada" class="flex flex-col items-center justify-center py-14 text-center px-6">
-          <div class="w-14 h-14 rounded-2xl bg-[#f0faf4] border-2 border-[#e8f5e9] flex items-center justify-center mb-3">
+          <div
+            class="w-14 h-14 rounded-2xl bg-[#f0faf4] border-2 border-[#e8f5e9] flex items-center justify-center mb-3">
             <AppIcon name="touch_app" :size="28" class="text-[#299261]" />
           </div>
           <p class="text-sm font-bold text-[#0D291C]">Selecciona una autorización base</p>
-          <p class="text-xs text-gray-400 mt-1">Haz clic en una autorización de la columna izquierda para configurar sus modalidades de pago</p>
+          <p class="text-xs text-gray-400 mt-1">Haz clic en una autorización de la columna izquierda para configurar sus
+            modalidades de pago</p>
         </div>
 
         <!-- Skeleton cargando modalidades -->
@@ -173,17 +175,16 @@
               class="flex items-center gap-3 px-5 py-3 hover:bg-[#f0faf4] transition-colors cursor-pointer"
               @click="toggleAsignacion(auth.IdAutorizacion)">
               <!-- Checkbox custom -->
-              <button type="button"
-                :class="[
-                  'w-5 h-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 transition-all',
-                  asignaciones[auth.IdAutorizacion]?.activo
-                    ? 'bg-[#299261] border-[#299261]'
-                    : 'bg-white border-gray-300 hover:border-[#299261]'
-                ]">
-                <svg v-if="asignaciones[auth.IdAutorizacion]?.activo"
-                  class="w-3 h-3 text-white" viewBox="0 0 12 10" fill="none">
-                  <path d="M1 5l3.5 3.5L11 1" stroke="currentColor" stroke-width="2.2"
-                    stroke-linecap="round" stroke-linejoin="round"/>
+              <button type="button" :class="[
+                'w-5 h-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 transition-all',
+                asignaciones[auth.IdAutorizacion]?.activo
+                  ? 'bg-[#299261] border-[#299261]'
+                  : 'bg-white border-gray-300 hover:border-[#299261]'
+              ]">
+                <svg v-if="asignaciones[auth.IdAutorizacion]?.activo" class="w-3 h-3 text-white" viewBox="0 0 12 10"
+                  fill="none">
+                  <path d="M1 5l3.5 3.5L11 1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
                 </svg>
               </button>
               <!-- Nombre -->
@@ -194,11 +195,8 @@
                 {{ auth.NombreAutorizacion }}
               </span>
               <!-- Select modalidad -->
-              <select
-                :disabled="!asignaciones[auth.IdAutorizacion]?.activo"
-                v-model="asignaciones[auth.IdAutorizacion].modalidad"
-                @click.stop
-                :class="[
+              <select :disabled="!asignaciones[auth.IdAutorizacion]?.activo"
+                v-model="asignaciones[auth.IdAutorizacion].modalidad" @click.stop :class="[
                   'text-xs rounded-xl px-2.5 py-1.5 border-2 outline-none transition-all flex-shrink-0',
                   asignaciones[auth.IdAutorizacion]?.activo
                     ? 'border-[#299261] bg-white text-[#0D291C] cursor-pointer focus:ring-2 focus:ring-[#299261]/20'
@@ -207,13 +205,14 @@
                 <option value="MENSUALIDAD">MENSUALIDAD</option>
                 <option value="QUINCENA">QUINCENA</option>
                 <option v-if="idSedeSeleccionada == 24" value="RECARGA">RECARGA</option>
-                
+
               </select>
             </li>
           </ul>
 
           <!-- Footer guardar -->
-          <div class="px-5 py-4 border-t-2 border-[#f0faf4] bg-[#f9fffe] flex items-center justify-between gap-3 flex-shrink-0">
+          <div
+            class="px-5 py-4 border-t-2 border-[#f0faf4] bg-[#f9fffe] flex items-center justify-between gap-3 flex-shrink-0">
             <span class="text-xs text-gray-400 font-medium">
               {{ cantidadActivos }} autorización(es) seleccionada(s)
             </span>
@@ -222,7 +221,7 @@
               style="box-shadow: 0 3px 0 #050e09">
               <span v-if="guardando"
                 class="inline-block w-3.5 h-3.5 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
-              <AppIcon v-else name="save" :size="14" />
+              <AppIcon v-else name="save" :size="25" />
               {{ guardando ? 'Guardando…' : 'Guardar cambios' }}
             </button>
           </div>
@@ -236,11 +235,13 @@
         <AppIcon name="emoji_transportation" :size="32" class="text-[#299261]" />
       </div>
       <p class="text-base font-bold text-[#0D291C]">Selecciona un estacionamiento</p>
-      <p class="text-sm text-gray-400 mt-1">Elige una sede en el selector de arriba para gestionar sus modalidades de pago</p>
+      <p class="text-sm text-gray-400 mt-1">Elige una sede en el selector de arriba para gestionar sus modalidades de
+        pago</p>
     </div>
 
     <!-- ── Tabla inferior: Reglas actuales ── -->
-    <div v-if="idSedeSeleccionada && baseSeleccionada" class="bg-white rounded-2xl shadow-sm overflow-hidden flex-shrink-0">
+    <div v-if="idSedeSeleccionada && baseSeleccionada"
+      class="bg-white rounded-2xl shadow-sm overflow-hidden flex-shrink-0 mb-5">
       <div class="px-5 py-4 border-b-2 border-[#7FD344] bg-[#0D291C] flex items-center justify-between">
         <h3 class="text-sm font-black uppercase tracking-widest text-white">Reglas actuales</h3>
         <span class="text-[0.65rem] font-bold text-[#7FD344]/70">
@@ -248,7 +249,7 @@
         </span>
       </div>
 
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto ">
         <table class="border-collapse min-w-[600px] w-full">
           <thead>
             <tr>
@@ -286,17 +287,20 @@
                 {{ r.IdAutorizacionPago }}
               </td>
               <td class="px-5 py-3 text-sm whitespace-nowrap">
-                <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9]">
+                <span
+                  class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9]">
                   {{ baseSeleccionada.NombreAutorizacion }}
                 </span>
               </td>
               <td class="px-5 py-3 text-sm whitespace-nowrap">
-                <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-violet-50 text-violet-800 border border-violet-200">
+                <span
+                  class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-violet-50 text-violet-800 border border-violet-200">
                   {{ r.AutorizacionPago?.NombreAutorizacion ?? `ID ${r.IdAutorizacionPago}` }}
                 </span>
               </td>
               <td class="px-5 py-3 text-sm whitespace-nowrap">
-                <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                <span
+                  class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-amber-50 text-amber-800 border border-amber-200">
                   {{ r.Modalidad }}
                 </span>
               </td>
@@ -318,14 +322,16 @@
       </div>
     </div>
 
+    <div class="h-[30px] bg-transparent">
+      <p></p>
+    </div>
+
   </div>
 
   <!-- ── Modal Quincenas ── -->
   <Transition name="modal-fade">
-    <div v-if="modalQuincena.visible"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style="background: rgba(0,0,0,0.45);"
-      @click.self="modalQuincena.visible = false">
+    <div v-if="modalQuincena.visible" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style="background: rgba(0,0,0,0.45);" @click.self="modalQuincena.visible = false">
       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
         <!-- Header -->
         <div class="bg-[#0D291C] px-6 py-4 flex items-center justify-between">
@@ -338,7 +344,8 @@
         <!-- Body -->
         <div class="px-6 py-5 flex flex-col gap-4">
           <p class="text-xs text-gray-500">
-            Sede: <span class="font-bold text-[#0D291C]">{{ sedes.find(s => s.IdEstacionamiento === idSedeSeleccionada)?.Nombre }}</span>
+            Sede: <span class="font-bold text-[#0D291C]">{{sedes.find(s => s.IdEstacionamiento ===
+              idSedeSeleccionada)?.Nombre}}</span>
           </p>
           <div class="flex flex-col gap-1.5">
             <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A]">
@@ -346,33 +353,30 @@
             </label>
             <div class="flex gap-3">
               <!-- Opción Habilitar -->
-              <button type="button"
-                @click="modalQuincena.nuevoEstado = true"
-                :class="[
-                  'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-black transition-all',
-                  modalQuincena.nuevoEstado === true
-                    ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C]'
-                    : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-[#299261]/50'
-                ]">
+              <button type="button" @click="modalQuincena.nuevoEstado = true" :class="[
+                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-black transition-all',
+                modalQuincena.nuevoEstado === true
+                  ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C]'
+                  : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-[#299261]/50'
+              ]">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#299261]" />
                 Habilitado
               </button>
               <!-- Opción Deshabilitar -->
-              <button type="button"
-                @click="modalQuincena.nuevoEstado = false"
-                :class="[
-                  'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-black transition-all',
-                  modalQuincena.nuevoEstado === false
-                    ? 'bg-red-50 border-red-300 text-red-700'
-                    : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-red-200'
-                ]">
+              <button type="button" @click="modalQuincena.nuevoEstado = false" :class="[
+                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-black transition-all',
+                modalQuincena.nuevoEstado === false
+                  ? 'bg-red-50 border-red-300 text-red-700'
+                  : 'bg-gray-50 border-gray-200 text-gray-400 hover:border-red-200'
+              ]">
                 <span class="w-2.5 h-2.5 rounded-full bg-red-400" />
                 Deshabilitado
               </button>
             </div>
           </div>
           <p v-if="modalQuincena.nuevoEstado !== null" class="text-xs text-gray-400 text-center">
-            {{ modalQuincena.nuevoEstado ? 'Se permitirá el pago por quincena en esta sede.' : 'No se permitirá el pago por quincena en esta sede.' }}
+            {{ modalQuincena.nuevoEstado ? 'Se permitirá el pago por quincena en esta sede.'
+              : 'No se permitirá el pago por quincena en esta sede.' }}
           </p>
         </div>
         <!-- Footer -->
@@ -381,8 +385,7 @@
             class="flex-1 py-2.5 rounded-full border-2 border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
             Cancelar
           </button>
-          <button @click="enviarQuincena"
-            :disabled="modalQuincena.nuevoEstado === null || habilitandoQuincena"
+          <button @click="enviarQuincena" :disabled="modalQuincena.nuevoEstado === null || habilitandoQuincena"
             class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[#0D291C] text-[#7FD344] text-sm font-black border-2 border-[#0D291C] transition-all hover:bg-[#1a4a2e] disabled:opacity-40 disabled:cursor-not-allowed"
             style="box-shadow: 0 3px 0 #050e09">
             <span v-if="habilitandoQuincena"
@@ -442,7 +445,7 @@ const cantidadActivos = computed(
 const cargarSedes = async () => {
   loadingSedes.value = true
   try {
-    const data = await SedesService.getAll({_limitValue: 100})
+    const data = await SedesService.getAll({ _limitValue: 100 })
     sedes.value = Array.isArray(data) ? data : []
   } catch {
     sedes.value = []
@@ -618,6 +621,7 @@ onMounted(() => {
 .fade-up-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
 .fade-up-enter-from,
 .fade-up-leave-to {
   opacity: 0;
@@ -634,10 +638,12 @@ onMounted(() => {
 .modal-fade-leave-active {
   transition: opacity 0.2s ease;
 }
+
 .modal-fade-enter-active .bg-white,
 .modal-fade-leave-active .bg-white {
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;

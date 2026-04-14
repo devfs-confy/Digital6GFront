@@ -591,8 +591,11 @@ const guardar = async () => {
             const d = new Date(f)
             if (isNaN(d)) return undefined
             const pad = n => String(n).padStart(2, '0')
-            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+            const result = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+            console.log('[toApiDate] input:', f, '→ Date obj:', d.toString(), '→ output:', result)
+            return result
         }
+
 
         const dto = {
             NombreApellidos: form.NombreApellidos || undefined,
@@ -609,6 +612,13 @@ const guardar = async () => {
             ...(form.FechaFin && { FechaFin: toApiDate(form.FechaFin) }),
             ...(form.IdAutorizacion && { IdAutorizacion: form.IdAutorizacion }), // ← agregar
         }
+
+        console.log('[guardar] DTO a enviar:', dto)
+
+        console.log('[guardar] FechaInicio raw del form:', form.FechaInicio)
+        console.log('[guardar] FechaFin raw del form:', form.FechaFin)
+        console.log('[guardar] FechaInicio convertida:', toApiDate(form.FechaInicio))
+        console.log('[guardar] FechaFin convertida:', toApiDate(form.FechaFin))
 
         const response = await MensualidadesService.updateById(id, dto)
         if (response?.error) {
