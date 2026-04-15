@@ -271,6 +271,9 @@
                             </div>
                         </div>
 
+                        <!-- Imagen (crear y editar) -->
+
+
                         <!-- Estado (solo editar) -->
                         <div v-if="modoEditar"
                             class="flex items-center justify-between px-3.5 py-3 bg-gray-50 rounded-xl border-2 border-gray-200">
@@ -284,15 +287,45 @@
                             </button>
                         </div>
 
+
+
                         <!-- Imagen (solo crear) -->
-                        <div v-if="!modoEditar" class="flex flex-col gap-1">
-                            <label
-                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700">Imagen</label>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700">
+                                Imagen {{ modoEditar ? '(opcional — reemplaza la actual)' : '*' }}
+                            </label>
                             <input ref="inputImagen" type="file" accept="image/*" @change="onImagenChange"
                                 class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] transition-all w-full cursor-pointer" />
                             <div v-if="previewImagen"
                                 class="mt-2 rounded-xl overflow-hidden border-2 border-gray-200 h-36">
                                 <img :src="previewImagen" class="w-full h-full object-cover" />
+                            </div>
+                        </div>
+
+                        <!-- Sedes (crear y editar) -->
+                        <div class="flex flex-col gap-1">
+                            <label
+                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700">Sedes</label>
+                            <div class="flex flex-col gap-2">
+                                <label v-for="s in sedes" :key="s.IdEstacionamiento"
+                                    class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 cursor-pointer transition-all"
+                                    :class="formData.Estacionamientos.includes(s.IdEstacionamiento)
+                                        ? 'border-[#299261] bg-[#f0fdf4]'
+                                        : 'border-gray-200 bg-gray-50'">
+                                    <input type="checkbox" :value="s.IdEstacionamiento"
+                                        v-model="formData.Estacionamientos" class="sr-only" />
+                                    <div class="w-4 h-4 rounded-[4px] border-2 flex items-center justify-center flex-shrink-0 transition-all"
+                                        :class="formData.Estacionamientos.includes(s.IdEstacionamiento)
+                                            ? 'bg-[#299261] border-[#299261]'
+                                            : 'border-gray-300'">
+                                        <svg v-if="formData.Estacionamientos.includes(s.IdEstacionamiento)"
+                                            xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="white"
+                                            viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-[0.82rem] font-semibold text-[#0D291C]">{{ s.Nombre }}</span>
+                                </label>
                             </div>
                         </div>
 
@@ -356,7 +389,7 @@
                                     {{ pe.T_Estacionamientos?.Nombre?.slice(0, 2).toUpperCase() }}
                                 </div>
                                 <span class="text-[0.82rem] font-black text-[#0D291C]">{{ pe.T_Estacionamientos?.Nombre
-                                    }}</span>
+                                }}</span>
                             </div>
                             <button @click="toggleSede(pe)"
                                 class="relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0"
@@ -386,6 +419,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { showError } from '@/utils/swal'
 import bannerService from '@/api/services/banner.service'
+import SedesService from '@/api/services/sedes.service'
 
 // ── Estado ────────────────────────────────────────────────────────
 const publicidades = ref([])
@@ -394,7 +428,10 @@ const loading = ref(false)
 const total = ref(0)
 const page = ref(1)
 const limit = ref(12)
-
+const sedes = ref([])
+// En onMounted:
+const sedesRes = await SedesService.getAll()
+sedes.value = Array.isArray(sedesRes) ? sedesRes : (sedesRes?.data ?? [])
 // ── Filtros ───────────────────────────────────────────────────────
 const busqueda = ref('')
 const filtroEstado = ref('')
@@ -415,7 +452,6 @@ const modoEditar = ref(false)
 const guardando = ref(false)
 const errForm = ref('')
 const publicidadSedes = ref(null)
-const inputImagen = ref(null)
 const previewImagen = ref('')
 const imagenFile = ref(null)
 
@@ -427,35 +463,44 @@ const formData = ref({
     FechaInicio: '',
     FechaExpiracion: '',
     Estado: true,
+    Estacionamientos: [],
 })
+
 
 // ── Carga ─────────────────────────────────────────────────────────
 const cargarPublicidades = async () => {
     loading.value = true
     const res = await bannerService.getallPublicidad()
     loading.value = false
-
-    if (res?.error) {
-        showError({ status: res.status, data: res.data })
-        return
-    }
-
-    const raw = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
-    total.value = res?.total ?? raw.length
+    if (res?.error) { showError({ status: res.status, data: res.data }); return }
+    const raw = Array.isArray(res?.data) ? res.data : []
     publicidades.value = raw
+    total.value = res?.total ?? raw.length
 
-    // Cargar imágenes en paralelo
-    raw.forEach(p => cargarImagen(p.IdPublicidad))
+    raw.forEach(p => { if (p.Imagen) cargarImagen(p.IdPublicidad) })
 }
+
+// Y en el template, para usar las imágenes cargadas por Blob:
+// <img :src="imagenes[p.IdPublicidad] || imgUrl(p.Imagen)" ... />
 
 const cargarImagen = async (id) => {
-    const blob = await bannerService.getimgpublicidad(id)
-    if (blob && blob instanceof Blob) {
-        imagenes.value[id] = URL.createObjectURL(blob)
+    try {
+        const res = await bannerService.getimgpublicidad(id)
+        const base64 = res?.data?.data ?? res?.data ?? res
+        const contentType = res?.data?.contentType ?? 'image/webp'
+        if (base64 && typeof base64 === 'string') {
+            imagenes.value[id] = `data:${contentType};base64,${base64}`
+        }
+    } catch (e) {
+        console.warn('[imagen]', id, e)
     }
 }
 
-onMounted(cargarPublicidades)
+onMounted(async () => {
+    await cargarPublicidades()
+    const sedesRes = await SedesService.getAll()
+    sedes.value = Array.isArray(sedesRes) ? sedesRes : (sedesRes?.data ?? [])
+})
 watch(page, () => cargarPublicidades())
 
 // ── Crear ─────────────────────────────────────────────────────────
@@ -464,13 +509,23 @@ const abrirModalCrear = () => {
     errForm.value = ''
     previewImagen.value = ''
     imagenFile.value = null
-    formData.value = { IdPublicidad: null, Titulo: '', Descripcion: '', Enlace: '', FechaInicio: '', FechaExpiracion: '', Estado: true }
+    formData.value = {
+        IdPublicidad: null,
+        Titulo: '',
+        Descripcion: '',
+        Enlace: '',
+        FechaInicio: '',
+        FechaExpiracion: '',
+        Estado: true,
+        Estacionamientos: []
+    }
     modalForm.value = true
 }
 
 const onImagenChange = (e) => {
     const file = e.target.files[0]
     if (!file) return
+
     imagenFile.value = file
     previewImagen.value = URL.createObjectURL(file)
 }
@@ -479,6 +534,8 @@ const onImagenChange = (e) => {
 const abrirModalEditar = (p) => {
     modoEditar.value = true
     errForm.value = ''
+    previewImagen.value = imagenes.value[p.IdPublicidad] ?? ''
+    imagenFile.value = null
     formData.value = {
         IdPublicidad: p.IdPublicidad,
         Titulo: p.Titulo ?? '',
@@ -487,6 +544,10 @@ const abrirModalEditar = (p) => {
         FechaInicio: p.FechaInicio ? p.FechaInicio.slice(0, 10) : '',
         FechaExpiracion: p.FechaExpiracion ? p.FechaExpiracion.slice(0, 10) : '',
         Estado: p.Estado,
+        Estacionamientos: p.T_PublicidadEstacionamientos
+            ?.filter(pe => pe.Activo)
+            .map(pe => pe.IdEstacionamiento) ?? [],
+
     }
     modalForm.value = true
 }
@@ -497,40 +558,40 @@ const guardarPublicidad = async () => {
     if (!formData.value.Titulo.trim()) { errForm.value = 'El título es obligatorio.'; return }
     if (!formData.value.FechaInicio) { errForm.value = 'La fecha de inicio es obligatoria.'; return }
     if (!formData.value.FechaExpiracion) { errForm.value = 'La fecha de expiración es obligatoria.'; return }
+    if (!modoEditar.value && !formData.value.Estacionamientos?.length) {
+        errForm.value = 'Selecciona al menos una sede.'; return
+    }
 
     guardando.value = true
-
-    if (modoEditar.value) {
-        const payload = {
-            Titulo: formData.value.Titulo.trim(),
-            Descripcion: formData.value.Descripcion?.trim() || null,
-            Enlace: formData.value.Enlace?.trim() || null,
-            FechaInicio: formData.value.FechaInicio,
-            FechaExpiracion: formData.value.FechaExpiracion,
-            Estado: formData.value.Estado,
-        }
-        const res = await bannerService.updatePublicidad(formData.value.IdPublicidad, payload)
-        guardando.value = false
-        if (res?.error) { showError({ status: res.status, data: res.data }); return }
-        modalForm.value = false
-        await showSuccess('¡Publicidad actualizada!', 'Los cambios fueron guardados.')
-        await cargarPublicidades()
-    } else {
-        // Crear con FormData si hay imagen
+    try {
         const payload = new FormData()
         payload.append('Titulo', formData.value.Titulo.trim())
         if (formData.value.Descripcion?.trim()) payload.append('Descripcion', formData.value.Descripcion.trim())
         if (formData.value.Enlace?.trim()) payload.append('Enlace', formData.value.Enlace.trim())
         payload.append('FechaInicio', formData.value.FechaInicio)
         payload.append('FechaExpiracion', formData.value.FechaExpiracion)
-        if (imagenFile.value) payload.append('Imagen', imagenFile.value)
+        payload.append('Estado', formData.value.Estado)
+        if (imagenFile.value) {
+            payload.append('Imagen', imagenFile.value)
+        }
+        payload.append('Estacionamientos', `[${formData.value.Estacionamientos.join(',')}]`)
 
-        const res = await bannerService.createPublicidad(payload)
-        guardando.value = false
+        for (const [key, value] of payload.entries()) {
+            console.log(`  ${key}:`, value instanceof File ? `FILE(${value.name}, ${value.size}b, ${value.type})` : value)
+        }
+
+
+        const res = modoEditar.value
+            ? await bannerService.updatePublicidad(formData.value.IdPublicidad, payload)
+            : await bannerService.createPublicidad(payload)
         if (res?.error) { showError({ status: res.status, data: res.data }); return }
+
         modalForm.value = false
-        await showSuccess('¡Publicidad creada!', 'Ya aparece en el listado.')
         await cargarPublicidades()
+    } catch (e) {
+        errForm.value = 'Error inesperado al guardar.'
+    } finally {
+        guardando.value = false
     }
 }
 
@@ -541,30 +602,26 @@ const abrirModalSedes = (p) => {
 }
 
 const toggleSede = async (pe) => {
+    const nuevoActivo = !pe.Activo
     const res = await bannerService.enablePublicidad(
         publicidadSedes.value.IdPublicidad,
-        pe.IdEstacionamiento
+        pe.IdEstacionamiento,
+        nuevoActivo  // ← pasar el estado deseado
     )
-    if (res?.error) {
-        showError({ status: res.status, data: res.data })
-        return
-    }
-    // Toggle local
-    pe.Activo = !pe.Activo
-    // Actualizar en el listado principal
+    if (res?.error) { showError({ status: res.status, data: res.data }); return }
+    pe.Activo = nuevoActivo
     const idx = publicidades.value.findIndex(p => p.IdPublicidad === publicidadSedes.value.IdPublicidad)
     if (idx !== -1) {
-        const sedeIdx = publicidades.value[idx].T_PublicidadEstacionamientos.findIndex(
-            s => s.IdEstacionamiento === pe.IdEstacionamiento
-        )
-        if (sedeIdx !== -1) publicidades.value[idx].T_PublicidadEstacionamientos[sedeIdx].Activo = pe.Activo
+        const sedeIdx = publicidades.value[idx].T_PublicidadEstacionamientos
+            .findIndex(s => s.IdEstacionamiento === pe.IdEstacionamiento)
+        if (sedeIdx !== -1) publicidades.value[idx].T_PublicidadEstacionamientos[sedeIdx].Activo = nuevoActivo
     }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────
 const fmtFecha = (iso) => {
     if (!iso) return '—'
-    return new Date(iso).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+    return new Date(iso).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: '2-digit', })
 }
 </script>
 

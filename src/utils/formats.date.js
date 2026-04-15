@@ -69,6 +69,21 @@ function getColombiaDateString(fin) {
    
 
  }
+
+ function DateOfString(f){
+  const dt = DateTime.fromISO(f)
+
+    if (!dt.isValid) {
+        console.error('Fecha inválida:', dt.invalidExplanation)
+        return ''
+    }
+
+    return DateTime
+        .fromISO(f, { zone: 'utc' })     // viene en UTC     // lo pasas a local
+        .toFormat("yyyy-MM-dd'T'HH:mm")
+
+ }
+
 export default {
   fechaFormato,
   InputLocal,
@@ -76,5 +91,6 @@ export default {
   FechaSinCeros,
   fechaSinDate,
   getColombiaDateString,
-  getDateNow
+  getDateNow,
+  DateOfString
 };

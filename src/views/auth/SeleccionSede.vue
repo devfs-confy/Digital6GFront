@@ -6,6 +6,16 @@
         <div class="ss-card">
             <div class="top-accent" />
 
+            <!-- Volver desktop -->
+            <button @click="$router.push('/login')"
+                class="flex items-center gap-1.5 text-[0.76rem] font-extrabold bg-transparent border-none cursor-pointer p-0 transition-colors w-fit mb-4"
+                style="color:#0D291C; font-family:'Funnel Display','Roboto',sans-serif"
+                onmouseover="this.style.color='#299261'" onmouseout="this.style.color='#0D291C'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>
+                Volver
+            </button>
             <!-- Header -->
             <div class="ss-header">
                 <div class="ss-icon-wrap">

@@ -19,7 +19,11 @@ class PublicidadService {
   // POST /v1/publicidad - Solo para admin, crea una nueva publicidad
   async createPublicidad(payload) {
     try {
-      const { data } = await api.post(`${this.nameRoute}`, payload);
+      const { data } = await api.post(`${this.nameRoute}`, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return data;
     } catch (error) {
       return handleError(error);
@@ -30,7 +34,11 @@ class PublicidadService {
 
   async updatePublicidad(id, payload) {
     try {
-      const { data } = await api.patch(`${this.nameRoute}/${id}`, payload);
+      const { data } = await api.patch(`${this.nameRoute}/${id}`, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return data;
     } catch (error) {
       return handleError(error);
@@ -38,10 +46,14 @@ class PublicidadService {
   }
 
   // PATCH /v1/publicidad/{id}/estacionamiento/{idEstacionamiento} - Solo para admin, actualiza una publicidad existente
-  async enablePublicidad(id, idEstacionamiento) {
+  // Corregir getimgpublicidad — ya no se necesita, la imagen viene en el listado
+  // Corregir enablePublicidad — agregar query param activo
+  async enablePublicidad(id, idEstacionamiento, activo) {
     try {
       const { data } = await api.patch(
         `${this.nameRoute}/${id}/estacionamiento/${idEstacionamiento}`,
+        null,
+        { params: { activo } },
       );
       return data;
     } catch (error) {

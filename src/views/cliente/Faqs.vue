@@ -107,7 +107,7 @@ const categorias = [
             {
                 id: 2,
                 pregunta: '¿Porqué no puedo congelar la mensualidad si acabé de pagar mensualidad y la tarjeta?',
-                respuesta: ''
+                respuesta: 'Tienes que dirigirte '
             },
             {
                 id: 3,
@@ -144,6 +144,11 @@ const categorias = [
                 pregunta: '¿Qué debo presentar para iniciar mi mensualidad en el parqueadero?',
                 respuesta: ''
             },
+            {
+                id: 10,
+                pregunta: '¿Cómo puedo crear otra mensualidad en otra con mi usuario actual?',
+                respuesta: ''
+            }
         ]
     },
     {
@@ -151,22 +156,22 @@ const categorias = [
         nombre: 'Pagos',
         faqs: [
             {
-                id: 10,
+                id: 11,
                 pregunta: '¿Cómo consulto mis pagos?',
                 respuesta: 'En el menú principal selecciona "Pagos Recientes" para ver el historial de tus últimas transacciones con su estado y valor.'
             },
             {
-                id: 11,
+                id: 12,
                 pregunta: '¿Qué hago si mi pago quedó pendiente?',
                 respuesta: 'Al intentar pagar nuevamente, el sistema detectará automáticamente la transacción pendiente y te mostrará un enlace para completarla.'
             },
             {
-                id: 12,
+                id: 13,
                 pregunta: '¿Cómo puedo pagar mis mensualidades en línea?',
                 respuesta: 'Una vez registrado en nuestro Portal, puedes pagar tus mensualidades desde el Portal, en la opción de Mis Mensualidades oprimir el botón pagar, seleccionar el valor de la mensualidad a cancelar y seguir los pasos del proceso de compra'
             },
             {
-                id: 13,
+                id: 14,
                 pregunta: '¿Dónde puedo consultar los pagos realizados de mi mensualidad?',
                 respuesta: ''
             },
@@ -177,42 +182,42 @@ const categorias = [
         nombre: 'AvalPay',
         faqs: [
             {
-                id: 14,
+                id: 15,
                 pregunta: '¿Qué es AvalPay?',
                 respuesta: 'AvalPay es la plataforma de pagos electrónicos que usa Parquearse para procesar en línea las transacciones generadas en la tienda virtual con las formas de pago habilitadas para tal fin.'
             },
             {
-                id: 15,
+                id: 16,
                 pregunta: '¿Cómo puedo pagar?',
                 respuesta: 'En la tienda virtual de Parquearse usted podrá realizar su pago con los medios habilitados para tal fin.Usted, de acuerdo con las opciones de pago escogidas por el comercio, podrá pagar a través de tarjetas de crédito Visa, y MasterCard y Cuentas debito ahorro y corriente PSE.'
             },
             {
-                id: 16,
+                id: 17,
                 pregunta: '¿Es seguro ingresar mis datos bancarios en este sitio web?',
                 respuesta: 'Para proteger tus datos Parquearse delega en AVALPAY la captura de la información sensible. Nuestra plataforma de pagos cumple con los más altos estándares exigidos por la norma internacional PCI DSS de seguridad en transacciones con tarjeta de crédito. Además, tiene certificado de seguridad SSL expedido por GeoTrust una compañía Verisign, el cual garantiza comunicaciones seguras mediante la encriptación de todoslos datos hacia y desde elsitio; de esta manera te podrássentirseguro a la hora de ingresar la información de su tarjeta. Durante el proceso de pago, en el navegador se muestra el nombre de la organización autenticada, la autoridad que lo certifica y la barra de dirección cambia a color verde.Estas característicasson visibles de inmediato y dan garantía y confianza para completar la transacción en AVALPAY. AVALPAY Pagostambién cuenta con elmonitoreo constante deMcAfee Secure y la firma demensajes electrónicos con Certicámara.'
             },
             {
-                id: 17,
+                id: 18,
                 pregunta: '¿Puedo realizar el pago cualquier día y a cualquier hora?',
                 respuesta: 'Sí, en Parquearse podrás realizar tus compras en línea los 7 días de la semana, las 24 horas del día a sólo un clic de distancia.'
             },
             {
-                id: 18,
+                id: 19,
                 pregunta: '¿Puedo cambiar la forma de pago?',
                 respuesta: 'Si aún no has finalizado tu pago, podrás volver al paso inicial y elegir la forma de pago que prefieras. Una vez finalizada la compra no es posible cambiar la forma de pago.'
             },
             {
-                id: 19,
+                id: 20,
                 pregunta: '¿Pagar electrónicamente tiene algún valor para mí como comprador?',
                 respuesta: 'No, los pagos electrónicosrealizados a través de AVALPAY no generan costos adicionales para el comprador.'
             },
             {
-                id: 20,
+                id: 21,
                 pregunta: '¿Qué debo hacer si mi transacción no concluyó?',
                 respuesta: 'En primera instancia, revisar si llegó un email de confirmación de la transacción a la cuenta de correo electrónico inscrito en el momento de realizar el pago, en caso de no haberlo recibido, deberás contactar a contabilidad de parquearse  para confirmar el estado de la transacción.'
             },
             {
-                id: 21,
+                id: 22,
                 pregunta: '¿Qué debo hacer si no recibí el comprobante de pago?',
                 respuesta: 'Por cada transacción aprobada a través de AVALPAY, recibirás un comprobante del pago con la referencia de compra en la dirección de correo electrónico que indicaste al momento de pagar. Si no lo recibes, podrás contactar a contabilidad o a la línea 607683042 o al correo electrónico contabilidad@parquearse.com, para solicitar el reenvío del comprobante a la misma dirección de correo electrónico registrada al momento de pagar.'
             },
@@ -224,22 +229,22 @@ const categorias = [
         nombre: 'Cuenta y acceso',
         faqs: [
             {
-                id: 22,
+                id: 23,
                 pregunta: '¿Cómo actualizo mis datos personales?',
                 respuesta: 'Ve a "Información Personal" desde el menú principal. Allí podrás actualizar tu nombre, teléfono y correo electrónico.'
             },
             {
-                id: 23,
+                id: 24,
                 pregunta: 'Perdí mi tarjeta de acceso, ¿qué hago?',
                 respuesta: 'En la tarjeta de tu mensualidad activa verás el botón "Perdí mi tarjeta". Al confirmarlo, se habilitará el cobro de tarjeta y podrás tramitar una nueva desde el botón "Pagar".'
             },
             {
-                id: 24,
+                id: 25,
                 pregunta: '¿Qué hasgo si registré mal el número de cédula cuando creé el usuario y ya realicé pago virtual de la mensualidad?',
                 respuesta: ''
             },
             {
-                id: 25,
+                id: 26,
                 pregunta: '¿Qué hago si seleccioné mal la sede en el momento del registro?',
                 respuesta: ''
             }

@@ -171,12 +171,17 @@
                             </td>
 
                             <!-- Opciones -->
-                            <td class=" text-center">
-                                <button @click="abrirDetalle(m)"
-                                    class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-[#299261] hover:bg-[#e8f5e9] transition-all"
-                                    title="Ver / Editar">
-                                    <AppIcon name="credit_card_gear" :size="35" style=" color:black " />
-                                </button>
+                            <td class="px-3 py-3 text-center">
+                                <div class="flex items-center justify-center gap-1">
+                                    <button @click="abrirVerDetalle(m)" title="Ver detalles"
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all">
+                                        <AppIcon name="visibility" :size="25" />
+                                    </button>
+                                    <button @click="abrirDetalle(m)" title="Editar"
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-[#299261] hover:bg-[#e8f5e9] transition-all">
+                                        <AppIcon name="edit_square" :size="25" />
+                                    </button>
+                                </div>
                             </td>
                         </tr>
 
@@ -188,6 +193,116 @@
             <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
+
+        <!-- ── Aside Ver Detalle (read-only) ────────────────────────── -->
+        <AsideEditar v-model="panelVer" :titulo="detalleVer?.NombreApellidos ?? '—'"
+            :subtitulo="(detalleVer?.T_Estacionamiento?.Nombre ?? '') + (detalleVer?.Documento ? ' · Doc. ' + detalleVer.Documento : '')"
+            label-guardar="Editar" :loading="loadingVer" @guardar="panelVer = false; abrirDetalle(detalleVerSource)"
+            @update:modelValue="panelVer = false">
+
+            <div v-if="loadingVer" class="flex flex-col items-center py-10 gap-3">
+                <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                <span class="text-sm text-gray-400">Cargando detalle...</span>
+            </div>
+
+            <template v-else-if="detalleVer">
+                <!-- Badges estado -->
+                <div class="flex gap-2 flex-wrap">
+                    <span class="text-[0.7rem] font-black px-3 py-1 rounded-full"
+                        :class="detalleVer.Estado ? 'bg-[#e8f5e9] text-[#299261] border border-[#c8e6c9]' : 'bg-red-50 text-red-600 border border-red-200'">
+                        ● {{ detalleVer.Estado ? 'Activo' : 'Inactivo' }}
+                    </span>
+                    <span class="text-[0.7rem] font-black px-3 py-1 rounded-full"
+                        :class="detalleVer.CobroTarjeta ? 'bg-blue-50 text-blue-600 border border-blue-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        {{ detalleVer.CobroTarjeta ? '💳 Con tarjeta' : 'Sin tarjeta' }}
+                    </span>
+                    <span class="text-[0.7rem] font-black px-3 py-1 rounded-full"
+                        :class="detalleVer.solicitud ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-gray-100 text-gray-500 border border-gray-200'">
+                        {{ detalleVer.solicitud ? 'Con solicitud' : 'Sin solicitud' }}
+                    </span>
+                </div>
+
+                <!-- Datos titular -->
+                <div class="flex flex-col gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C]/60 border-b border-[#e8f5e9] pb-1">
+                        Titular</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="detail-pill col-span-2">
+                            <span class="dp-label">Nombre</span>
+                            <span class="dp-value">{{ detalleVer.NombreApellidos ?? '—' }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">Documento</span>
+                            <span class="dp-value font-mono">{{ detalleVer.Documento ?? '—' }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">Sede</span>
+                            <span class="dp-value">{{ detalleVer.T_Estacionamiento?.Nombre ?? '—' }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">NIT</span>
+                            <span class="dp-value font-mono">{{ detalleVer.Nit ?? '—' }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">Empresa</span>
+                            <span class="dp-value">{{ detalleVer.NombreEmpresa ?? '—' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Autorización y vigencia -->
+                <div class="flex flex-col gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C]/60 border-b border-[#e8f5e9] pb-1">
+                        Autorización y vigencia</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="detail-pill col-span-2">
+                            <span class="dp-label">Autorización</span>
+                            <span class="dp-value">{{ detalleVer.T_Autorizaciones?.NombreAutorizacion ?? '—' }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">Tipo</span>
+                            <span class="dp-value">{{ detalleVer.T_Estacionamiento?.Nombre ?? '—' }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">ID Autorización</span>
+                            <span class="dp-value font-mono">{{ detalleVer.T_Autorizaciones?.IdAutorizacion ?? '—'
+                            }}</span>
+                        </div>
+                        <div class="detail-pill">
+                            <span class="dp-label">Fecha inicio</span>
+                            <span class="dp-value">{{ formatFecha(detalleVer.FechaInicio) }}</span>
+                        </div>
+                        <div class="detail-pill"
+                            :class="vigenciaClass(detalleVer) === 'text-red-500' ? 'border-red-200 bg-red-50' : ''">
+                            <span class="dp-label">Fecha fin</span>
+                            <span class="dp-value" :class="vigenciaClass(detalleVer)">
+                                {{ formatFecha(detalleVer.FechaFin) }}
+                                <span v-if="detalleVer.FechaFin" class="ml-1 text-[0.6rem]">({{
+                                    vigenciaLabel(detalleVer) }})</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehículos -->
+                <div class="flex flex-col gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C]/60 border-b border-[#e8f5e9] pb-1">
+                        Vehículos</p>
+                    <div class="flex gap-2 flex-wrap">
+                        <span v-for="p in placas(detalleVer)" :key="p"
+                            class="text-[0.72rem] font-black tracking-widest bg-[#0D291C] text-white px-3 py-1.5 rounded-lg">
+                            {{ p }}
+                        </span>
+                        <span v-if="!placas(detalleVer).length" class="text-sm text-gray-400">Sin vehículos
+                            registrados</span>
+                    </div>
+                </div>
+            </template>
+
+        </AsideEditar>
 
         <!-- ── Overlay ───────────────────────────────────────────── -->
         <!-- ── Panel mensualidad ─────────────────────────────────────────── -->
@@ -506,6 +621,27 @@ onMounted(async () => {
 })
 
 
+// ── Aside ver detalle (read-only) ────────────────────────────────
+const panelVer = ref(false)
+const loadingVer = ref(false)
+const detalleVer = ref(null)
+const detalleVerSource = ref(null)
+
+const abrirVerDetalle = async (m) => {
+    detalleVerSource.value = m
+    detalleVer.value = null
+    loadingVer.value = true
+    panelVer.value = true
+    try {
+        const res = await MensualidadesService.getDetalleById(m.IdPersonaAutorizada)
+        detalleVer.value = res?.data ?? res
+    } catch (e) {
+        console.error('[Ver detalle]', e)
+    } finally {
+        loadingVer.value = false
+    }
+}
+
 // ── Panel detalle ──────────────────────────────────────────────────
 const abrirDetalle = async (m) => {
     panelAbierto.value = true
@@ -514,26 +650,28 @@ const abrirDetalle = async (m) => {
     detalle.value = null
     autorizaciones.value = []
 
-    const idSede = m.T_Estacionamiento?.IdEstacionamiento ?? m._sedeId
-
     try {
-        const [resDetalle, resAuth] = await Promise.all([
-            MensualidadesService.getDetalleById(m.IdPersonaAutorizada),
-            AutorizacionesService.getBySede(idSede),
-        ])
-
+        // 1. Cargar detalle primero para obtener IdEstacionamiento correcto
+        const resDetalle = await MensualidadesService.getDetalleById(m.IdPersonaAutorizada)
         const d = resDetalle?.data ?? resDetalle
         detalle.value = d
 
-        const authData = resAuth?.data ?? resAuth ?? []
-        autorizaciones.value = Array.isArray(authData) ? authData : []
+        // 2. Usar sede del detalle (no del item de lista)
+        const idSede = d.T_Estacionamiento?.IdEstacionamiento ?? m._sedeId
+        if (idSede) {
+            const resAuth = await AutorizacionesService.getBySede(idSede)
+            const authData = resAuth?.data ?? resAuth ?? []
+            autorizaciones.value = Array.isArray(authData) ? authData : []
+        } else {
+            autorizaciones.value = []
+        }
 
         const toInputDate = (f) => {
+            console.log(f)
             if (!f) return ''
-            const d = new Date(f)
-            if (isNaN(d)) return ''
-            const pad = n => String(n).padStart(2, '0')
-            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+            // separa fecha y hora directamente
+            return formatsDate.DateOfString(f)
+
         }
 
         Object.assign(form, {
@@ -638,6 +776,40 @@ const guardar = async () => {
 </script>
 
 <style scoped>
+.detail-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #f8fffe;
+    border: 1px solid #e8f5e9;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.dp-label {
+    font-size: 0.58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #299261;
+}
+
+.dp-value {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #232B3A;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
 /* ── Field helpers para usar dentro del slot del AsideEditar ─────── */
 .aside-field-label {
     font-size: 0.72rem;

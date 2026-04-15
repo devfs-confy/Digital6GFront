@@ -3,7 +3,7 @@ import { api } from "@/api/axios";
 import { handleError } from "@/utils/error.handler";
 
 const AutorizacionesService = {
-  nameRoute: "/v1/autorizaciones",
+  nameRoute: "/v1/autorizaciones-mensuales",
 
   async getAll(params = {}) {
     try {
@@ -14,6 +14,50 @@ const AutorizacionesService = {
     }
   },
 
+  async create(data) {
+    try {
+      const response = await api.post(this.nameRoute, data);
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+
+  async get(idpersona) {
+    try {
+      const response = await api.get(`${this.nameRoute}/changes`, {
+        params: { IdPersona: idpersona },
+      });
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+
+  async modify(idAutorizacion, idEstacionamiento, data) {
+    try {
+      const response = await api.put(
+        `${this.nameRoute}/${idAutorizacion}/${idEstacionamiento}`,
+        data,
+      );
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+
+  async getRules() {
+    try {
+      const response = await api.get(`${this.nameRoute}/reglas`);
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+
+
+  
+  // CONFIGURACION DE AUTORIZACIONES
   async getBySede(IdEstacionamiento) {
     try {
       const response = await api.get(

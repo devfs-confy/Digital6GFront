@@ -51,8 +51,18 @@
                             md:px-10 md:pt-7 md:pb-10
                             max-[767px]:px-[18px] max-[767px]:py-5">
 
+
+                    <button @click="$router.back()"
+                        class="hidden md:flex items-center gap-1.5 text-[0.76rem] font-extrabold text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261] w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                        </svg>
+                        Volver
+                    </button>
                     <!-- Encabezado -->
                     <div class="flex items-start gap-3">
+
                         <div class="w-10 h-10 rounded-[14px] bg-[#0D291C] flex items-center justify-center shrink-0"
                             style="box-shadow:0 3px 0 #051510">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#7FD344"
@@ -263,6 +273,34 @@
                                 </div>
                             </div>
 
+                            <!-- Términos y condiciones -->
+                            <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                                <div class="relative flex-shrink-0 mt-0.5">
+                                    <input type="checkbox" v-model="aceptoTerminos" class="sr-only" />
+                                    <div class="w-4 h-4 rounded-[5px] border-2 flex items-center justify-center transition-all"
+                                        :class="aceptoTerminos
+                                            ? 'bg-[#0D291C] border-[#0D291C]'
+                                            : 'bg-white border-gray-300'">
+                                        <svg v-if="aceptoTerminos" xmlns="http://www.w3.org/2000/svg" width="9"
+                                            height="9" fill="#7FD344" viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="text-[0.72rem] font-semibold text-gray-500 leading-snug">
+                                    He leído y acepto los
+                                    <a href="/terminos" target="_blank"
+                                        class="font-black text-[#299261] hover:underline">
+                                        Términos y condiciones
+                                    </a>
+                                    y la
+                                    <a href="/privacidad" target="_blank"
+                                        class="font-black text-[#299261] hover:underline">
+                                        Política de privacidad
+                                    </a>
+                                </span>
+                            </label>
+
                             <!-- Error 409 -->
                             <Transition name="fade">
                                 <div v-if="errSubmit === '409'"
@@ -382,6 +420,8 @@
                             </p>
                         </div>
                     </Transition>
+
+
 
                     <!-- ── MODAL ÉXITO ── -->
                     <Transition name="modal">
@@ -504,7 +544,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ClientService from '@/api/services/client.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
 
-
+const aceptoTerminos = ref(false)
 const route = useRoute()
 const router = useRouter()
 
@@ -646,6 +686,7 @@ const validarFormulario = () => {
     if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
     if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
     if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
+    if (!aceptoTerminos.value) { errSubmit.value = 'Debes aceptar los términos y condiciones para continuar.'; return false }
     return true
 }
 

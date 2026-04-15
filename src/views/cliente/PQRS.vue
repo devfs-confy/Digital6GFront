@@ -665,8 +665,6 @@ const crearPqrs = async () => {
 
         const res = await PqrsService.create(payload)
 
-        // ── LOG 3: ¿qué respondió el servidor? ──
-        console.log('[PQRS] respuesta servidor:', res)
 
         modalNuevo.value = false
         quitarImagen()

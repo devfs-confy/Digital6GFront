@@ -106,13 +106,17 @@
                             <td class="td-cell max-w-[155px]">
                                 <div class="flex flex-col">
                                     <span class="font-semibold truncate text-[#0D291C] text-[0.85rem]">{{
+                                        pqrs.DocumentoUsuario }}</span>
+
+                                    <span class="text-[0.72rem] truncate text-gray-400"> {{
                                         pqrs.NombreCliente
                                         }}</span>
                                     <span class="text-[0.72rem] truncate text-gray-400">{{ pqrs.Email }}</span>
+
                                 </div>
                             </td>
-                            <td class="td-cell">
-                                <div class="flex flex-col gap-1 items-center">
+                            <td class="td-cell max-w-[60px]">
+                                <div class="flex flex-col gap-1 items-start w-max">
                                     <span
                                         class="inline-block px-[10px] py-[2px] rounded-full text-[0.68rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9] w-fit">
                                         {{ tipoLabel(pqrs.Tipo) }}
@@ -148,10 +152,10 @@
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
                                         <AppIcon name="visibility" :size="30" />
                                     </button>
-                                    <button @click="abrirCambioEstado(pqrs)" title="Cambiar estado"
+                                    <!-- <button @click="abrirCambioEstado(pqrs)" title="Cambiar estado"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-blue-50 hover:text-blue-500 transition-all border-0">
                                         <AppIcon name="gpp_maybe" :size="30" />
-                                    </button>
+                                    </button> -->
                                     <button @click="abrirCambioPrioridad(pqrs)" title="Cambiar prioridad"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-amber-50 hover:text-amber-500 transition-all border-0">
                                         <AppIcon name="arrow_shape_up_stack" :size="30" />
@@ -236,6 +240,13 @@
                             </div>
                         </div>
 
+                        <!-- Loading detalle -->
+                        <div v-if="loadingDetalle" class="flex items-center justify-center gap-2 py-2">
+                            <div
+                                class="w-4 h-4 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                            <span class="text-[0.72rem] text-gray-400 font-semibold">Cargando detalle...</span>
+                        </div>
+
                         <!-- Datos del cliente -->
                         <div class="flex flex-col gap-2">
                             <p
@@ -243,26 +254,29 @@
                                 Datos del cliente
                             </p>
                             <div class="grid grid-cols-2 gap-2">
-                                <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{
-                                        pqrsAccion?.NombreCliente ?? '—' }}</span>
+                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.NombreCliente ?? '—' }}</span>
                                 </div>
-                                <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—'
-                                    }}</span>
+                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Documento</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] font-mono">{{ pqrsAccion?.DocumentoUsuario ?? '—' }}</span>
                                 </div>
-                                <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
-                                    <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">
-                                        {{ pqrsAccion?.Email ?? '—' }}</span>
+                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—' }}</span>
+                                </div>
+                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Email ?? '—' }}</span>
+                                </div>
+                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha creación</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ formatFecha(pqrsAccion?.FechaCreacion) }}</span>
+                                </div>
+                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha respuesta</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ formatFecha(pqrsAccion?.FechaRespuesta) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -320,6 +334,38 @@
                             <div v-else
                                 class="flex items-center gap-2 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-2xl text-[0.78rem] font-semibold text-gray-400">
                                 No se pudo cargar la imagen.
+                            </div>
+                        </div>
+
+                        <!-- Asignaciones -->
+                        <div v-if="pqrsAccion?.AsignacionPQRS?.length" class="flex flex-col gap-2">
+                            <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                                Asignaciones ({{ pqrsAccion.AsignacionPQRS.length }})
+                            </p>
+                            <div class="flex flex-col gap-2">
+                                <div v-for="a in pqrsAccion.AsignacionPQRS" :key="a.IdAsignacion"
+                                    class="flex items-start gap-3 px-3 py-2.5 rounded-xl border"
+                                    :class="a.Activo ? 'bg-[#f0faf4] border-[#c8e6c9]' : 'bg-gray-50 border-gray-100 opacity-60'">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                                        :class="a.Activo ? 'bg-[#0D291C]' : 'bg-gray-300'">
+                                        <AppIcon name="manage_accounts" :size="14"
+                                            :class="a.Activo ? 'text-[#7FD344]' : 'text-white'" />
+                                    </div>
+                                    <div class="flex flex-col gap-[2px] min-w-0 flex-1">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-[0.8rem] font-black text-[#0D291C] truncate">
+                                                {{ a.Usuario?.Nombres }} {{ a.Usuario?.Apellidos }}
+                                            </span>
+                                            <span class="text-[0.6rem] font-black px-1.5 py-[1px] rounded-full flex-shrink-0"
+                                                :class="a.Activo ? 'bg-[#299261] text-white' : 'bg-gray-200 text-gray-500'">
+                                                {{ a.Activo ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </div>
+                                        <span class="text-[0.72rem] text-[#299261] font-semibold">{{ a.Departamento }}</span>
+                                        <span v-if="a.Observacion" class="text-[0.72rem] text-gray-500 italic">{{ a.Observacion }}</span>
+                                        <span class="text-[0.65rem] text-gray-400">{{ formatFecha(a.FechaAsignacion) }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -715,9 +761,17 @@
                         <!-- Formulario -->
                         <div class="flex flex-col gap-3">
                             <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Documento usuario admin *</label>
-                                <input v-model="fAsignar.DocumentoUsuario" type="number" class="field-input"
-                                    placeholder="1098..." />
+                                <label class="field-label">Administrador *</label>
+                                <div v-if="loadingAdmins" class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[0.76rem] text-gray-400">
+                                    <div class="w-3.5 h-3.5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin flex-shrink-0" />
+                                    Cargando administradores...
+                                </div>
+                                <select v-else v-model="fAsignar.DocumentoUsuario" class="field-input cursor-pointer">
+                                    <option value="">Seleccionar administrador</option>
+                                    <option v-for="a in admins" :key="a.Documento" :value="a.Documento">
+                                        {{ a.Nombres }} {{ a.Apellidos }} — {{ a.Documento }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Departamento *</label>
@@ -761,6 +815,7 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import PqrsService from '@/api/services/pqrs.service'
+import AdminServices from '@/api/services/admin.service'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 
 // ── Estado ─────────────────────────────────────────────────────────
@@ -887,17 +942,31 @@ const limpiarFiltros = () => {
 
 // ── Detalle / Responder ────────────────────────────────────────────
 const abrirDetalle = async (pqrs) => {
-    pqrsAccion.value = pqrs
-    detalleActivo.value = pqrs        // muestra datos inmediato
+    pqrsAccion.value = pqrs           // datos inmediatos del listado
+    detalleActivo.value = pqrs
     fR.Respuesta = pqrs.Respuesta ?? ''
     fR.Estado = pqrs.Estado ?? 'ABIERTO'
     respuestaOriginal.value = pqrs.Respuesta ?? ''
     errResponder.value = ''
     imagenDetalle.value = null
+    loadingDetalle.value = true
     modalDetalle.value = true
 
-    if (pqrs.Imagen) {
-        await cargarImagenPqrs(pqrs.Id)
+    try {
+        const res = await PqrsService.getDetailPqrs(pqrs.Id)
+        const full = res?.data ?? res
+        if (full) {
+            pqrsAccion.value = full
+            detalleActivo.value = full
+            fR.Respuesta = full.Respuesta ?? ''
+            fR.Estado = full.Estado ?? 'ABIERTO'
+            respuestaOriginal.value = full.Respuesta ?? ''
+        }
+        if (full?.Imagen) await cargarImagenPqrs(pqrs.Id)
+    } catch (e) {
+        console.warn('[Detalle PQRS]', e)
+    } finally {
+        loadingDetalle.value = false
     }
 }
 
@@ -1050,17 +1119,33 @@ const guardarMotivo = async () => {
 const modalAsignar = ref(false)
 const guardandoAsignar = ref(false)
 const errAsignar = ref('')
+const admins = ref([])
+const loadingAdmins = ref(false)
 const fAsignar = reactive({
     DocumentoUsuario: '',
     Departamento: '',
     Observacion: '',
 })
 
-const abrirAsignar = (pqrs) => {
+const cargarAdmins = async () => {
+    if (admins.value.length) return
+    loadingAdmins.value = true
+    try {
+        const res = await AdminServices.getAllAdmins({ limit: 200 })
+        admins.value = res?.data ?? (Array.isArray(res) ? res : [])
+    } catch (e) {
+        console.error('[Admins]', e)
+    } finally {
+        loadingAdmins.value = false
+    }
+}
+
+const abrirAsignar = async (pqrs) => {
     pqrsAccion.value = pqrs
     errAsignar.value = ''
     Object.assign(fAsignar, { DocumentoUsuario: '', Departamento: '', Observacion: '' })
     modalAsignar.value = true
+    await cargarAdmins()
 }
 
 const asignarPqrs = async () => {
@@ -1220,9 +1305,7 @@ input.search-input {
     }
 }
 
-.th-cell {
-    text-align: left;
-}
+
 
 .td-cell {
     text-align: left;
