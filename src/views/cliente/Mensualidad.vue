@@ -44,7 +44,7 @@
                 }" />
 
                 <!-- Card head -->
-                <div class="flex items-center gap-3 mt-1.5">
+                <div class="flex items-start gap-3 mt-1.5">
                     <!-- Avatar -->
                     <div
                         class="w-11 h-11 rounded-[14px] bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0 border-2 border-[#e8f5e9]">
@@ -52,12 +52,11 @@
                     </div>
                     <!-- Info -->
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-[0.95rem] font-extrabold text-[#0D291C] truncate">{{ m.sede }} - {{
-                            m.mensualidad }}</h3>
-                        <!-- <p class="text-[0.72rem] font-semibold text-gray-400 truncate mt-0.5"></p> -->
+                        <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] truncate leading-tight">{{ m.nombre }}</h3>
+                        <p class="text-[0.7rem] font-semibold text-gray-400 truncate mt-[2px]">CC {{ m.documento }}</p>
                         <!-- Badge -->
                         <span
-                            class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full mt-[3px] border"
+                            class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full mt-[4px] border"
                             :class="{
                                 'bg-green-100 text-green-700 border-green-200': m.estado === 'activa',
                                 'bg-amber-100 text-amber-600 border-amber-200': m.estado === 'por_vencer',
@@ -84,6 +83,26 @@
                             {{ m.estado === 'congelada' ? 'cong.' : 'días' }}
                         </span>
                     </div>
+                </div>
+
+                <!-- Sede · Mensualidad + Placas -->
+                <div class="flex flex-col gap-2">
+                    <p class="text-[0.7rem] font-bold text-gray-500 truncate">
+                        <span class="text-[#0D291C]">{{ m.sede }}</span>
+                        <span class="mx-1 opacity-40">·</span>
+                        <span>{{ m.mensualidad }}</span>
+                    </p>
+                    <div v-if="m.placas.length" class="flex flex-wrap gap-1.5">
+                        <span v-for="placa in m.placas" :key="placa"
+                            class="inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest px-2.5 py-[3px] rounded-lg bg-[#0D291C] text-[#7FD344] border border-[#1a3d2a]">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z"/>
+                                <circle cx="7.5" cy="14.5" r="1.5"/><circle cx="16.5" cy="14.5" r="1.5"/>
+                            </svg>
+                            {{ placa }}
+                        </span>
+                    </div>
+                    <p v-else class="text-[0.65rem] text-gray-400 italic">Sin placas registradas</p>
                 </div>
 
                 <!-- Dates block -->
@@ -204,7 +223,7 @@
         <!-- ───────────────── MODAL: PAGO ───────────────── -->
         <Transition name="modal">
             <div v-if="modalPago"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[70] p-4">
                 <div
                     class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)] max-[720px]:max-h-[95%]">
                     <!-- Head -->
@@ -216,10 +235,11 @@
                                 {{ iniciales(mensualidadAccion?.nombre) }}
                             </div>
                             <div>
-                                <p class="text-[0.9rem] font-extrabold text-white">Renovar mensualidad</p>
+                                <p class="text-[0.9rem] font-extrabold text-white">
+                                    {{ infoExcedente ? 'Pago excedente' : 'Renovar mensualidad' }}
+                                </p>
                                 <p class="text-[0.65rem] text-white/50 font-semibold">{{ mensualidadAccion?.nombre }} ·
-                                    {{
-                                        mensualidadAccion?.sede }}</p>
+                                    {{ mensualidadAccion?.sede }}</p>
                             </div>
                         </div>
                         <button @click="cerrarModales"
@@ -308,8 +328,46 @@
 
                         <!-- Options -->
                         <template v-else>
-                            <!-- Plan selector -->
-                            <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+
+                            <!-- ── Excedente resumen (solo cuando infoExcedente) ── -->
+                            <div v-if="infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Pago excedente
+                                </p>
+                                <div class="flex flex-col gap-3 rounded-2xl border-2 border-[#c8e6c9] bg-[#f0fdf4] p-4">
+                                    <div
+                                        class="flex items-center justify-between text-[0.78rem] font-semibold text-gray-500">
+                                        <span>{{ infoExcedente.autorizacionAnterior }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#299261"
+                                            viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                        <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
+                                            }}</span>
+                                    </div>
+                                    <div
+                                        class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
+                                        <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
+                                            <span>Subtotal</span><span>{{
+                                                formatPrecio(infoExcedente.excedente?.subtotal) }}</span>
+                                        </div>
+                                        <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
+                                            <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
+                                                }}</span>
+                                        </div>
+                                        <div
+                                            class="flex justify-between text-[0.85rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
+                                            <span>Total a pagar</span>
+                                            <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Plan selector (solo renovación normal) -->
+                            <div v-if="!infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                                     Elige tu plan
@@ -370,7 +428,7 @@
                             </div>
 
                             <!-- Month selector -->
-                            <div v-if="opcionSeleccionada && !esQuincena && !esSoloTarjeta"
+                            <div v-if="!infoExcedente && opcionSeleccionada && !esQuincena && !esSoloTarjeta"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -403,7 +461,7 @@
                             </div>
 
                             <!-- Manual start date -->
-                            <div v-if="!mensualidadAccion?.fechaFin && !esSoloTarjeta"
+                            <div v-if="!infoExcedente && !mensualidadAccion?.fechaFin && !esSoloTarjeta"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -555,16 +613,17 @@
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             Cancelar
                         </button>
-                        <button @click="confirmarPago" :disabled="!opcionSeleccionada || loadingOpciones || iniciandoPago
-                            || (!mensualidadAccion?.fechaFin && !fechaInicioManual)
+                        <button @click="confirmarPago" :disabled="(!infoExcedente && !opcionSeleccionada) || loadingOpciones || iniciandoPago
+                            || (!infoExcedente && !mensualidadAccion?.fechaFin && !fechaInicioManual)
                             || !avalpayinformacion.tipoDocumento || !avalpayinformacion.documento
                             || !avalpayinformacion.nombre || !avalpayinformacion.apellido
                             || !avalpayinformacion.telefono || !avalpayinformacion.correo"
                             class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="iniciandoPago"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
-                            {{ iniciandoPago ? 'Redirigiendo...' : esSoloTarjeta ?
-                                'Ir a pagar (solo tarjeta)' : 'Ir a pagar' }}
+                            {{ iniciandoPago ? 'Redirigiendo...' : infoExcedente ? 'Pagar excedente (' +
+                                formatPrecio(infoExcedente.excedente?.total) + ')'
+                                : esSoloTarjeta ? 'Ir a pagar (solo tarjeta) ' : 'Ir a pagar' }}
                         </button>
                     </div>
                 </div>
@@ -1058,9 +1117,10 @@ const cargarMisMensualidades = async () => {
             cobroTarjetaPermitido: !!(m.CobroTarjeta),
             id: m.IdPersonaAutorizada,
             nombre: m.NombreApellidos ?? '—',
+            documento: m.Documento ?? '—',
             fechaInicio: m.FechaInicio ? m.FechaInicio : null,
             fechaFin: m.FechaFin ? m.FechaFin : null,
-            sede: m.T_Estacionamiento?.Nombre ?? '—',
+            sede: m.T_Estacionamiento?.Nombre?.trim() ?? '—',
             mensualidad: m.T_Autorizaciones?.NombreAutorizacion ?? '—',
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),
@@ -1153,8 +1213,6 @@ const confirmarCambioPlacas = async () => {
     guardandoPlacas.value = true
 
     if (usandoCambioAutorizacion.value) {
-        const placaIngresada = (nuevasPlacas.value[0] ?? '').toUpperCase().trim()
-
         const placasPayload = nuevasPlacas.value
             .map((val, i) => {
                 const placa = val?.trim().toUpperCase() || null
@@ -1162,12 +1220,19 @@ const confirmarCambioPlacas = async () => {
             })
             .filter(arr => arr.length > 0)
 
-
-        const res = await MensualidadesService.cambiarAutorizacion({
+        const payload = {
             IdPersonaAutorizada: Number(mensualidadAccion.value.id),
             Placas: placasPayload,
-        })
+        }
+
+        const res = await MensualidadesService.cambiarAutorizacion(payload)
         guardandoPlacas.value = false
+
+        // 200 con requierePago: true → informativo, mostrar banner
+        if (res?.data?.requierePago) {
+            infoExcedente.value = res.data
+            return
+        }
 
         if (res?.error) {
             // 409 con requierePago → mostrar banner de excedente
@@ -1244,7 +1309,8 @@ const _aplicarCambioPlacasLocal = () => {
 const confirmarPagoExcedente = () => {
     modalPlacas.value = false
     consentimientoAceptado.value = false
-    modalConsentimiento.value = true
+    errPago.value = ''
+    modalPago.value = true  // necesita datos de facturación antes de proceder
 }
 
 
@@ -1398,7 +1464,7 @@ const seleccionarMesesExtra = async (n) => {
 }
 
 const confirmarPago = async () => {
-    if (!opcionSeleccionada.value) return
+    if (!infoExcedente.value && !opcionSeleccionada.value) return
 
     // Validar formulario
 
@@ -1420,6 +1486,13 @@ const confirmarPago = async () => {
     }
     errPago.value = ''
 
+    // Excedente: ir directo a pasarela, sin consent ni facturación
+    if (infoExcedente.value) {
+        modalPago.value = false
+        await ejecutarPago({ IdentificacionCliente: '222222222222' })
+        return
+    }
+
     if (mensualidadAccion.value?.cobroTarjetaPermitido) {
         const { isConfirmed } = await showConfirm({
             title: '¿Recuerdas reclamar tu tarjeta?',
@@ -1431,9 +1504,8 @@ const confirmarPago = async () => {
         if (!isConfirmed) return
     }
 
-    // Saltar ModalConsentimiento → ir directo a ejecutarPago con los datos
     modalPago.value = false
-    modalConsentimiento.value = true  // si aún usas consentimiento, si no: ejecutarPagoDirecto()
+    modalConsentimiento.value = true
 }
 
 
@@ -1462,13 +1534,13 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
 
         // ── Caso: pago de excedente por cambio de autorización ──
         if (excedentePendiente) {
-            const datosPago = excedentePendiente.datosPago
-            const placasNuevas = datosPago?.placasNuevas ?? {}
-
-            // ← filtrar las null, solo enviar las que tienen valor
-            const placasPayload = PLACA_KEYS
-                .filter(key => placasNuevas[key])
-                .map(key => [{ ColumnaPlaca: key, PlacaNueva: placasNuevas[key] }])
+            // placasSnapshot capturado al inicio de ejecutarPago
+            const placasPayload = placasSnapshot
+                .map((val, i) => {
+                    const placa = val?.trim().toUpperCase() || null
+                    return placa ? [{ ColumnaPlaca: PLACA_KEYS[i], PlacaNueva: placa }] : []
+                })
+                .filter(arr => arr.length > 0)
 
             const body = {
                 Email: avalpayinformacion.value.correo,
@@ -1483,8 +1555,6 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 Placas: placasPayload,
             }
 
-
-            console.log('[ejecutarPago] body excedente:', JSON.stringify(body, null, 2))
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
             const url = data?.urlPago ?? null
@@ -1517,7 +1587,6 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
 
 
         showInfo("Un momento", "Redirigiendo a la página de pago...")
-        console.log('[ejecutarPago] body normal:', JSON.stringify(body, null, 2))
 
         const res = await PagoService.iniciarPago(m.id, body)
         const data = res?.data ?? res

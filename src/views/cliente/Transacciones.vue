@@ -9,7 +9,7 @@
                 <AppIcon name="arrow_left_alt" :size="14" />
                 <span class="hidden sm:inline">Volver</span>
             </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Transacciones - pasarela de pagos
+            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Transacciones - Pasarela de Pagos
             </h2>
             <div class="w-[72px] sm:w-[88px]" />
         </div>
@@ -40,7 +40,7 @@
                 <div
                     class="bg-white rounded-[18px] px-[18px] py-4 flex flex-col gap-1 border-2 border-[#e8f5e9] shadow-[0_3px_0_#e2ede7]">
                     <span class="text-[1.2rem] font-black text-[#0D291C] leading-none">{{ formatCOP(totalPagado)
-                        }}</span>
+                    }}</span>
                     <span class="text-[0.65rem] font-bold uppercase tracking-[0.07em] text-gray-400">Total pagado</span>
                 </div>
                 <div

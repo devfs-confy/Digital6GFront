@@ -55,7 +55,7 @@
                 :class="abierto === faq.id ? 'border-[#299261]' : 'border-[rgba(13,41,28,0.1)] hover:border-[#299261]'">
 
                 <!-- Pregunta -->
-                <div class="flex items-center justify-between gap-3 px-[18px] py-[14px] cursor-pointer select-none"
+                <div class="flex items-start justify-between gap-3 px-[18px] py-[14px] cursor-pointer select-none"
                     @click="toggleFaq(faq.id)">
                     <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ faq.pregunta }}</span>
                     <div class="w-[26px] h-[26px] rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200"
@@ -73,7 +73,7 @@
                 <div class="overflow-hidden transition-all duration-250 ease-in-out"
                     :style="{ maxHeight: abierto === faq.id ? '400px' : '0px' }">
                     <div
-                        class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t border-[rgba(13,41,28,0.08)]">
+                        class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)]">
                         {{ faq.respuesta }}
                     </div>
                 </div>
@@ -102,7 +102,7 @@ const categorias = [
             {
                 id: 1,
                 pregunta: '¿Cómo agrego una mensualidad?',
-                respuesta: 'Dirígete a "Mis Mensualidades" y haz clic en el botón "Añadir". Selecciona la sede y completa el formulario con el código de verificación que te entregó el administrador.'
+                respuesta: 'Dirígete a "Mis Mensualidades" y haz clic en el botón "Añadir". Selecciona la sede y completa el formulario con el código de verificación que te entregó el Operario.'
             },
             {
                 id: 2,
@@ -122,12 +122,12 @@ const categorias = [
             {
                 id: 5,
                 pregunta: '¿Cómo cambio mis placas?',
-                respuesta: 'Ingresa al detalle de tu mensualidad y haz clic en "Cambiar placa". Solo se permite un cambio por mes. Si deseas cambiar de tipo de vehículo (moto a carro o viceversa), usa la opción "Cambiar tipo".'
+                respuesta: 'Ingresa al detalle de tu mensualidad y haz clic en "Cambiar placa". Solo se permite un cambio por mes. Si deseas cambiar de tipo de vehículo (moto a carro) en caso que no tengas carro asignado, se te cobrara un excedente'
             },
             {
                 id: 6,
                 pregunta: '¿Cómo puedo adquirir la tarjeta del parqueadero?',
-                respuesta: ''
+                respuesta: 'Para adquirirla, dirigígete a "Mis Mensualidades" y haz clic en el botón "Pagar". Selecciona el plan y el número de meses, luego confirma para ser redirigido a la pasarela de pago, despues de haber realizado el pago, podras acercarte al parqueadero y reclamar tu tarjeta con el Operario.'
             },
             {
                 id: 7,
@@ -137,7 +137,7 @@ const categorias = [
             {
                 id: 8,
                 pregunta: '¿Dónde puedo consultar los días disponibles de mi mensualidad?',
-                respuesta: ''
+                respuesta: 'En el apartado de "Mis Mensualidades" en el menú principal podrás ver los días disponibles de tu mensualidad.'
             },
             {
                 id: 9,

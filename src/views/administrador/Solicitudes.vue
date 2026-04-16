@@ -711,8 +711,7 @@
         <!-- ───── MODAL: ASIGNAR PQRS ───── -->
         <Transition name="modal">
             <div v-if="modalAsignar"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalAsignar = false">
+                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]">
                 <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[440px] flex flex-col overflow-hidden modal-card"
                     style="box-shadow: 0 7px 0 #0D291C">
 

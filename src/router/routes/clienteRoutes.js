@@ -23,13 +23,13 @@ export const clienteMenuItems = [
     route: "/cliente/pagos",
   },
   {
-    label: "Parqueos <br> recientes",
+    label: "Parqueos <br> Recientes",
     icon: icoParqueos,
     route: "/cliente/parqueos",
   },
 
   {
-    label: "Historia de<br> transacciones",
+    label: "Historia de<br> Transacciones",
     icon: icoPagos,
     route: "/cliente/transacciones",
     permission: "CREAR-CODIGOS",
@@ -40,7 +40,7 @@ export const clienteMenuItems = [
     route: "/cliente/pqrs",
   },
   {
-    label: "Información </br> personal",
+    label: "Información </br> Personal",
     icon: icoPerfil,
     route: "/cliente/informacion",
   },

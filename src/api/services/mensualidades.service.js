@@ -38,19 +38,28 @@ class MensualidadesService {
     }
   }
 
-  async cambiarAutorizacion({ IdPersonaAutorizada, Placas }) {
-    try {
-      const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
-        IdPersonaAutorizada,
-        Placas,
-      });
-      return data;
-    } catch (error) {
-      return handleError(error);
-    }
-  }
-
   // POST /v1/mensualidades/clientes/cambio-autorizacion
+  // cambio de placas si es carro a moto no cobra nada, si cambia de moto a carro cobra el excedente 
+
+// 200 =
+// {
+//   "success": true,
+//   "message": "Cambio requiere pago del excedente",
+//   "statusCode": 200,
+//   "data": {
+//     "requierePago": true,
+//     "aplicado": false,
+//     "autorizacionAnterior": "Mensualidad Moto",
+//     "autorizacionNueva": "Mensualidad Carro",
+//     "IdAutorizacionNueva": "5",
+//     "excedente": {
+//       "valorNeto": 40000,
+//       "subtotal": 33613,
+//       "iva": 6387,
+//       "total": 40000
+//     }
+//   }
+// }
   async cambiarAutorizacion({ IdPersonaAutorizada, Placas }) {
     try {
       const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
@@ -58,11 +67,12 @@ class MensualidadesService {
         Placas,
       });
       return data;
-
-      console.log(data);
     } catch (error) {
+      // 409 requierePago es informativo, no mostrar alerta de error
+      if (error?.response?.status === 409) {
+        return { error: true, status: 409, data: error.response.data }
+      }
       return handleError(error);
-      console.log(error);
     }
   }
 

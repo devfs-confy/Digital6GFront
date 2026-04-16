@@ -292,7 +292,7 @@
                             class="self-start flex items-center gap-1.5 text-[0.75rem] font-bold text-[#0D291C] hover:text-[#299261] transition-colors border-none bg-transparent p-0 cursor-pointer mt-1">
                             <span
                                 class="w-5 h-5 rounded-lg bg-[#0D291C] text-[#7FD344] flex items-center justify-center">
-                                <AppIcon name="add" :size="11" />
+                                <AppIcon name="add" :size="30" />
                             </span>
                             Agregar placa
                         </button>

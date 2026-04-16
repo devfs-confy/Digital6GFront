@@ -84,9 +84,9 @@
                                 formatPrecio(a.Valor) }}</td>
                             <td class="px-5 py-3 text-center">
                                 <button @click="verArqueo(a)"
-                                    class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-[#299261] hover:bg-[#e8f5e9] transition-all"
+                                    class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-[#299261] hover:bg-[#e8f5e9] transition-all"
                                     title="Ver detalle">
-                                    <AppIcon name="visibility" :size="20" />
+                                    <AppIcon name="visibility" :size="30" />
                                 </button>
                             </td>
                         </tr>
@@ -161,7 +161,7 @@
                 <div class="flex flex-col gap-1.5">
                     <p class="text-[0.65rem] font-black uppercase tracking-[0.08em] text-gray-400">Transacciones</p>
                     <div class="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
-                        <AppIcon name="receipt_long" :size="20" class="text-[#299261] flex-shrink-0" />
+                        <AppIcon name="receipt_long" :size="30" class="text-[#299261] flex-shrink-0" />
                         <div class="flex flex-col">
                             <span class="text-[1.1rem] font-black text-[#0D291C]">{{ arqueoActivo.CantTransacciones ?? 0
                                 }}</span>

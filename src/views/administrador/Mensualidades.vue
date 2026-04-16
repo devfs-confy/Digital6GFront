@@ -174,12 +174,12 @@
                             <td class="px-3 py-3 text-center">
                                 <div class="flex items-center justify-center gap-1">
                                     <button @click="abrirVerDetalle(m)" title="Ver detalles"
-                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all">
-                                        <AppIcon name="visibility" :size="25" />
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-blue-500 hover:bg-blue-50 transition-all">
+                                        <AppIcon name="visibility" :size="30" />
                                     </button>
                                     <button @click="abrirDetalle(m)" title="Editar"
-                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-gray-400 hover:text-[#299261] hover:bg-[#e8f5e9] transition-all">
-                                        <AppIcon name="edit_square" :size="25" />
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-[#299261] hover:bg-[#e8f5e9] transition-all">
+                                        <AppIcon name="edit_square" :size="30" />
                                     </button>
                                 </div>
                             </td>
@@ -656,15 +656,10 @@ const abrirDetalle = async (m) => {
         const d = resDetalle?.data ?? resDetalle
         detalle.value = d
 
-        // 2. Usar sede del detalle (no del item de lista)
-        const idSede = d.T_Estacionamiento?.IdEstacionamiento ?? m._sedeId
-        if (idSede) {
-            const resAuth = await AutorizacionesService.getBySede(idSede)
-            const authData = resAuth?.data ?? resAuth ?? []
-            autorizaciones.value = Array.isArray(authData) ? authData : []
-        } else {
-            autorizaciones.value = []
-        }
+        // 2. Cargar todas las autorizaciones para el select
+        const resAuth = await AutorizacionesService.getAll()
+        const authData = resAuth?.data ?? resAuth ?? []
+        autorizaciones.value = Array.isArray(authData) ? authData : []
 
         const toInputDate = (f) => {
             console.log(f)

@@ -210,7 +210,7 @@
                                 <div v-if="notifDetalle.FechaExpiracion" class="modal-detail-row">
                                     <span class="modal-detail-key">Expira</span>
                                     <span class="modal-detail-val">{{ formatFecha(notifDetalle.FechaExpiracion)
-                                    }}</span>
+                                        }}</span>
                                 </div>
                                 <div v-if="notifDetalle.DocumentoUsuario" class="modal-detail-row">
                                     <span class="modal-detail-key">Usuario</span>
@@ -244,6 +244,9 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import NotificacionesService from '@/api/services/notificaciones.service'
+import { DateTime } from 'luxon'
+
+const ZONA = 'America/Bogota'
 
 // ── Estado ──────────────────────────────────────
 const isOpen = ref(false)
@@ -282,7 +285,9 @@ const leidos = computed(() => itemsFiltrados.value.filter(n => n.EsLeida))
 async function fetchNotificaciones() {
     loading.value = true
     const res = await NotificacionesService.GetNotifiaciones()
-    if (res?.success) notificaciones.value = res.data
+    if (res?.success) {
+        notificaciones.value = res.data
+    }
     loading.value = false
 }
 
@@ -292,6 +297,7 @@ async function abrirDetalle(notif) {
         notif.EsLeida = true
     }
     notifDetalle.value = notif
+
     isOpen.value = false
 }
 
@@ -316,8 +322,16 @@ function togglePanel() {
     if (isOpen.value) fetchNotificaciones()
 }
 
+// El backend guarda hora Colombia pero etiqueta con Z — quitamos Z para no convertir
+function stripZ(dateStr) {
+    return dateStr.replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, '')
+}
+
 function timeAgo(dateStr) {
-    const diff = (Date.now() - new Date(dateStr)) / 1000
+    if (!dateStr) return ''
+    const ahora = DateTime.now().setZone(ZONA)
+    const fecha = DateTime.fromISO(stripZ(dateStr), { zone: ZONA })
+    const diff = ahora.diff(fecha, 'seconds').seconds
     if (diff < 60) return 'hace un momento'
     if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`
     if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`
@@ -326,10 +340,8 @@ function timeAgo(dateStr) {
 
 function formatFecha(dateStr) {
     if (!dateStr) return '—'
-    return new Date(dateStr).toLocaleDateString('es-CO', {
-        day: '2-digit', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-    })
+    return DateTime.fromISO(stripZ(dateStr), { zone: ZONA })
+        .toFormat("dd/MM/yyyy HH:mm")
 }
 
 function onClickOutside(e) {

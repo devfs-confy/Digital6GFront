@@ -97,7 +97,7 @@
                                         </span>
                                         <span class="text-xs text-gray-400 font-mono sm:hidden">{{ u.Documento }}</span>
                                         <span class="text-xs text-gray-400 truncate hidden sm:block">{{ u.Email
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -115,12 +115,12 @@
                                 <button @click="abrirEditar(u)"
                                     class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9] text-gray-400 hover:text-[#299261]"
                                     title="Editar información">
-                                    <AppIcon name="person_edit" :size="35" style="color:black;" />
+                                    <AppIcon name="person_edit" :size="30" style="color:black;" />
                                 </button>
                                 <button @click="darDeBaja(u)"
                                     class="w-8 h-8 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all text-gray-400 hover:text-red-500"
                                     title="Inhabilitar">
-                                    <AppIcon name="account_circle_off" :size="35" style="color:black;" />
+                                    <AppIcon name="account_circle_off" :size="30" style="color:black;" />
                                 </button>
                             </td>
                         </tr>

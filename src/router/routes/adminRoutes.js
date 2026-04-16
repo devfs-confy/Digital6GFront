@@ -24,6 +24,12 @@ export const adminMenuItems = [
     permission: "VER-USUARIOS",
   },
   {
+    label: "Mensualidades",
+    icon: icoMensual2,
+    route: "/admin/mensualidades",
+    permission: "VER-MENSUALIDADES",
+  },
+  {
     label: "Solicitudes <br> PQRS",
     icon: icoSolicitudes,
     route: "/admin/solicitudes",
@@ -36,7 +42,7 @@ export const adminMenuItems = [
     permission: "EDITAR-SEDES",
   },
   {
-    label: "Administrar<br>sedes",
+    label: "Administrar<br>Sedes",
     icon: icoSedes,
     route: "/admin/sedes",
     permission: "VER-SEDES",
@@ -47,12 +53,7 @@ export const adminMenuItems = [
     route: "/admin/tarifas-admin",
     permission: "VER-SEDES",
   },
-  {
-    label: "Mensualidades",
-    icon: icoMensual2,
-    route: "/admin/mensualidades",
-    permission: "VER-MENSUALIDADES",
-  },
+
   {
     label: "Usuarios",
     icon: icoUsuarios,
@@ -66,20 +67,20 @@ export const adminMenuItems = [
     permission: "VER-ROLES",
   },
   {
-    label: "Ver<br> disponibilidad",
+    label: "Ver<br> Disponibilidad",
     icon: icoDisponibilidad,
     route: "/admin/disponibilidad",
     permission: "CREAR-CODIGOS",
   },
   {
-    label: "Codigo<br> verificacion",
+    label: "Codigo<br> Verificacion",
     icon: IcoVerificacion,
     route: "/admin/verificacion",
     permission: "CREAR-CODIGOS",
   },
 
   {
-    label: "autorizaciones",
+    label: "Autorizaciones",
     icon: icoAuth,
     route: "/admin/autorizaciones",
     permission: "CREAR-CODIGOS",
