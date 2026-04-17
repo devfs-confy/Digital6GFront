@@ -202,6 +202,24 @@
                                 placeholder="Describe con deta..." rows="3" maxlength="250" />
                         </div>
 
+                        <!-- Mensualidad relacionada (opcional) -->
+                        <div class="flex flex-col gap-[5px]">
+                            <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">
+                                Mensualidad relacionada <span class="normal-case opacity-60 font-semibold">(opcional)</span>
+                            </label>
+                            <div v-if="loadingMensualidades"
+                                class="flex items-center gap-2 bg-white/50 border-2 border-[#0D291C] rounded-[13px] px-[13px] py-[9px] text-[0.78rem] font-semibold text-[#0D291C] opacity-50">
+                                <div class="w-[14px] h-[14px] border-2 border-[#0D291C] border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                                <span>Cargando mensualidades...</span>
+                            </div>
+                            <select v-else v-model="fN.IdPersonaAutorizada" class="pqrs-input">
+                                <option :value="null">Sin mensualidad asociada</option>
+                                <option v-for="m in misMensualidades" :key="m.id" :value="Number(m.id)">
+                                    {{ m.label }}
+                                </option>
+                            </select>
+                        </div>
+
                         <!-- Imagen adjunta (opcional) -->
                         <div class="flex flex-col gap-[5px]">
                             <label
@@ -472,6 +490,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import PqrsService from '@/api/services/pqrs.service'
+import MensualidadesService from '@/api/services/mensualidades.service'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -616,6 +635,23 @@ onMounted(cargarPqrs)
 const irPagina = (p) => { if (p < 1 || p > totalPaginas.value) return; paginaActual.value = p; cargarPqrs() }
 const onLimitChange = (val) => { limit.value = val; paginaActual.value = 1; cargarPqrs() }
 
+const misMensualidades = ref([])
+const loadingMensualidades = ref(false)
+
+const cargarMensualidades = async () => {
+    if (misMensualidades.value.length) return
+    loadingMensualidades.value = true
+    try {
+        const res = await MensualidadesService.getMisMensualidades()
+        const raw = Array.isArray(res) ? res : (res?.data ?? [])
+        misMensualidades.value = raw.map(m => ({
+            id: m.IdPersonaAutorizada,
+            label: `${m.T_Estacionamiento?.Nombre?.trim() ?? '—'} · ${m.T_Autorizaciones?.NombreAutorizacion ?? '—'}`,
+        }))
+    } catch { /* silent */ }
+    finally { loadingMensualidades.value = false }
+}
+
 const abrirNuevaPqrs = async () => {
     errNuevo.value = ''
     quitarImagen()  // ← limpia imagen al abrir
@@ -628,7 +664,10 @@ const abrirNuevaPqrs = async () => {
         IdPersonaAutorizada: null,
     })
     modalNuevo.value = true
-    if (!motivos.value.length) await cargarMotivos()
+    await Promise.all([
+        !motivos.value.length ? cargarMotivos() : Promise.resolve(),
+        cargarMensualidades(),
+    ])
 }
 
 

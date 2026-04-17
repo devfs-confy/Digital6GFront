@@ -38,32 +38,35 @@ class PagosService {
       Apellidos,
     } = body;
 
-    const payload = {
-      Email,
-      Telefono,
-      CantidadMeses,
-      ModalidadPago,
-      ...(FechaInicio && { FechaInicio }),
-      ...(IdentificacionCliente && { IdentificacionCliente }),
-      ...(IdAutorizacionNueva && { IdAutorizacionNueva }),
-      ...(PlacasNuevas && { PlacasNuevas }),
-      ...(Placas && { Placas }),
-      ...(Documento && { Documento }),
-      ...(TipoDocumento && { TipoDocumento }),
-      ...(Nombre && { Nombre }),
-      ...(Apellidos && { Apellidos }),
-    };
+    try {
+      const payload = {
+        Email,
+        Telefono,
+        CantidadMeses,
+        ModalidadPago,
+        ...(FechaInicio && { FechaInicio }),
+        ...(IdentificacionCliente && { IdentificacionCliente }),
+        ...(IdAutorizacionNueva && { IdAutorizacionNueva }),
+        ...(PlacasNuevas && { PlacasNuevas }),
+        ...(Placas && { Placas }),
+        ...(Documento && { Documento }),
+        ...(TipoDocumento && { TipoDocumento }),
+        ...(Nombre && { Nombre }),
+        ...(Apellidos && { Apellidos }),
+      };
 
-    console.log(
-      "[iniciarPago] payload FINAL que se envía:",
-      JSON.stringify(payload, null, 2),
-    );
+      const { data } = await api.post(
+        `${BASE_MENSUALIDAD}/iniciar-pago/${idPersona}`,
+        payload,
+      );
 
-    const { data } = await api.post(
-      `${BASE_MENSUALIDAD}/iniciar-pago/${idPersona}`,
-      payload,
-    );
-    return data;
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+  catch(error) {
+    return handleError(error);
   }
 
   async consultarEstado(rquid) {

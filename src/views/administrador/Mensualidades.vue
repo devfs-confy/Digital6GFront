@@ -19,7 +19,7 @@
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px]">
                 <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Buscar</label>
                 <div class="relative">
-                    <input v-model="filtros.search" type="text" placeholder="Nombre, documento o placa..."
+                    <input v-model="filtros.search" type="text" placeholder="Nombre, documento, placa o #ID..."
                         class="w-full rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 pr-10 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all"
                         @input="onFiltroChange" />
                     <AppIcon name="search" :size="20"
@@ -112,16 +112,20 @@
                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors group">
 
                             <!-- Titular -->
-                            <td class="px-5 py-3   shadow-[3px_0_8px_rgba(0,0,0,0.07)] transition-colors">
+                            <td class="px-5 py-3 shadow-[3px_0_8px_rgba(0,0,0,0.07)] transition-colors">
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0">
                                         {{ iniciales(m.NombreApellidos) }}
                                     </div>
-                                    <span
-                                        class="text-sm font-semibold text-[#0D291C] leading-tight max-w-[160px] truncate">
-                                        {{ m.NombreApellidos }}
-                                    </span>
+                                    <div class="flex flex-col gap-0.5 min-w-0">
+                                        <span class="text-sm font-semibold text-[#0D291C] leading-tight max-w-[160px] truncate">
+                                            {{ m.NombreApellidos }}
+                                        </span>
+                                        <span class="text-[0.6rem] font-black px-1.5 py-[1px] rounded-md bg-[#0D291C] text-[#7FD344] self-start">
+                                            #{{ m.IdPersonaAutorizada }}
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
 
@@ -485,12 +489,18 @@ const mensualidadesFiltradas = computed(() => {
 
     // Filtro búsqueda local (solo cuando no hay sede, porque con sede lo hace el backend)
     if (!filtros.sede && filtros.search) {
-        const q = filtros.search.toLowerCase()
-        lista = lista.filter(m =>
-            m.NombreApellidos?.toLowerCase().includes(q) ||
-            m.Documento?.toLowerCase().includes(q) ||
-            placas(m).some(p => p.toLowerCase().includes(q))
-        )
+        const raw = filtros.search.trim()
+        if (raw.startsWith('#')) {
+            const id = raw.slice(1)
+            lista = lista.filter(m => String(m.IdPersonaAutorizada).includes(id))
+        } else {
+            const q = raw.toLowerCase()
+            lista = lista.filter(m =>
+                m.NombreApellidos?.toLowerCase().includes(q) ||
+                m.Documento?.toLowerCase().includes(q) ||
+                placas(m).some(p => p.toLowerCase().includes(q))
+            )
+        }
     }
 
     // Actualiza contadores reactivamente

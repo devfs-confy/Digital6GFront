@@ -1154,7 +1154,7 @@ const abrirDetalle = async (m) => {
         const data = res?.data ?? res
         placaCambiada.value = data?.solictud
         detalleCompleto.value = data
-        placasDetalle.value = PLACA_KEYS.map(k => data[k] ?? '')
+        placasDetalle.value = PLACA_KEYS.map(k => data[k]).filter(Boolean)
         const placaPrincipal = (placasDetalle.value[0] ?? '').toUpperCase().trim()
         mensualidadAccion.value = {
             ...mensualidadAccion.value,

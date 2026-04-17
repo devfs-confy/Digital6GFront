@@ -282,6 +282,22 @@
                         </div>
 
 
+                        <!-- Mensualidad relacionada -->
+                        <div v-if="pqrsAccion?.PersonaAutorizada" class="flex flex-col gap-2">
+                            <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                                Mensualidad relacionada
+                            </p>
+                            <div class="flex items-center gap-3 px-3 py-2.5 bg-[#f0faf4] rounded-xl border border-[#c8e6c9]">
+                                <div class="w-8 h-8 rounded-[10px] bg-[#0D291C] flex items-center justify-center flex-shrink-0">
+                                    <AppIcon name="directions_car" :size="16" class="text-[#7FD344]" />
+                                </div>
+                                <div class="flex flex-col gap-0.5 min-w-0">
+                                    <span class="text-[0.8rem] font-black text-[#0D291C] truncate">{{ pqrsAccion.PersonaAutorizada.NombreApellidos }}</span>
+                                    <span class="text-[0.65rem] font-semibold text-gray-500 font-mono">CC {{ pqrsAccion.PersonaAutorizada.Documento }} · ID #{{ pqrsAccion.PersonaAutorizada.IdPersonaAutorizada }}</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Asunto -->
                         <div class="flex flex-col gap-2">
                             <p

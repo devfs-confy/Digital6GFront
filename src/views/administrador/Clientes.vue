@@ -24,7 +24,7 @@
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
                     class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Buscar</label>
-                <input v-model="busqueda" type="text" placeholder="Nombre o documento..." class="search-input w-full" />
+                <input v-model="busqueda" type="text" placeholder="Nombre, documento o #ID mensualidad..." class="search-input w-full" />
             </div>
             <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
@@ -95,10 +95,16 @@
                                         class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-[0.75rem] flex-shrink-0 border-2 border-[#e8f5e9]">
                                         {{ iniciales(cliente.Nombres) }}
                                     </div>
-                                    <div class="flex flex-col items-start min-w-0">
+                                    <div class="flex flex-col items-start min-w-0 gap-0.5">
                                         <span class="font-semibold text-[#0D291C] leading-tight truncate max-w-[140px]">
                                             {{ cliente.Nombres }} {{ cliente.Apellidos }}
                                         </span>
+                                        <div v-if="cliente.tPersonasAutorizadas?.length" class="flex flex-wrap gap-1">
+                                            <span v-for="p in cliente.tPersonasAutorizadas" :key="p.IdPersonaAutorizada"
+                                                class="text-[0.58rem] font-black px-1.5 py-[1px] rounded-md bg-[#0D291C] text-[#7FD344]">
+                                                #{{ p.IdPersonaAutorizada }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -428,9 +434,20 @@ const fE = reactive({
 })
 
 // ── Computed ───────────────────────────────────────────────────────
-const listaClientes = computed(() =>
-    Array.isArray(clientes.value) ? clientes.value : (clientes.value?.data ?? [])
-)
+const listaClientes = computed(() => {
+    const raw = Array.isArray(clientes.value) ? clientes.value : (clientes.value?.data ?? [])
+    const raw2 = busquedaDebounced.value?.trim()
+    if (!raw2) return raw
+    if (raw2.startsWith('#')) {
+        const id = raw2.slice(1)
+        return raw.filter(c => c.tPersonasAutorizadas?.some(p => String(p.IdPersonaAutorizada).includes(id)))
+    }
+    const ql = raw2.toLowerCase()
+    return raw.filter(c =>
+        String(c.Documento).toLowerCase().includes(ql) ||
+        `${c.Nombres} ${c.Apellidos}`.toLowerCase().includes(ql)
+    )
+})
 
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -440,12 +457,13 @@ const iniciales = (nombre = '') =>
 // ── Carga ──────────────────────────────────────────────────────────
 const cargarClientes = async () => {
     loading.value = true
+    const buscarPorId = busquedaDebounced.value?.trim().startsWith('#')
     try {
         const params = {
-            page: paginaActual.value,
-            limit: limit.value,
+            page: buscarPorId ? 1 : paginaActual.value,
+            limit: buscarPorId ? 9999 : limit.value,
             ...(filtroSede.value && { sede: filtroSede.value }),
-            ...(busquedaDebounced.value && { search: busquedaDebounced.value }),
+            ...(!buscarPorId && busquedaDebounced.value && { search: busquedaDebounced.value }),
         }
 
         // Si hay filtro de estado, traemos todo para filtrar localmente

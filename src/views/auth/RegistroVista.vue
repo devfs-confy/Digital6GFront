@@ -604,7 +604,7 @@ const onDocumentoInput = () => {
     usuarioEncontrado.value = false
     msgDoc.value = ''
     errSubmit.value = ''
-    const doc = form.Documento.replace(/\D/g, '')
+    const doc = form.Documento.replace(/\D/g, '')   
     form.Documento = doc
     if (doc.length >= 7) docTimer = setTimeout(() => buscarDocumento(doc), 900)
 }
