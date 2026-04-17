@@ -207,7 +207,6 @@ const cargarHistorial = async () => {
             }))
         }))
 
-        console.log('[HistorialPagos] Cargado', raw)
     } catch (e) {
         console.error('[HistorialPagos]', e)
         errorCarga.value = 'No se pudo cargar el historial de pagos.'

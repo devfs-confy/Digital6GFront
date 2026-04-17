@@ -537,7 +537,6 @@ const cargarImagenPqrs = async (id) => {
     try {
         const res = await PqrsService.getImagenesPqrs(id)
         imagenDetalle.value = res?.data ?? null
-        console.log('[Imagen]', imagenDetalle.value)
     } catch (e) {
         console.warn('[Imagen PQRS]', e)
     } finally {
@@ -549,8 +548,7 @@ function handleFileChange(event) {
     const file = event.target.files?.[0]
 
     // ── LOG 5: ¿llega el evento con archivo? ──
-    console.log('[FileChange] event.target.files:', event.target.files)
-    console.log('[FileChange] file recibido:', file)
+
 
     if (!file) {
         console.warn('[FileChange] No se recibió archivo')
@@ -575,12 +573,10 @@ function handleFileChange(event) {
     selectedFile.value = file
 
     // ── LOG 6: confirmar que se guardó en el ref ──
-    console.log('[FileChange] selectedFile.value asignado:', selectedFile.value?.name)
 
     const reader = new FileReader()
     reader.onload = () => {
         previewUrl.value = reader.result
-        console.log('[FileChange] previewUrl generado, longitud:', reader.result?.length)
     }
     reader.readAsDataURL(file)
 }
@@ -626,7 +622,6 @@ const cargarPqrs = async () => {
         totalRegistros.value = res?.total ?? res?.count ?? datos.length
         totalPaginas.value = res?.totalPages ?? res?.pages ?? Math.max(1, Math.ceil(totalRegistros.value / limit.value))
 
-        console.log('[PQRS]', { datos, total: totalRegistros.value, paginas: totalPaginas.value })
 
     } catch (e) {
         pqrsList.value = []

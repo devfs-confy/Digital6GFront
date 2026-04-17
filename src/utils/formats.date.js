@@ -11,7 +11,6 @@ function fechaFormato(date) {
 
 function InputLocal(date) {
   if (date == null) return "Sin registro";
-  console.log({date})
   const fecha = new Date(date);
 
   const yyyy = fecha.getFullYear();
@@ -27,7 +26,6 @@ function DateTimeLocal(date) {
   if (date == null) return "Sin registro";
   let newDate = new Date(date);
   const fecha = DateTime.fromISO(newDate).setZone("America/Bogota");
-  console.log(fecha);
   return fecha.toFormat("yyyy-MM-dd HH:mm:ss");
 }
 
@@ -40,49 +38,44 @@ function FechaSinCeros(fecha) {
   return `${Number(anio)}-${Number(mes)}-${Number(dia)}`;
 }
 
-
-function fechaSinDate(date){ //fecha sin el new date
-  if(!date) return ''
-  const format = date.split('T')
-  return `${format[0]} ${format[1].split('.')[0]}`
+function fechaSinDate(date) {
+  //fecha sin el new date
+  if (!date) return "";
+  const format = date.split("T");
+  return `${format[0]} ${format[1].split(".")[0]}`;
 }
 function getColombiaDateString(fin) {
-    const date = new Date().toLocaleString("en-US", {
-        timeZone: "America/Bogota",
-    });
-    const colombiaDate = new Date(date);
+  const date = new Date().toLocaleString("en-US", {
+    timeZone: "America/Bogota",
+  });
+  const colombiaDate = new Date(date);
 
-    const pad = (n) => n.toString().padStart(2, '0');
+  const pad = (n) => n.toString().padStart(2, "0");
 
-    const yyyy = colombiaDate.getFullYear();
-    const mm = pad(colombiaDate.getMonth() + 1);
-    const dd = pad(colombiaDate.getDate());
+  const yyyy = colombiaDate.getFullYear();
+  const mm = pad(colombiaDate.getMonth() + 1);
+  const dd = pad(colombiaDate.getDate());
 
-    if (fin) return `${yyyy}-${mm}-${dd}`
-    return `${yyyy}-${mm}-${dd}`;
+  if (fin) return `${yyyy}-${mm}-${dd}`;
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 //DATETIME LUXON - return en new Date()
- function getDateNow(){
+function getDateNow() {
+  return DateTime.local().setZone("America/Bogota").toJSDate();
+}
 
-    return DateTime.local().setZone('America/Bogota').toJSDate();
-   
+function DateOfString(f) {
+  const dt = DateTime.fromISO(f);
 
- }
+  if (!dt.isValid) {
+    console.error("Fecha inválida:", dt.invalidExplanation);
+    return "";
+  }
 
- function DateOfString(f){
-  const dt = DateTime.fromISO(f)
-
-    if (!dt.isValid) {
-        console.error('Fecha inválida:', dt.invalidExplanation)
-        return ''
-    }
-
-    return DateTime
-        .fromISO(f, { zone: 'utc' })     // viene en UTC     // lo pasas a local
-        .toFormat("yyyy-MM-dd'T'HH:mm")
-
- }
+  return DateTime.fromISO(f, { zone: "utc" }) // viene en UTC     // lo pasas a local
+    .toFormat("yyyy-MM-dd'T'HH:mm");
+}
 
 export default {
   fechaFormato,
@@ -92,5 +85,5 @@ export default {
   fechaSinDate,
   getColombiaDateString,
   getDateNow,
-  DateOfString
+  DateOfString,
 };

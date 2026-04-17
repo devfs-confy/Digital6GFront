@@ -52,7 +52,8 @@
                     </div>
                     <!-- Info -->
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] truncate leading-tight">{{ m.nombre }}</h3>
+                        <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] truncate leading-tight">{{ m.nombre }}
+                        </h3>
                         <p class="text-[0.7rem] font-semibold text-gray-400 truncate mt-[2px]">CC {{ m.documento }}</p>
                         <!-- Badge -->
                         <span
@@ -95,9 +96,12 @@
                     <div v-if="m.placas.length" class="flex flex-wrap gap-1.5">
                         <span v-for="placa in m.placas" :key="placa"
                             class="inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest px-2.5 py-[3px] rounded-lg bg-[#0D291C] text-[#7FD344] border border-[#1a3d2a]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z"/>
-                                <circle cx="7.5" cy="14.5" r="1.5"/><circle cx="16.5" cy="14.5" r="1.5"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z" />
+                                <circle cx="7.5" cy="14.5" r="1.5" />
+                                <circle cx="16.5" cy="14.5" r="1.5" />
                             </svg>
                             {{ placa }}
                         </span>
@@ -175,16 +179,13 @@
 
 
                 <!-- Card actions -->
-                <div class="grid gap-2 w-full" :class="mostrarCongelar(m) ? 'grid-cols-3' : 'grid-cols-2'">
+                <div class="grid grid-cols-2 gap-2 w-full">
                     <!-- Pay -->
                     <button @click="pagarDeshabilitado(m) ? null : abrirPago(m)" :disabled="pagarDeshabilitado(m)"
-                        :class="[
-                            m.conPago && m.estado !== 'congelada' ? 'col-span-1' : '',
-                            pagarDeshabilitado(m)
-                                ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
-                                : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'
-                        ]"
-                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
+                        :class="pagarDeshabilitado(m)
+                            ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
+                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'"
+                        class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -194,25 +195,24 @@
                     </button>
                     <!-- View -->
                     <button @click="abrirDetalle(m)"
-                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
+                        class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
-                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
                         </svg>
-                        Mas información
+                        <span class="xs:inline">Más info</span>
                     </button>
-                    <!-- Freeze -->
+                    <!-- Freeze — fila completa si existe -->
                     <button v-if="mostrarCongelar(m)" @click="abrirCongelar(m)"
-                        class="flex items-center justify-center gap-2 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
+                        class="col-span-2 flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
                                 d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z" />
                         </svg>
-                        Congelar
+                        Congelar mensualidad
                     </button>
-
                 </div>
             </div>
         </div>
@@ -387,8 +387,8 @@
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
                                                     <template v-if="op.cantidadMeses > 0">
-                                                        · {{ op.cantidadMeses }} {{ op.cantidadMeses === 1 ? 'mes' :
-                                                            'meses' }}
+                                                        · <template v-if="op.modalidad === 'QUINCENA'">15 días</template>
+                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses === 1 ? 'mes' : 'meses' }}</template>
                                                     </template>
                                                 </span>
                                             </div>
@@ -1529,7 +1529,6 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             iniciandoPago.value = false
             return
         }
-        console.log('[ejecutarPago] mensualidadAccion completa:', JSON.stringify(m, null, 2))
         const user = authStore.user
 
         // ── Caso: pago de excedente por cambio de autorización ──

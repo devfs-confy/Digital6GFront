@@ -57,8 +57,22 @@
                                     <rect width="18" height="11" x="3" y="11" rx="2" />
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                 </svg>
-                                <input v-model="password" id="password" type="password" placeholder="••••••••"
-                                    @keyup.enter="handleLogin" autocomplete="current-password" />
+                                <input v-model="password" id="password" :type="verPassword ? 'text' : 'password'"
+                                    placeholder="••••••••" @keyup.enter="handleLogin" autocomplete="current-password" />
+                                <button type="button" @click="verPassword = !verPassword" class="eye-btn" tabindex="-1">
+                                    <svg v-if="!verPassword" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" viewBox="0 0 24 24">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                        <line x1="1" y1="1" x2="23" y2="23" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
@@ -119,6 +133,7 @@ const auth = useAuthStore()
 
 const documento = ref('')
 const password = ref('')
+const verPassword = ref(false)
 
 async function handleLogin() {
     if (!documento.value || !password.value) return
@@ -378,6 +393,23 @@ async function handleLogin() {
 
 .input-wrap.error input {
     border-color: #fca5a5;
+}
+
+.eye-btn {
+    position: absolute;
+    right: 11px;
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    color: #b0bec5;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.eye-btn:hover {
+    color: #299261;
 }
 
 /* ── Error alert ──────────────────────────────── */

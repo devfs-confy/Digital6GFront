@@ -668,16 +668,11 @@ const abrirDetalle = async (m) => {
 
         // 2. Cargar autorizaciones de la sede correspondiente
         const idSede = String(d.T_Estacionamiento?.IdEstacionamiento ?? d.IdEstacionamiento ?? '')
-        console.log('[Auth] idSede:', idSede)
-        console.log('[Auth] T_Autorizaciones del detalle:', d.T_Autorizaciones)
         const resAuth = await AutorizacionesService.listarPorSede(idSede)
-        console.log('[Auth] listarPorSede raw:', resAuth)
         const authData = Array.isArray(resAuth) ? resAuth : (resAuth?.data ?? [])
-        console.log('[Auth] authData final:', authData)
         autorizaciones.value = authData
 
         const toInputDate = (f) => {
-            console.log(f)
             if (!f) return ''
             // separa fecha y hora directamente
             return formatsDate.DateOfString(f)
@@ -740,7 +735,6 @@ const guardar = async () => {
             if (isNaN(d)) return undefined
             const pad = n => String(n).padStart(2, '0')
             const result = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
-            console.log('[toApiDate] input:', f, '→ Date obj:', d.toString(), '→ output:', result)
             return result
         }
 
@@ -761,12 +755,7 @@ const guardar = async () => {
             ...(form.IdAutorizacion && { IdAutorizacion: form.IdAutorizacion }), // ← agregar
         }
 
-        console.log('[guardar] DTO a enviar:', dto)
 
-        console.log('[guardar] FechaInicio raw del form:', form.FechaInicio)
-        console.log('[guardar] FechaFin raw del form:', form.FechaFin)
-        console.log('[guardar] FechaInicio convertida:', toApiDate(form.FechaInicio))
-        console.log('[guardar] FechaFin convertida:', toApiDate(form.FechaFin))
 
         const response = await MensualidadesService.updateById(id, dto)
         if (response?.error) {

@@ -26,7 +26,6 @@ class FacturaService {
       );
 
       // Extraer filename del header Content-Disposition
-      console.log('[Factura] headers:', response.headers)
       const contentDisposition = response.headers["content-disposition"];
       let fileName = "factura.pdf"; // fallback
 

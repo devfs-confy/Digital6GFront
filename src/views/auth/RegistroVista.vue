@@ -653,7 +653,6 @@ const buscarDocumento = async (doc) => {
             placas: [d.placa1, d.placa2, d.placa3, d.placa4, d.placa5].filter(Boolean),
         })
 
-        console.log('Datos de mensualidad encontrados:', mensualidadData.value)
 
         if (form.placas.length === 0) form.placas = ['']
         msgDoc.value = '✓ Mensualidad encontrada — completa los datos faltantes'
