@@ -205,7 +205,7 @@
                     </button>
                     <!-- Freeze — fila completa si existe -->
                     <button v-if="mostrarCongelar(m)" @click="abrirCongelar(m)"
-                        class="col-span-2 flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
+                        class=" col-span-2 flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -387,8 +387,10 @@
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
                                                     <template v-if="op.cantidadMeses > 0">
-                                                        · <template v-if="op.modalidad === 'QUINCENA'">15 días</template>
-                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses === 1 ? 'mes' : 'meses' }}</template>
+                                                        · <template v-if="op.modalidad === 'QUINCENA'">15
+                                                            días</template>
+                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses ===
+                                                            1 ? 'mes' : 'meses' }}</template>
                                                     </template>
                                                 </span>
                                             </div>
@@ -1011,7 +1013,8 @@ const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINC
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
 
 const mostrarCongelar = (m) =>
-    m.conPago && m.estado !== 'congelada' && !m.esQuincena
+    m.conPago && m.estado !== 'congelada' && !m.esQuincena && !m.esMoto && m.estado !== 'activa' && m.estado !== 'pendiente' && m.estado !== 'por_vencer'
+
 
 // ── Helpers de fecha ──────────────────────────────────────────
 const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null

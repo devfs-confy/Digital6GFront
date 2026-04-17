@@ -113,16 +113,18 @@
 
                             <!-- Titular -->
                             <td class="px-5 py-3 shadow-[3px_0_8px_rgba(0,0,0,0.07)] transition-colors">
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3  max-w-[155px]">
                                     <div
                                         class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0">
                                         {{ iniciales(m.NombreApellidos) }}
                                     </div>
                                     <div class="flex flex-col gap-0.5 min-w-0">
-                                        <span class="text-sm font-semibold text-[#0D291C] leading-tight max-w-[160px] truncate">
+                                        <span
+                                            class="text-sm font-semibold text-[#0D291C] leading-tight max-w-[160px] truncate">
                                             {{ m.NombreApellidos }}
                                         </span>
-                                        <span class="text-[0.6rem] font-black px-1.5 py-[1px] rounded-md bg-[#0D291C] text-[#7FD344] self-start">
+                                        <span
+                                            class="text-[0.6rem] font-black px-1.5 py-[1px] rounded-md bg-[#0D291C] text-[#7FD344] self-start">
                                             #{{ m.IdPersonaAutorizada }}
                                         </span>
                                     </div>
@@ -157,9 +159,7 @@
                             <!-- Vigencia -->
                             <td class="px-5 py-3 whitespace-nowrap">
                                 <div v-if="m.FechaInicio || m.FechaFin" class="flex flex-col gap-0.5">
-                                    <span class="text-[0.72rem] font-semibold text-gray-500">
-                                        {{ formatFecha(m.FechaInicio) }} → {{ formatFecha(m.FechaFin) }}
-                                    </span>
+
                                     <span :class="['text-[0.65rem] font-bold', vigenciaClass(m)]">
                                         {{ vigenciaLabel(m) }}
                                     </span>
