@@ -244,7 +244,7 @@
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                        }}</label>
+                                            }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
                                                 class="field-input placa-input flex-1" placeholder="" maxlength="7" />
@@ -606,7 +606,7 @@ const onDocumentoInput = () => {
     errSubmit.value = ''
     const doc = form.Documento.replace(/\D/g, '')
     form.Documento = doc
-    if (doc.length >= 6) docTimer = setTimeout(() => buscarDocumento(doc), 900)
+    if (doc.length >= 7) docTimer = setTimeout(() => buscarDocumento(doc), 900)
 }
 
 const buscarDocumento = async (doc) => {

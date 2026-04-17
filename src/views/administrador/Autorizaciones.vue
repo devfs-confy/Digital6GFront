@@ -486,7 +486,7 @@ const cargar = async () => {
 
         if (filtros.value.sede) {
             // Endpoint dedicado por sede, devuelve todos → paginamos client-side
-            res = await AutorizacionesService.getBySede(parseInt(filtros.value.sede, 10))
+            res = await AutorizacionesService.listarPorSede(parseInt(filtros.value.sede, 10))
             if (res?.error) { showError({ status: res.status, data: res.data }); autorizaciones.value = []; return }
             autorizaciones.value = res?.data ?? (Array.isArray(res) ? res : [])
         } else {
@@ -620,5 +620,15 @@ input[type="checkbox"].sr-only {
     height: 1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 </style>

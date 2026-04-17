@@ -79,7 +79,7 @@
                             </td>
                             <td class="px-4 py-3 max-w-[220px]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Descripcion ?? '—'
-                                }}</span>
+                                    }}</span>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1 text-[0.8rem] font-extrabold" :class="{
@@ -183,10 +183,10 @@
                                     class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">Asunto
                                     *</label>
                                 <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{ fN.Asunto.length
-                                }}/50</span>
+                                    }}/50</span>
                             </div>
-                            <input v-model="fN.Asunto" type="text" class="pqrs-input"
-                                placeholder="Ej: Problema con el acceso al parqueadero" maxlength="50" />
+                            <input v-model="fN.Asunto" type="text" class="pqrs-input" placeholder="Ej: Probl..."
+                                maxlength="50" />
                         </div>
 
                         <!-- Descripción -->
@@ -199,8 +199,7 @@
                                     fN.Descripcion.length }}/250</span>
                             </div>
                             <textarea v-model="fN.Descripcion" class="pqrs-input resize-y min-h-[90px]"
-                                placeholder="Describe con detalle tu petición, queja, reclamo o sugerencia..." rows="3"
-                                maxlength="250" />
+                                placeholder="Describe con deta..." rows="3" maxlength="250" />
                         </div>
 
                         <!-- Imagen adjunta (opcional) -->
@@ -268,8 +267,8 @@
                                 <label
                                     class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">Correo
                                     electrónico *</label>
-                                <input v-model="fN.Email" type="email" class="pqrs-input"
-                                    placeholder="correo@ejemplo.com" maxlength="250" />
+                                <input v-model="fN.Email" type="email" class="pqrs-input" placeholder="corr..."
+                                    maxlength="250" />
                             </div>
                         </div>
 
@@ -352,7 +351,7 @@
                                         <span
                                             class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
                                         <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ detalleActivo.Tipo
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">

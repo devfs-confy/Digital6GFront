@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
+    <div class="flex flex-col gap-5 min-h-full overflow-y-auto pb-6">
 
         <!-- Header -->
         <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
@@ -30,8 +30,20 @@
             </button>
         </div>
 
-        <!-- Sin resultados -->
-        <div v-if="busqueda && categoriasFiltradas.length === 0"
+        <!-- Categorías (botones) — solo visibles cuando no se busca -->
+        <div v-if="!busqueda" class="flex flex-wrap gap-2">
+            <button v-for="cat in categorias" :key="cat.id" @click="seleccionarCategoria(cat.id)"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-full text-[0.78rem] font-black border-2 transition-all cursor-pointer"
+                :class="categoriaActiva === cat.id
+                    ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510]'
+                    : 'bg-white text-[#0D291C] border-[#c8e6c9] shadow-[0_2px_0_#c8e6c9] hover:border-[#299261] hover:bg-[#f0faf4]'">
+                {{ cat.nombre }}
+                <span class="text-[0.65rem] font-black opacity-60">({{ cat.faqs.length }})</span>
+            </button>
+        </div>
+
+        <!-- Sin resultados búsqueda -->
+        <div v-if="busqueda && faqsBuscadas.length === 0"
             class="flex flex-col items-center gap-3 py-16 text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -40,45 +52,75 @@
             <span class="text-sm font-semibold">Sin resultados para "{{ busqueda }}"</span>
         </div>
 
-        <!-- Categorías y FAQs -->
-        <div v-for="cat in categoriasFiltradas" :key="cat.id" class="flex flex-col gap-2">
-
-            <!-- Label categoría -->
-            <p
-                class="text-[1rem] font-black uppercase tracking-[0.12em] text-[#0D291C] opacity-45 border-b border-[rgba(13,41,28,0.1)] pb-1.5">
-                {{ cat.nombre }}
-            </p>
-
-            <!-- Items FAQ -->
-            <div v-for="faq in cat.faqs" :key="faq.id"
-                class="bg-white rounded-2xl border-[1.5px] overflow-hidden transition-colors duration-150"
-                :class="abierto === faq.id ? 'border-[#299261]' : 'border-[rgba(13,41,28,0.1)] hover:border-[#299261]'">
-
-                <!-- Pregunta -->
-                <div class="flex items-start justify-between gap-3 px-[18px] py-[14px] cursor-pointer select-none"
-                    @click="toggleFaq(faq.id)">
-                    <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ faq.pregunta }}</span>
-                    <div class="w-[26px] h-[26px] rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200"
-                        :class="abierto === faq.id
-                            ? 'bg-[#0D291C] rotate-45'
-                            : 'bg-[#f0faf4] border-[1.5px] border-[#c8e6c9]'">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                            :fill="abierto === faq.id ? '#7FD344' : '#299261'">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                        </svg>
+        <!-- Resultados búsqueda (ignora categoría activa) -->
+        <template v-if="busqueda">
+            <div class="flex flex-col gap-2">
+                <p class="text-[0.62rem] font-black uppercase tracking-[0.1em] text-gray-400 pl-1">
+                    {{ faqsBuscadas.length }} resultado{{ faqsBuscadas.length !== 1 ? 's' : '' }}
+                </p>
+                <div v-for="faq in faqsBuscadas" :key="faq.id"
+                    class="bg-white rounded-2xl border-[1.5px] overflow-hidden transition-colors duration-150"
+                    :class="abierto === faq.id ? 'border-[#299261]' : 'border-[rgba(13,41,28,0.1)] hover:border-[#299261]'">
+                    <div class="flex items-start justify-between gap-3 px-[18px] py-[14px] cursor-pointer select-none"
+                        @click="toggleFaq(faq.id)">
+                        <div class="flex flex-col gap-1 flex-1 min-w-0">
+                            <span class="text-[0.65rem] font-black uppercase tracking-wide text-[#299261] opacity-70">{{ faq._cat }}</span>
+                            <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ faq.pregunta }}</span>
+                        </div>
+                        <div class="w-[26px] h-[26px] rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                            :class="abierto === faq.id ? 'bg-[#0D291C] rotate-45' : 'bg-[#f0faf4] border-[1.5px] border-[#c8e6c9]'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                :fill="abierto === faq.id ? '#7FD344' : '#299261'">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Respuesta con animación -->
-                <div class="overflow-hidden transition-all duration-250 ease-in-out"
-                    :style="{ maxHeight: abierto === faq.id ? '400px' : '0px' }">
-                    <div
-                        class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)]">
-                        {{ faq.respuesta }}
+                    <div class="overflow-hidden transition-all duration-250 ease-in-out"
+                        :style="{ maxHeight: abierto === faq.id ? '400px' : '0px' }">
+                        <div class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)]">
+                            {{ faq.respuesta }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
+
+        <!-- FAQs de categoría activa -->
+        <template v-else-if="categoriaActiva">
+            <div class="flex flex-col gap-2">
+                <div v-for="faq in faqsCategoria" :key="faq.id"
+                    class="bg-white rounded-2xl border-[1.5px] overflow-hidden transition-colors duration-150"
+                    :class="abierto === faq.id ? 'border-[#299261]' : 'border-[rgba(13,41,28,0.1)] hover:border-[#299261]'">
+                    <div class="flex items-start justify-between gap-3 px-[18px] py-[14px] cursor-pointer select-none"
+                        @click="toggleFaq(faq.id)">
+                        <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ faq.pregunta }}</span>
+                        <div class="w-[26px] h-[26px] rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                            :class="abierto === faq.id ? 'bg-[#0D291C] rotate-45' : 'bg-[#f0faf4] border-[1.5px] border-[#c8e6c9]'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                :fill="abierto === faq.id ? '#7FD344' : '#299261'">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden transition-all duration-250 ease-in-out"
+                        :style="{ maxHeight: abierto === faq.id ? '400px' : '0px' }">
+                        <div class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)]">
+                            {{ faq.respuesta }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Estado vacío: ninguna categoría seleccionada -->
+        <template v-else>
+            <div class="flex flex-col items-center gap-3 py-14 text-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                </svg>
+                <span class="text-sm font-semibold">Selecciona una categoría</span>
+            </div>
+        </template>
 
     </div>
 </template>
@@ -88,9 +130,15 @@ import { ref, computed } from 'vue'
 
 const busqueda = ref('')
 const abierto = ref(null)
+const categoriaActiva = ref(null)
 
 const toggleFaq = (id) => {
     abierto.value = abierto.value === id ? null : id
+}
+
+const seleccionarCategoria = (id) => {
+    categoriaActiva.value = categoriaActiva.value === id ? null : id
+    abierto.value = null
 }
 
 // ── Datos ─────────────────────────────────────────────────────────
@@ -122,7 +170,7 @@ const categorias = [
             {
                 id: 5,
                 pregunta: '¿Cómo cambio mis placas?',
-                respuesta: 'Ingresa al detalle de tu mensualidad y haz clic en "Cambiar placa". Solo se permite un cambio por mes. Si deseas cambiar de tipo de vehículo (moto a carro) en caso que no tengas carro asignado, se te cobrara un excedente'
+                respuesta: 'Ingresa al detalle de tu mensualidad y haz clic en "Cambiar placa". Solo se permite un cambio por mes. Si deseas cambiar de tipo de vehículo (moto a carro) en caso que no tengas carro asignado, se te cobrara un excedente.'
             },
             {
                 id: 6,
@@ -142,12 +190,12 @@ const categorias = [
             {
                 id: 9,
                 pregunta: '¿Qué debo presentar para iniciar mi mensualidad en el parqueadero?',
-                respuesta: ''
+                respuesta: 'Una vez habiendo pagado la mensualidad ya tendrás activa tu mensualidad en la sede para tu uso.'
             },
             {
                 id: 10,
                 pregunta: '¿Cómo puedo crear otra mensualidad en otra con mi usuario actual?',
-                respuesta: ''
+                respuesta: 'En el apartado de añadir mensualidad puedes agregar una mensualidad nueva, pero tendrás que acercarte al parqueadero que deseas la mensualidad y pedir un codigo de verificacion al Operario.'
             }
         ]
     },
@@ -173,7 +221,7 @@ const categorias = [
             {
                 id: 14,
                 pregunta: '¿Dónde puedo consultar los pagos realizados de mi mensualidad?',
-                respuesta: ''
+                respuesta: 'En el apartado de "Pagos Recientes" puedes acceder a los ultimos 3 pagos realizados en tu mensualidad.'
             },
         ]
     },
@@ -240,30 +288,31 @@ const categorias = [
             },
             {
                 id: 25,
-                pregunta: '¿Qué hasgo si registré mal el número de cédula cuando creé el usuario y ya realicé pago virtual de la mensualidad?',
-                respuesta: ''
+                pregunta: '¿Qué hago si registré mal el número de cédula cuando creé el usuario y ya realicé pago virtual de la mensualidad?',
+                respuesta: 'En el apartado de "PQRS" podrás realizar la solicitud de cambio de cédula.'
             },
             {
                 id: 26,
                 pregunta: '¿Qué hago si seleccioné mal la sede en el momento del registro?',
-                respuesta: ''
+                respuesta: 'En el apartado de "PQRS" podrás realizar la solicitud de cambio de sede.'
             }
         ]
     },
 ]
 
-// ── Filtrado ──────────────────────────────────────────────────────
-const categoriasFiltradas = computed(() => {
-    if (!busqueda.value.trim()) return categorias
-    const q = busqueda.value.toLowerCase()
-    return categorias
-        .map(cat => ({
-            ...cat,
-            faqs: cat.faqs.filter(f =>
-                f.pregunta.toLowerCase().includes(q) ||
-                f.respuesta.toLowerCase().includes(q)
-            )
-        }))
-        .filter(cat => cat.faqs.length > 0)
+// ── Computed ──────────────────────────────────────────────────────
+const faqsCategoria = computed(() => {
+    if (!categoriaActiva.value) return []
+    return categorias.find(c => c.id === categoriaActiva.value)?.faqs ?? []
+})
+
+const faqsBuscadas = computed(() => {
+    const q = busqueda.value.trim().toLowerCase()
+    if (!q) return []
+    return categorias.flatMap(cat =>
+        cat.faqs
+            .filter(f => f.pregunta.toLowerCase().includes(q) || f.respuesta.toLowerCase().includes(q))
+            .map(f => ({ ...f, _cat: cat.nombre }))
+    )
 })
 </script>

@@ -103,13 +103,18 @@
              MODAL — GENERAR CÓDIGO
         ══════════════════════════════════════════ -->
         <Transition name="modal">
-            <div v-if="modalGenerar" class="modal-overlay" @click.self="cerrarModal">
-                <div class="modal-card">
+            <div v-if="modalGenerar"
+                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+                @click.self="cerrarModal">
+                <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[440px] max-h-[90vh] flex flex-col overflow-hidden modal-card"
+                    style="box-shadow: 0 7px 0 #0D291C">
 
                     <!-- Head -->
-                    <div class="modal-head">
-                        <div class="modal-head__left">
-                            <div class="modal-icon">
+                    <div
+                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div
+                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7FD344"
                                     viewBox="0 0 24 24">
                                     <path
@@ -117,15 +122,18 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="modal-head__name">Nuevo código</p>
-                                <p class="modal-head__sub">Selecciona sede y autorización</p>
+                                <p class="text-[0.95rem] font-black text-white uppercase leading-none">Nuevo código</p>
+                                <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/45">
+                                    Selecciona sede y autorización</p>
                             </div>
                         </div>
-                        <button @click="cerrarModal" class="modal-close">✕</button>
+                        <button @click="cerrarModal"
+                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/20 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
 
                     <!-- Body -->
-                    <div class="modal-body">
+                    <div
+                        class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
 
                         <!-- Sede -->
                         <div class="field-group">
@@ -146,14 +154,12 @@
                         </div>
 
                         <!-- Autorización -->
-                        <!-- Autorización -->
                         <div class="field-group">
                             <label class="field-label">Autorización <span class="text-red-400">*</span></label>
                             <div v-if="cargandoTarifas"
                                 class="flex items-center gap-2 py-3 px-4 rounded-xl border-2 border-gray-100">
                                 <span class="spinner-sm" />
-                                <span class="text-[0.75rem] text-gray-400 font-semibold">Cargando
-                                    autorizaciones...</span>
+                                <span class="text-[0.75rem] text-gray-400 font-semibold">Cargando autorizaciones...</span>
                             </div>
                             <select v-else v-model="form.idAutorizacion" class="field-input field-input--select"
                                 :disabled="!form.idSede || tarifas.length === 0">
@@ -191,11 +197,12 @@
                     </div>
 
                     <!-- Foot -->
-                    <div class="modal-foot">
-                        <button @click="cerrarModal" class="btn-modal btn-modal--cancel">Cancelar</button>
-                        <button @click="confirmarGeneracion" class="btn-modal btn-modal--confirm"
+                    <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
+                        <button @click="cerrarModal" class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
+                        <button @click="confirmarGeneracion" class="btn-modal-dark"
                             :disabled="!form.idSede || !form.idAutorizacion || generando">
-                            <span v-if="generando" class="spinner-sm spinner-sm--light" />
+                            <span v-if="generando"
+                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
                             <template v-else>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                     viewBox="0 0 24 24">
@@ -216,40 +223,55 @@
              MODAL — CÓDIGO GENERADO (resultado)
         ══════════════════════════════════════════ -->
         <Transition name="modal">
-            <div v-if="modalResultado" class="modal-overlay" @click.self="cerrarResultado">
-                <div class="modal-card modal-card--resultado">
+            <div v-if="modalResultado"
+                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
+                @click.self="cerrarResultado">
+                <div class="bg-[#0D291C] border-[2.5px] border-[#7FD344]/40 rounded-[28px] w-full max-w-[440px] flex flex-col overflow-hidden modal-card"
+                    style="box-shadow: 0 7px 0 #051510">
 
-                    <div class="modal-head" style="background:#0a1f15">
-                        <div class="modal-head__left">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                                style="background:rgba(127,211,68,0.2)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#7FD344"
+                    <!-- Head -->
+                    <div
+                        class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 border-b-2 border-[#7FD344]/15">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div
+                                class="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0 bg-[#7FD344]/15 border border-[#7FD344]/30">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7FD344"
                                     viewBox="0 0 24 24">
                                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                                 </svg>
                             </div>
                             <div>
-                                <p class="modal-head__name">¡Código generado!</p>
-                                <p class="modal-head__sub">{{ sedeNombreResultado }}</p>
+                                <p class="text-[0.95rem] font-black text-[#7FD344] uppercase leading-none">¡Código generado!</p>
+                                <p class="text-[0.62rem] font-semibold uppercase tracking-[0.07em] mt-[3px] text-white/40">
+                                    {{ sedeNombreResultado }}</p>
                             </div>
                         </div>
-                        <button @click="cerrarResultado" class="modal-close">✕</button>
+                        <button @click="cerrarResultado"
+                            class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/15 text-white/45 hover:bg-white/20 hover:text-white transition-all">✕</button>
                     </div>
 
-                    <div class="modal-body" style="background:#0D291C">
+                    <!-- Body -->
+                    <div class="px-6 py-5 flex flex-col gap-4">
 
-                        <p class="text-[0.72rem] font-semibold text-center" style="color:rgba(127,211,68,0.6)">
+                        <p class="text-[0.72rem] font-semibold text-center text-[#7FD344]/60">
                             Comparte este código con el cliente para que complete su registro
                         </p>
 
                         <!-- Código grande -->
-                        <div class="resultado-codigo-wrap">
-                            <span class="resultado-codigo">{{ codigoResultado }}</span>
+                        <div
+                            class="bg-[#7FD344]/08 border-2 border-[#7FD344]/30 rounded-[18px] py-6 px-4 flex items-center justify-center"
+                            style="background:rgba(127,211,68,0.08)">
+                            <span
+                                class="font-mono text-[1.8rem] font-black text-[#7FD344] tracking-[0.18em] break-all text-center">{{ codigoResultado }}</span>
                         </div>
 
-                        <!-- Botón copiar grande -->
-                        <button @click="copiarResultado" class="btn-copiar-grande"
-                            :class="{ 'btn-copiar-grande--ok': copiadoResultado }">
+                        <!-- Botón copiar -->
+                        <button @click="copiarResultado"
+                            class="w-full flex items-center justify-center gap-2 py-3 rounded-[14px] text-[0.82rem] font-black border-2 transition-all"
+                            :class="copiadoResultado
+                                ? 'bg-[#7FD344]/25 border-[#7FD344] text-[#a3e635]'
+                                : 'bg-[#7FD344]/12 border-[#7FD344]/35 text-[#7FD344] hover:bg-[#7FD344]/20 hover:border-[#7FD344]'"
+                            style="background: rgba(127,211,68,0.12)">
                             <svg v-if="!copiadoResultado" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                 fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -262,16 +284,17 @@
                             {{ copiadoResultado ? '¡Copiado!' : 'Copiar código' }}
                         </button>
 
-                        <p class="text-[0.62rem] font-semibold text-center" style="color:rgba(127,211,68,0.35)">
+                        <p class="text-[0.62rem] font-semibold text-center text-[#7FD344]/35">
                             El código es de un solo uso y tiene vigencia limitada
                         </p>
 
                     </div>
 
-                    <div class="modal-foot" style="border-top:1.5px solid rgba(127,211,68,0.2);background:#0D291C">
-                        <button @click="cerrarResultado" class="btn-modal btn-modal--cancel">Cerrar</button>
-                        <button @click="generarOtro" class="btn-modal btn-modal--confirm"
-                            style="display:flex;align-items:center;justify-content:center;gap:6px">
+                    <!-- Foot -->
+                    <div class="px-6 py-4 border-t-2 border-[#7FD344]/15 flex gap-2.5 flex-shrink-0">
+                        <button @click="cerrarResultado"
+                            class="flex-1 py-3 px-5 rounded-[14px] text-[0.88rem] font-900 font-black cursor-pointer border-[2.5px] border-white/15 bg-white/10 text-white/60 hover:bg-white/18 hover:text-white transition-all">Cerrar</button>
+                        <button @click="generarOtro" class="btn-modal-dark" style="flex:1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 viewBox="0 0 24 24">
                                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -345,7 +368,7 @@ const onSedeChange = async () => {
 
     cargandoTarifas.value = true
     try {
-        const res = await AutorizacionesService.getBySede(form.idSede)
+        const res = await AutorizacionesService.listarPorSede(form.idSede)
         const raw = Array.isArray(res) ? res : (res?.data ?? res?.items ?? [])
 
         tarifas.value = raw
@@ -874,46 +897,47 @@ const copiarResultado = async () => {
 }
 
 /* Botones modal */
-.btn-modal {
+.btn-modal-dark {
     flex: 1;
-    padding: 11px 18px;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    background-color: #0D291C;
+    color: #7FD344;
+    border: 2.5px solid #0D291C;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 0.88rem;
+    font-weight: 900;
     cursor: pointer;
-    border: 2px solid;
-    box-shadow: 0 3px 0;
+    box-shadow: 0 4px 0 #050e09;
+    transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.btn-modal:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 !important;
+.btn-modal-dark:hover:not(:disabled) {
+    background-color: #1a4a2e;
 }
 
-.btn-modal:disabled {
-    opacity: 0.4;
+.btn-modal-dark:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #050e09;
+}
+
+.btn-modal-dark:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
-.btn-modal--cancel {
-    background: white;
-    color: #232B3A;
-    border-color: #000;
-    box-shadow: 0 3px 0 #000;
+.btn-modal-dark--cancel {
+    background-color: rgba(13, 41, 28, 0.12);
+    color: #0D291C;
+    box-shadow: 0 4px 0 rgba(13, 41, 28, 0.2);
+    border-color: transparent;
 }
 
-.btn-modal--confirm {
-    background: #232B3A;
-    color: white;
-    border-color: #000;
-    box-shadow: 0 3px 0 #000;
+.btn-modal-dark--cancel:hover:not(:disabled) {
+    background-color: rgba(13, 41, 28, 0.2);
 }
 
 /* Fields */

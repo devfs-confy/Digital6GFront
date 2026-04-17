@@ -181,6 +181,9 @@ class MensualidadesService {
       );
       return data;
     } catch (error) {
+      if (error?.response?.status === 404) {
+        return { error: true, status: 404, data: error.response.data }
+      }
       return handleError(error);
     }
   }
