@@ -666,10 +666,15 @@ const abrirDetalle = async (m) => {
         const d = resDetalle?.data ?? resDetalle
         detalle.value = d
 
-        // 2. Cargar todas las autorizaciones para el select
-        const resAuth = await AutorizacionesService.getAll()
-        const authData = resAuth?.data ?? resAuth ?? []
-        autorizaciones.value = Array.isArray(authData) ? authData : []
+        // 2. Cargar autorizaciones de la sede correspondiente
+        const idSede = String(d.T_Estacionamiento?.IdEstacionamiento ?? d.IdEstacionamiento ?? '')
+        console.log('[Auth] idSede:', idSede)
+        console.log('[Auth] T_Autorizaciones del detalle:', d.T_Autorizaciones)
+        const resAuth = await AutorizacionesService.listarPorSede(idSede)
+        console.log('[Auth] listarPorSede raw:', resAuth)
+        const authData = Array.isArray(resAuth) ? resAuth : (resAuth?.data ?? [])
+        console.log('[Auth] authData final:', authData)
+        autorizaciones.value = authData
 
         const toInputDate = (f) => {
             console.log(f)

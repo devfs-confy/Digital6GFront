@@ -365,7 +365,7 @@ const rangoFin = computed(() => Math.min(pagina.value * porPagina.value, registr
 watch([busqueda, filtroDesde, filtroHasta, filtroTipo], () => { pagina.value = 1 })
 
 // ── Helpers ───────────────────────────────────────────────────────
-const fmtFecha = (iso) => new Date(iso).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' })
+const fmtFecha = (iso) => new Date(iso).toLocaleDateString('es-CO', { year: 'numeric', day: '2-digit', month: 'short' })
 const fmtHora = (iso) => new Date(iso).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
 const calcDuracion = (entrada, salida) => {
     const min = Math.round((new Date(salida) - new Date(entrada)) / 60000)

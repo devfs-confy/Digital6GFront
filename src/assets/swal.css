@@ -6,7 +6,9 @@
   padding: 0 !important;
   overflow: hidden !important;
   font-family: inherit !important;
+  width: calc(100vw - 32px) !important;
   max-width: 420px !important;
+  box-sizing: border-box !important;
 }
 
 /* Icono */

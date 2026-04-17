@@ -202,18 +202,29 @@
                                 placeholder="Describe con deta..." rows="3" maxlength="250" />
                         </div>
 
-                        <!-- Mensualidad relacionada (opcional) -->
-                        <div class="flex flex-col gap-[5px]">
+                        <!-- Mensualidad relacionada -->
+                        <div v-if="loadingMensualidades || misMensualidades.length > 0" class="flex flex-col gap-[5px]">
                             <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">
-                                Mensualidad relacionada <span class="normal-case opacity-60 font-semibold">(opcional)</span>
+                                Mensualidad relacionada
+                                <span v-if="misMensualidades.length > 0" class="text-red-500 font-black">*</span>
+                                <span v-else class="normal-case opacity-60 font-semibold">(opcional)</span>
                             </label>
                             <div v-if="loadingMensualidades"
                                 class="flex items-center gap-2 bg-white/50 border-2 border-[#0D291C] rounded-[13px] px-[13px] py-[9px] text-[0.78rem] font-semibold text-[#0D291C] opacity-50">
                                 <div class="w-[14px] h-[14px] border-2 border-[#0D291C] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                                 <span>Cargando mensualidades...</span>
                             </div>
+                            <!-- 1 sola: mostrar como pill informativa, no select -->
+                            <div v-else-if="misMensualidades.length === 1"
+                                class="flex items-center gap-2 px-[13px] py-[9px] bg-[#f0faf4] border-2 border-[#299261] rounded-[13px] text-[0.78rem] font-semibold text-[#0D291C]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#299261" viewBox="0 0 24 24" class="flex-shrink-0">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                                </svg>
+                                {{ misMensualidades[0].label }}
+                            </div>
+                            <!-- Múltiples: select requerido -->
                             <select v-else v-model="fN.IdPersonaAutorizada" class="pqrs-input">
-                                <option :value="null">Sin mensualidad asociada</option>
+                                <option :value="null" disabled>Seleccionar mensualidad</option>
                                 <option v-for="m in misMensualidades" :key="m.id" :value="Number(m.id)">
                                     {{ m.label }}
                                 </option>
@@ -493,6 +504,7 @@ import PqrsService from '@/api/services/pqrs.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import { useAuthStore } from '@/stores/auth'
+import { showSuccess, showError } from '@/utils/swal'
 
 const pqrsList = ref([])
 const motivos = ref([])
@@ -654,7 +666,7 @@ const cargarMensualidades = async () => {
 
 const abrirNuevaPqrs = async () => {
     errNuevo.value = ''
-    quitarImagen()  // ← limpia imagen al abrir
+    quitarImagen()
     const u = authStore.user
     Object.assign(fN, {
         IdMotivo: '', Tipo: '', Asunto: '', Descripcion: '',
@@ -668,6 +680,9 @@ const abrirNuevaPqrs = async () => {
         !motivos.value.length ? cargarMotivos() : Promise.resolve(),
         cargarMensualidades(),
     ])
+    // Auto-asignar si solo tiene 1 mensualidad
+    if (misMensualidades.value.length === 1)
+        fN.IdPersonaAutorizada = Number(misMensualidades.value[0].id)
 }
 
 
@@ -679,6 +694,9 @@ const crearPqrs = async () => {
     if (!fN.Descripcion.trim()) { errNuevo.value = 'Escribe una descripción.'; return }
     if (!fN.Telefono.trim()) { errNuevo.value = 'El teléfono es requerido.'; return }
     if (!fN.Email.trim()) { errNuevo.value = 'El correo es requerido.'; return }
+    if (misMensualidades.value.length > 0 && !fN.IdPersonaAutorizada) {
+        errNuevo.value = 'Debes seleccionar la mensualidad relacionada.'; return
+    }
 
     guardando.value = true
     try {
@@ -695,26 +713,20 @@ const crearPqrs = async () => {
         if (selectedFile.value)
             payload.append('Imagen', selectedFile.value)
 
-
-        // ── LOG 2: ¿qué tiene el FormData? ──
-        for (const [key, value] of payload.entries()) {
-            console.log(`[PQRS FormData] ${key}:`, value)
-        }
-
         const res = await PqrsService.create(payload)
-
 
         modalNuevo.value = false
         quitarImagen()
         paginaActual.value = 1
         await cargarPqrs()
+        showSuccess('PQRS enviada', 'Tu solicitud fue registrada correctamente.')
     } catch (e) {
-        // ── LOG 4: error completo ──
-        console.error('[PQRS] error completo:', e)
-        console.error('[PQRS] error response:', e.response?.data)
-        console.error('[PQRS] error status:', e.response?.status)
-        const msg = e.response?.data?.message
-        errNuevo.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al enviar la PQRS.')
+        console.error('[PQRS]', e.response?.data ?? e.message)
+        const data = e.response?.data
+        const msg = data?.message
+        const texto = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al enviar la PQRS.')
+        errNuevo.value = texto
+        showError({ status: e.response?.status, data })
     } finally {
         guardando.value = false
     }
