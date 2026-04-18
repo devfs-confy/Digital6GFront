@@ -140,7 +140,7 @@
                                 <td class="px-4 py-[13px] border-b border-gray-100 whitespace-nowrap">
                                     <div
                                         class="inline-flex items-center gap-1.5 bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-[10px] py-1">
-                                        <span class="text-[0.85rem] leading-none">🇨🇴</span>
+
                                         <span
                                             class="font-mono text-[0.82rem] font-black text-[#0D291C] tracking-[0.06em]">{{
                                                 r.placa }}</span>
@@ -160,7 +160,7 @@
                                         <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.entrada) }} ·
                                             {{ fmtHora(r.entrada) }}</span>
                                         <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloEntrada
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </td>
 
@@ -205,7 +205,7 @@
                     class="flex items-center justify-between flex-wrap gap-3 px-4 py-3 border-t border-gray-100 bg-white">
                     <span class="text-xs text-gray-400">
                         <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ registrosFiltrados.length
-                        }}</strong>
+                            }}</strong>
                     </span>
                     <div class="flex items-center gap-1">
                         <button @click="pagina--" :disabled="pagina === 1" class="page-btn">
@@ -344,14 +344,16 @@ const volverASedes = () => {
 // ── Filtrado y paginación ────────────────────────────────────────
 const registrosFiltrados = computed(() => {
     const q = busqueda.value.toLowerCase()
-    return registros.value.filter(r => {
-        const matchQ = !q || r.placa.toLowerCase().includes(q)
-        const matchTipo = !filtroTipo.value || r.tipoVehiculo === filtroTipo.value
-        const fechaEntry = new Date(r.entrada)
-        const matchDesde = !filtroDesde.value || fechaEntry >= new Date(filtroDesde.value)
-        const matchHasta = !filtroHasta.value || fechaEntry <= new Date(filtroHasta.value + 'T23:59:59')
-        return matchQ && matchTipo && matchDesde && matchHasta
-    })
+    return registros.value
+        .filter(r => {
+            const matchQ = !q || r.placa.toLowerCase().includes(q)
+            const matchTipo = !filtroTipo.value || r.tipoVehiculo === filtroTipo.value
+            const fechaEntry = new Date(r.entrada)
+            const matchDesde = !filtroDesde.value || fechaEntry >= new Date(filtroDesde.value)
+            const matchHasta = !filtroHasta.value || fechaEntry <= new Date(filtroHasta.value + 'T23:59:59')
+            return matchQ && matchTipo && matchDesde && matchHasta
+        })
+        .sort((a, b) => new Date(b.entrada) - new Date(a.entrada))
 })
 
 const totalPaginas = computed(() => Math.max(1, Math.ceil(registrosFiltrados.value.length / porPagina.value)))

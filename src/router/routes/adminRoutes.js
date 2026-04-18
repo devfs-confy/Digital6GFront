@@ -13,6 +13,7 @@ import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
 import icoRoles from "@/assets/img/dashboard_customize_white.svg?raw";
 import icoUCC from "@/assets/img/how_to_reg.svg?raw";
 import icoAuth from "@/assets/img/fact_check.svg?raw";
+import icoPlacas from "@/assets/img/flowsheet.svg?raw";
 
 // ── Ítems del menú lateral ─────────────────────────────────────────
 export const adminMenuItems = [
@@ -33,6 +34,12 @@ export const adminMenuItems = [
     label: "Solicitudes <br> PQRS",
     icon: icoSolicitudes,
     route: "/admin/solicitudes",
+    permission: "VER-MENSUALIDADES",
+  },
+  {
+    label: "Historial Cambio <br> Placas",
+    icon: icoPlacas,
+    route: "/admin/historial-cambio-placas",
     permission: "VER-MENSUALIDADES",
   },
   {
@@ -123,6 +130,12 @@ export const adminRoutes = {
     {
       path: "solicitudes",
       component: () => import("@/views/administrador/Solicitudes.vue"),
+      meta: { permission: "VER-MENSUALIDADES" },
+    },
+    {
+      path: "historial-cambio-placas",
+      component: () =>
+        import("@/views/administrador/HistorialCambioPlacas.vue"),
       meta: { permission: "VER-MENSUALIDADES" },
     },
     {

@@ -87,6 +87,7 @@ emoji_transportation_green
 event_available
 event_available_green
 fact_check
+flowsheet
 home
 how_to_reg
 id_card

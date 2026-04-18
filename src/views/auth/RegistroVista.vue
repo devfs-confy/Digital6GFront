@@ -91,7 +91,8 @@
                             <div class="relative">
                                 <input v-model="form.Documento" type="text" class="field-input"
                                     :class="{ 'field-input--active': buscandoDoc }" placeholder="Ej: 109..."
-                                    @input="onDocumentoInput" :disabled="formularioListo && !editandoDoc" />
+                                    @input="onDocumentoInput" maxlength="10"
+                                    :disabled="formularioListo && !editandoDoc" />
                                 <div v-if="buscandoDoc" class="absolute right-3 top-1/2 -translate-y-1/2 flex">
                                     <span class="spinner-sm" />
                                 </div>
@@ -241,14 +242,31 @@
                             <!-- Vehículos -->
                             <div class="flex flex-col gap-2.5">
                                 <p class="section-label">Vehículos</p>
+
+                                <!-- Aviso placas bloqueadas -->
+                                <!-- <div v-if="placasBloqueadas"
+                                    class="flex items-start gap-2 px-3 py-2.5 rounded-xl text-[0.75rem] font-semibold bg-amber-50 text-amber-800 border-[1.5px] border-amber-200 leading-snug">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#92400e"
+                                        viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                        <path
+                                            d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                                    </svg>
+                                    <span>Tu mensualidad está vigente — las placas no se pueden modificar durante el
+                                        registro. Si necesitas cambiarlas, hazlo desde el portal una vez activo tu
+                                        usuario.</span>
+                                </div> -->
+
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                            }}</label>
+                                        }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
-                                                class="field-input placa-input flex-1" placeholder="" maxlength="7" />
-                                            <button v-if="idx > 0" type="button" @click="form.placas.splice(idx, 1)"
+                                                class="field-input placa-input flex-1"
+                                                :class="{ 'opacity-60 cursor-not-allowed bg-gray-50': placasBloqueadas }"
+                                                placeholder="" maxlength="6" :disabled="placasBloqueadas" />
+                                            <button v-if="idx > 0 && !placasBloqueadas" type="button"
+                                                @click="form.placas.splice(idx, 1)"
                                                 class="w-8 h-8 rounded-[10px] shrink-0 flex items-center justify-center bg-red-100 text-red-600 border-none cursor-pointer transition-all hover:bg-red-600 hover:text-white">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11"
                                                     fill="currentColor" viewBox="0 0 24 24">
@@ -258,7 +276,8 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <button v-if="form.placas.length < 2" type="button" @click="form.placas.push('')"
+                                    <button v-if="form.placas.length < 2 && !placasBloqueadas" type="button"
+                                        @click="form.placas.push('')"
                                         class="flex items-center gap-1.5 w-fit text-[0.72rem] font-black text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261]">
                                         <span
                                             class="w-5 h-5 rounded-lg bg-[#0D291C] flex items-center justify-center shrink-0"
@@ -604,7 +623,7 @@ const onDocumentoInput = () => {
     usuarioEncontrado.value = false
     msgDoc.value = ''
     errSubmit.value = ''
-    const doc = form.Documento.replace(/\D/g, '')   
+    const doc = form.Documento.replace(/\D/g, '')
     form.Documento = doc
     if (doc.length >= 7) docTimer = setTimeout(() => buscarDocumento(doc), 900)
 }
@@ -633,6 +652,8 @@ const buscarDocumento = async (doc) => {
             return
         }
         const d = res.data ?? res
+        console.log('[RegistroVista] usuario antiguo:', d)
+        console.log('[RegistroVista] fechaFin:', d.fechaFin, '| hoy:', new Date().toISOString(), '| vigente:', d.fechaFin ? new Date(d.fechaFin) > new Date() : false)
         mensualidadData.value = d
         usuarioEncontrado.value = true
         const partes = (d.nombreApellidos ?? '').trim().split(/\s+/)
@@ -668,6 +689,14 @@ const buscarDocumento = async (doc) => {
     }
 }
 
+// Placas bloqueadas si el usuario ya existe en el sistema (usuario antiguo)
+const placasBloqueadas = computed(() => {
+    if (!usuarioEncontrado.value) return false
+    const fechaFin = mensualidadData.value?.fechaFin
+    if (!fechaFin) return false
+    return new Date(fechaFin) > new Date()
+})
+
 const limpiarCampos = () => {
     Object.assign(form, { Nombres: '', IdTarjeta: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
@@ -681,8 +710,10 @@ const validarFormulario = () => {
     if (!form.Telefono || form.Telefono.length < 7) { errSubmit.value = 'Ingresa un teléfono de contacto válido.'; return false }
     if (!form.Email || !emailValido(form.Email)) { errSubmit.value = 'Ingresa un correo electrónico válido.'; return false }
     if (!form.Password || form.Password.length < 8) { errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false }
-    if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
-    if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
+    if (!placasBloqueadas.value) {
+        if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
+        if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
+    }
     if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
     if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
     if (!aceptoTerminos.value) { errSubmit.value = 'Debes aceptar los términos y condiciones para continuar.'; return false }

@@ -174,10 +174,6 @@
                     </span>
                 </div>
 
-                <!-- Formulario de facturación -->
-
-
-
                 <!-- Card actions -->
                 <div class="grid grid-cols-2 gap-2 w-full">
                     <!-- Pay -->
@@ -463,7 +459,7 @@
                             </div>
 
                             <!-- Manual start date -->
-                            <div v-if="!infoExcedente && !mensualidadAccion?.fechaFin && !esSoloTarjeta"
+                            <div v-if="!infoExcedente && (!mensualidadAccion?.fechaFin || mensualidadAccion?.estado === 'vencida') && !esSoloTarjeta"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -999,6 +995,7 @@ const REGEX_DOCUMENTO = {
 
 
 
+
 // ── Tarjeta perdida ───────────────────────────────────────────
 const modalTarjeta = ref(false)
 const guardandoTarjeta = ref(false)
@@ -1365,9 +1362,16 @@ const abrirPago = async (m) => {
     errPago.value = ''
     pagoPendiente.value = null
     mesesExtra.value = 1
-    fechaInicioManual.value = m.fechaFin ? '' : hoyISO
+    fechaInicioManual.value = (m.estado === 'vencida' || !m.fechaFin) ? hoyISO : ''
     loadingOpciones.value = true
     modalPago.value = true
+
+    // Pre-cargar correo y celular del token
+    const u = authStore.user
+    if (u) {
+        avalpayinformacion.value.telefono = avalpayinformacion.value.telefono || u.telefono || ''
+        avalpayinformacion.value.correo = avalpayinformacion.value.correo || u.email || ''
+    }
 
     try {
         // ── 1. Verificar pago pendiente
@@ -1584,7 +1588,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             CantidadMeses: cantidadMeses,
             ModalidadPago: opcionSeleccionada.value.modalidad,
             IdentificacionCliente: IdentificacionCliente ?? '222222222222',
-            ...(!m.fechaFin && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
+            ...((!m.fechaFin || m.estado === 'vencida') && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
 
 
