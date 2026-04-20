@@ -43,9 +43,9 @@ export const adminMenuItems = [
     permission: "VER-MENSUALIDADES",
   },
   {
-    label: "Arqueos",
+    label: "Consignaciones",
     icon: icoArqueos,
-    route: "/admin/arqueos",
+    route: "/admin/consignaciones",
     permission: "EDITAR-SEDES",
   },
   {
@@ -139,8 +139,8 @@ export const adminRoutes = {
       meta: { permission: "VER-MENSUALIDADES" },
     },
     {
-      path: "arqueos",
-      component: () => import("@/views/administrador/Arqueos.vue"),
+      path: "consignaciones",
+      component: () => import("@/views/administrador/Consignacion.vue"),
       meta: { permission: "EDITAR-SEDES" },
     },
     {
