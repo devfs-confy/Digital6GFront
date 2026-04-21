@@ -160,7 +160,7 @@
                                         <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.entrada) }} ·
                                             {{ fmtHora(r.entrada) }}</span>
                                         <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloEntrada
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                 </td>
 
@@ -205,7 +205,7 @@
                     class="flex items-center justify-between flex-wrap gap-3 px-4 py-3 border-t border-gray-100 bg-white">
                     <span class="text-xs text-gray-400">
                         <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ registrosFiltrados.length
-                            }}</strong>
+                        }}</strong>
                     </span>
                     <div class="flex items-center gap-1">
                         <button @click="pagina--" :disabled="pagina === 1" class="page-btn">
@@ -318,13 +318,16 @@ const seleccionarSede = async (sede) => {
         if (!idPersona) return
 
         const res = await ParqueosService.getallParqueos(idPersona)
-        const raw = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : [])
+        const raw = (Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : []))
+            .filter(r => Number(r.idEstacionamiento) === Number(sede.IdEstacionamiento))
+
+        const isValidSalida = (f) => f && !f.startsWith('1900')
 
         registros.value = raw.map(r => ({
             Nombre: `${r.nombreEstacionamiento}`,
             placa: r.placaEntrada ?? r.placaSalida ?? '—',
             entrada: r.fechaEntrada,
-            salida: r.fechaSalida ?? null,
+            salida: isValidSalida(r.fechaSalida) ? r.fechaSalida : null,
             moduloEntrada: r.moduloEntrada ?? '—',
             moduloSalida: r.moduloSalida ?? null,
             tipoVehiculo: r.idTipoVehiculo === 1 ? 'carro' : 'moto',
