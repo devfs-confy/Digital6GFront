@@ -15,6 +15,7 @@ import icoUCC from "@/assets/img/how_to_reg.svg?raw";
 import icoAuth from "@/assets/img/fact_check.svg?raw";
 import icoPlacas from "@/assets/img/flowsheet.svg?raw";
 import icoFacturacion from "@/assets/img/receipt_long.svg?raw";
+import icoPagos from "@/assets/img/garage_money.svg?raw";
 
 // ── Ítems del menú lateral ─────────────────────────────────────────
 export const adminMenuItems = [
@@ -41,6 +42,12 @@ export const adminMenuItems = [
     label: "Historial Cambio <br> Placas",
     icon: icoPlacas,
     route: "/admin/historial-cambio-placas",
+    permission: "VER-MENSUALIDADES",
+  },
+  {
+    label: "historial <br> pagos",
+    icon: icoPagos,
+    route: "/admin/historial-pagos",
     permission: "VER-MENSUALIDADES",
   },
   {
@@ -137,6 +144,11 @@ export const adminRoutes = {
     {
       path: "solicitudes",
       component: () => import("@/views/administrador/Solicitudes.vue"),
+      meta: { permission: "VER-MENSUALIDADES" },
+    },
+    {
+      path: "historial-pagos",
+      component: () => import("@/views/administrador/HistorialPagos.vue"),
       meta: { permission: "VER-MENSUALIDADES" },
     },
     {
