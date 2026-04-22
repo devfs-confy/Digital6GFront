@@ -185,6 +185,14 @@
                                         class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-[#299261] hover:bg-[#e8f5e9] transition-all">
                                         <AppIcon name="edit_square" :size="30" />
                                     </button>
+                                    <button @click="abrirModalPagos(m)" title="Últimos pagos"
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-amber-500 hover:bg-amber-50 transition-all">
+                                        <AppIcon name="receipt_long" :size="30" />
+                                    </button>
+                                    <button @click="abrirModalTransacciones(m)" title="Transacciones"
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-purple-500 hover:bg-purple-50 transition-all">
+                                        <AppIcon name="car_tag" :size="30" />
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -430,6 +438,192 @@
 
         </AsideEditar>
 
+        <!-- ── Modal Últimos Pagos ───────────────────────────────────────── -->
+        <Teleport to="body">
+            <Transition name="modal-fade">
+                <div v-if="modalPagos" class="modal-overlay" @click.self="modalPagos = false">
+                    <div class="modal-box">
+                        <!-- Header -->
+                        <div class="modal-header">
+                            <div class="flex flex-col">
+                                <h3 class="text-lg font-black text-[#0D291C]">Últimos Pagos</h3>
+                                <p class="text-xs text-gray-400 font-medium mt-0.5">
+                                    {{ selectedMensual?.NombreApellidos }} · #{{ selectedMensual?.IdPersonaAutorizada }}
+                                </p>
+                            </div>
+                            <button @click="modalPagos = false"
+                                class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-500 transition-all text-gray-500 flex-shrink-0">
+                                <AppIcon name="close" :size="20" />
+                            </button>
+                        </div>
+                        <!-- Body -->
+                        <div class="modal-body">
+                            <!-- Loading -->
+                            <div v-if="loadingPagos" class="flex flex-col items-center py-16 gap-3">
+                                <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                <span class="text-sm text-gray-400">Cargando pagos...</span>
+                            </div>
+
+                            <!-- Vacío -->
+                            <div v-else-if="!pagosData.length" class="flex flex-col items-center justify-center py-16 gap-3 text-gray-300">
+                                <AppIcon name="receipt_long" :size="56" />
+                                <span class="text-sm font-medium">Sin pagos registrados</span>
+                            </div>
+
+                            <!-- Tabla -->
+                            <div v-else class="overflow-x-auto overflow-y-auto max-h-[55vh]">
+                                <table class="w-full border-collapse min-w-[540px]">
+                                    <thead>
+                                        <tr>
+                                            <th class="modal-th">Sede</th>
+                                            <th class="modal-th">Módulo</th>
+                                            <th class="modal-th">N° Factura</th>
+                                            <th class="modal-th text-right">Total</th>
+                                            <th class="modal-th">Tipo Pago</th>
+                                            <th class="modal-th">Fecha Pago</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="p in pagosData" :key="p.idPago"
+                                            class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
+                                            <td class="modal-td font-mono text-xs text-gray-500">{{ p.idEstacionamiento }}</td>
+                                            <td class="modal-td">
+                                                <span class="text-[0.7rem] font-black tracking-wider bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-md">
+                                                    {{ p.idModulo }}
+                                                </span>
+                                            </td>
+                                            <td class="modal-td font-mono font-bold text-[#0D291C]"># {{ p.numeroFactura }}</td>
+                                            <td class="modal-td text-right font-black text-[#299261]">
+                                                {{ Number(p.total).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }) }}
+                                            </td>
+                                            <td class="modal-td">
+                                                <span class="text-[0.7rem] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
+                                                    {{ p.idTipoPago }}
+                                                </span>
+                                            </td>
+                                            <td class="modal-td text-xs text-gray-500 whitespace-nowrap">{{ formatFecha(p.fechaPago) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
+
+        <!-- ── Modal Transacciones ───────────────────────────────────────── -->
+        <Teleport to="body">
+            <Transition name="modal-fade">
+                <div v-if="modalTransacciones" class="modal-overlay" @click.self="modalTransacciones = false">
+                    <div class="modal-box">
+                        <!-- Header -->
+                        <div class="modal-header">
+                            <div class="flex flex-col">
+                                <h3 class="text-lg font-black text-[#0D291C]">Transacciones</h3>
+                                <p class="text-xs text-gray-400 font-medium mt-0.5">
+                                    {{ selectedMensual?.NombreApellidos }} · #{{ selectedMensual?.IdPersonaAutorizada }}
+                                </p>
+                            </div>
+                            <button @click="modalTransacciones = false"
+                                class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-500 transition-all text-gray-500 flex-shrink-0">
+                                <AppIcon name="close" :size="20" />
+                            </button>
+                        </div>
+                        <!-- Body -->
+                        <div class="modal-body flex flex-col gap-4">
+
+                            <!-- Loading sedes -->
+                            <div v-if="loadingSedesTransacciones" class="flex flex-col items-center py-10 gap-3">
+                                <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                <span class="text-sm text-gray-400">Cargando sedes...</span>
+                            </div>
+
+                            <template v-else>
+                                <!-- Cards sedes -->
+                                <div>
+                                    <p class="text-[0.62rem] font-black uppercase tracking-widest text-[#0D291C]/50 mb-2">Selecciona una sede</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button v-for="s in sedesTransacciones" :key="s.IdEstacionamiento"
+                                            @click="seleccionarSedeTransaccion(s)"
+                                            class="flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-sm font-bold transition-all"
+                                            :class="selectedSedeTransaccion?.IdEstacionamiento === s.IdEstacionamiento
+                                                ? 'border-[#299261] bg-[#e8f5e9] text-[#0D291C]'
+                                                : 'border-gray-200 bg-white text-gray-500 hover:border-[#299261] hover:text-[#0D291C]'">
+                                            <AppIcon name="location_on" :size="16" />
+                                            {{ s.Nombre.trim() }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Loading tabla -->
+                                <div v-if="loadingTransaccionesTable" class="flex flex-col items-center py-10 gap-3">
+                                    <div class="w-7 h-7 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                    <span class="text-sm text-gray-400">Cargando transacciones...</span>
+                                </div>
+
+                                <!-- Sin sede seleccionada -->
+                                <div v-else-if="!selectedSedeTransaccion"
+                                    class="flex flex-col items-center py-12 gap-3 text-gray-300">
+                                    <AppIcon name="swap_horiz" :size="48" />
+                                    <span class="text-sm font-medium">Selecciona una sede para ver transacciones</span>
+                                </div>
+
+                                <!-- Vacío -->
+                                <div v-else-if="!transaccionesTable.length"
+                                    class="flex flex-col items-center py-12 gap-3 text-gray-300">
+                                    <AppIcon name="inbox" :size="48" />
+                                    <span class="text-sm font-medium">Sin transacciones en esta sede</span>
+                                </div>
+
+                                <!-- Tabla -->
+                                <div v-else class="overflow-x-auto overflow-y-auto max-h-[45vh]">
+                                    <table class="w-full border-collapse min-w-[640px]">
+                                        <thead>
+                                            <tr>
+                                                <th class="modal-th">Módulo entrada</th>
+                                                <th class="modal-th">Placa entrada</th>
+                                                <th class="modal-th">Fecha entrada</th>
+                                                <th class="modal-th">Módulo salida</th>
+                                                <th class="modal-th">Placa salida</th>
+                                                <th class="modal-th">Fecha salida</th>
+                                                <th class="modal-th">Tipo veh.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(t, i) in transaccionesTable" :key="i"
+                                                class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
+                                                <td class="modal-td">
+                                                    <span class="text-[0.7rem] font-black tracking-wider bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-md">
+                                                        {{ t.moduloEntrada }}
+                                                    </span>
+                                                </td>
+                                                <td class="modal-td font-mono font-bold text-[#0D291C] tracking-widest">{{ t.placaEntrada }}</td>
+                                                <td class="modal-td text-xs text-gray-500 whitespace-nowrap">{{ formatFecha(t.fechaEntrada) }}</td>
+                                                <td class="modal-td">
+                                                    <span class="text-[0.7rem] font-black tracking-wider bg-purple-900 text-purple-200 px-2 py-0.5 rounded-md">
+                                                        {{ t.moduloSalida }}
+                                                    </span>
+                                                </td>
+                                                <td class="modal-td font-mono font-bold text-[#0D291C] tracking-widest">{{ t.placaSalida }}</td>
+                                                <td class="modal-td text-xs text-gray-500 whitespace-nowrap">{{ formatFecha(t.fechaSalida) }}</td>
+                                                <td class="modal-td text-center">
+                                                    <span class="text-[0.7rem] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
+                                                        {{ t.idTipoVehiculo }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
+
     </div>
 </template>
 
@@ -438,6 +632,9 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
+import FacturaService from '@/api/services/factura.service'
+import ReglasEstacionamientoService from '@/api/services/reglas.estacionamiento.service'
+import ParqueosService from '@/api/services/parqueos.service'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import { showConfirm } from '@/utils/swal'
 import formatsDate from '@/utils/formats.date'
@@ -630,6 +827,66 @@ onMounted(async () => {
     await cargarTodasLasMensualidades()
 })
 
+
+// ── Modales Pagos / Transacciones ─────────────────────────────────
+const modalPagos = ref(false)
+const modalTransacciones = ref(false)
+const selectedMensual = ref(null)
+const pagosData = ref([])
+const loadingPagos = ref(false)
+
+const abrirModalPagos = async (m) => {
+    selectedMensual.value = m
+    pagosData.value = []
+    loadingPagos.value = true
+    modalPagos.value = true
+    try {
+        const res = await FacturaService.getUltimosPagos(m.Documento)
+        pagosData.value = res?.data ?? []
+    } catch (e) {
+        console.error('[Últimos pagos]', e)
+    } finally {
+        loadingPagos.value = false
+    }
+}
+
+const sedesTransacciones = ref([])
+const loadingSedesTransacciones = ref(false)
+const selectedSedeTransaccion = ref(null)
+const transaccionesTable = ref([])
+const loadingTransaccionesTable = ref(false)
+
+const abrirModalTransacciones = async (m) => {
+    selectedMensual.value = m
+    sedesTransacciones.value = []
+    selectedSedeTransaccion.value = null
+    transaccionesTable.value = []
+    loadingSedesTransacciones.value = true
+    modalTransacciones.value = true
+    try {
+        const res = await ReglasEstacionamientoService.getEstacionamientoAcceso(m._sedeId)
+        sedesTransacciones.value = res?.data ?? []
+    } catch (e) {
+        console.error('[Transacciones sedes]', e)
+    } finally {
+        loadingSedesTransacciones.value = false
+    }
+}
+
+const seleccionarSedeTransaccion = async (sede) => {
+    if (selectedSedeTransaccion.value?.IdEstacionamiento === sede.IdEstacionamiento) return
+    selectedSedeTransaccion.value = sede
+    transaccionesTable.value = []
+    loadingTransaccionesTable.value = true
+    try {
+        const res = await ParqueosService.getAllAdmin(sede.IdEstacionamiento, selectedMensual.value.Documento)
+        transaccionesTable.value = res?.data ?? []
+    } catch (e) {
+        console.error('[Transacciones tabla]', e)
+    } finally {
+        loadingTransaccionesTable.value = false
+    }
+}
 
 // ── Aside ver detalle (read-only) ────────────────────────────────
 const panelVer = ref(false)
@@ -889,5 +1146,96 @@ input[type="checkbox"].sr-only {
 .overlay-enter-active,
 .overlay-leave-active {
     transition: opacity 0.25s;
+}
+
+/* ── Modales grandes ─────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(2px);
+}
+
+.modal-box {
+    background: white;
+    border-radius: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 860px;
+    max-height: 88vh;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 2px solid #e8f5e9;
+    flex-shrink: 0;
+}
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+/* Transición modal */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+.modal-fade-enter-active .modal-box,
+.modal-fade-leave-active .modal-box {
+    transition: transform 0.2s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+    opacity: 0;
+}
+.modal-fade-enter-from .modal-box,
+.modal-fade-leave-to .modal-box {
+    transform: translateY(12px) scale(0.98);
+}
+
+.modal-th {
+    padding: 0.625rem 1rem;
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: white;
+    background: #0D291C;
+    border-bottom: 3px solid #7FD344;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.modal-td {
+    padding: 0.625rem 1rem;
+    font-size: 0.82rem;
+    color: #232B3A;
+}
+
+@media (max-width: 640px) {
+    .modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-box {
+        max-width: 100%;
+        max-height: 85vh;
+        border-radius: 1.25rem 1.25rem 0 0;
+    }
 }
 </style>
