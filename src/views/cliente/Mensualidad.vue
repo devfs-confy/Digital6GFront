@@ -93,6 +93,10 @@
                         <span class="mx-1 opacity-40">·</span>
                         <span>{{ m.mensualidad }}</span>
                     </p>
+                    <p v-if="m.valorConIva" class="text-[0.72rem] font-black text-[#299261]">
+                        {{ formatPrecio(m.valorConIva) }}
+                        <span class="text-[0.62rem] font-semibold text-gray-400 ml-1">/ mes (IVA inc.)</span>
+                    </p>
                     <div v-if="m.placas.length" class="flex flex-wrap gap-1.5">
                         <span v-for="placa in m.placas" :key="placa"
                             class="inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest px-2.5 py-[3px] rounded-lg bg-[#0D291C] text-[#7FD344] border border-[#1a3d2a]">
@@ -122,7 +126,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -340,7 +344,7 @@
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
                                         <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
@@ -350,13 +354,13 @@
                                         </div>
                                         <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                             <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex justify-between text-[0.85rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                             <span>Total a pagar</span>
                                             <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -378,7 +382,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }}
@@ -392,10 +396,10 @@
                                             </div>
                                             <div class="flex flex-col items-end gap-0.5">
                                                 <span class="text-base font-black text-[#299261]">{{
-                                                    formatPrecio(op.totalFinal) }}</span>
-                                                <span v-if="op.tarjeta"
+                                                    formatPrecio(op.desglose.total) }}</span>
+                                                <!-- <span v-if="op.tarjeta"
                                                     class="text-[0.68rem] font-semibold text-gray-400">+ {{
-                                                        formatPrecio(op.tarjeta.total) }} Tarjeta</span>
+                                                        formatPrecio(op.tarjeta.total) }} Tarjeta</span> -->
                                             </div>
                                         </div>
                                         <!-- Desglose -->
@@ -404,7 +408,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -413,7 +417,7 @@
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
@@ -751,7 +755,7 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
@@ -775,18 +779,18 @@
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -1140,6 +1144,7 @@ const cargarMisMensualidades = async () => {
             fechaFin: m.FechaFin ? m.FechaFin : null,
             sede: m.T_Estacionamiento?.Nombre?.trim() ?? '—',
             mensualidad: m.T_Autorizaciones?.NombreAutorizacion ?? '—',
+            valorConIva: m.T_Autorizaciones?.Valor ? Math.round(m.T_Autorizaciones.Valor * 1.19) : null,
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),
             conPago: !!(m.FechaFin && parseLocal(m.FechaFin) > new Date()),
