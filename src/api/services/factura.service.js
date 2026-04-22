@@ -46,6 +46,16 @@ class FacturaService {
       return handleError(error);
     }
   }
+
+  async getUltimosPagos(documento){
+    try{
+      const response = await api.get(`/v1/facturas/admin/ultimos/${documento}`);
+      return response.data;
+    }
+    catch (error) {
+      return handleError(error);
+    }
+  }
 }
 
 export default new FacturaService();

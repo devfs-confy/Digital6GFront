@@ -243,7 +243,7 @@
                     </div>
 
                     <!-- Body (scrollable) -->
-                    <div
+                    <div ref="modalBodyRef"
                         class="flex flex-col bg-white overflow-y-auto flex-1 min-h-0 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
 
                         <!-- Loading -->
@@ -494,7 +494,7 @@
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
                                     {{ errPago }}
                                 </div>
-                                <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <div ref="formBillingRef" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                     <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2
               after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r
               after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -603,6 +603,17 @@
                                 </div>
                             </div>
                         </template>
+
+                        <!-- ── Scroll hint al formulario ── -->
+                        <div class="sticky bottom-0 left-0 right-0 px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-[#c8e6c9] flex-shrink-0">
+                                <button @click="scrollAlFormularioPago"
+                                    class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-black border border-[#1a4a2e] transition-all active:translate-y-px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+                                    </svg>
+                                    Completar datos de facturación
+                                </button>
+                        </div>
                     </div>
 
                     <!-- Foot -->
@@ -927,6 +938,13 @@ const authStore = useAuthStore()
 // ── Estado global ─────────────────────────────────────────────
 const loading = ref(false)
 const mensualidades = ref([])
+
+// ── Scroll hint formulario pago ───────────────────────────────
+const modalBodyRef = ref(null)
+const formBillingRef = ref(null)
+const scrollAlFormularioPago = () => {
+    formBillingRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 // ── Estado de modales ─────────────────────────────────────────
 const modalCodigo = ref(false)
@@ -1729,5 +1747,16 @@ const cerrarModales = () => {
 
 .modal-leave-active .modal-card {
     animation: popOut 0.18s ease-in both
+}
+
+.hint-slide-enter-active,
+.hint-slide-leave-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.hint-slide-enter-from,
+.hint-slide-leave-to {
+    opacity: 0;
+    transform: translateY(8px);
 }
 </style>

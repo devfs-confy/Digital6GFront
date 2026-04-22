@@ -140,7 +140,7 @@
       </div>
 
       <!-- Columna derecha: Asignar modalidades -->
-      <div class="bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
+      <div ref="formRef" class="bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
         <div class="px-5 py-4 border-b-2 border-[#7FD344] bg-[#0D291C] flex items-center justify-between">
           <h3 class="text-sm font-black uppercase tracking-widest text-white">Asignar modalidades</h3>
           <span v-if="baseSeleccionada" class="text-[0.65rem] font-bold text-[#7FD344]/70 truncate max-w-[140px]">
@@ -328,6 +328,16 @@
 
   </div>
 
+  <!-- ── Botón scroll al formulario (solo mobile) ── -->
+  <Transition name="scroll-hint">
+    <button v-if="mostrarScrollHint" @click="scrollAlFormulario"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 lg:hidden flex items-center gap-2 px-5 py-3 rounded-full bg-[#0D291C] text-[#7FD344] text-sm font-black shadow-xl border-2 border-[#7FD344] animate-bounce-slow"
+      style="box-shadow: 0 6px 24px rgba(13,41,28,0.45)">
+      <AppIcon name="arrow_downward" :size="18" />
+      Ver formulario de asignación
+    </button>
+  </Transition>
+
   <!-- ── Modal Quincenas ── -->
   <Transition name="modal-fade">
     <div v-if="modalQuincena.visible" class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -401,7 +411,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import AppIcon from '@/components/shared/AppIcon.vue'
 import SedesService from '@/api/services/sedes.service'
 import ModalidadesPagosService from '@/api/services/modalidades.pagos.js'
@@ -435,6 +445,15 @@ const habilitandoQuincena = ref(false)
 
 // Modal quincenas
 const modalQuincena = reactive({ visible: false, nuevoEstado: null })
+
+// Scroll hint mobile
+const formRef = ref(null)
+const mostrarScrollHint = ref(false)
+
+const scrollAlFormulario = () => {
+  formRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  mostrarScrollHint.value = false
+}
 
 // ── Computed ───────────────────────────────────────────────────────
 const cantidadActivos = computed(
@@ -503,6 +522,11 @@ const cargarConteos = async () => {
 const seleccionarBase = async (auth) => {
   if (baseSeleccionada.value?.IdAutorizacion === auth.IdAutorizacion) return
   baseSeleccionada.value = auth
+  // Mostrar hint solo en mobile (lg = 1024px)
+  if (window.innerWidth < 1024) {
+    mostrarScrollHint.value = true
+    setTimeout(() => { mostrarScrollHint.value = false }, 6000)
+  }
   await cargarModalidadesBase()
 }
 
@@ -632,6 +656,27 @@ onMounted(() => {
   .maincontainer-mp {
     height: auto;
   }
+}
+
+/* ── Scroll hint button ──────────────────────────────────────────── */
+.scroll-hint-enter-active,
+.scroll-hint-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.scroll-hint-enter-from,
+.scroll-hint-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(16px);
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-6px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 1.6s ease-in-out infinite;
 }
 
 .modal-fade-enter-active,
