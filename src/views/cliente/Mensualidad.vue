@@ -154,7 +154,7 @@
                         </span>
                     </div>
 
-                    <button v-if="m.estado === 'activa' || m.estado === 'por_vencer' && m.cobroTarjetaPermitido"
+                    <button  v-if="m.btnTarjeta"
                         @click="abrirModalTarjeta(m)"
                         class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
@@ -1136,6 +1136,7 @@ const cargarMisMensualidades = async () => {
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
         mensualidades.value = raw.map(m => ({
             _raw: m,
+            btnTarjeta : m.RequiereTarjeta,
             cobroTarjetaPermitido: !!(m.CobroTarjeta),
             id: m.IdPersonaAutorizada,
             nombre: m.NombreApellidos ?? '—',
