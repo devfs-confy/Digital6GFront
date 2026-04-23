@@ -379,27 +379,25 @@
                                         :class="opcionSeleccionada?.modalidad === op.modalidad
                                             ? 'border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9]'
                                             : 'border-gray-200'">
+                        
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
                                                     }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
-                                                    {{ op.modalidad }}
+                                                    {{ op.modalidad }} <span v-if="op.tarjeta"> + TARJETA</span>
                                                     <template v-if="op.cantidadMeses > 0">
                                                         · <template v-if="op.modalidad === 'QUINCENA'">15
                                                             días</template>
-                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses ===
-                                                            1 ? 'mes' : 'meses' }}</template>
+                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses === 1 ? 'mes' : 'meses' }}</template>
                                                     </template>
                                                 </span>
                                             </div>
                                             <div class="flex flex-col items-end gap-0.5">
-                                                <span class="text-base font-black text-[#299261]">{{
-                                                    formatPrecio(op.desglose.total) }}</span>
-                                                <!-- <span v-if="op.tarjeta"
-                                                    class="text-[0.68rem] font-semibold text-gray-400">+ {{
-                                                        formatPrecio(op.tarjeta.total) }} Tarjeta</span> -->
+                                             
+                                                <span class="text-base font-black text-[#299261]">{{formatPrecio(op.totalFinal) }}</span>
+                                                
                                             </div>
                                         </div>
                                         <!-- Desglose -->
@@ -407,22 +405,20 @@
                                             class="flex flex-col gap-[5px] pt-2.5 border-t border-gray-200">
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
-                                                <span>Subtotal</span><span>{{ formatPrecio(op.desglose.subtotal)
-                                                    }}</span>
+                                                <span>{{ op.modalidad }}</span><span>{{ formatPrecio(op.desglose.total)}}</span>
                                             </div>
-                                            <div
-                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
-                                                <span>IVA</span><span>{{ formatPrecio(op.desglose.iva) }}</span>
+                                           <div v-if="op.tarjeta"
+                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                                <span>TARJETA</span>
+                                                 <span> {{ formatPrecio(op.tarjeta.total)}}</span>
+                                                
                                             </div>
-                                            <div v-if="op.tarjeta"
-                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
-                                                <span>Cobro Tarjeta</span><span>{{ formatPrecio(op.tarjeta.total)
-                                                    }}</span>
-                                            </div>
+                                            
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
                                                 <span>Total a pagar</span><span class="text-[#299261]">{{
                                                     formatPrecio(op.totalFinal) }}</span>
+
                                             </div>
                                         </div>
                                     </button>
@@ -902,7 +898,7 @@
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
                             Cancelar
                         </button>
-                        <button @click="confirmarTarjetaPerdida" :disabled="guardandoTarjeta"
+                        <button @click="confirmarTarjetaPerdida()" :disabled="guardandoTarjeta"
                             class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-red-600 bg-red-600 text-white shadow-[0_1px_0_#991b1b] hover:bg-red-700 active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="guardandoTarjeta"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -1119,7 +1115,8 @@ const confirmarTarjetaPerdida = async () => {
             mensualidades.value[idx].cobroTarjetaPermitido = true
         }
         modalTarjeta.value = false
-        showSuccess('¡Tarjeta reportada!', 'Ya puedes usar el botón Pagar para tramitar una nueva.')
+        await showSuccess('¡Tarjeta reportada!', 'Ya puedes usar el botón Pagar para tramitar una nueva.')
+        await abrirPago(mensualidadAccion.value)
     } catch (e) {
         showError({ status: e?.response?.status, data: e?.response?.data })
     } finally {
@@ -1444,6 +1441,7 @@ const abrirPago = async (m) => {
             return
         }
         opcionesPago.value = Array.isArray(data) ? data : []
+        console.log(opcionesPago.value)
         opcionSeleccionada.value = opcionesPago.value[0] ?? null
 
     } catch (e) {
