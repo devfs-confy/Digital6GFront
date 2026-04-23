@@ -1333,6 +1333,14 @@ const confirmarPagoExcedente = () => {
     modalPlacas.value = false
     consentimientoAceptado.value = false
     errPago.value = ''
+
+    // Pre-cargar correo y teléfono del token (mismo que abrirPago)
+    const u = authStore.user
+    if (u) {
+        avalpayinformacion.value.telefono = avalpayinformacion.value.telefono || u.telefono || ''
+        avalpayinformacion.value.correo = avalpayinformacion.value.correo || u.email || ''
+    }
+
     modalPago.value = true  // necesita datos de facturación antes de proceder
 }
 
@@ -1516,10 +1524,10 @@ const confirmarPago = async () => {
     }
     errPago.value = ''
 
-    // Excedente: ir directo a pasarela, sin consent ni facturación
+    // Excedente: mismo flujo que renovación normal (consent → facturación)
     if (infoExcedente.value) {
         modalPago.value = false
-        await ejecutarPago({ IdentificacionCliente: '222222222222' })
+        modalConsentimiento.value = true
         return
     }
 
@@ -1582,6 +1590,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 ModalidadPago: 'CAMBIO_AUTORIZACION',
                 IdAutorizacionNueva: Number(excedentePendiente.IdAutorizacionNueva),
                 Placas: placasPayload,
+                IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             }
 
             const res = await PagoService.iniciarPago(m.id, body)
