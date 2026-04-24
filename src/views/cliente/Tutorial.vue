@@ -217,23 +217,6 @@ const categorias = [
                 ],
                 tips: [
                     'El ícono de campana muestra notificaciones pendientes',
-                ],
-            },
-            {
-                titulo: 'Menú de navegación',
-                subtitulo: 'Cómo moverte entre secciones',
-                icon: 'dashboard_customize', img: null,
-                desc: 'El menú lateral te lleva a todas las secciones: Inicio, Mis Mensualidades, Pagos Recientes, Parqueos, PQRS y más. El ícono resaltado indica dónde estás.',
-                info: [
-                    { icon: 'home', titulo: 'Inicio', desc: 'Accede a la sección de inicio para ver tus opciones de navegación.' },
-                    { icon: 'event_available', titulo: 'Mis mensualidades', desc: 'Verás cuántas mensualidades tienes vigentes y su fecha de vencimiento.' },
-                    { icon: 'receipt_long', titulo: 'Pagos recientes', desc: 'Los pagos más recientes aparecen en el inicio para acceso rápido.' },
-                    { icon: 'parking_sign', titulo: 'Parqueos', desc: 'Verás el historial de tus parqueos recientes.' },
-                    { icon: 'contract_edit', titulo: 'PQRS', desc: 'Accede a la sección de PQRS para reportar cualquier problema.' },
-                    { icon: 'info_i', titulo: 'Tutorial', desc: 'Puedes encontrar las respuestas a tus dudas en la sección de ayuda.' },
-                    { icon: 'account_circle', titulo: 'Información', desc: 'Accede a la sección de información para obtener información importante.' },
-                ],
-                tips: [
                     'Toca el ícono de la sección activa para volver al inicio de esa sección',
                     'Puedes colapsar el menú lateral en pantallas grandes',
                 ],
@@ -266,7 +249,7 @@ const categorias = [
                 tips: [
                     'Solo podrás cambiar la placa 1 vez al mes',
                 ],
-                nota: 'Si haces un cambio de mensualidad de moto a carro sin antes tener otras de carro, se te cobrará un excedente del costo de la mensualidad de carro.',
+                nota: 'Si haces un cambio de mensualidad de moto a carro, se te cobrará un excedente del costo de la mensualidad de carro.',
             },
             {
                 titulo: 'Ver mis mensualidades',
@@ -283,11 +266,11 @@ const categorias = [
             },
             {
                 titulo: 'Registrar nueva mensualidad',
-                subtitulo: 'Proceso de 3 pasos',
+                subtitulo: 'Los siguienetes 2 pasos',
                 icon: 'add', img: null,
                 desc: 'Toca el botón verde "+" en la esquina superior. Se abrirá el flujo de registro: elegir sede → ingresar código de verificación → confirmar.',
                 info: [
-                    { icon: 'fact_check', titulo: 'Requisito previo', desc: 'El operario del parqueadero debe darte un código de verificación antes de comenzar.' },
+                    { icon: 'fact_check', titulo: 'Requisito previo', desc: 'El operario del parqueadero de la sede que quieras agregar debe darte un código de verificación antes de comenzar.' },
                 ],
                 tips: [
                     'El botón "+" solo aparece si hay cupos disponibles en alguna sede',
