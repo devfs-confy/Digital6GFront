@@ -10,7 +10,8 @@ import App from "./App.vue"; //app main
 import AppIcon from "@/components/shared/AppIcon.vue";  //component
 import { vPermission } from "./directives/v-permission";
 import "@/assets/table-system.css";
-import "@/assets/tutorial.css";
+import "@/assets/tutorial.css"
+import "@/assets/mobile-perf.css";
 
 const app = createApp(App);
 

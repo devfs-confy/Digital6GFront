@@ -99,12 +99,12 @@
                     style="box-shadow: 0 3px 0 #e8f5e9">
 
                     <!-- Header oscuro con ícono -->
-                    <div class="bg-[#0D291C] px-5 py-5 flex flex-col items-center gap-3">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-[#7FD344]"
+                    <div class="bg-[#0D291C] px-5 py-5 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-[#7FD344]"
                             style="background: rgba(127,211,68,0.15); border: 1.5px solid rgba(127,211,68,0.3)">
-                            <AppIcon :name="pasoActualObj.icon" :size="32" />
+                            <AppIcon :name="pasoActualObj.icon" :size="30" />
                         </div>
-                        <div class="text-center">
+                        <div>
                             <p class="text-white font-black text-base leading-tight">{{ pasoActualObj.titulo }}</p>
                             <p class="text-white/45 text-[11px] mt-1">{{ pasoActualObj.subtitulo }}</p>
                         </div>
@@ -117,7 +117,7 @@
                     </div>
 
                     <!-- Cuerpo -->
-                    <div class="p-5 flex flex-col gap-4">
+                    <div class="p-5 flex flex-col gap-4 text-left">
 
                         <!-- Descripción principal -->
                         <p class="text-[13px] leading-relaxed text-gray-600">{{ pasoActualObj.desc }}</p>
@@ -202,7 +202,7 @@ const categorias = [
         id: 'inicio', label: 'Inicio', icon: 'home',
         pasos: [
             {
-                titulo: 'Tu pantalla de inicio',
+                titulo: 'Tu pantalla de inicio o en tu menú de navegación',
                 subtitulo: 'Lo primero que ves al entrar',
                 icon: 'home', img: null,
                 desc: 'Al ingresar al aplicativo podras visualizar 6 opciones de navegación: Inicio, Mis Mensualidades, Pagos Recientes, Parqueos, PQRS y más, donde puedes acceder a tus servicios y recibir ayuda.',
@@ -243,6 +243,31 @@ const categorias = [
     {
         id: 'mensualidades', label: 'Mensualidades', icon: 'event_available',
         pasos: [
+
+            {
+                titulo: 'Pagar mensualidad',
+                subtitulo: 'Renovar o saldar una deuda',
+                icon: 'payment_card', img: null,
+                desc: 'Toca tu mensualidad en el listado y selecciona "Pagar". Si es renovación elige la nueva fecha de inicio y serás dirigido a la pasarela AvalPay para completar el pago.',
+                info: [
+                    { icon: 'credit_score', titulo: 'Métodos aceptados', desc: 'Tarjeta Visa, Mastercard, débito y otros métodos habilitados en AvalPay.' },
+                ],
+                tips: [
+                    'Recibirás confirmación por correo al finalizar',
+                    'El estado se actualiza de inmediato al aprobar el pago',
+                ],
+            },
+            {
+                titulo: 'Cambiar Placa',
+                subtitulo: 'Poder cambiar la placa de tu mensualidad 1 vez al mes',
+                icon: 'payment_card', img: null,
+                desc: 'Busca tu mensualidad en el listado y selecciona "Más info". Buscas la opcion de "Cambiar Placa" y escribe la nueva placa .',
+
+                tips: [
+                    'Solo podrás cambiar la placa 1 vez al mes',
+                ],
+                nota: 'Si haces un cambio de mensualidad de moto a carro sin antes tener otras de carro, se te cobrará un excedente del costo de la mensualidad de carro.',
+            },
             {
                 titulo: 'Ver mis mensualidades',
                 subtitulo: 'Listado y estados',
@@ -290,31 +315,7 @@ const categorias = [
                 ],
                 nota: 'El código expira a los 15 Minutos de ser generado por el operario.',
             },
-            {
-                titulo: 'Pagar mensualidad',
-                subtitulo: 'Renovar o saldar una deuda',
-                icon: 'payment_card', img: null,
-                desc: 'Toca tu mensualidad en el listado y selecciona "Pagar". Si es renovación elige la nueva fecha de inicio y serás dirigido a la pasarela AvalPay para completar el pago.',
-                info: [
-                    { icon: 'credit_score', titulo: 'Métodos aceptados', desc: 'Tarjeta Visa, Mastercard, débito y otros métodos habilitados en AvalPay.' },
-                ],
-                tips: [
-                    'Recibirás confirmación por correo al finalizar',
-                    'El estado se actualiza de inmediato al aprobar el pago',
-                ],
-            },
-            {
-                titulo: 'Cambiar Placa',
-                subtitulo: 'Poder cambiar la placa de tu mensualidad 1 vez al mes',
-                icon: 'payment_card', img: null,
-                desc: 'Busca tu mensualidad en el listado y selecciona "Más info". Buscas la opcion de "Cambiar Placa" y escribe la nueva placa .',
 
-                tips: [
-                    'Solo podrás cambiar la placa 1 vez al mes',
-                ],
-                nota: 'Si haces un cambio de mensualidad de moto a carro sin antes tener otras de carro, se te cobrará un excedente del costo de la mensualidad de carro.',
-
-            },
         ],
     },
     {

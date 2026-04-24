@@ -1,0 +1,56 @@
+/* ═══════════════════════════════════════════════
+   MOBILE PERFORMANCE — deshabilita animaciones
+   en pantallas ≤767px para evitar lag.
+
+   Keyframes específicos de componentes se anulan
+   directamente en cada <style scoped> del componente
+   (los keyframes son globales pero el CSS de componentes
+   se inyecta después del global, por lo que sobrescriben).
+
+   Aquí manejamos lo que SÍ podemos controlar globalmente:
+   clases de Tailwind y clases de Vue Transition.
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+
+  /* ── Tailwind animate-pulse → stop (skeleton loaders estáticos) */
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  /* ── Vue Transitions → instantáneas en mobile */
+  /* Modales */
+  .modal-enter-active,
+  .modal-leave-active,
+  .pqrs-modal-enter-active,
+  .pqrs-modal-leave-active,
+  .tut-enter-active,
+  .tut-leave-active {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+  /* Tarjetas / reveals */
+  .fade-enter-active,
+  .fade-leave-active,
+  .reveal-enter-active,
+  .reveal-leave-active,
+  .err-slide-enter-active,
+  .err-slide-leave-active {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+  /* Tutorial slide */
+  .slide-forward-enter-active,
+  .slide-forward-leave-active,
+  .slide-back-enter-active,
+  .slide-back-leave-active {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+  /* Sub-elementos de cards dentro de transiciones */
+  .tut-enter-active .tutorial-card,
+  .tut-leave-active .tutorial-card {
+    transition-duration: 0ms !important;
+  }
+
+}

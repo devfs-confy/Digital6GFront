@@ -1772,4 +1772,13 @@ const cerrarModales = () => {
     opacity: 0;
     transform: translateY(8px);
 }
+
+@media (max-width: 767px) {
+    @keyframes shimmer { from {} to {} }
+    @keyframes cardIn  { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes popIn   { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes popOut  { from { opacity:0; } to { opacity:0; } }
+    .hint-slide-enter-active,
+    .hint-slide-leave-active { transition-duration: 0ms !important; }
+}
 </style>

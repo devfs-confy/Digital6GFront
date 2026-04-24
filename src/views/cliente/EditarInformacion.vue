@@ -513,4 +513,8 @@ const guardarPass = async () => {
         transform: translateY(0) scale(1);
     }
 }
+
+@media (max-width: 767px) {
+    @keyframes card-anim-kf { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+}
 </style>

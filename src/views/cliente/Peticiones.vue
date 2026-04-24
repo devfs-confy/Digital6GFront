@@ -171,4 +171,8 @@ import { useRouter } from 'vue-router'
     font-weight: 600;
     color: #299261;
 }
+
+@media (max-width: 767px) {
+    @keyframes cardIn { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+}
 </style>

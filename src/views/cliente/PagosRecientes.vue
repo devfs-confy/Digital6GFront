@@ -620,4 +620,9 @@ const formatMes = (fecha) => {
         transform: rotate(360deg);
     }
 }
+
+@media (max-width: 767px) {
+    @keyframes cardIn { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes rowIn  { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+}
 </style>

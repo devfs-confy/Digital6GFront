@@ -901,5 +901,8 @@ const abrirDetalle = async (pqrs) => {
         max-height: 95vh;
         box-shadow: 0 -4px 0 #0D291C;
     }
+
+    @keyframes pqrs-pop-in  { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes pqrs-pop-out { from { opacity:0; } to { opacity:0; } }
 }
 </style>

@@ -196,7 +196,7 @@
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Nombres <span
                                                 class="text-red-400">*</span></label>
-                                        <input v-model="form.Nombres" type="text" class="field-input" placeholder="" />
+                                        <input ref="inputNombres" v-model="form.Nombres" type="text" class="field-input" placeholder="" />
                                     </div>
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Apellidos <span
@@ -696,13 +696,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, nextTick } from 'vue'
 import { showError, showSuccess, showConfirm } from '@/utils/swal'
 import { useRoute, useRouter } from 'vue-router'
 import ClientService from '@/api/services/client.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
 
 const showTutorial = ref(false)
+const inputNombres = ref(null)
 const aceptoTerminos = ref(false)
 const route = useRoute()
 const router = useRouter()
@@ -789,6 +790,7 @@ const buscarDocumento = async (doc) => {
             limpiarCampos()
             msgDoc.value = 'No se encontró mensualidad activa — completa el formulario'
             formularioListo.value = true
+            enfocarNombres()
             return
         }
         const d = res.data ?? res
@@ -818,12 +820,14 @@ const buscarDocumento = async (doc) => {
         if (form.placas.length === 0) form.placas = ['']
         msgDoc.value = '✓ Mensualidad encontrada — completa los datos faltantes'
         formularioListo.value = true
+        enfocarNombres()
     } catch {
         mensualidadData.value = null
         usuarioEncontrado.value = false
         limpiarCampos()
         msgDoc.value = 'No se pudo verificar — completa el formulario manualmente'
         formularioListo.value = true
+        enfocarNombres()
     } finally {
         buscandoDoc.value = false
     }
@@ -836,6 +840,8 @@ const placasBloqueadas = computed(() => {
     if (!fechaFin) return false
     return new Date(fechaFin) > new Date()
 })
+
+const enfocarNombres = () => nextTick(() => inputNombres.value?.focus())
 
 const limpiarCampos = () => {
     Object.assign(form, { Nombres: '', IdTarjeta: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })

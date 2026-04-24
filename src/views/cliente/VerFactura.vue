@@ -553,4 +553,8 @@ onMounted(cargarFactura)
     min-height: 600px;
     border: none;
 }
+
+@media (max-width: 767px) {
+    @keyframes fadeUp { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+}
 </style>

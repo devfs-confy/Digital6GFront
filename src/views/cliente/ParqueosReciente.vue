@@ -458,4 +458,9 @@ const calcDuracion = (entrada, salida) => {
     opacity: 0.35;
     cursor: not-allowed;
 }
+
+@media (max-width: 767px) {
+    @keyframes pulseDot { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:1; transform:scale(1); } }
+    @keyframes rowIn    { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+}
 </style>

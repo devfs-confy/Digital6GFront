@@ -995,4 +995,8 @@ onMounted(cargarEstado)
 .btn-rechazo--volver:hover {
     background: #f9fafb
 }
+
+@media (max-width: 767px) {
+    @keyframes fadeUp { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+}
 </style>
