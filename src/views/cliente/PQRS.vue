@@ -79,7 +79,7 @@
                             </td>
                             <td class="px-4 py-3 max-w-[220px]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Descripcion ?? '—'
-                                    }}</span>
+                                }}</span>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1 text-[0.8rem] font-extrabold" :class="{
@@ -183,7 +183,7 @@
                                     class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">Asunto
                                     *</label>
                                 <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{ fN.Asunto.length
-                                    }}/50</span>
+                                }}/50</span>
                             </div>
                             <input v-model="fN.Asunto" type="text" class="pqrs-input" placeholder="Ej: Probl..."
                                 maxlength="50" />
@@ -204,21 +204,25 @@
 
                         <!-- Mensualidad relacionada -->
                         <div v-if="loadingMensualidades || misMensualidades.length > 0" class="flex flex-col gap-[5px]">
-                            <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">
+                            <label
+                                class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-[#0D291C] opacity-60 pl-[2px]">
                                 Mensualidad relacionada
                                 <span v-if="misMensualidades.length > 0" class="text-red-500 font-black">*</span>
                                 <span v-else class="normal-case opacity-60 font-semibold">(opcional)</span>
                             </label>
                             <div v-if="loadingMensualidades"
                                 class="flex items-center gap-2 bg-white/50 border-2 border-[#0D291C] rounded-[13px] px-[13px] py-[9px] text-[0.78rem] font-semibold text-[#0D291C] opacity-50">
-                                <div class="w-[14px] h-[14px] border-2 border-[#0D291C] border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                                <div
+                                    class="w-[14px] h-[14px] border-2 border-[#0D291C] border-t-transparent rounded-full animate-spin flex-shrink-0" />
                                 <span>Cargando mensualidades...</span>
                             </div>
                             <!-- 1 sola: mostrar como pill informativa, no select -->
                             <div v-else-if="misMensualidades.length === 1"
                                 class="flex items-center gap-2 px-[13px] py-[9px] bg-[#f0faf4] border-2 border-[#299261] rounded-[13px] text-[0.78rem] font-semibold text-[#0D291C]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#299261" viewBox="0 0 24 24" class="flex-shrink-0">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#299261"
+                                    viewBox="0 0 24 24" class="flex-shrink-0">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
                                 </svg>
                                 {{ misMensualidades[0].label }}
                             </div>
@@ -380,7 +384,7 @@
                                         <span
                                             class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
                                         <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ detalleActivo.Tipo
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">

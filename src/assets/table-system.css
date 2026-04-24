@@ -52,6 +52,7 @@
   font-weight: 500;
   vertical-align: middle;
   white-space: nowrap;
+  text-align: left;
 }
 .td-cell--sticky {
   position: sticky;

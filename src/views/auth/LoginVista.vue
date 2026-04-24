@@ -66,10 +66,11 @@
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                         <circle cx="12" cy="12" r="3" />
                                     </svg>
-                                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round" viewBox="0 0 24 24">
-                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                        <path
+                                            d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
                                         <line x1="1" y1="1" x2="23" y2="23" />
                                     </svg>
                                 </button>
@@ -120,6 +121,133 @@
                 <img src="@/assets/img/confy-negro.png" alt="" class="form-deco-logo" />
             </div>
         </div>
+
+        <!-- ── Botón tutorial fijo ── -->
+        <button @click="showTutorial = true" class="tutorial-fab">
+            <AppIcon name="info_i_green" :size="25" />
+            <span>Ayuda</span>
+        </button>
+
+        <!-- ── Modal tutorial ── -->
+        <Transition name="tut">
+            <div v-if="showTutorial" class="tutorial-overlay" @click.self="showTutorial = false">
+                <div class="tutorial-card">
+
+                    <!-- Header -->
+                    <div class="tutorial-header">
+                        <div class="tutorial-header-icon">
+                            <AppIcon name="info_i" :size="18" />
+                        </div>
+                        <div class="tutorial-header-text">
+                            <p class="tutorial-title">Guía de acceso</p>
+                            <p class="tutorial-subtitle">¿Cómo usar esta pantalla?</p>
+                        </div>
+                        <button @click="showTutorial = false" class="tutorial-close">✕</button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="tutorial-body">
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">1</div>
+                            <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Documento</p>
+                                <p class="tutorial-step-desc">Ingresa tu número de cédula o documento de identidad
+                                    registrado en la plataforma.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">2</div>
+                            <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Contraseña</p>
+                                <p class="tutorial-step-desc">Ingresa la contraseña asociada a tu cuenta. Usa el ojo
+                                    para mostrarla u ocultarla.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">3</div>
+                            <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#232B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Ingresar</p>
+                                <p class="tutorial-step-desc">Presiona este botón para acceder a tu cuenta con las
+                                    credenciales ingresadas.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-divider">Opciones adicionales</div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-icon"
+                                style="background:#eff6ff;border-color:#bfdbfe;margin-left:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                                    <path d="M12 17h.01" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">¿Olvidaste tu contraseña?</p>
+                                <p class="tutorial-step-desc">Si no recuerdas tu contraseña, haz clic aquí para
+                                    recuperarla por correo electrónico.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-icon"
+                                style="background:#f5f3ff;border-color:#ddd6fe;margin-left:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#5b21b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <line x1="19" y1="8" x2="19" y2="14" />
+                                    <line x1="22" y1="11" x2="16" y2="11" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Regístrate</p>
+                                <p class="tutorial-step-desc">¿No tienes cuenta aún? Crea una nueva cuenta en la
+                                    plataforma desde aquí.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="tutorial-footer">
+                        <button @click="showTutorial = false" class="tutorial-btn-close">Entendido</button>
+                    </div>
+
+                </div>
+            </div>
+        </Transition>
+
     </div>
 </template>
 
@@ -134,6 +262,7 @@ const auth = useAuthStore()
 const documento = ref('')
 const password = ref('')
 const verPassword = ref(false)
+const showTutorial = ref(false)
 
 async function handleLogin() {
     if (!documento.value || !password.value) return

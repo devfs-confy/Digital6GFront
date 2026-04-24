@@ -7,7 +7,8 @@
                     <!-- Cabecera -->
                     <div :class="['modal-head', esInhabilitar ? 'modal-head--danger' : 'modal-head--activate']">
                         <div class="modal-head__left">
-                            <div :class="['modal-avatar', esInhabilitar ? 'modal-avatar--danger' : 'modal-avatar--activate']">
+                            <div
+                                :class="['modal-avatar', esInhabilitar ? 'modal-avatar--danger' : 'modal-avatar--activate']">
                                 {{ iniciales(cliente?.Nombres) }}
                             </div>
                             <div>
@@ -70,9 +71,8 @@
                                 </div>
                                 <div class="field-group field-group--full">
                                     <label class="field-label">Observaciones</label>
-                                    <textarea v-model="observacionesLocal"
-                                        class="field-input field-input--textarea" rows="2"
-                                        placeholder="Detalles adicionales..."></textarea>
+                                    <textarea v-model="observacionesLocal" class="field-input field-input--textarea"
+                                        rows="2" placeholder="Detalles adicionales..."></textarea>
                                 </div>
                             </div>
                         </template>
@@ -96,16 +96,15 @@
                         <button @click="emit('update:modelValue', false)" class="btn-modal btn-cancel">
                             Cancelar
                         </button>
-                        <button @click="confirmar"
-                            :class="['btn-modal', esInhabilitar ? 'btn-danger' : 'btn-activate']"
+                        <button @click="confirmar" :class="['btn-modal', esInhabilitar ? 'btn-danger' : 'btn-activate']"
                             :disabled="esInhabilitar && !motivoLocal">
                             <svg v-if="esInhabilitar" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                                 fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
                             </svg>
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                fill="currentColor" viewBox="0 0 24 24">
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                viewBox="0 0 24 24">
                                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                             </svg>
                             {{ esInhabilitar ? 'Inhabilitar' : 'Activar cliente' }}
@@ -183,7 +182,7 @@ const iniciales = (nombre = '') =>
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
 }
 
 .modal-card--danger {
@@ -390,7 +389,7 @@ const iniciales = (nombre = '') =>
     border-radius: 12px !important;
     padding: 9px 13px !important;
     font-size: 0.86rem !important;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     color: #111827 !important;
     outline: none !important;
     box-shadow: none !important;
@@ -449,7 +448,7 @@ const iniciales = (nombre = '') =>
 .confirm-doc {
     font-size: 0.7rem;
     color: #9ca3af;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     margin-top: 2px;
 }
 
@@ -481,7 +480,7 @@ const iniciales = (nombre = '') =>
     border-radius: 12px;
     font-weight: 800;
     font-size: 0.8rem;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     cursor: pointer;
     transition: background 0.2s, transform 0.12s, box-shadow 0.2s, opacity 0.2s;
 }

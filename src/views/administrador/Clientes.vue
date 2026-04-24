@@ -61,7 +61,7 @@
                             <th class="th-cell">Correo</th>
                             <th class="th-cell">Teléfono</th>
                             <th class="th-cell">Estado</th>
-                            <th class="th-cell text-center">Opciones</th>
+                            <th class="th-cell th-cell--center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,7 +121,7 @@
                                     Activo</span>
                                 <span v-else class="text-[#dc2626] font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
-                            <td class="td-cell text-center">
+                            <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-2">
                                     <button @click="abrirEditar(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all"

@@ -16,7 +16,7 @@
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
 
-            <div class="flex flex-col gap-1 flex-[2] min-w-[200px]">
+            <div class="flex flex-col gap-1 flex-[2] min-w-[200px] ">
                 <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Buscar</label>
                 <div class="relative">
                     <input v-model="filtros.search" type="text" placeholder="Nombre, documento, placa o #ID..."
@@ -57,28 +57,13 @@
                 <table class="border-collapse min-w-[700px] w-full">
                     <thead>
                         <tr>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Titular</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
-                                Documento</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Sede
-                            </th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Placas</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Vigencia</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Estado</th>
-                            <th
-                                class="px-5 py-3.5 text-center text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
-                                Opciones</th>
+                            <th class="th-cell">Titular</th>
+                            <th class="th-cell th-cell--sticky">Documento</th>
+                            <th class="th-cell">Sede</th>
+                            <th class="th-cell">Placas</th>
+                            <th class="th-cell">Vigencia</th>
+                            <th class="th-cell">Estado</th>
+                            <th class="th-cell th-cell--center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,7 +97,7 @@
                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors group">
 
                             <!-- Titular -->
-                            <td class="px-5 py-3 shadow-[3px_0_8px_rgba(0,0,0,0.07)] transition-colors">
+                            <td class="td-cell">
                                 <div class="flex items-center gap-3  max-w-[155px]">
                                     <div
                                         class="w-9 h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-sm flex-shrink-0">
@@ -132,19 +117,18 @@
                             </td>
 
                             <!-- Documento -->
-                            <td
-                                class="sticky left-0 bg-white group-hover:bg-[#f0faf4] px-5 py-3 font-mono text-sm text-gray-600 whitespace-nowrap">
+                            <td class="td-cell td-cell--sticky font-mono group-hover:bg-[#f0faf4]">
                                 {{ m.Documento }}
                             </td>
 
-                            <td class="px-5 py-3 whitespace-nowrap">
+                            <td class="td-cell">
                                 <span
                                     class="text-[0.72rem] font-bold text-[#299261] bg-[#f0faf4] border border-[#c8e6c9] px-2 py-0.5 rounded-full">
                                     {{ m._sedeName || sedeNombre || '—' }}
                                 </span>
                             </td>
                             <!-- Placas -->
-                            <td class="px-5 py-3">
+                            <td class="td-cell">
                                 <div class="flex gap-1 flex-wrap">
                                     <span v-for="p in placas(m)" :key="p"
                                         class="inline-block text-[0.6rem] font-black tracking-widest bg-[#0D291C] text-[white] px-2 py-0.5 rounded-md">
@@ -157,7 +141,7 @@
 
 
                             <!-- Vigencia -->
-                            <td class="px-5 py-3 whitespace-nowrap">
+                            <td class="td-cell">
                                 <div v-if="m.FechaInicio || m.FechaFin" class="flex flex-col gap-0.5">
 
                                     <span :class="['text-[0.65rem] font-bold', vigenciaClass(m)]">
@@ -168,14 +152,14 @@
                             </td>
 
                             <!-- Estado -->
-                            <td class="px-5 py-3 whitespace-nowrap">
+                            <td class="td-cell">
                                 <span v-if="m.Estado" class="text-[#299261] font-extrabold text-[0.8rem]">●
                                     Activo</span>
                                 <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
 
                             <!-- Opciones -->
-                            <td class="px-3 py-3 text-center">
+                            <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-1">
                                     <button @click="abrirVerDetalle(m)" title="Ver detalles"
                                         class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-blue-500 hover:bg-blue-50 transition-all">
@@ -280,7 +264,7 @@
                         <div class="detail-pill">
                             <span class="dp-label">ID Autorización</span>
                             <span class="dp-value font-mono">{{ detalleVer.T_Autorizaciones?.IdAutorizacion ?? '—'
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="detail-pill">
                             <span class="dp-label">Fecha inicio</span>
@@ -430,7 +414,7 @@
                     </select>
                     <p class="text-[0.65rem] text-gray-400 pl-0.5">
                         Actual: <strong class="text-[#0D291C]">{{ detalle?.T_Autorizaciones?.NombreAutorizacion ?? '—'
-                            }}</strong>
+                        }}</strong>
                     </p>
                 </div>
 
@@ -441,67 +425,84 @@
         <!-- ── Modal Últimos Pagos ───────────────────────────────────────── -->
         <Teleport to="body">
             <Transition name="modal-fade">
-                <div v-if="modalPagos" class="modal-overlay" @click.self="modalPagos = false">
-                    <div class="modal-box">
+                <div v-if="modalPagos"
+                    class="fixed inset-0 z-[1000] bg-black/55 backdrop-blur-sm flex sm:items-center items-end sm:p-4"
+                    @click.self="modalPagos = false">
+                    <div class="w-full sm:max-w-[860px] sm:mx-auto flex flex-col overflow-hidden bg-white border-2 border-[#0D291C] rounded-t-3xl sm:rounded-3xl sm:max-h-[88vh] max-h-[85vh]"
+                        style="box-shadow: 0 6px 0 #000">
+
                         <!-- Header -->
-                        <div class="modal-header">
-                            <div class="flex flex-col">
-                                <h3 class="text-lg font-black text-[#0D291C]">Últimos Pagos</h3>
-                                <p class="text-xs text-gray-400 font-medium mt-0.5">
-                                    {{ selectedMensual?.NombreApellidos }} · #{{ selectedMensual?.IdPersonaAutorizada }}
-                                </p>
+                        <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] flex-shrink-0">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-white/10 border border-[#7FD344]/30 flex items-center justify-center flex-shrink-0">
+                                    <AppIcon name="receipt_long" :size="18" class="text-[#7FD344]" />
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[0.9rem] font-extrabold text-white truncate">Últimos Pagos</p>
+                                    <p class="text-[0.65rem] text-white/50 font-semibold truncate mt-[1px]">
+                                        {{ selectedMensual?.NombreApellidos }} · #{{
+                                        selectedMensual?.IdPersonaAutorizada }}
+                                    </p>
+                                </div>
                             </div>
                             <button @click="modalPagos = false"
-                                class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-500 transition-all text-gray-500 flex-shrink-0">
-                                <AppIcon name="close" :size="20" />
+                                class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white transition-all flex-shrink-0">
+                                ✕
                             </button>
                         </div>
+
                         <!-- Body -->
-                        <div class="modal-body">
+                        <div
+                            class="flex-1 overflow-y-auto p-5 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
                             <!-- Loading -->
                             <div v-if="loadingPagos" class="flex flex-col items-center py-16 gap-3">
-                                <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                <div
+                                    class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
                                 <span class="text-sm text-gray-400">Cargando pagos...</span>
                             </div>
 
                             <!-- Vacío -->
-                            <div v-else-if="!pagosData.length" class="flex flex-col items-center justify-center py-16 gap-3 text-gray-300">
+                            <div v-else-if="!pagosData.length"
+                                class="flex flex-col items-center justify-center py-16 gap-3 text-gray-300">
                                 <AppIcon name="receipt_long" :size="56" />
                                 <span class="text-sm font-medium">Sin pagos registrados</span>
                             </div>
 
                             <!-- Tabla -->
-                            <div v-else class="overflow-x-auto overflow-y-auto max-h-[55vh]">
+                            <div v-else class="overflow-x-auto">
                                 <table class="w-full border-collapse min-w-[540px]">
                                     <thead>
                                         <tr>
-                                            <th class="modal-th">Sede</th>
-                                            <th class="modal-th">Módulo</th>
-                                            <th class="modal-th">N° Factura</th>
-                                            <th class="modal-th text-right">Total</th>
-                                            <th class="modal-th">Tipo Pago</th>
-                                            <th class="modal-th">Fecha Pago</th>
+                                            <th class="th-cell">Sede</th>
+                                            <th class="th-cell">Módulo</th>
+                                            <th class="th-cell">N° Factura</th>
+                                            <th class="th-cell">Total</th>
+                                            <th class="th-cell">Tipo Pago</th>
+                                            <th class="th-cell">Fecha Pago</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="p in pagosData" :key="p.idPago"
                                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
-                                            <td class="modal-td font-mono text-xs text-gray-500">{{ p.idEstacionamiento }}</td>
-                                            <td class="modal-td">
-                                                <span class="text-[0.7rem] font-black tracking-wider bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-md">
-                                                    {{ p.idModulo }}
-                                                </span>
+                                            <td class="td-cell font-mono text-xs text-gray-500">{{ p.idEstacionamiento
+                                                }}</td>
+                                            <td class="td-cell">
+                                                <span class="badge badge--dark">{{ p.idModulo }}</span>
                                             </td>
-                                            <td class="modal-td font-mono font-bold text-[#0D291C]"># {{ p.numeroFactura }}</td>
-                                            <td class="modal-td text-right font-black text-[#299261]">
-                                                {{ Number(p.total).toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }) }}
+                                            <td class="td-cell font-mono font-bold text-[#0D291C]">#{{ p.numeroFactura
+                                                }}</td>
+                                            <td class="td-cell font-black text-[#299261]">
+                                                {{ Number(p.total).toLocaleString('es-CO', {
+                                                    style: 'currency',
+                                                currency: 'COP',
+                                                minimumFractionDigits: 0 }) }}
                                             </td>
-                                            <td class="modal-td">
-                                                <span class="text-[0.7rem] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
-                                                    {{ p.idTipoPago }}
-                                                </span>
+                                            <td class="td-cell">
+                                                <span class="badge badge--blue">{{ p.idTipoPago }}</span>
                                             </td>
-                                            <td class="modal-td text-xs text-gray-500 whitespace-nowrap">{{ formatFecha(p.fechaPago) }}</td>
+                                            <td class="td-cell text-xs text-gray-500">{{ formatFecha(p.fechaPago) }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -515,42 +516,57 @@
         <!-- ── Modal Transacciones ───────────────────────────────────────── -->
         <Teleport to="body">
             <Transition name="modal-fade">
-                <div v-if="modalTransacciones" class="modal-overlay" @click.self="modalTransacciones = false">
-                    <div class="modal-box">
+                <div v-if="modalTransacciones"
+                    class="fixed inset-0 z-[1000] bg-black/55 backdrop-blur-sm flex sm:items-center items-end sm:p-4"
+                    @click.self="modalTransacciones = false">
+                    <div class="w-full sm:max-w-[900px] sm:mx-auto flex flex-col overflow-hidden bg-white border-2 border-[#0D291C] rounded-t-3xl sm:rounded-3xl sm:max-h-[88vh] max-h-[88vh]"
+                        style="box-shadow: 0 6px 0 #000">
+
                         <!-- Header -->
-                        <div class="modal-header">
-                            <div class="flex flex-col">
-                                <h3 class="text-lg font-black text-[#0D291C]">Transacciones</h3>
-                                <p class="text-xs text-gray-400 font-medium mt-0.5">
-                                    {{ selectedMensual?.NombreApellidos }} · #{{ selectedMensual?.IdPersonaAutorizada }}
-                                </p>
+                        <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] flex-shrink-0">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-white/10 border border-[#7FD344]/30 flex items-center justify-center flex-shrink-0">
+                                    <AppIcon name="car_tag" :size="18" class="text-[#7FD344]" />
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[0.9rem] font-extrabold text-white truncate">Transacciones</p>
+                                    <p class="text-[0.65rem] text-white/50 font-semibold truncate mt-[1px]">
+                                        {{ selectedMensual?.NombreApellidos }} · #{{
+                                        selectedMensual?.IdPersonaAutorizada }}
+                                    </p>
+                                </div>
                             </div>
                             <button @click="modalTransacciones = false"
-                                class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-500 transition-all text-gray-500 flex-shrink-0">
-                                <AppIcon name="close" :size="20" />
+                                class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white transition-all flex-shrink-0">
+                                ✕
                             </button>
                         </div>
+
                         <!-- Body -->
-                        <div class="modal-body flex flex-col gap-4">
+                        <div
+                            class="flex-1 overflow-y-auto p-5 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
 
                             <!-- Loading sedes -->
                             <div v-if="loadingSedesTransacciones" class="flex flex-col items-center py-10 gap-3">
-                                <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                <div
+                                    class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
                                 <span class="text-sm text-gray-400">Cargando sedes...</span>
                             </div>
 
                             <template v-else>
-                                <!-- Cards sedes -->
-                                <div>
-                                    <p class="text-[0.62rem] font-black uppercase tracking-widest text-[#0D291C]/50 mb-2">Selecciona una sede</p>
+                                <!-- Chips sedes -->
+                                <div class="flex-shrink-0">
+                                    <p
+                                        class="text-[0.62rem] font-black uppercase tracking-widest text-[#0D291C]/50 mb-2">
+                                        Selecciona una sede</p>
                                     <div class="flex flex-wrap gap-2">
                                         <button v-for="s in sedesTransacciones" :key="s.IdEstacionamiento"
                                             @click="seleccionarSedeTransaccion(s)"
-                                            class="flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-sm font-bold transition-all"
+                                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-[0.8rem] font-bold transition-all"
                                             :class="selectedSedeTransaccion?.IdEstacionamiento === s.IdEstacionamiento
                                                 ? 'border-[#299261] bg-[#e8f5e9] text-[#0D291C]'
                                                 : 'border-gray-200 bg-white text-gray-500 hover:border-[#299261] hover:text-[#0D291C]'">
-                                            <AppIcon name="location_on" :size="16" />
                                             {{ s.Nombre.trim() }}
                                         </button>
                                     </div>
@@ -558,59 +574,58 @@
 
                                 <!-- Loading tabla -->
                                 <div v-if="loadingTransaccionesTable" class="flex flex-col items-center py-10 gap-3">
-                                    <div class="w-7 h-7 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                    <div
+                                        class="w-7 h-7 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
                                     <span class="text-sm text-gray-400">Cargando transacciones...</span>
                                 </div>
 
                                 <!-- Sin sede seleccionada -->
                                 <div v-else-if="!selectedSedeTransaccion"
-                                    class="flex flex-col items-center py-12 gap-3 text-gray-300">
+                                    class="flex flex-col items-center py-10 gap-3 text-gray-300">
                                     <AppIcon name="swap_horiz" :size="48" />
                                     <span class="text-sm font-medium">Selecciona una sede para ver transacciones</span>
                                 </div>
 
                                 <!-- Vacío -->
                                 <div v-else-if="!transaccionesTable.length"
-                                    class="flex flex-col items-center py-12 gap-3 text-gray-300">
+                                    class="flex flex-col items-center py-10 gap-3 text-gray-300">
                                     <AppIcon name="inbox" :size="48" />
                                     <span class="text-sm font-medium">Sin transacciones en esta sede</span>
                                 </div>
 
                                 <!-- Tabla -->
-                                <div v-else class="overflow-x-auto overflow-y-auto max-h-[45vh]">
+                                <div v-else class="overflow-x-auto flex-1">
                                     <table class="w-full border-collapse min-w-[640px]">
                                         <thead>
                                             <tr>
-                                                <th class="modal-th">Módulo entrada</th>
-                                                <th class="modal-th">Placa entrada</th>
-                                                <th class="modal-th">Fecha entrada</th>
-                                                <th class="modal-th">Módulo salida</th>
-                                                <th class="modal-th">Placa salida</th>
-                                                <th class="modal-th">Fecha salida</th>
-                                                <th class="modal-th">Tipo veh.</th>
+                                                <th class="th-cell">Módulo entrada</th>
+                                                <th class="th-cell">Placa entrada</th>
+                                                <th class="th-cell">Fecha entrada</th>
+                                                <th class="th-cell">Módulo salida</th>
+                                                <th class="th-cell">Placa salida</th>
+                                                <th class="th-cell">Fecha salida</th>
+                                                <th class="th-cell th-cell--center">Tipo veh.</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr v-for="(t, i) in transaccionesTable" :key="i"
                                                 class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
-                                                <td class="modal-td">
-                                                    <span class="text-[0.7rem] font-black tracking-wider bg-[#0D291C] text-[#7FD344] px-2 py-0.5 rounded-md">
-                                                        {{ t.moduloEntrada }}
-                                                    </span>
+                                                <td class="td-cell">
+                                                    <span class="badge badge--dark">{{ t.moduloEntrada }}</span>
                                                 </td>
-                                                <td class="modal-td font-mono font-bold text-[#0D291C] tracking-widest">{{ t.placaEntrada }}</td>
-                                                <td class="modal-td text-xs text-gray-500 whitespace-nowrap">{{ formatFecha(t.fechaEntrada) }}</td>
-                                                <td class="modal-td">
-                                                    <span class="text-[0.7rem] font-black tracking-wider bg-purple-900 text-purple-200 px-2 py-0.5 rounded-md">
-                                                        {{ t.moduloSalida }}
-                                                    </span>
+                                                <td class="td-cell font-mono font-bold text-[#0D291C] tracking-widest">
+                                                    {{ t.placaEntrada }}</td>
+                                                <td class="td-cell text-xs text-gray-500">{{ formatFecha(t.fechaEntrada)
+                                                    }}</td>
+                                                <td class="td-cell">
+                                                    <span class="badge badge--violet">{{ t.moduloSalida }}</span>
                                                 </td>
-                                                <td class="modal-td font-mono font-bold text-[#0D291C] tracking-widest">{{ t.placaSalida }}</td>
-                                                <td class="modal-td text-xs text-gray-500 whitespace-nowrap">{{ formatFecha(t.fechaSalida) }}</td>
-                                                <td class="modal-td text-center">
-                                                    <span class="text-[0.7rem] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
-                                                        {{ t.idTipoVehiculo }}
-                                                    </span>
+                                                <td class="td-cell font-mono font-bold text-[#0D291C] tracking-widest">
+                                                    {{ t.placaSalida }}</td>
+                                                <td class="td-cell text-xs text-gray-500">{{ formatFecha(t.fechaSalida)
+                                                    }}</td>
+                                                <td class="td-cell td-cell--center">
+                                                    <span class="badge badge--blue">{{ t.idTipoVehiculo }}</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -1148,94 +1163,14 @@ input[type="checkbox"].sr-only {
     transition: opacity 0.25s;
 }
 
-/* ── Modales grandes ─────────────────────────────────────────────── */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    backdrop-filter: blur(2px);
-}
-
-.modal-box {
-    background: white;
-    border-radius: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 860px;
-    max-height: 88vh;
-    overflow: hidden;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 2px solid #e8f5e9;
-    flex-shrink: 0;
-}
-
-.modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem;
-}
-
-/* Transición modal */
+/* ── Transición modales ──────────────────────────────────────────── */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
     transition: opacity 0.2s ease;
 }
-.modal-fade-enter-active .modal-box,
-.modal-fade-leave-active .modal-box {
-    transition: transform 0.2s ease;
-}
+
 .modal-fade-enter-from,
 .modal-fade-leave-to {
     opacity: 0;
-}
-.modal-fade-enter-from .modal-box,
-.modal-fade-leave-to .modal-box {
-    transform: translateY(12px) scale(0.98);
-}
-
-.modal-th {
-    padding: 0.625rem 1rem;
-    font-size: 0.65rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: white;
-    background: #0D291C;
-    border-bottom: 3px solid #7FD344;
-    white-space: nowrap;
-    text-align: left;
-}
-
-.modal-td {
-    padding: 0.625rem 1rem;
-    font-size: 0.82rem;
-    color: #232B3A;
-}
-
-@media (max-width: 640px) {
-    .modal-overlay {
-        align-items: flex-end;
-        padding: 0;
-    }
-
-    .modal-box {
-        max-width: 100%;
-        max-height: 85vh;
-        border-radius: 1.25rem 1.25rem 0 0;
-    }
 }
 </style>

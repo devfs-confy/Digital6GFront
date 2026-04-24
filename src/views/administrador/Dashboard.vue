@@ -127,6 +127,8 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import sedesServices from '@/api/services/sedes.service'
 import UsersService from '@/api/services/client.service'
 import SedesDisponibilidadService from '@/api/services/sedesdisponibilidad.service'
+import MensualidadesService from '@/api/services/mensualidades.service'
+
 
 import clientes from '@/assets/img/account_box_green.svg?raw'
 import mensualidades from '@/assets/img/calendar_add_on_green.svg?raw'
@@ -150,6 +152,7 @@ const Sedesdata = ref([])
 const { hasPermission } = useAuth()
 
 const usuariostotales = computed(() => Usuarios.value?.total ?? '—')
+const mensualidadestotales = computed(() => Usuarios.value?.mensualidades ?? '—')
 const sedestotal = computed(() => Sedes.value.length)
 const sedesLabels = computed(() => Sedes.value.map(s => s.Nombre).slice(0, 6))
 
@@ -202,9 +205,9 @@ const pct = (v) => (!v.Total || v.Total === 0) ? 0 : Math.round((v.Mensualidades
 // ── Menú rápido ────────────────────────────────────────────────────
 const opciones = computed(() => [
     { id: 1, icon: clientes, titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: 'VER-USUARIOS' },
-    { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: 'Al día', route: '/admin/mensualidades', permission: 'VER-MENSUALIDADES' },
-    { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '3 pendientes', route: '/admin/solicitudes', permission: 'VER-MENSUALIDADES' },
-    { id: 4, icon: reportes, titulo: 'Reportes', sub: 'Ver estadísticas', route: '/admin/reportes', permission: 'VER-USUARIOS' },
+    { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: '', route: '/admin/mensualidades', permission: 'VER-MENSUALIDADES' },
+    { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '', route: '/admin/solicitudes', permission: 'VER-MENSUALIDADES' },
+    { id: 4, icon: reportes, titulo: 'Reportes', sub: '', route: '/admin/reportes', permission: 'VER-USUARIOS' },
     { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: 'VER-SEDES' },
     { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: 'VER-ROLES' },
     { id: 7, icon: disponibilidad, titulo: 'Ver disponibilidad', sub: '', route: '/admin/disponibilidad', permission: 'CREAR-CODIGOS' },
@@ -251,7 +254,7 @@ onMounted(async () => {
     align-content: start;
     width: 100%;
     box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
 }
 
 /* ── Page header ──────────────────────────────── */
@@ -436,7 +439,7 @@ onMounted(async () => {
     color: #374151;
     cursor: pointer;
     outline: none;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     transition: border-color 0.15s;
 }
 

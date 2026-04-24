@@ -16,7 +16,8 @@
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px] max-[600px]:flex-none max-[600px]:w-full">
-                <label class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Buscar</label>
+                <label
+                    class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Buscar</label>
                 <div class="relative">
                     <input v-model="filtros.search" type="text" placeholder="Módulo, prefijo o resolución..."
                         class="w-full rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 pr-10 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all"
@@ -26,7 +27,8 @@
                 </div>
             </div>
             <div class="flex flex-col gap-1 flex-1 min-w-[160px] max-[600px]:flex-none max-[600px]:w-full">
-                <label class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Sede</label>
+                <label
+                    class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Sede</label>
                 <select v-model="filtros.sede" @change="onFiltroChange"
                     class="rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all cursor-pointer">
                     <option value="">Todas las sedes</option>
@@ -36,7 +38,8 @@
                 </select>
             </div>
             <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
-                <label class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Estado</label>
+                <label
+                    class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Estado</label>
                 <select v-model="filtros.estado" @change="onFiltroChange"
                     class="rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all cursor-pointer">
                     <option value="">Todos</option>
@@ -72,7 +75,8 @@
                         <tr v-if="loading">
                             <td colspan="10" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                    <div
+                                        class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
                                     <span class="text-sm font-medium text-gray-400">Cargando facturación...</span>
                                 </div>
                             </td>
@@ -116,7 +120,7 @@
                             </td>
                             <td class="td-cell td-cell--center">
                                 <button @click="abrirDetalle(r)" class="action-btn" title="Ver / Editar">
-                                    <AppIcon name="visibility" :size="20" />
+                                    <AppIcon name="visibility" :size="30" />
                                 </button>
                             </td>
                         </tr>
@@ -124,25 +128,14 @@
                 </table>
             </div>
 
-            <TablePaginacion
-                :pagina-actual="paginaActual"
-                :total-paginas="totalPaginas"
-                :total-registros="total"
-                :limit="limit"
-                @pagina="irPagina"
-                @limit="onLimitChange"
-            />
+            <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas" :total-registros="total"
+                :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
         <!-- ───── ASIDE: VER + EDITAR ───── -->
-        <AsideEditar
-            v-model="asideDetalle"
-            :titulo="`Facturación #${activo?.IdFacturacion ?? ''}`"
+        <AsideEditar v-model="asideDetalle" :titulo="`Facturación #${activo?.IdFacturacion ?? ''}`"
             :subtitulo="activo ? `${activo.IdModulo} · ${nombreSede(activo.IdEstacionamiento)}` : ''"
-            label-guardar="Guardar cambios"
-            :loading="guardando"
-            :error="errGuardar"
-            @guardar="guardar">
+            label-guardar="Guardar cambios" :loading="guardando" :error="errGuardar" @guardar="guardar">
 
             <div v-if="loadingDetalle" class="flex items-center justify-center py-10 gap-3">
                 <div class="w-6 h-6 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
@@ -153,7 +146,8 @@
 
                 <!-- Info fija (solo lectura) -->
                 <section class="flex flex-col gap-2">
-                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
                         Información general
                         <span class="flex-1 h-[1.5px] bg-gradient-to-r from-[#c8e6c9] to-transparent rounded-full" />
                     </p>
@@ -164,18 +158,22 @@
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Módulo</span>
-                            <span class="text-[0.82rem] font-black text-[#7FD344] bg-[#0D291C] rounded-lg px-2 py-0.5 inline-block w-fit">{{ activo.IdModulo }}</span>
+                            <span
+                                class="text-[0.82rem] font-black text-[#7FD344] bg-[#0D291C] rounded-lg px-2 py-0.5 inline-block w-fit">{{
+                                activo.IdModulo }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Sede</span>
-                            <span class="text-[0.82rem] font-bold text-[#299261]">{{ nombreSede(activo.IdEstacionamiento) }}</span>
+                            <span class="text-[0.82rem] font-bold text-[#299261]">{{
+                                nombreSede(activo.IdEstacionamiento) }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Prefijo</span>
                             <span class="text-[0.82rem] font-mono font-bold text-[#0D291C]">{{ activo.Prefijo }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Factura actual</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Factura
+                                actual</span>
                             <span class="text-[0.82rem] font-bold text-[#299261]">{{ activo.FacturaActual }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
@@ -188,21 +186,21 @@
                     <!-- Barra de progreso -->
                     <div class="bg-white rounded-xl px-3 py-3 border border-gray-200">
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Uso del rango</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Uso del
+                                rango</span>
                             <span class="text-[0.7rem] font-black text-[#299261]">{{ porcentajeUso(activo) }}%</span>
                         </div>
                         <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div
-                                class="h-full bg-gradient-to-r from-[#299261] to-[#7FD344] rounded-full transition-all duration-500"
-                                :style="{ width: porcentajeUso(activo) + '%' }"
-                            />
+                            <div class="h-full bg-gradient-to-r from-[#299261] to-[#7FD344] rounded-full transition-all duration-500"
+                                :style="{ width: porcentajeUso(activo) + '%' }" />
                         </div>
                     </div>
                 </section>
 
                 <!-- Campos editables -->
                 <section class="flex flex-col gap-2">
-                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
                         Editar resolución y rango
                         <span class="flex-1 h-[1.5px] bg-gradient-to-r from-[#c8e6c9] to-transparent rounded-full" />
                     </p>
@@ -210,20 +208,20 @@
 
                         <div class="flex flex-col gap-[5px]">
                             <label class="field-label">Número de resolución *</label>
-                            <input v-model="form.NumeroResolucion" type="text"
-                                class="field-input" placeholder="Ej: 18764070868173" />
+                            <input v-model="form.NumeroResolucion" type="text" class="field-input"
+                                placeholder="Ej: 18764070868173" />
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Factura inicial *</label>
-                                <input v-model="form.FacturaInicial" type="number" min="1"
-                                    class="field-input" placeholder="1" />
+                                <input v-model="form.FacturaInicial" type="number" min="1" class="field-input"
+                                    placeholder="1" />
                             </div>
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Factura final *</label>
-                                <input v-model="form.FacturaFinal" type="number" min="1"
-                                    class="field-input" placeholder="50000" />
+                                <input v-model="form.FacturaFinal" type="number" min="1" class="field-input"
+                                    placeholder="50000" />
                             </div>
                         </div>
 

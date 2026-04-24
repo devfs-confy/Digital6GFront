@@ -44,22 +44,10 @@
                 <table class="w-full border-collapse" style="min-width:300px">
                     <thead>
                         <tr>
-                            <th
-                                class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-white bg-[#0D291C] border-b-[3px] border-[#7FD344]">
-                                Usuario
-                            </th>
-                            <th
-                                class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-white bg-[#0D291C] border-b-[3px] border-[#7FD344] hidden sm:table-cell">
-                                Documento
-                            </th>
-                            <th
-                                class="px-3 sm:px-4 py-3 text-left text-[0.65rem] font-black uppercase tracking-widest text-white bg-[#0D291C] border-b-[3px] border-[#7FD344] hidden md:table-cell">
-                                Rol
-                            </th>
-                            <th
-                                class="px-3 sm:px-4 py-3 text-center text-[0.65rem] font-black uppercase tracking-widest text-white bg-[#0D291C] border-b-[3px] border-[#7FD344]">
-                                Opciones
-                            </th>
+                            <th class="th-cell">Usuario</th>
+                            <th class="th-cell hidden sm:table-cell">Documento</th>
+                            <th class="th-cell hidden md:table-cell">Rol</th>
+                            <th class="th-cell th-cell--center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,7 +73,7 @@
                         </tr>
                         <tr v-for="u in usuariosPaginados" :key="u.Documento"
                             class="border-b border-[#e8f5e9] hover:bg-[#f0faf4] transition-colors last:border-0">
-                            <td class="px-3 sm:px-4 py-3 whitespace-nowrap">
+                            <td class="td-cell">
                                 <div class="flex items-center gap-2 sm:gap-3">
                                     <div
                                         class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-xs border-2 border-[#e8f5e9] flex-shrink-0">
@@ -101,17 +89,17 @@
                                     </div>
                                 </div>
                             </td>
-                            <td
-                                class="px-3 sm:px-4 py-3 text-sm tracking-wide text-gray-600 whitespace-nowrap hidden sm:table-cell">
+                            <td class="td-cell font-mono hidden sm:table-cell">
                                 {{ u.Documento }}
                             </td>
-                            <td class="px-3 sm:px-4 py-3 hidden md:table-cell">
+                            <td class="td-cell hidden md:table-cell">
                                 <span
                                     class="text-[0.72rem] font-bold px-2.5 py-1 rounded-full bg-[#f0faf4] text-[#299261] border border-[#c8e6c9]">
                                     {{ u.T_UsuarioRol?.[0]?.T_Roles?.Nombre ?? 'Sin rol' }}
                                 </span>
                             </td>
-                            <td class="px-3 sm:px-4 py-3 whitespace-nowrap icongap">
+                            <td class="td-cell td-cell--center">
+                                <div class="flex items-center justify-center gap-1">
                                 <button @click="abrirEditar(u)"
                                     class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9] text-gray-400 hover:text-[#299261]"
                                     title="Editar información">
@@ -122,6 +110,7 @@
                                     title="Inhabilitar">
                                     <AppIcon name="account_circle_off" :size="30" style="color:black;" />
                                 </button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -351,12 +340,6 @@ const iniciales = (nombre = '') =>
 </script>
 
 <style scoped>
-.icongap {
-    gap: 5%;
-    display: flex;
-    justify-content: center;
-}
-
 .field-label {
     font-size: 0.72rem;
     font-weight: 800;

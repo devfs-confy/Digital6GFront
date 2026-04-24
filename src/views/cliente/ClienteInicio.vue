@@ -36,6 +36,7 @@ import informacion from '@/assets/img/account_circle_green.svg?raw'
 import pqrs from '@/assets/img/contract_edit_green.svg?raw'
 import publicidadService from '@/api/services/banner.service'
 import ModalBanner from '@/components/modals/ModalBanner.vue'
+import icoPagos from "@/assets/img/receipt_long_green.svg?raw";
 
 
 const bannerUrl = ref([])
@@ -78,36 +79,29 @@ const opciones = [
         sub: '',
         route: "/cliente/mensualidad"
     },
-    // {
-    //     id: 2,
-    //     icon: notificaciones,
-    //     titulo: 'Notificaciones Pendientes',
-    //     sub: '3 nuevas sin leer',
-    //     route: "/cliente/notificaciones",
-    // },
-    // {
-    //     id: 3,
-    //     icon: peticiones,
-    //     titulo: 'Cambios y Peticiones',
-    //     sub: '',
-    //     route: "/cliente/peticiones",
-    // },
     {
-        id: 4,
-        icon: parqueos,
-        titulo: 'Parqueos Recientes',
-        sub: '',
-        route: "/cliente/parqueos",
-    },
-    {
-        id: 5,
+        id: 2,
         icon: pagos,
         titulo: 'Pagos Recientes',
         sub: '',
         route: "/cliente/pagos",
     },
     {
-        id: 6,
+        id: 3,
+        icon: parqueos,
+        titulo: 'Parqueos Recientes',
+        sub: '',
+        route: "/cliente/parqueos",
+    },
+    {
+        id: 4,
+        icon: icoPagos,
+        titulo: 'Historial de Transacciones',
+        sub: '',
+        route: "/cliente/transacciones",
+    },
+    {
+        id: 5,
         icon: pqrs,
         titulo: 'PQRS',
         sub: '',
@@ -115,7 +109,7 @@ const opciones = [
 
     },
     {
-        id: 7,
+        id: 6,
         icon: informacion,
         titulo: 'Informacion Personal',
         sub: '',

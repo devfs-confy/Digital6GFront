@@ -86,6 +86,87 @@
                 </button>
             </div>
         </div>
+
+        <!-- ── Botón tutorial fijo ── -->
+        <button @click="showTutorial = true" class="tutorial-fab">
+            <AppIcon name="info_i_green" :size="20" />
+            <span>Ayuda</span>
+        </button>
+
+        <!-- ── Modal tutorial ── -->
+        <Transition name="tut">
+            <div v-if="showTutorial" class="tutorial-overlay" @click.self="showTutorial = false">
+                <div class="tutorial-card">
+                    <div class="tutorial-header">
+                        <div class="tutorial-header-icon">
+                            <AppIcon name="info_i" :size="18" />
+                        </div>
+                        <div class="tutorial-header-text">
+                            <p class="tutorial-title">Seleccionar sede</p>
+                            <p class="tutorial-subtitle">¿Cómo usar esta pantalla?</p>
+                        </div>
+                        <button @click="showTutorial = false" class="tutorial-close">✕</button>
+                    </div>
+                    <div class="tutorial-body">
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">1</div>
+                            <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#299261"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Elige tu sede</p>
+                                <p class="tutorial-step-desc">Selecciona la sede donde tienes activa o deseas activar tu
+                                    mensualidad de parqueo. Toca una tarjeta para marcarla.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">2</div>
+                            <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#232B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Continuar</p>
+                                <p class="tutorial-step-desc">Una vez seleccionada la sede, presiona este botón para
+                                    avanzar al formulario de registro.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-divider">Opciones adicionales</div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-icon"
+                                style="background:#fef2f2;border-color:#fecaca;margin-left:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Volver al inicio de sesión</p>
+                                <p class="tutorial-step-desc">Si ya tienes una cuenta registrada, regresa al inicio de
+                                    sesión desde este botón.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tutorial-footer">
+                        <button @click="showTutorial = false" class="tutorial-btn-close">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
     </div>
 </template>
 
@@ -95,6 +176,7 @@ import { useRouter } from 'vue-router'
 import SedesService from '@/api/services/sedes.service'
 
 const router = useRouter()
+const showTutorial = ref(false)
 const sedes = ref([])
 const loading = ref(true)
 const sedeSeleccionada = ref(null)
@@ -464,7 +546,7 @@ const continuar = () => {
 .btn-volver {
     font-size: 0.78rem;
     font-weight: 600;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     color: #a0aec0;
     background: transparent;
     border: none;

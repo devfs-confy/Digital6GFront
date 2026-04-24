@@ -349,7 +349,7 @@ const confirmar = () => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
 }
 
 /* ── Head ─────────────────────────────────────────── */
@@ -677,7 +677,7 @@ const confirmar = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Plus Jakarta Sans', sans-serif
+    font-family: "Funnel Display", "Roboto", sans-serif;
 }
 
 .cal-day:hover:not(.cal-day--disabled):not(.cal-day--selected) {
@@ -728,7 +728,7 @@ const confirmar = () => {
     border-radius: 12px !important;
     padding: 10px 13px !important;
     font-size: 0.86rem !important;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     color: #1e3a5f !important;
     outline: none !important;
     width: 100%;
@@ -777,7 +777,7 @@ const confirmar = () => {
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 800;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: "Funnel Display", "Roboto", sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;

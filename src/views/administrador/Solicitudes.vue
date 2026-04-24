@@ -68,14 +68,14 @@
                 <table class="border-collapse min-w-[800px] w-full">
                     <thead>
                         <tr>
-                            <th class="th-cell">#</th>
+                            <th class="th-cell w-12">#</th>
                             <th class="th-cell">Cliente</th>
-                            <th class="th-cell">Tipo / Motivo</th>
+                            <th class="th-cell w-[140px]">Tipo / Motivo</th>
                             <th class="th-cell">Asunto</th>
-                            <th class="th-cell">Estado</th>
-                            <th class="th-cell">Prioridad</th>
-                            <th class="th-cell">Fecha</th>
-                            <th class="th-cell text-center">Opciones</th>
+                            <th class="th-cell w-[100px]">Estado</th>
+                            <th class="th-cell w-[90px]">Prioridad</th>
+                            <th class="th-cell w-[110px]">Fecha</th>
+                            <th class="th-cell th-cell--center w-[110px]">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -146,7 +146,7 @@
                             </td>
                             <td class="td-cell text-[0.82rem] text-gray-500 whitespace-nowrap">{{
                                 formatFecha(pqrs.FechaCreacion) }}</td>
-                            <td class="td-cell text-center">
+                            <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-1">
                                     <button @click="abrirDetalle(pqrs)" title="Ver y responder"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
@@ -1321,8 +1321,4 @@ input.search-input {
 }
 
 
-
-.td-cell {
-    text-align: left;
-}
 </style>

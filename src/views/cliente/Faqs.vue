@@ -10,7 +10,8 @@
                 <span class="hidden sm:inline">Volver</span>
             </button>
             <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Preguntas Frecuentes</h2>
-            <div class="w-[72px] sm:w-[88px]" />
+            <div
+                class="flex items-center gap-1.5 bg-transparent text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full" />
         </div>
 
         <!-- Buscador -->
@@ -43,8 +44,7 @@
         </div>
 
         <!-- Sin resultados búsqueda -->
-        <div v-if="busqueda && faqsBuscadas.length === 0"
-            class="flex flex-col items-center gap-3 py-16 text-gray-300">
+        <div v-if="busqueda && faqsBuscadas.length === 0" class="flex flex-col items-center gap-3 py-16 text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
                 <path
                     d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
@@ -64,7 +64,8 @@
                     <div class="flex items-start justify-between gap-3 px-[18px] py-[14px] cursor-pointer select-none"
                         @click="toggleFaq(faq.id)">
                         <div class="flex flex-col gap-1 flex-1 min-w-0">
-                            <span class="text-[0.65rem] font-black uppercase tracking-wide text-[#299261] opacity-70">{{ faq._cat }}</span>
+                            <span class="text-[0.65rem] font-black uppercase tracking-wide text-[#299261] opacity-70">{{
+                                faq._cat }}</span>
                             <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ faq.pregunta }}</span>
                         </div>
                         <div class="w-[26px] h-[26px] rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200"
@@ -77,12 +78,15 @@
                     </div>
                     <div class="overflow-hidden transition-all duration-250 ease-in-out"
                         :style="{ maxHeight: abierto === faq.id ? '400px' : '0px' }">
-                        <div class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)] flex flex-col gap-3">
+                        <div
+                            class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)] flex flex-col gap-3">
                             <span>{{ faq.respuesta }}</span>
                             <button v-if="faq.link" @click="router.push(faq.link.route)"
                                 class="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-black bg-[#0D291C] text-[#7FD344] border border-[#0D291C] shadow-[0_2px_0_#051510] hover:bg-[#132e21] transition-all active:translate-y-[1px] active:shadow-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M10 6v2H5v11h11v-5h2v7H3V6h7zm11-3v8l-3.29-3.29-5.42 5.42-1.42-1.42 5.42-5.42L13 3h8z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M10 6v2H5v11h11v-5h2v7H3V6h7zm11-3v8l-3.29-3.29-5.42 5.42-1.42-1.42 5.42-5.42L13 3h8z" />
                                 </svg>
                                 {{ faq.link.label }}
                             </button>
@@ -111,12 +115,15 @@
                     </div>
                     <div class="overflow-hidden transition-all duration-250 ease-in-out"
                         :style="{ maxHeight: abierto === faq.id ? '400px' : '0px' }">
-                        <div class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)] flex flex-col gap-3">
+                        <div
+                            class="px-[18px] pb-4 pt-3 text-[0.82rem] text-gray-500 leading-relaxed border-t text-left border-[rgba(13,41,28,0.08)] flex flex-col gap-3">
                             <span>{{ faq.respuesta }}</span>
                             <button v-if="faq.link" @click="router.push(faq.link.route)"
                                 class="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-black bg-[#0D291C] text-[#7FD344] border border-[#0D291C] shadow-[0_2px_0_#051510] hover:bg-[#132e21] transition-all active:translate-y-[1px] active:shadow-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M10 6v2H5v11h11v-5h2v7H3V6h7zm11-3v8l-3.29-3.29-5.42 5.42-1.42-1.42 5.42-5.42L13 3h8z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M10 6v2H5v11h11v-5h2v7H3V6h7zm11-3v8l-3.29-3.29-5.42 5.42-1.42-1.42 5.42-5.42L13 3h8z" />
                                 </svg>
                                 {{ faq.link.label }}
                             </button>
@@ -130,7 +137,8 @@
         <template v-else>
             <div class="flex flex-col items-center gap-3 py-14 text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
                 </svg>
                 <span class="text-sm font-semibold">Selecciona una categoría</span>
             </div>

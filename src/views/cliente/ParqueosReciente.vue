@@ -12,7 +12,8 @@
             <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">
                 {{ sedeSeleccionada ? sedeSeleccionada.Nombre : 'Historial de Accesos' }}
             </h2>
-            <div class="w-[72px] sm:w-[88px]" />
+            <div
+                class="flex items-center gap-1.5 bg-transparent text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full" />
         </div>
 
         <!-- ── PANTALLA 1: Selección de sede ── -->

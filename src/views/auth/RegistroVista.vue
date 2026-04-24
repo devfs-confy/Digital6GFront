@@ -553,6 +553,145 @@
             </div>
 
         </div>
+
+        <!-- ── Botón tutorial fijo ── -->
+        <button @click="showTutorial = true" class="tutorial-fab">
+            <AppIcon name="info_i_green" :size="20" />
+            <span>Ayuda</span>
+        </button>
+
+        <!-- ── Modal tutorial ── -->
+        <Transition name="tut">
+            <div v-if="showTutorial" class="tutorial-overlay" @click.self="showTutorial = false">
+                <div class="tutorial-card">
+                    <div class="tutorial-header">
+                        <div class="tutorial-header-icon">
+                            <AppIcon name="info_i" :size="18" />
+                        </div>
+                        <div class="tutorial-header-text">
+                            <p class="tutorial-title">Crear tu cuenta</p>
+                            <p class="tutorial-subtitle">¿Cómo completar el registro?</p>
+                        </div>
+                        <button @click="showTutorial = false" class="tutorial-close">✕</button>
+                    </div>
+                    <div class="tutorial-body">
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">1</div>
+                            <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Documento</p>
+                                <p class="tutorial-step-desc">Ingresa tu cédula. Buscaremos automáticamente tu
+                                    mensualidad activa en esta sede para pre-llenar los datos.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">2</div>
+                            <div class="tutorial-step-icon" style="background:#eff6ff;border-color:#bfdbfe;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Datos personales</p>
+                                <p class="tutorial-step-desc">Revisa o completa tu nombre, apellidos, teléfono y correo
+                                    electrónico.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">3</div>
+                            <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Contraseña</p>
+                                <p class="tutorial-step-desc">Crea una contraseña de mínimo 8 caracteres para acceder a
+                                    tu cuenta.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">4</div>
+                            <div class="tutorial-step-icon" style="background:#fefce8;border-color:#fde68a;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#854d0e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <rect x="1" y="3" width="15" height="13" rx="2" />
+                                    <path d="M16 8h4l3 5v3h-7V8z" />
+                                    <circle cx="5.5" cy="18.5" r="2.5" />
+                                    <circle cx="18.5" cy="18.5" r="2.5" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Vehículos / Placas</p>
+                                <p class="tutorial-step-desc">Registra la placa de tu vehículo (ej: ABC123 carro ·
+                                    ABC12D moto). Puedes agregar hasta 2 placas.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-num">5</div>
+                            <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#232B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">Crear cuenta</p>
+                                <p class="tutorial-step-desc">Acepta los términos y condiciones, luego presiona este
+                                    botón para finalizar tu registro.</p>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-divider">Opciones adicionales</div>
+
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-icon"
+                                style="background:#f5f3ff;border-color:#ddd6fe;margin-left:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    stroke="#5b21b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                    <polyline points="10 17 15 12 10 7" />
+                                    <line x1="15" y1="12" x2="3" y2="12" />
+                                </svg>
+                            </div>
+                            <div class="tutorial-step-body">
+                                <p class="tutorial-step-title">¿Ya tienes cuenta?</p>
+                                <p class="tutorial-step-desc">Si ya estás registrado, ve al inicio de sesión desde el
+                                    enlace al final del formulario.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tutorial-footer">
+                        <button @click="showTutorial = false" class="tutorial-btn-close">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
     </div>
 </template>
 
@@ -563,6 +702,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ClientService from '@/api/services/client.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
 
+const showTutorial = ref(false)
 const aceptoTerminos = ref(false)
 const route = useRoute()
 const router = useRouter()
@@ -647,7 +787,7 @@ const buscarDocumento = async (doc) => {
             usuarioEncontrado.value = false
             mensualidadData.value = null
             limpiarCampos()
-            msgDoc.value = 'No se encontró mensualidad — completa el formulario'
+            msgDoc.value = 'No se encontró mensualidad activa — completa el formulario'
             formularioListo.value = true
             return
         }
