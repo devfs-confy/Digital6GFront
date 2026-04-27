@@ -374,7 +374,7 @@ const categorias = [
                 titulo: 'Cambiar Placa',
                 subtitulo: 'Poder cambiar la placa de tu mensualidad 1 vez al mes',
                 icon: 'payment_card', imgs: [],
-                desc: 'Busca tu mensualidad en el listado y selecciona "Más info". Buscas la opcion de "Cambiar Placa" y escribe la nueva placa .',
+                desc: 'Busca tu mensualidad en el listado y selecciona "Más info". Buscas la opcion de "Cambiar Placa" y escribe la nueva placa.',
 
                 tips: [
                     'Solo podrás cambiar la placa 1 vez al mes',
