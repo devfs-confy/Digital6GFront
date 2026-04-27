@@ -45,7 +45,7 @@ export const adminMenuItems = [
     permission: "VER-MENSUALIDADES",
   },
   {
-    label: "historial <br> pagos",
+    label: "Historial <br> Pagos",
     icon: icoPagos,
     route: "/admin/historial-pagos",
     permission: "VER-MENSUALIDADES",

@@ -438,7 +438,8 @@
               </div>
               <div class="tutorial-step-body">
                 <p class="tutorial-step-title">Ya tengo un código</p>
-                <p class="tutorial-step-desc">Si ya solicitaste un código antes y no ha expirado, usa este enlace para
+                <p class="tutorial-step-desc">Si ya solicitaste un código antes y no ha expirado, digita el documento
+                  de identidad para
                   ir directo a verificarlo.</p>
               </div>
             </div>

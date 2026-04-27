@@ -66,7 +66,8 @@
                         <tr v-if="loading">
                             <td colspan="9" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
-                                    <div class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                    <div
+                                        class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
                                     <span class="text-sm font-medium text-gray-400">Cargando historial...</span>
                                 </div>
                             </td>
@@ -77,7 +78,8 @@
                             <td colspan="9" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <AppIcon name="history" :size="48" class="text-gray-300" />
-                                    <span class="text-sm font-medium text-gray-300">No hay registros de cambio de placas</span>
+                                    <span class="text-sm font-medium text-gray-300">No hay registros de cambio de
+                                        placas</span>
                                 </div>
                             </td>
                         </tr>
@@ -89,7 +91,7 @@
                                 <span class="font-mono text-xs text-gray-400">#{{ r.IdSolicitud }}</span>
                             </td>
 
-                            <td class="td-cell font-semibold text-[#0D291C]">
+                            <td class="td-cell font-semibold text-[#0D291C] max-w-[140px]  truncate">
                                 {{ r.T_PersonasAutorizadas?.NombreApellidos ?? '—' }}
                             </td>
 
@@ -105,12 +107,15 @@
 
                             <td class="td-cell">
                                 <div class="flex flex-col gap-1">
-                                    <div v-for="(d, i) in r.Detalles" :key="i" class="flex items-center gap-1.5 text-[0.7rem]">
+                                    <div v-for="(d, i) in r.Detalles" :key="i"
+                                        class="flex items-center gap-1.5 text-[0.7rem]">
                                         <span class="font-mono text-gray-400">{{ d.PlacaAnterior ?? '—' }}</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#299261" viewBox="0 0 24 24">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="#299261"
+                                            viewBox="0 0 24 24">
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
-                                        <span class="font-mono font-bold text-[#0D291C]">{{ d.PlacaNueva ?? '—' }}</span>
+                                        <span class="font-mono font-bold text-[#0D291C]">{{ d.PlacaNueva ?? '—'
+                                            }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -156,47 +161,58 @@
 
                 <!-- Persona -->
                 <section class="flex flex-col gap-2">
-                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
                         Persona
                         <span class="flex-1 h-[1.5px] bg-gradient-to-r from-[#c8e6c9] to-transparent rounded-full" />
                     </p>
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="col-span-2 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
+                        <div
+                            class="col-span-2 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Nombre</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ detalle.T_PersonasAutorizadas?.NombreApellidos ?? '—' }}</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{
+                                detalle.T_PersonasAutorizadas?.NombreApellidos ?? '—' }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Documento</span>
-                            <span class="font-mono text-[0.82rem] font-bold text-[#0D291C]">{{ detalle.DocumentoUsuario }}</span>
+                            <span
+                                class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Documento</span>
+                            <span class="font-mono text-[0.82rem] font-bold text-[#0D291C]">{{ detalle.DocumentoUsuario
+                                }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Sede</span>
-                            <span class="text-[0.82rem] font-bold text-[#299261]">{{ detalle.T_PersonasAutorizadas?.T_Estacionamiento?.Nombre?.trim() ?? '—' }}</span>
+                            <span class="text-[0.82rem] font-bold text-[#299261]">{{
+                                detalle.T_PersonasAutorizadas?.T_Estacionamiento?.Nombre?.trim() ?? '—' }}</span>
                         </div>
                     </div>
                 </section>
 
                 <!-- Autorización -->
                 <section class="flex flex-col gap-2">
-                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
                         Autorización
                         <span class="flex-1 h-[1.5px] bg-gradient-to-r from-[#c8e6c9] to-transparent rounded-full" />
                     </p>
                     <div class="grid grid-cols-2 gap-2">
                         <div class="flex flex-col gap-1 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Anterior</span>
-                            <span class="text-[0.78rem] font-bold text-gray-600">{{ detalle.AutorizacionAnterior?.NombreAutorizacion ?? '—' }}</span>
+                            <span
+                                class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Anterior</span>
+                            <span class="text-[0.78rem] font-bold text-gray-600">{{
+                                detalle.AutorizacionAnterior?.NombreAutorizacion ?? '—' }}</span>
                         </div>
                         <div class="flex flex-col gap-1 bg-[#f0faf4] rounded-xl px-3 py-2.5 border border-[#c8e6c9]">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-[#299261]">Nueva</span>
-                            <span class="text-[0.78rem] font-bold text-[#0D291C]">{{ detalle.AutorizacionNueva?.NombreAutorizacion ?? '—' }}</span>
+                            <span class="text-[0.78rem] font-bold text-[#0D291C]">{{
+                                detalle.AutorizacionNueva?.NombreAutorizacion ?? '—' }}</span>
                         </div>
                     </div>
                 </section>
 
                 <!-- Placas -->
                 <section class="flex flex-col gap-2">
-                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
                         Placas cambiadas
                         <span class="flex-1 h-[1.5px] bg-gradient-to-r from-[#c8e6c9] to-transparent rounded-full" />
                     </p>
@@ -204,17 +220,23 @@
                         <div v-for="(d, i) in detalle.Detalles" :key="i"
                             class="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-gray-200">
                             <div class="flex flex-col items-center gap-0.5 flex-1">
-                                <span class="text-[0.58rem] font-black uppercase tracking-wider text-gray-400">Anterior</span>
-                                <span class="font-mono text-sm font-bold text-gray-500">{{ d.PlacaAnterior ?? '—' }}</span>
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wider text-gray-400">Anterior</span>
+                                <span class="font-mono text-sm font-bold text-gray-500">{{ d.PlacaAnterior ?? '—'
+                                    }}</span>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-[#0D291C] flex items-center justify-center flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#7FD344" viewBox="0 0 24 24">
+                            <div
+                                class="w-8 h-8 rounded-full bg-[#0D291C] flex items-center justify-center flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#7FD344"
+                                    viewBox="0 0 24 24">
                                     <path d="M8 5v14l11-7z" />
                                 </svg>
                             </div>
                             <div class="flex flex-col items-center gap-0.5 flex-1">
-                                <span class="text-[0.58rem] font-black uppercase tracking-wider text-[#299261]">Nueva</span>
-                                <span class="font-mono text-sm font-bold text-[#0D291C]">{{ d.PlacaNueva ?? '—' }}</span>
+                                <span
+                                    class="text-[0.58rem] font-black uppercase tracking-wider text-[#299261]">Nueva</span>
+                                <span class="font-mono text-sm font-bold text-[#0D291C]">{{ d.PlacaNueva ?? '—'
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -222,14 +244,16 @@
 
                 <!-- Info -->
                 <section class="flex flex-col gap-2">
-                    <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
+                    <p
+                        class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2">
                         Info
                         <span class="flex-1 h-[1.5px] bg-gradient-to-r from-[#c8e6c9] to-transparent rounded-full" />
                     </p>
                     <div class="grid grid-cols-3 gap-2">
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Mes</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ nombreMes(detalle.MesAplicacion) }}</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ nombreMes(detalle.MesAplicacion)
+                                }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Año</span>
@@ -237,12 +261,16 @@
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Estado</span>
-                            <span v-if="detalle.Estado === 1" class="text-[0.78rem] font-black text-[#299261]">● Aplicado</span>
+                            <span v-if="detalle.Estado === 1" class="text-[0.78rem] font-black text-[#299261]">●
+                                Aplicado</span>
                             <span v-else class="text-[0.78rem] font-black text-amber-500">● Pendiente</span>
                         </div>
-                        <div class="col-span-3 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Fecha de creación</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(detalle.FechaCreacion) }}</span>
+                        <div
+                            class="col-span-3 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Fecha de
+                                creación</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(detalle.FechaCreacion)
+                                }}</span>
                         </div>
                     </div>
                 </section>
@@ -353,7 +381,12 @@ onMounted(() => {
 
 <style scoped>
 @media (max-width: 780px) {
-    .shadow-sm { height: auto; }
-    .maincontainer { height: auto; }
+    .shadow-sm {
+        height: auto;
+    }
+
+    .maincontainer {
+        height: auto;
+    }
 }
 </style>
