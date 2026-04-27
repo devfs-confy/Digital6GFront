@@ -81,12 +81,7 @@ export const adminMenuItems = [
     route: "/admin/roles",
     permission: "VER-ROLES",
   },
-  {
-    label: "Ver<br> Disponibilidad",
-    icon: icoDisponibilidad,
-    route: "/admin/disponibilidad",
-    permission: "CREAR-CODIGOS",
-  },
+
   {
     label: "Codigo<br> Verificacion",
     icon: IcoVerificacion,
@@ -193,11 +188,6 @@ export const adminRoutes = {
       meta: { permission: "CREAR-CODIGOS" },
     },
     {
-      path: "verificacion",
-      component: () => import("@/views/administrador/Codigo.vue"),
-      meta: { permission: "CREAR-CODIGOS" },
-    },
-    {
       path: "autorizaciones",
       component: () => import("@/views/administrador/Autorizaciones.vue"),
       meta: { permission: "CREAR-CODIGOS" },
@@ -217,7 +207,6 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/ComunidadUCC.vue"),
       meta: { permission: "VER-USUARIOS" },
     },
-
     {
       path: "facturacion",
       component: () => import("@/views/administrador/Facturacion.vue"),

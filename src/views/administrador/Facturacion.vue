@@ -160,7 +160,7 @@
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Módulo</span>
                             <span
                                 class="text-[0.82rem] font-black text-[#7FD344] bg-[#0D291C] rounded-lg px-2 py-0.5 inline-block w-fit">{{
-                                activo.IdModulo }}</span>
+                                    activo.IdModulo }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Sede</span>
@@ -457,5 +457,11 @@ const guardar = async () => {
     .maincontainer {
         height: auto;
     }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 </style>

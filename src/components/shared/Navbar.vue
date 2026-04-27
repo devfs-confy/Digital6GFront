@@ -3,7 +3,7 @@
 
         <!-- Izquierda: botón colapsar + título -->
         <div class="flex items-center gap-7 min-w-0">
-            <span v-html="colapsenobg" @click="emit('toggle')" :class="[
+            <span v-html="open_sidebar" @click="emit('toggle')" :class="[
                 'cursor-pointer transition-all duration-300 flex-shrink-0 max-w-max',
                 isOpen ? 'w-0 opacity-0 pointer-events-none hidden' : 'w-8 opacity-100'
             ]" />
@@ -74,7 +74,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import colapsenobg from '@/assets/img/colapsenobg.svg?raw'
+import open_sidebar from '@/assets/img/open_sidebar.svg?raw'
 import { addonCategoryNames } from '@vueuse/core/metadata.mjs'
 import NotificacionesBtn from '@/components/aside/NotificacionesBtn.vue'
 

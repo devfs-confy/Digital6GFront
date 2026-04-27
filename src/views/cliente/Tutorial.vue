@@ -110,10 +110,43 @@
                         </div>
                     </div>
 
-                    <!-- Imagen real (si existe) -->
-                    <div v-if="pasoActualObj.img" class="border-b border-[#f0faf4] overflow-hidden"
-                        style="max-height:200px">
-                        <img :src="pasoActualObj.img" :alt="pasoActualObj.titulo" class="w-full object-cover" />
+                    <!-- Carousel de imágenes -->
+                    <div v-if="pasoActualObj.imgs?.length"
+                        class="relative border-b border-[#f0faf4] overflow-hidden select-none bg-[#f8fdf8]"
+                        style="max-height:240px">
+                        <img :src="pasoActualObj.imgs[carouselIdx]" :alt="pasoActualObj.titulo"
+                            class="w-full object-cover cursor-zoom-in" style="max-height:240px"
+                            @click="abrirLightbox(pasoActualObj.imgs[carouselIdx])" />
+                        <!-- Zoom badge -->
+                        <div
+                            class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/45 rounded-lg px-2 py-1 text-white text-[10px] font-bold backdrop-blur-sm pointer-events-none">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                                <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
+                            </svg>
+                            Zoom
+                        </div>
+                        <!-- Flechas + dots (solo si >1 imagen) -->
+                        <template v-if="pasoActualObj.imgs.length > 1">
+                            <button @click.stop="carouselPrev"
+                                class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:scale-90 transition-transform">
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                                </svg>
+                            </button>
+                            <button @click.stop="carouselNext"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:scale-90 transition-transform">
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
+                                </svg>
+                            </button>
+                            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                                <div v-for="(_, i) in pasoActualObj.imgs" :key="i"
+                                    class="rounded-full transition-all duration-200"
+                                    :class="i === carouselIdx ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'" />
+                            </div>
+                        </template>
                     </div>
 
                     <!-- Cuerpo -->
@@ -161,7 +194,6 @@
                     </div>
                 </div>
             </transition>
-
             <!-- Navegación Anterior / Siguiente -->
             <div class="flex gap-3">
                 <button @click="anterior()"
@@ -178,15 +210,64 @@
                         :size="16" />
                 </button>
             </div>
-
         </template>
-
     </div>
+
+    <!-- ── LIGHTBOX ── -->
+    <Teleport to="body">
+        <Transition name="lb-fade">
+            <div v-if="lightboxOpen" class="fixed inset-0 z-[9999] bg-black/93 flex flex-col"
+                @click.self="cerrarLightbox">
+                <!-- Top bar -->
+                <div class="flex items-center justify-between px-4 py-3 flex-shrink-0">
+                    <span class="text-white/50 text-[11px]">Pellizca para hacer zoom</span>
+                    <button @click="cerrarLightbox"
+                        class="w-9 h-9 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 active:scale-90 transition-all">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                        </svg>
+                    </button>
+                </div>
+                <!-- Imagen con zoom nativo -->
+                <div class="flex-1 overflow-auto flex items-center justify-center p-3" style="touch-action: pinch-zoom;"
+                    @click.self="cerrarLightbox">
+                    <img :src="lightboxImg" class="rounded-xl object-contain"
+                        style="max-width:90vw; max-height:calc(100vh - 90px); touch-action: pinch-zoom;" />
+                </div>
+                <!-- Indicador multi-imagen -->
+                <div v-if="pasoActualObj?.imgs?.length > 1"
+                    class="flex items-center justify-center gap-3 py-3 flex-shrink-0">
+                    <button @click="lightboxPrev"
+                        class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center active:scale-90">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        </svg>
+                    </button>
+                    <div class="flex gap-1.5">
+                        <div v-for="(_, i) in pasoActualObj.imgs" :key="i"
+                            class="rounded-full transition-all duration-200 cursor-pointer"
+                            :class="i === carouselIdx ? 'w-5 h-1.5 bg-[#7FD344]' : 'w-1.5 h-1.5 bg-white/40'"
+                            @click="saltoLightbox(i)" />
+                    </div>
+                    <button @click="lightboxNext"
+                        class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center active:scale-90">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />z|
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </Transition>
+    </Teleport>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import pago1 from '@/assets/img/tutorial/pago1.png'
+import pago2 from '@/assets/img/tutorial/pago2.png'
+import pago3 from '@/assets/img/tutorial/pago3.png'
 
 
 const router = useRouter()
@@ -195,16 +276,22 @@ const router = useRouter()
 const categoriaActiva = ref(null)
 const pasoActual = ref(0)
 const transicion = ref('slide-forward')
+const carouselIdx = ref(0)
+const lightboxOpen = ref(false)
+const lightboxImg = ref(null)
+
+watch(pasoActual, () => { carouselIdx.value = 0 })
+watch(lightboxOpen, val => { document.body.style.overflow = val ? 'hidden' : '' })
 
 // ── Data ──────────────────────────────────────────────────
 const categorias = [
     {
-        id: 'inicio', label: 'Inicio', icon: 'home',
+        id: 'inicio', label: 'Inicio Tutorial', icon: 'home',
         pasos: [
             {
                 titulo: 'Tu pantalla de inicio o en tu menú de navegación',
                 subtitulo: 'Lo primero que ves al entrar',
-                icon: 'home', img: null,
+                icon: 'home', imgs: [],
                 desc: 'Al ingresar al aplicativo podras visualizar 6 opciones de navegación: Inicio, Mis Mensualidades, Pagos Recientes, Parqueos, PQRS y más, donde puedes acceder a tus servicios y recibir ayuda.',
                 info: [
                     { icon: 'home', titulo: 'Inicio', desc: 'Accede a la sección de inicio para ver tus opciones de navegación.' },
@@ -224,13 +311,14 @@ const categorias = [
         ],
     },
     {
-        id: 'mensualidades', label: 'Mensualidades', icon: 'event_available',
+        id: 'mensualidades', label: 'Mensualidades Tutorial', icon: 'event_available',
         pasos: [
 
             {
                 titulo: 'Pagar mensualidad',
                 subtitulo: 'Renovar o saldar una deuda',
-                icon: 'payment_card', img: null,
+                icon: 'payment_card',
+                imgs: [pago1, pago2, pago3],
                 desc: 'Toca tu mensualidad en el listado y selecciona "Pagar". Si es renovación elige la nueva fecha de inicio y serás dirigido a la pasarela AvalPay para completar el pago.',
                 info: [
                     { icon: 'credit_score', titulo: 'Métodos aceptados', desc: 'Tarjeta Visa, Mastercard, débito y otros métodos habilitados en AvalPay.' },
@@ -243,7 +331,7 @@ const categorias = [
             {
                 titulo: 'Cambiar Placa',
                 subtitulo: 'Poder cambiar la placa de tu mensualidad 1 vez al mes',
-                icon: 'payment_card', img: null,
+                icon: 'payment_card', imgs: [],
                 desc: 'Busca tu mensualidad en el listado y selecciona "Más info". Buscas la opcion de "Cambiar Placa" y escribe la nueva placa .',
 
                 tips: [
@@ -254,7 +342,7 @@ const categorias = [
             {
                 titulo: 'Ver mis mensualidades',
                 subtitulo: 'Listado y estados',
-                icon: 'event_available', img: null,
+                icon: 'event_available', imgs: [],
                 desc: 'En "Mis Mensualidades" verás todas tus mensualidades registradas con su estado actual, sede, placa y fecha de vencimiento.',
                 info: [
                     { icon: 'offline_pin_green', titulo: 'Activa', desc: 'La mensualidad está vigente y puedes usar el parqueadero sin problema.' },
@@ -267,7 +355,7 @@ const categorias = [
             {
                 titulo: 'Registrar nueva mensualidad',
                 subtitulo: 'Los siguienetes 2 pasos',
-                icon: 'add', img: null,
+                icon: 'add', imgs: [],
                 desc: 'Toca el botón verde "+" en la esquina superior. Se abrirá el flujo de registro: elegir sede → ingresar código de verificación → confirmar.',
                 info: [
                     { icon: 'fact_check', titulo: 'Requisito previo', desc: 'El operario del parqueadero de la sede que quieras agregar debe darte un código de verificación antes de comenzar.' },
@@ -281,7 +369,7 @@ const categorias = [
             {
                 titulo: 'Seleccionar la sede',
                 subtitulo: 'Elige el parqueadero',
-                icon: 'parking_sign', img: null,
+                icon: 'parking_sign', imgs: [],
                 desc: 'Se desplegará el listado de sedes disponibles. Busca la sede de tu parqueadero por nombre y tócala para seleccionarla. Solo aparecen sedes con cupos activos.',
                 tips: [
                     'Verifica la dirección antes de confirmar',
@@ -290,7 +378,7 @@ const categorias = [
             {
                 titulo: 'Código de verificación',
                 subtitulo: 'Ingresa el código del operario',
-                icon: 'fact_check', img: null,
+                icon: 'fact_check', imgs: [],
                 desc: 'Escribe el código único que te dio el operario en el campo habilitado. Toca "Confirmar" y tu mensualidad quedará activa de inmediato.',
                 tips: [
                     'El código distingue mayúsculas y minúsculas — escríbelo exactamente',
@@ -302,12 +390,12 @@ const categorias = [
         ],
     },
     {
-        id: 'pagos', label: 'Pagos', icon: 'receipt_long',
+        id: 'pagos', label: 'Historial de Pagos Tutorial', icon: 'receipt_long',
         pasos: [
             {
                 titulo: 'Historial de pagos',
                 subtitulo: 'Todas tus transacciones',
-                icon: 'receipt_long', img: null,
+                icon: 'receipt_long', imgs: [],
                 desc: 'En "Pagos Recientes" encontrarás un listado cronológico de todas tus transacciones: del más reciente al más antiguo, fecha de pago y valor de cada una.',
                 tips: [
                     'Se ordenan del más reciente al más antiguo',
@@ -319,7 +407,7 @@ const categorias = [
             {
                 titulo: 'Descargar comprobante',
                 subtitulo: 'Guardar PDF',
-                icon: 'assignment', img: null,
+                icon: 'assignment', imgs: [],
                 desc: 'En el detalle de un pago aprobado toca "Factura" para guardar el PDF y poder compartirlo por WhatsApp o correo electrónico.',
                 tips: [
                     'El comprobante incluye número de transacción, fecha y valor exacto',
@@ -329,12 +417,12 @@ const categorias = [
         ],
     },
     {
-        id: 'parqueos', label: 'Parqueos', icon: 'parking_sign',
+        id: 'parqueos', label: 'Parqueos Tutorial', icon: 'parking_sign',
         pasos: [
             {
                 titulo: 'Parqueos recientes',
                 subtitulo: 'Historial de entradas y salidas',
-                icon: 'parking_sign', img: null,
+                icon: 'parking_sign', imgs: [],
                 desc: 'En "Parqueos Recientes" está el historial de cada vez que ingresaste: fecha, hora de entrada y salida y duración total del turno.',
                 tips: [
                     'Se ordenan del más reciente al más antiguo',
@@ -345,12 +433,12 @@ const categorias = [
         ],
     },
     {
-        id: 'pqrs', label: 'PQRS', icon: 'contract_edit',
+        id: 'pqrs', label: 'PQRS Tutorial', icon: 'contract_edit',
         pasos: [
             {
                 titulo: '¿Qué es una PQRS?',
                 subtitulo: 'Peticiones, Quejas, Reclamos y Sugerencias',
-                icon: 'contact_support', img: null,
+                icon: 'contact_support', imgs: [],
                 desc: 'PQRS es el canal oficial de comunicación entre tú y Parquearse. Úsalo para hacer peticiones formales, reportar problemas, presentar reclamos o dar sugerencias de mejora.',
                 info: [
                     { icon: 'contract_edit', titulo: 'Petición', desc: 'Solicitar información o un servicio específico.' },
@@ -362,7 +450,7 @@ const categorias = [
             {
                 titulo: 'Crear una solicitud',
                 subtitulo: 'Paso a paso',
-                icon: 'edit_square', img: null,
+                icon: 'edit_square', imgs: [],
                 desc: 'Toca "Nueva o +", selecciona el tipo, describe tu caso con detalle y adjunta evidencia si es necesario. Luego toca "Enviar" para radicar tu solicitud.',
                 tips: [
                     'Incluye fecha, sede y número de transacción si aplica — agiliza la respuesta',
@@ -373,7 +461,7 @@ const categorias = [
             {
                 titulo: 'Seguimiento de tu PQRS',
                 subtitulo: 'Cómo saber el estado de tu solicitud',
-                icon: 'content_paste_search', img: null,
+                icon: 'content_paste_search', imgs: [],
                 desc: 'En el listado de PQRS verás el estado de cada solicitud: pendiente, en revisión o resuelto. Toca cualquiera para leer la respuesta del equipo de Parquearse.',
                 tips: [
                     'Recibirás una notificación cuando haya actualización',
@@ -382,12 +470,12 @@ const categorias = [
         ],
     },
     {
-        id: 'perfil', label: 'Mi Perfil', icon: 'account_circle',
+        id: 'perfil', label: 'Mi Perfil Tutorial', icon: 'account_circle',
         pasos: [
             {
                 titulo: 'Ver mi información personal',
                 subtitulo: 'Tus datos registrados',
-                icon: 'account_circle', img: null,
+                icon: 'account_circle', imgs: [],
                 desc: 'En "Información Personal" puedes ver todos los datos de tu cuenta: nombre completo, número de documento, correo electrónico y teléfono de contacto.',
                 tips: [
                     'Solo tú puedes ver y modificar tus datos',
@@ -397,7 +485,7 @@ const categorias = [
             {
                 titulo: 'Editar mis datos',
                 subtitulo: 'Actualizar nombre, teléfono o correo',
-                icon: 'person_edit', img: null,
+                icon: 'person_edit', imgs: [],
                 desc: 'Toca el campo que deseas cambiar, escribe el nuevo valor y toca "Guardar". El cambio de documento requiere una solicitud de verificación.',
                 tips: [
                     'Los demás cambios se guardan de inmediato',
@@ -407,7 +495,7 @@ const categorias = [
             {
                 titulo: 'Cambiar contraseña',
                 subtitulo: 'Cambiar tu contraseña',
-                icon: 'visibility_off', img: null,
+                icon: 'visibility_off', imgs: [],
                 desc: 'Toca "Cambiar contraseña" y escribe tu contraseña actual y la nueva. Toca "Guardar contraseña" para confirmar.',
             },
         ],
@@ -463,6 +551,42 @@ function handleBack() {
         router.back()
     }
 }
+
+function carouselPrev() {
+    const len = pasoActualObj.value.imgs.length
+    carouselIdx.value = (carouselIdx.value - 1 + len) % len
+}
+
+function carouselNext() {
+    const len = pasoActualObj.value.imgs.length
+    carouselIdx.value = (carouselIdx.value + 1) % len
+}
+
+function abrirLightbox(src) {
+    lightboxImg.value = src
+    lightboxOpen.value = true
+}
+
+function cerrarLightbox() {
+    lightboxOpen.value = false
+}
+
+function lightboxPrev() {
+    const len = pasoActualObj.value.imgs.length
+    carouselIdx.value = (carouselIdx.value - 1 + len) % len
+    lightboxImg.value = pasoActualObj.value.imgs[carouselIdx.value]
+}
+
+function lightboxNext() {
+    const len = pasoActualObj.value.imgs.length
+    carouselIdx.value = (carouselIdx.value + 1) % len
+    lightboxImg.value = pasoActualObj.value.imgs[carouselIdx.value]
+}
+
+function saltoLightbox(i) {
+    carouselIdx.value = i
+    lightboxImg.value = pasoActualObj.value.imgs[i]
+}
 </script>
 
 <style scoped>
@@ -494,5 +618,23 @@ function handleBack() {
 .slide-back-leave-to {
     opacity: 0;
     transform: translateX(20px);
+}
+
+.lb-fade-enter-active,
+.lb-fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.lb-fade-enter-from,
+.lb-fade-leave-to {
+    opacity: 0;
+}
+
+@media (max-width: 767px) {
+
+    .lb-fade-enter-active,
+    .lb-fade-leave-active {
+        transition-duration: 0ms !important;
+    }
 }
 </style>
