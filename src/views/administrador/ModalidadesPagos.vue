@@ -42,15 +42,15 @@
           <button v-permission="'HABILITAR-QUINCENAS'" @click="abrirModalQuincena" :class="[
             'flex items-center gap-2 px-4 py-2.5 rounded-full border-2 text-sm font-black transition-all',
             quincenaHabilitada === true
-              ? 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
+              ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
               : quincenaHabilitada === false
-                ? 'bg-[#e8f5e9] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
+                ? 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
                 : 'bg-[#EAEAEA] border-[#299261] text-[#0D291C] hover:bg-[#d4edda]'
           ]" style="box-shadow: 0 2px 0 rgba(0,0,0,0.12)">
             <span
-              :class="['w-2 h-2 rounded-full flex-shrink-0', quincenaHabilitada === true ? 'bg-red-500' : 'bg-[#299261]']" />
+              :class="['w-2 h-2 rounded-full flex-shrink-0', quincenaHabilitada === true ? 'bg-[#299261]' : ' bg-red-500']" />
             <span>
-              {{ quincenaHabilitada === true ? 'Quincenas: ON' : quincenaHabilitada === false ? 'Quincenas: OFF' :
+              {{ quincenaHabilitada === true ? 'Quincenas' : quincenaHabilitada === false ? 'Quincenas' :
                 'Quincenas' }}
             </span>
           </button>
@@ -671,8 +671,15 @@ onMounted(() => {
 }
 
 @keyframes bounce-slow {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(-6px); }
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-6px);
+  }
 }
 
 .animate-bounce-slow {

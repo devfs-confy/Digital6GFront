@@ -6,7 +6,6 @@ import icoSedes from "@/assets/img/emoji_transportation.svg?raw";
 import icoMensual2 from "@/assets/img/calendar_add_on.svg?raw";
 import icoUsuarios from "@/assets/img/manage_accounts.svg?raw";
 import icoDashboard from "@/assets/img/home.svg?raw";
-import icoDisponibilidad from "@/assets/img/calendar_check.svg?raw";
 import IcoVerificacion from "@/assets/img/verified.svg?raw";
 import icoTarifas from "@/assets/img/car_tag.svg?raw";
 import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
@@ -182,9 +181,10 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/Roles.vue"),
       meta: { permission: "VER-ROLES" },
     },
+
     {
-      path: "disponibilidad",
-      component: () => import("@/views/administrador/VerDisponibilidad.vue"),
+      path: "verificacion",
+      component: () => import("@/views/administrador/Codigo.vue"),
       meta: { permission: "CREAR-CODIGOS" },
     },
     {

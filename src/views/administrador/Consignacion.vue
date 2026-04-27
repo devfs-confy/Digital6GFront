@@ -56,6 +56,7 @@
                         <tr>
                             <th class="th-cell">#ID</th>
                             <th class="th-cell">Sede</th>
+                            <th class="th-cell">Cant Facturas</th>
                             <th class="th-cell">Fecha</th>
                             <th class="th-cell">Valor</th>
                             <th class="th-cell">Estado</th>
@@ -88,6 +89,9 @@
                                 <span class="badge badge--green">
                                     {{ c.T_Estacionamientos?.Nombre ?? `Sede ${c.IdEstacionamiento}` }}
                                 </span>
+                            </td>
+                            <td class="td-cell">
+                                <span class="text-xs text-gray-600">{{ c.Cantidad }}</span>
                             </td>
                             <td class="td-cell">
                                 <span class="text-xs text-gray-600">{{ formatFecha(c.FechaConsignacion) }}</span>
@@ -157,7 +161,7 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Referencia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C] uppercase">{{ activo.Referencia
-                                }}</span>
+                            }}</span>
                         </div>
                         <div v-if="activo.DocumentoUsuario"
                             class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
@@ -193,21 +197,21 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Efectivo</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.ValorEfectivo)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div v-if="activo.ValorDatafono != null"
                             class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Datáfono</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.ValorDatafono)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div v-if="activo.Producido != null"
                             class="col-span-2 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Producido</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.Producido)
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
                 </section>
@@ -374,6 +378,8 @@ const cargar = async (page = 1) => {
         registros.value = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
         total.value = res?.total ?? registros.value.length
         paginaActual.value = res?.page ?? page
+
+
     } catch (e) {
         console.error('[Consignaciones]', e)
         registros.value = []
@@ -381,6 +387,7 @@ const cargar = async (page = 1) => {
         loading.value = false
     }
 }
+
 
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
