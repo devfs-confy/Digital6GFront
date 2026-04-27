@@ -111,40 +111,58 @@
                     </div>
 
                     <!-- Carousel de imágenes -->
-                    <div v-if="pasoActualObj.imgs?.length"
-                        class="relative border-b border-[#f0faf4] overflow-hidden select-none bg-[#f8fdf8]"
-                        style="max-height:240px">
-                        <img :src="pasoActualObj.imgs[carouselIdx]" :alt="pasoActualObj.titulo"
-                            class="w-full object-cover cursor-zoom-in" style="max-height:240px"
-                            @click="abrirLightbox(pasoActualObj.imgs[carouselIdx])" />
-                        <!-- Zoom badge -->
-                        <div
-                            class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/45 rounded-lg px-2 py-1 text-white text-[10px] font-bold backdrop-blur-sm pointer-events-none">
-                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                                <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
-                            </svg>
-                            Zoom
+                    <div v-if="pasoActualObj.imgs?.length" class="relative overflow-hidden select-none bg-[#0A1F13]"
+                        style="height: 290px" @touchstart.passive="swipeStart" @touchend.passive="swipeEnd">
+
+                        <!-- Imagen con fade -->
+                        <transition name="img-fade" mode="out-in">
+                            <img :key="carouselIdx" :src="pasoActualObj.imgs[carouselIdx]" :alt="pasoActualObj.titulo"
+                                class="absolute inset-0 w-full h-full object-contain cursor-zoom-in"
+                                style="padding: 10px" @click="abrirLightbox(pasoActualObj.imgs[carouselIdx])" />
+                        </transition>
+
+                        <!-- Top bar: counter izq + ampliar der -->
+                        <div class="absolute top-0 left-0 right-0 flex items-center justify-between px-3 pt-2.5 pointer-events-none"
+                            style="background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 100%); padding-bottom: 18px">
+                            <div v-if="pasoActualObj.imgs.length > 1"
+                                class="bg-black/50 backdrop-blur-sm rounded-lg px-2.5 py-1 text-white text-[11px] font-black pointer-events-none">
+                                {{ carouselIdx + 1 }} / {{ pasoActualObj.imgs.length }}
+                            </div>
+                            <div v-else class="w-1" />
+                            <button
+                                class="flex items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-lg px-2.5 py-1 text-[#7FD344] text-[10px] font-black pointer-events-auto"
+                                @click="abrirLightbox(pasoActualObj.imgs[carouselIdx])">
+                                <svg width="11" height="11" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                                    <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
+                                </svg>
+                                Ampliar
+                            </button>
                         </div>
+
                         <!-- Flechas + dots (solo si >1 imagen) -->
                         <template v-if="pasoActualObj.imgs.length > 1">
                             <button @click.stop="carouselPrev"
-                                class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:scale-90 transition-transform">
+                                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/55 backdrop-blur-sm border border-white/15 text-white flex items-center justify-center active:scale-90 transition-transform">
                                 <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                                 </svg>
                             </button>
                             <button @click.stop="carouselNext"
-                                class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center active:scale-90 transition-transform">
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/55 backdrop-blur-sm border border-white/15 text-white flex items-center justify-center active:scale-90 transition-transform">
                                 <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
                                 </svg>
                             </button>
-                            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-                                <div v-for="(_, i) in pasoActualObj.imgs" :key="i"
-                                    class="rounded-full transition-all duration-200"
-                                    :class="i === carouselIdx ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'" />
+                            <!-- Dots bottom con gradiente -->
+                            <div class="absolute bottom-0 left-0 right-0 flex items-end justify-center pb-3"
+                                style="background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%); padding-top: 20px">
+                                <div class="flex items-center gap-1.5">
+                                    <button v-for="(_, i) in pasoActualObj.imgs" :key="i" @click.stop="carouselIdx = i"
+                                        class="rounded-full transition-all duration-250"
+                                        :class="i === carouselIdx ? 'w-6 h-1.5 bg-[#7FD344]' : 'w-1.5 h-1.5 bg-white/45'" />
+                                </div>
                             </div>
                         </template>
                     </div>
@@ -182,13 +200,17 @@
                             </div>
                         </div>
 
-                        <!-- Nota de aviso -->
-                        <div v-if="pasoActualObj.nota"
-                            class="flex items-start gap-2.5 bg-amber-50 rounded-xl px-3.5 py-3 border border-amber-200">
-                            <div class="text-amber-500 flex-shrink-0 mt-0.5">
-                                <AppIcon name="gpp_maybe" :size="17" />
+                        <!-- Nota de aviso (string o array) -->
+                        <div v-if="pasoActualObj.nota" class="flex flex-col gap-2">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-amber-600/70">Importante</p>
+                            <div v-for="(n, i) in (Array.isArray(pasoActualObj.nota) ? pasoActualObj.nota : [pasoActualObj.nota])"
+                                :key="i"
+                                class="flex items-start gap-2.5 bg-amber-50 rounded-xl px-3.5 py-3 border border-amber-200">
+                                <div class="text-amber-500 flex-shrink-0 mt-0.5">
+                                    <AppIcon name="gpp_maybe" :size="17" />
+                                </div>
+                                <span class="text-[11.5px] leading-snug text-amber-800">{{ n }}</span>
                             </div>
-                            <span class="text-[11.5px] leading-snug text-amber-800">{{ pasoActualObj.nota }}</span>
                         </div>
 
                     </div>
@@ -216,47 +238,66 @@
     <!-- ── LIGHTBOX ── -->
     <Teleport to="body">
         <Transition name="lb-fade">
-            <div v-if="lightboxOpen" class="fixed inset-0 z-[9999] bg-black/93 flex flex-col"
+            <div v-if="lightboxOpen" class="fixed inset-0 z-[9999] bg-gray-900/90 backdrop-blur-sm flex flex-col"
                 @click.self="cerrarLightbox">
-                <!-- Top bar -->
-                <div class="flex items-center justify-between px-4 py-3 flex-shrink-0">
-                    <span class="text-white/50 text-[11px]">Pellizca para hacer zoom</span>
+
+                <!-- Top bar con gradiente -->
+                <div class="flex-shrink-0 flex items-center justify-between px-4 pt-5 pb-8"
+                    style="background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%)">
+                    <div>
+                        <p class="text-white font-black text-[13px] leading-tight">{{ pasoActualObj?.titulo }}</p>
+                        <p v-if="pasoActualObj?.imgs?.length > 1" class="text-[#7FD344] text-[11px] font-black mt-0.5">
+                            {{ carouselIdx + 1 }} / {{ pasoActualObj.imgs.length }}
+                        </p>
+                        <p v-else class="text-white/40 text-[10px] mt-0.5">Pellizca para hacer zoom</p>
+                    </div>
                     <button @click="cerrarLightbox"
-                        class="w-9 h-9 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 active:scale-90 transition-all">
+                        class="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 active:scale-90 transition-all flex-shrink-0">
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                         </svg>
                     </button>
                 </div>
+
                 <!-- Imagen con zoom nativo -->
-                <div class="flex-1 overflow-auto flex items-center justify-center p-3" style="touch-action: pinch-zoom;"
-                    @click.self="cerrarLightbox">
-                    <img :src="lightboxImg" class="rounded-xl object-contain"
-                        style="max-width:90vw; max-height:calc(100vh - 90px); touch-action: pinch-zoom;" />
+                <div class="flex-1 flex items-center justify-center px-3 overflow-auto"
+                    style="touch-action: pinch-zoom;" @click.self="cerrarLightbox" @touchstart.passive="swipeStart"
+                    @touchend.passive="swipeEndLightbox">
+                    <transition name="img-fade" mode="out-in">
+                        <img :key="carouselIdx" :src="lightboxImg" class="rounded-2xl object-contain"
+                            style="max-width: 96vw; max-height: calc(100vh - 160px); touch-action: pinch-zoom;" />
+                    </transition>
                 </div>
-                <!-- Indicador multi-imagen -->
-                <div v-if="pasoActualObj?.imgs?.length > 1"
-                    class="flex items-center justify-center gap-3 py-3 flex-shrink-0">
-                    <button @click="lightboxPrev"
-                        class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center active:scale-90">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                        </svg>
-                    </button>
-                    <div class="flex gap-1.5">
-                        <div v-for="(_, i) in pasoActualObj.imgs" :key="i"
-                            class="rounded-full transition-all duration-200 cursor-pointer"
-                            :class="i === carouselIdx ? 'w-5 h-1.5 bg-[#7FD344]' : 'w-1.5 h-1.5 bg-white/40'"
-                            @click="saltoLightbox(i)" />
-                    </div>
-                    <button @click="lightboxNext"
-                        class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center active:scale-90">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />z|
-                        </svg>
-                    </button>
+
+                <!-- Bottom nav con gradiente -->
+                <div class="flex-shrink-0 flex items-center justify-center gap-4 px-4 pb-8 pt-8"
+                    style="background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)">
+                    <template v-if="pasoActualObj?.imgs?.length > 1">
+                        <button @click="lightboxPrev"
+                            class="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center active:scale-90 transition-all hover:bg-white/20">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                            </svg>
+                        </button>
+                        <div class="flex gap-2 items-center">
+                            <div v-for="(_, i) in pasoActualObj.imgs" :key="i"
+                                class="rounded-full transition-all duration-200 cursor-pointer"
+                                :class="i === carouselIdx ? 'w-6 h-1.5 bg-[#7FD344]' : 'w-1.5 h-1.5 bg-white/35'"
+                                @click="saltoLightbox(i)" />
+                        </div>
+                        <button @click="lightboxNext"
+                            class="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center active:scale-90 transition-all hover:bg-white/20">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
+                            </svg>
+                        </button>
+                    </template>
+                    <template v-else>
+                        <p class="text-white/30 text-[11px]">Pellizca para hacer zoom</p>
+                    </template>
                 </div>
+
             </div>
         </Transition>
     </Teleport>
@@ -279,6 +320,7 @@ const transicion = ref('slide-forward')
 const carouselIdx = ref(0)
 const lightboxOpen = ref(false)
 const lightboxImg = ref(null)
+const swipeTouchStartX = ref(0)
 
 watch(pasoActual, () => { carouselIdx.value = 0 })
 watch(lightboxOpen, val => { document.body.style.overflow = val ? 'hidden' : '' })
@@ -337,7 +379,8 @@ const categorias = [
                 tips: [
                     'Solo podrás cambiar la placa 1 vez al mes',
                 ],
-                nota: 'Si haces un cambio de mensualidad de moto a carro, se te cobrará un excedente del costo de la mensualidad de carro.',
+                nota: ['Si haces un cambio de mensualidad de moto a carro, se te cobrará un excedente del costo de la mensualidad de carro.',
+                    'Si vas ha realizar el cambio y pagarás el excedente, ten en cuenta que la fecha de vencimiento no se actualizará, será la vigente.',],
             },
             {
                 titulo: 'Ver mis mensualidades',
@@ -346,9 +389,9 @@ const categorias = [
                 desc: 'En "Mis Mensualidades" verás todas tus mensualidades registradas con su estado actual, sede, placa y fecha de vencimiento.',
                 info: [
                     { icon: 'offline_pin_green', titulo: 'Activa', desc: 'La mensualidad está vigente y puedes usar el parqueadero sin problema.' },
-                    { icon: 'snowflake_green', titulo: 'congelada', desc: 'La mensualidad está pausada hasta la nueva fecha de inicio.' },
-                    { icon: 'explosion_green', titulo: 'Vencida', desc: 'Debes renovarla pagando para continuar usando el servicio.' },
-                    { icon: 'brightness_alert_green', titulo: 'por_vencer', desc: 'Debes renovarla pagando para continuar usando el servicio.' },
+                    { icon: 'snowflake_green', titulo: 'Congelada', desc: 'La mensualidad está pausada hasta la nueva fecha de inicio.' },
+                    { icon: 'explosion_green', titulo: 'Vencida', desc: 'Debes pagar para renovarla y continuar usando el servicio.' },
+                    { icon: 'brightness_alert_green', titulo: 'Por_vencer', desc: 'Puedes pagar con anticipación para continuar usando el servicio.' },
                 ],
                 tips: ['Desliza hacia abajo para refrescar la lista'],
             },
@@ -587,6 +630,20 @@ function saltoLightbox(i) {
     carouselIdx.value = i
     lightboxImg.value = pasoActualObj.value.imgs[i]
 }
+
+function swipeStart(e) {
+    swipeTouchStartX.value = e.touches[0].clientX
+}
+
+function swipeEnd(e) {
+    const delta = swipeTouchStartX.value - e.changedTouches[0].clientX
+    if (Math.abs(delta) > 40) delta > 0 ? carouselNext() : carouselPrev()
+}
+
+function swipeEndLightbox(e) {
+    const delta = swipeTouchStartX.value - e.changedTouches[0].clientX
+    if (Math.abs(delta) > 40) delta > 0 ? lightboxNext() : lightboxPrev()
+}
 </script>
 
 <style scoped>
@@ -630,10 +687,25 @@ function saltoLightbox(i) {
     opacity: 0;
 }
 
+.img-fade-enter-active,
+.img-fade-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.img-fade-enter-from,
+.img-fade-leave-to {
+    opacity: 0;
+}
+
 @media (max-width: 767px) {
 
     .lb-fade-enter-active,
     .lb-fade-leave-active {
+        transition-duration: 0ms !important;
+    }
+
+    .img-fade-enter-active,
+    .img-fade-leave-active {
         transition-duration: 0ms !important;
     }
 }

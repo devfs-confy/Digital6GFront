@@ -51,7 +51,9 @@
                 <h1 class="text-[1.8rem] font-extrabold text-d6g-gray leading-tight tracking-tight mb-1.5">
                   Olvidé mi<br />contraseña
                 </h1>
-                <p class="text-slate-400 text-[0.84rem]">Ingresa tu documento para recibir el código</p>
+                <p class="text-slate-400 text-[0.84rem]">Por favor ingresa tu documento pimero para poder realizar la
+                  recuperación
+                </p>
               </div>
 
               <div class="flex flex-col gap-[18px]">
@@ -349,8 +351,10 @@
           </div>
           <div class="tutorial-body">
 
+            <div class="tutorial-divider">Opciones principales</div>
+
+
             <div class="tutorial-step">
-              <div class="tutorial-step-num">1</div>
               <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="#299261"
                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -359,14 +363,16 @@
                 </svg>
               </div>
               <div class="tutorial-step-body">
-                <p class="tutorial-step-title">Tu documento</p>
+                <p class="tutorial-step-title">
+                  <!-- <div class="tutorial-step-num">1</div> -->
+                  Tu documento
+                </p>
                 <p class="tutorial-step-desc">Ingresa tu número de cédula. Verificaremos que tengas una cuenta
                   registrada en la plataforma.</p>
               </div>
             </div>
 
             <div class="tutorial-step">
-              <div class="tutorial-step-num">2</div>
               <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="#232B3A"
                   stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -374,14 +380,14 @@
                 </svg>
               </div>
               <div class="tutorial-step-body">
-                <p class="tutorial-step-title">Enviar código</p>
+                <p class="tutorial-step-title">
+                  Enviar código</p>
                 <p class="tutorial-step-desc">Te enviaremos un código OTP de 6 dígitos al correo registrado en tu
                   cuenta.</p>
               </div>
             </div>
 
             <div class="tutorial-step">
-              <div class="tutorial-step-num">3</div>
               <div class="tutorial-step-icon" style="background:#eff6ff;border-color:#bfdbfe;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="#1e40af"
                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -397,14 +403,14 @@
                 </svg>
               </div>
               <div class="tutorial-step-body">
-                <p class="tutorial-step-title">Código de 6 dígitos</p>
+                <p class="tutorial-step-title">
+                  Código de 6 dígitos</p>
                 <p class="tutorial-step-desc">Ingresa el código recibido en tu correo. Tienes 15 minutos antes de que
                   expire.</p>
               </div>
             </div>
 
             <div class="tutorial-step">
-              <div class="tutorial-step-num">4</div>
               <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="#299261"
                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -413,7 +419,8 @@
                 </svg>
               </div>
               <div class="tutorial-step-body">
-                <p class="tutorial-step-title">Nueva contraseña</p>
+                <p class="tutorial-step-title">
+                  Nueva contraseña</p>
                 <p class="tutorial-step-desc">Elige tu nueva contraseña (mínimo 8 caracteres) y confírmala para guardar
                   el cambio.</p>
               </div>

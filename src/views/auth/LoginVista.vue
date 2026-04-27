@@ -148,8 +148,9 @@
                     <!-- Body -->
                     <div class="tutorial-body">
 
+                        <div class="tutorial-divider">Opciones Principales</div>
+
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">1</div>
                             <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -159,14 +160,17 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Documento</p>
+
+                                <p class="tutorial-step-title">
+                                    <!-- <div class="tutorial-step-num">1</div> -->
+                                    Documento
+                                </p>
                                 <p class="tutorial-step-desc">Ingresa tu número de cédula o documento de identidad
                                     registrado en la plataforma.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">2</div>
                             <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -176,14 +180,14 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Contraseña</p>
+                                <p class="tutorial-step-title">
+                                    Contraseña</p>
                                 <p class="tutorial-step-desc">Ingresa la contraseña asociada a tu cuenta. Usa el ojo
                                     para mostrarla u ocultarla.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">3</div>
                             <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#232B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
@@ -192,8 +196,10 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Ingresar</p>
-                                <p class="tutorial-step-desc">Presiona este botón para acceder a tu cuenta con las
+                                <p class="tutorial-step-title">
+                                    Ingresar</p>
+                                <p class="tutorial-step-desc">Presiona este el botón "ingresar" para acceder a tu cuenta
+                                    con las
                                     credenciales ingresadas.</p>
                             </div>
                         </div>
@@ -213,7 +219,8 @@
                             </div>
                             <div class="tutorial-step-body">
                                 <p class="tutorial-step-title">¿Olvidaste tu contraseña?</p>
-                                <p class="tutorial-step-desc">Si no recuerdas tu contraseña, haz clic aquí para
+                                <p class="tutorial-step-desc">Si no recuerdas tu contraseña, haz clic en el boton
+                                    "¿Olvidaste tu contraseña?" para
                                     recuperarla por correo electrónico.</p>
                             </div>
                         </div>

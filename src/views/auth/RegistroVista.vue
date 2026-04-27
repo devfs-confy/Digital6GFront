@@ -196,7 +196,8 @@
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Nombres <span
                                                 class="text-red-400">*</span></label>
-                                        <input ref="inputNombres" v-model="form.Nombres" type="text" class="field-input" placeholder="" />
+                                        <input ref="inputNombres" v-model="form.Nombres" type="text" class="field-input"
+                                            placeholder="" />
                                     </div>
                                     <div class="flex flex-col gap-1">
                                         <label class="field-label-sm">Apellidos <span
@@ -259,7 +260,7 @@
                                 <div class="flex flex-col gap-2.5">
                                     <div v-for="(_, idx) in form.placas" :key="idx" class="flex flex-col gap-1">
                                         <label class="field-label-sm">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : ''
-                                        }}</label>
+                                            }}</label>
                                         <div class="flex gap-2 items-center">
                                             <input v-model="form.placas[idx]" type="text"
                                                 class="field-input placa-input flex-1"
@@ -576,8 +577,9 @@
                     </div>
                     <div class="tutorial-body">
 
+                        <div class="tutorial-divider">Opciones principales</div>
+
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">1</div>
                             <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -587,14 +589,16 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Documento</p>
+                                <p class="tutorial-step-title">
+                                    <!-- <div class="tutorial-step-num">1</div> -->
+                                    Documento
+                                </p>
                                 <p class="tutorial-step-desc">Ingresa tu cédula. Buscaremos automáticamente tu
                                     mensualidad activa en esta sede para pre-llenar los datos.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">2</div>
                             <div class="tutorial-step-icon" style="background:#eff6ff;border-color:#bfdbfe;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -606,14 +610,14 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Datos personales</p>
+                                <p class="tutorial-step-title">
+                                    Datos personales</p>
                                 <p class="tutorial-step-desc">Revisa o completa tu nombre, apellidos, teléfono y correo
                                     electrónico.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">3</div>
                             <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#299261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -623,14 +627,14 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Contraseña</p>
+                                <p class="tutorial-step-title">
+                                    Contraseña</p>
                                 <p class="tutorial-step-desc">Crea una contraseña de mínimo 8 caracteres para acceder a
                                     tu cuenta.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">4</div>
                             <div class="tutorial-step-icon" style="background:#fefce8;border-color:#fde68a;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#854d0e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -642,14 +646,14 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Vehículos / Placas</p>
+                                <p class="tutorial-step-title">
+                                    Vehículos / Placas</p>
                                 <p class="tutorial-step-desc">Registra la placa de tu vehículo (ej: ABC123 carro ·
                                     ABC12D moto). Puedes agregar hasta 2 placas.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">5</div>
                             <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#232B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
@@ -658,8 +662,10 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Crear cuenta</p>
-                                <p class="tutorial-step-desc">Acepta los términos y condiciones, luego presiona este
+                                <p class="tutorial-step-title">
+                                    Crear cuenta</p>
+                                <p class="tutorial-step-desc">Lee y acepta los términos y condiciones, luego presiona
+                                    este
                                     botón para finalizar tu registro.</p>
                             </div>
                         </div>

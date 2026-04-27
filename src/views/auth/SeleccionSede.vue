@@ -109,8 +109,9 @@
                     </div>
                     <div class="tutorial-body">
 
+                        <div class="tutorial-divider">Opciones principales</div>
+
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">1</div>
                             <div class="tutorial-step-icon" style="background:#f0faf4;border-color:#c8e6c9;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#299261"
                                     viewBox="0 0 24 24">
@@ -119,14 +120,16 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Elige tu sede</p>
+                                <p class="tutorial-step-title">
+                                    <!-- <div class="tutorial-step-num">1</div> -->
+                                    Elige tu sede
+                                </p>
                                 <p class="tutorial-step-desc">Selecciona la sede donde tienes activa o deseas activar tu
                                     mensualidad de parqueo. Toca una tarjeta para marcarla.</p>
                             </div>
                         </div>
 
                         <div class="tutorial-step">
-                            <div class="tutorial-step-num">2</div>
                             <div class="tutorial-step-icon" style="background:#232b3a14;border-color:#232b3a22;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
                                     stroke="#232B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
@@ -135,7 +138,8 @@
                                 </svg>
                             </div>
                             <div class="tutorial-step-body">
-                                <p class="tutorial-step-title">Continuar</p>
+                                <p class="tutorial-step-title">
+                                    Continuar</p>
                                 <p class="tutorial-step-desc">Una vez seleccionada la sede, presiona este botón para
                                     avanzar al formulario de registro.</p>
                             </div>
@@ -297,9 +301,11 @@ const continuar = () => {
 /* ── Header ───────────────────────────────────── */
 .ss-header {
     display: flex;
-    align-items: flex-start;
     gap: 14px;
     margin-bottom: 28px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 .ss-icon-wrap {
@@ -312,6 +318,8 @@ const continuar = () => {
     justify-content: center;
     flex-shrink: 0;
     box-shadow: 0 3px 0 #051510;
+    position: absolute;
+    left: 0%;
 }
 
 .ss-badge {
