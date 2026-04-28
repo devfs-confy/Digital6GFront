@@ -2,42 +2,28 @@
     <div class="h-full flex flex-col gap-4">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-
-            <!-- Botón Volver -->
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" style="fill: black" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-
-            <!-- Título -->
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Comunidad UCC</h2>
-
-            <!-- Acciones -->
-            <div class="flex items-center gap-2">
-                <!-- Botón Subir Excel -->
-                <button @click="abrirModalExcel"
-                    class="flex items-center gap-1.5 bg-white text-[#299261] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border-2 border-[#299261]"
-                    style="box-shadow: #595858 0px 2px 0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                            d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
-                    </svg>
-                    <span class="hidden sm:inline">Subir Excel</span>
-                </button>
-
-                <!-- Botón Registrar -->
-                <button @click="abrirModalRegistrar"
-                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                    style="box-shadow: #595858 0px 2px 0">
-                    <AppIcon name="add" :size="14" />
-                    <span class="hidden sm:inline">Registrar</span>
-                </button>
-            </div>
-        </div>
+        <AdminPageHeader title="Comunidad UCC">
+            <template #right>
+                <div class="flex items-center gap-2">
+                    <button @click="abrirModalExcel"
+                        class="flex items-center gap-1.5 bg-white text-[#299261] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border-2 border-[#299261]"
+                        style="box-shadow: #595858 0px 2px 0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
+                        </svg>
+                        <span class="hidden sm:inline">Subir Excel</span>
+                    </button>
+                    <button @click="abrirModalRegistrar"
+                        class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                        style="box-shadow: #595858 0px 2px 0">
+                        <AppIcon name="add" :size="14" />
+                        <span class="hidden sm:inline">Registrar</span>
+                    </button>
+                </div>
+            </template>
+        </AdminPageHeader>
 
         <!-- Buscador -->
         <div class="bg-white rounded-2xl px-4 py-3 flex gap-2 items-center flex-shrink-0 shadow-sm">

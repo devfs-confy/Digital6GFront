@@ -2,16 +2,7 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Tarifas</h2>
-            <div class="w-[72px] sm:w-[88px]" />
-        </div>
+        <AdminPageHeader title="Tarifas" />
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -38,16 +29,7 @@
                     <option v-for="t in catTiposVehiculo" :key="t.id" :value="t.id">{{ t.nombre }}</option>
                 </select>
             </div>
-            <!-- 
-            <div class="flex flex-col gap-1 flex-1 min-w-[130px]">
-                <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">Tipo
-                    pago</label>
-                <select v-model="filtros.idTipoPago" @change="onFiltroChange"
-                    class="rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all cursor-pointer">
-                    <option :value="null">Todos</option>
-                    <option v-for="t in catTiposPago" :key="t.id" :value="t.id">{{ t.nombre }}</option>
-                </select>
-            </div> -->
+
 
             <div class="flex flex-col gap-1 flex-1 min-w-[130px]">
                 <label
@@ -73,29 +55,22 @@
                 <table class="border-collapse min-w-[760px] w-full">
                     <thead>
                         <tr>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] sticky left-0 z-10 shadow-[3px_0_8px_rgba(0,0,0,0.12)]">
+                            <th class="th-cell th-cell--sticky w-[60px]">
                                 #</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                            <th class="th-cell">
                                 Sede</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                            <th class="th-cell">
                                 Vehículo</th>
                             <!-- <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                                class="th-cell">
                                 Tipo pago</th> -->
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                            <th class="th-cell">
                                 Autorización</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                            <th class="th-cell">
                                 Valor</th>
-                            <th
-                                class="px-5 py-3.5 text-left text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                            <th class="th-cell">
                                 Estado</th>
-                            <th
-                                class="px-5 py-3.5 text-center text-[0.68rem] font-black uppercase tracking-widest text-[white] bg-[#0D291C] border-b-[3px] border-[#7FD344] whitespace-nowrap">
+                            <th class="th-cell th-cell--center">
                                 Opciones</th>
                         </tr>
                     </thead>
@@ -129,12 +104,11 @@
                         <tr v-else v-for="t in tarifas" :key="t.IdTarifa"
                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors group">
 
-                            <td
-                                class="px-5 py-3 font-mono font-bold text-sm text-[#0D291C] sticky left-0 bg-white group-hover:bg-[#f0faf4] shadow-[3px_0_8px_rgba(0,0,0,0.07)] transition-colors">
+                            <td class="td-cell  w-[60px] font-mono font-bold group-hover:bg-[#f0faf4]">
                                 {{ t.IdTarifa }}
                             </td>
 
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <td class="td-cell td-cell--sticky w-[200px] ">
                                 <span
                                     class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-[#e8f5e9] text-[#1b5e20] border border-[#c8e6c9]">
                                     {{sedes.find(s => String(s.IdEstacionamiento) ===
@@ -142,7 +116,7 @@
                                 </span>
                             </td>
 
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <td class="td-cell">
                                 <div
                                     class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-blue-50 text-blue-800 border border-blue-200">
                                     <AppIcon name="car-side" :size="12" />
@@ -160,26 +134,26 @@
                                 </div>
                             </td> -->
 
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <td class="td-cell">
                                 <span
                                     class="inline-block px-2.5 py-0.5 rounded-full text-[0.72rem] font-bold bg-violet-50 text-violet-800 border border-violet-200">
                                     {{ t.T_Autorizacion?.NombreAutorizacion ?? '—' }}
                                 </span>
                             </td>
 
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <td class="td-cell">
                                 <span
                                     class="inline-block px-2.5 py-0.5 rounded-full text-[0.78rem] font-black bg-[#0D291C] text-[#7FD344] tracking-wide">
                                     ${{ Number(t.Valor).toLocaleString('es-CO') }}
                                 </span>
                             </td>
 
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <td class="td-cell">
                                 <span v-if="t.Estado" class="text-[#299261] font-extrabold text-[0.8rem]">●
                                     Activo</span>
                                 <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
-                            <td class="px-5 py-3 text-sm whitespace-nowrap">
+                            <td class="td-cell td-cell--center">
                                 <button @click="abrirEditar(t)"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-bold text-[#0D291C]  transition-all">
                                     <AppIcon name="car_tag" :size="30" />

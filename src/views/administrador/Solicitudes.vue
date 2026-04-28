@@ -2,21 +2,16 @@
     <div class="h-full flex flex-col gap-6 maincontainer w-full ">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">PQRS</h2>
-            <button @click="abrirMotivos"
-                class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="assignment" :size="14" />
-                <span class="hidden sm:inline">Motivos</span>
-            </button>
-        </div>
+        <AdminPageHeader title="PQRS">
+            <template #right>
+                <button @click="abrirMotivos"
+                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                    style="box-shadow: #595858 0px 2px 0">
+                    <AppIcon name="assignment" :size="14" />
+                    <span class="hidden sm:inline">Motivos</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -110,7 +105,7 @@
 
                                     <span class="text-[0.72rem] truncate text-gray-400"> {{
                                         pqrs.NombreCliente
-                                        }}</span>
+                                    }}</span>
                                     <span class="text-[0.72rem] truncate text-gray-400">{{ pqrs.Email }}</span>
 
                                 </div>
@@ -126,7 +121,7 @@
                             </td>
                             <td class="td-cell max-w-[150px]">
                                 <span class="block truncate text-[0.82rem] text-gray-600">{{ pqrs.Asunto ?? '—'
-                                }}</span>
+                                    }}</span>
                             </td>
                             <td class="td-cell">
                                 <span class="inline-flex items-center gap-1 text-[0.8rem] font-extrabold" :class="{
@@ -214,7 +209,7 @@
                                 <span
                                     class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
                                 <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ tipoLabel(pqrsAccion?.Tipo)
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="flex flex-col gap-[3px] px-3 py-2 rounded-xl border" :class="{
                                 'bg-red-50 border-red-100': pqrsAccion?.Prioridad === 'ALTA',
@@ -254,29 +249,49 @@
                                 Datos del cliente
                             </p>
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.NombreCliente ?? '—' }}</span>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{
+                                        pqrsAccion?.NombreCliente
+                                        ?? '—' }}</span>
                                 </div>
-                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Documento</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] font-mono">{{ pqrsAccion?.DocumentoUsuario ?? '—' }}</span>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Documento</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] font-mono">{{
+                                        pqrsAccion?.DocumentoUsuario ?? '—' }}</span>
                                 </div>
-                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—' }}</span>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—'
+                                        }}</span>
                                 </div>
-                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Email ?? '—' }}</span>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    <span
+                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Email
+                                        ?? '—'
+                                        }}</span>
                                 </div>
-                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha creación</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ formatFecha(pqrsAccion?.FechaCreacion) }}</span>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha
+                                        creación</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{
+                                        formatFecha(pqrsAccion?.FechaCreacion) }}</span>
                                 </div>
-                                <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha respuesta</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ formatFecha(pqrsAccion?.FechaRespuesta) }}</span>
+                                <div
+                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha
+                                        respuesta</span>
+                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{
+                                        formatFecha(pqrsAccion?.FechaRespuesta) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -284,16 +299,22 @@
 
                         <!-- Mensualidad relacionada -->
                         <div v-if="pqrsAccion?.PersonaAutorizada" class="flex flex-col gap-2">
-                            <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            <p
+                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
                                 Mensualidad relacionada
                             </p>
-                            <div class="flex items-center gap-3 px-3 py-2.5 bg-[#f0faf4] rounded-xl border border-[#c8e6c9]">
-                                <div class="w-8 h-8 rounded-[10px] bg-[#0D291C] flex items-center justify-center flex-shrink-0">
+                            <div
+                                class="flex items-center gap-3 px-3 py-2.5 bg-[#f0faf4] rounded-xl border border-[#c8e6c9]">
+                                <div
+                                    class="w-8 h-8 rounded-[10px] bg-[#0D291C] flex items-center justify-center flex-shrink-0">
                                     <AppIcon name="directions_car" :size="16" class="text-[#7FD344]" />
                                 </div>
                                 <div class="flex flex-col gap-0.5 min-w-0">
-                                    <span class="text-[0.8rem] font-black text-[#0D291C] truncate">{{ pqrsAccion.PersonaAutorizada.NombreApellidos }}</span>
-                                    <span class="text-[0.65rem] font-semibold text-gray-500 font-mono">CC {{ pqrsAccion.PersonaAutorizada.Documento }} · ID #{{ pqrsAccion.PersonaAutorizada.IdPersonaAutorizada }}</span>
+                                    <span class="text-[0.8rem] font-black text-[#0D291C] truncate">{{
+                                        pqrsAccion.PersonaAutorizada.NombreApellidos }}</span>
+                                    <span class="text-[0.65rem] font-semibold text-gray-500 font-mono">CC {{
+                                        pqrsAccion.PersonaAutorizada.Documento }} · ID #{{
+                                            pqrsAccion.PersonaAutorizada.IdPersonaAutorizada }}</span>
                                 </div>
                             </div>
                         </div>
@@ -355,7 +376,8 @@
 
                         <!-- Asignaciones -->
                         <div v-if="pqrsAccion?.AsignacionPQRS?.length" class="flex flex-col gap-2">
-                            <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                            <p
+                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
                                 Asignaciones ({{ pqrsAccion.AsignacionPQRS.length }})
                             </p>
                             <div class="flex flex-col gap-2">
@@ -372,14 +394,19 @@
                                             <span class="text-[0.8rem] font-black text-[#0D291C] truncate">
                                                 {{ a.Usuario?.Nombres }} {{ a.Usuario?.Apellidos }}
                                             </span>
-                                            <span class="text-[0.6rem] font-black px-1.5 py-[1px] rounded-full flex-shrink-0"
+                                            <span
+                                                class="text-[0.6rem] font-black px-1.5 py-[1px] rounded-full flex-shrink-0"
                                                 :class="a.Activo ? 'bg-[#299261] text-white' : 'bg-gray-200 text-gray-500'">
                                                 {{ a.Activo ? 'Activo' : 'Inactivo' }}
                                             </span>
                                         </div>
-                                        <span class="text-[0.72rem] text-[#299261] font-semibold">{{ a.Departamento }}</span>
-                                        <span v-if="a.Observacion" class="text-[0.72rem] text-gray-500 italic">{{ a.Observacion }}</span>
-                                        <span class="text-[0.65rem] text-gray-400">{{ formatFecha(a.FechaAsignacion) }}</span>
+                                        <span class="text-[0.72rem] text-[#299261] font-semibold">{{ a.Departamento
+                                            }}</span>
+                                        <span v-if="a.Observacion" class="text-[0.72rem] text-gray-500 italic">{{
+                                            a.Observacion
+                                            }}</span>
+                                        <span class="text-[0.65rem] text-gray-400">{{ formatFecha(a.FechaAsignacion)
+                                            }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -777,8 +804,10 @@
                         <div class="flex flex-col gap-3">
                             <div class="flex flex-col gap-[5px]">
                                 <label class="field-label">Administrador *</label>
-                                <div v-if="loadingAdmins" class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[0.76rem] text-gray-400">
-                                    <div class="w-3.5 h-3.5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin flex-shrink-0" />
+                                <div v-if="loadingAdmins"
+                                    class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[0.76rem] text-gray-400">
+                                    <div
+                                        class="w-3.5 h-3.5 border-2 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin flex-shrink-0" />
                                     Cargando administradores...
                                 </div>
                                 <select v-else v-model="fAsignar.DocumentoUsuario" class="field-input cursor-pointer">
@@ -1319,6 +1348,4 @@ input.search-input {
         height: auto;
     }
 }
-
-
 </style>

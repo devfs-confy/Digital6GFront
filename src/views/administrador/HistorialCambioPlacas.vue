@@ -2,16 +2,7 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial Cambio de Placas</h2>
-            <div class="w-[72px] sm:w-[88px]" />
-        </div>
+        <AdminPageHeader title="Historial Cambio de Placas" />
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -115,7 +106,7 @@
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
                                         <span class="font-mono font-bold text-[#0D291C]">{{ d.PlacaNueva ?? '—'
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -135,7 +126,7 @@
 
                             <td class="td-cell td-cell--center">
                                 <button @click="abrirDetalle(r.IdSolicitud)" class="action-btn" title="Ver detalle">
-                                    <AppIcon name="visibility" :size="20" />
+                                    <AppIcon name="visibility" :size="30" />
                                 </button>
                             </td>
                         </tr>
@@ -177,7 +168,7 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Documento</span>
                             <span class="font-mono text-[0.82rem] font-bold text-[#0D291C]">{{ detalle.DocumentoUsuario
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Sede</span>
@@ -223,7 +214,7 @@
                                 <span
                                     class="text-[0.58rem] font-black uppercase tracking-wider text-gray-400">Anterior</span>
                                 <span class="font-mono text-sm font-bold text-gray-500">{{ d.PlacaAnterior ?? '—'
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div
                                 class="w-8 h-8 rounded-full bg-[#0D291C] flex items-center justify-center flex-shrink-0">
@@ -236,7 +227,7 @@
                                 <span
                                     class="text-[0.58rem] font-black uppercase tracking-wider text-[#299261]">Nueva</span>
                                 <span class="font-mono text-sm font-bold text-[#0D291C]">{{ d.PlacaNueva ?? '—'
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -253,7 +244,7 @@
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Mes</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ nombreMes(detalle.MesAplicacion)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Año</span>
@@ -270,7 +261,7 @@
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Fecha de
                                 creación</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(detalle.FechaCreacion)
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
                 </section>

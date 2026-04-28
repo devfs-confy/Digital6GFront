@@ -2,20 +2,7 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Clientes</h2>
-            <button @click="abrirNuevo"
-                class=" cursor-none pointer-events-none flex items-center gap-1.5 bg-transparent text-transparent text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full">
-                <AppIcon name="add" :size="14" />
-                <span class="hidden sm:inline"></span>
-            </button>
-        </div>
+        <AdminPageHeader title="Clientes" />
 
 
 
@@ -24,7 +11,8 @@
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
                     class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Buscar</label>
-                <input v-model="busqueda" type="text" placeholder="Nombre, documento o #ID mensualidad..." class="search-input w-full" />
+                <input v-model="busqueda" type="text" placeholder="Nombre, documento o #ID mensualidad..."
+                    class="search-input w-full" />
             </div>
             <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
                 <label

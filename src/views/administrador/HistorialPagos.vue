@@ -2,16 +2,7 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Pagos</h2>
-            <div class="w-[72px] sm:w-[88px]" />
-        </div>
+        <AdminPageHeader title="Historial de Pagos" />
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -138,8 +129,8 @@
                                     <span v-if="!p.PagoMensual && !p.Anulada" class="text-gray-400 text-xs">—</span>
                                 </div>
                             </td>
-                            <td class="td-cell td-cell--center">
-                                <button @click="verDetalle(p)" class="action-btn" title="Ver detalle">
+                            <td class="td-cell flex justify-center ">
+                                <button @click="verDetalle(p)" class="action-btn th-cell--center" title="Ver detalle">
                                     <AppIcon name="visibility" :size="30" />
                                 </button>
                             </td>
@@ -179,30 +170,30 @@
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Fecha
                                 pago</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(activo.FechaPago)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">ID
                                 Transacción</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C] font-mono">{{ activo.IdTransaccion
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Módulo</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C] font-mono">{{ activo.IdModulo ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">N°
                                 Factura</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.NumeroFactura ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">ID
                                 Autorizado</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdAutorizado ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Tipo
@@ -213,14 +204,14 @@
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Forma
                                 pago</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdFormaPago?.trim() ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                         <div
                             class="col-span-2 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Identificación
                                 cliente</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdentificacionCliente ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
                 </section>
@@ -264,7 +255,7 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Subtotal</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.Subtotal)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">IVA</span>

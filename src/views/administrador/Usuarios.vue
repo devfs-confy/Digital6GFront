@@ -2,31 +2,16 @@
     <div class="h-full flex flex-col gap-4">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-
-            <!-- Botón Volver — siempre a la izquierda -->
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" style="fill: black" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-
-            <!-- Título — siempre centrado -->
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Usuarios</h2>
-
-            <!-- Botón Nuevo — siempre a la derecha -->
-            <button @click="abrirCrear"
-                class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="add" :size="14" />
-                <span class="hidden sm:inline">Nuevo</span>
-            </button>
-
-
-            <!-- Botón Nuevo -->
-
-        </div>
+        <AdminPageHeader title="Usuarios">
+            <template #right>
+                <button @click="abrirCrear"
+                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                    style="box-shadow: #595858 0px 2px 0">
+                    <AppIcon name="add" :size="14" />
+                    <span class="hidden sm:inline">Nuevo</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
         <!-- Buscador -->
         <div class="bg-white rounded-2xl px-4 py-3 flex gap-2 items-center flex-shrink-0 shadow-sm">

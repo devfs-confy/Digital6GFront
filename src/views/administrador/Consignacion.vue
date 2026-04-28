@@ -2,21 +2,16 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Consignaciones</h2>
-            <button @click="abrirGenerar"
-                class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="add" :size="14" />
-                <span class="hidden sm:inline">Generar</span>
-            </button>
-        </div>
+        <AdminPageHeader title="Consignaciones">
+            <template #right>
+                <button @click="abrirGenerar"
+                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                    style="box-shadow: #595858 0px 2px 0">
+                    <AppIcon name="add" :size="14" />
+                    <span class="hidden sm:inline">Generar</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -65,7 +60,7 @@
                     </thead>
                     <tbody>
                         <tr v-if="loading">
-                            <td colspan="6" class="py-20 text-center">
+                            <td colspan="6" class="py-20">
                                 <div class="flex flex-col items-center gap-3">
                                     <div
                                         class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
@@ -103,9 +98,9 @@
                                 <span v-if="c.Sincronizacion === true" class="estado--activo">● Sincronizada</span>
                                 <span v-else class="text-amber-500 font-extrabold text-[0.8rem]">● Pendiente</span>
                             </td>
-                            <td class="td-cell td-cell--center">
+                            <td class="td-cell flex justify-center">
                                 <button @click="verDetalle(c)" class="action-btn" title="Ver detalle">
-                                    <AppIcon name="visibility" :size="20" />
+                                    <AppIcon name="visibility" :size="30" />
                                 </button>
                             </td>
                         </tr>
@@ -161,7 +156,7 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Referencia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C] uppercase">{{ activo.Referencia
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="activo.DocumentoUsuario"
                             class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
@@ -197,21 +192,21 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Efectivo</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.ValorEfectivo)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="activo.ValorDatafono != null"
                             class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Datáfono</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.ValorDatafono)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div v-if="activo.Producido != null"
                             class="col-span-2 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Producido</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.Producido)
-                            }}</span>
+                                }}</span>
                         </div>
                     </div>
                 </section>
