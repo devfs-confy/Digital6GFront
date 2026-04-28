@@ -61,10 +61,8 @@
             <template v-if="sedeActual">
                 <div v-for="v in sedeActual.vehiculos" :key="v.IdTipoVehiculo" class="disp-row">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="text-[1.05rem] leading-none">
-                            <span v-if="v.TipoVehiculo === 'Moto'" v-html="motorbike" />
-                            <span v-else v-html="car" />
-                        </span>
+                        <AppIcon class="text-[#3d6520]" :name="v.TipoVehiculo === 'Moto' ? 'two_wheeler' : 'car-side'"
+                            :size="20" />
                         <div class="flex items-center gap-1.5">
                             <span class="text-[0.7rem] font-bold text-[#299261]">{{ v.MensualidadesOcupadas }}
                                 ocupadas</span>
@@ -72,13 +70,14 @@
                             <span class="text-[0.7rem] font-bold text-gray-400">{{ v.Total }} total</span>
                         </div>
                     </div>
-                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full transition-all duration-500"
+                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden ">
+                        <div class="h-full rounded-full transition-all duration-500   "
                             :class="pct(v) >= 90 ? 'bg-red-500' : pct(v) >= 70 ? 'bg-amber-400' : 'bg-[#7FD344]'"
                             :style="{ width: `${pct(v)}%` }" />
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-[0.62rem] font-semibold text-gray-400">{{ v.MensualidadesDisponibles }}
+                        <span class="text-[0.62rem] font-semibold text-gray-400  ">{{
+                            v.MensualidadesDisponibles }}
                             disponibles</span>
                         <span class="text-[0.62rem] font-black"
                             :class="pct(v) >= 90 ? 'text-red-500' : pct(v) >= 70 ? 'text-amber-500' : 'text-[#299261]'">
@@ -101,7 +100,7 @@
         <div v-for="(opcion, i) in opciones" :key="opcion.id" class="opcion-card card-animation"
             :style="{ animationDelay: `${i * 0.04}s` }" @click="router.push(opcion.route)">
             <div class="opcion-icon">
-                <span v-html="opcion.icon" />
+                <AppIcon :name="opcion.icon" :size="30" :color="opcion.color" :fill="opcion.fill" />
             </div>
             <div class="opcion-body">
                 <h2>{{ opcion.titulo }}</h2>
@@ -130,18 +129,6 @@ import SedesDisponibilidadService from '@/api/services/sedesdisponibilidad.servi
 import MensualidadesService from '@/api/services/mensualidades.service'
 
 
-import clientes from '@/assets/img/account_box_green.svg?raw'
-import mensualidades from '@/assets/img/calendar_add_on_green.svg?raw'
-import solicitudes from '@/assets/img/contract_green.svg?raw'
-import reportes from '@/assets/img/assignment_green.svg?raw'
-import disponibilidad from '@/assets/img/event_available_green.svg?raw'
-import verificacion from '@/assets/img/verified_green.svg?raw'
-import tarifas from '@/assets/img/car_tag_green.svg?raw'
-import tarjetas from '@/assets/img/payment_card_green.svg?raw'
-import car from '@/assets/img/car-side.svg?raw'
-import motorbike from '@/assets/img/two_wheeler.svg?raw'
-import sedes from '@/assets/img/emoji_transportation_green.svg?raw'
-import usuarios from '@/assets/img/manage_accounts_green.svg?raw'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -204,16 +191,31 @@ const pct = (v) => (!v.Total || v.Total === 0) ? 0 : Math.round((v.Mensualidades
 
 // ── Menú rápido ────────────────────────────────────────────────────
 const opciones = computed(() => [
-    { id: 1, icon: clientes, titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: 'VER-USUARIOS' },
-    { id: 2, icon: mensualidades, titulo: 'Mensualidades', sub: '', route: '/admin/mensualidades', permission: 'VER-MENSUALIDADES' },
-    { id: 3, icon: solicitudes, titulo: 'Solicitudes', sub: '', route: '/admin/solicitudes', permission: 'VER-MENSUALIDADES' },
-    { id: 4, icon: reportes, titulo: 'Reportes', sub: '', route: '/admin/reportes', permission: 'VER-USUARIOS' },
-    { id: 5, icon: sedes, titulo: 'Administrar sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: 'VER-SEDES' },
-    { id: 6, icon: usuarios, titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: 'VER-ROLES' },
-    { id: 7, icon: disponibilidad, titulo: 'Ver disponibilidad', sub: '', route: '/admin/disponibilidad', permission: 'CREAR-CODIGOS' },
-    { id: 8, icon: verificacion, titulo: 'Codigo verificacion', sub: '', route: '/admin/verificacion', permission: 'CREAR-CODIGOS' },
-    { id: 9, icon: tarifas, titulo: 'Ver tarifas', sub: '', route: '/admin/tarifas', permission: 'CREAR-CODIGOS' },
-    { id: 10, icon: tarjetas, titulo: 'Tarjeta', sub: '', route: '/admin/tarjetas', permission: 'CREAR-CODIGOS' },
+    // VER-USUARIOS
+    { id: 1, icon: 'account_box_green', titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: 'VER-USUARIOS' },
+    // VER-MENSUALIDADES
+    { id: 3, icon: 'calendar_add_on_green', titulo: 'Mensualidades', sub: '', route: '/admin/mensualidades', permission: 'VER-MENSUALIDADES' },
+    { id: 4, icon: 'contract_green', titulo: 'Solicitudes', sub: '', route: '/admin/solicitudes', permission: 'VER-MENSUALIDADES' },
+    { id: 5, icon: 'receipt_long_green', titulo: 'Historial de Pagos', sub: '', route: '/admin/historial-pagos', permission: 'VER-MENSUALIDADES' },
+    { id: 6, icon: 'flowsheet', titulo: 'Historial Cambio Placas', sub: '', route: '/admin/historial-cambio-placas', permission: 'VER-MENSUALIDADES' },
+    { id: 7, icon: 'assignment_green', titulo: 'Consignaciones', sub: '', route: '/admin/consignaciones', permission: 'EDITAR-SEDES' },
+    { id: 8, icon: 'receipt_long_green', titulo: 'Facturación', sub: '', route: '/admin/facturacion', permission: 'EDITAR-SEDES' },
+    { id: 9, icon: 'payment_card_green', titulo: 'Modalidades de Pago', sub: '', route: '/admin/modalidades-pagos', permission: 'VER-SEDES' },
+
+    // VER-SEDES
+    { id: 10, icon: 'emoji_transportation_green', titulo: 'Sedes', sub: `${sedestotal.value} sedes`, route: '/admin/sedes', permission: 'VER-SEDES' },
+    { id: 8, icon: 'car_tag_green', titulo: 'Tarifas', sub: '', route: '/admin/tarifas-admin', permission: 'VER-SEDES' },
+    // EDITAR-SEDES
+    // VER-ROLES
+    { id: 12, icon: 'manage_accounts_green', titulo: 'Usuarios', sub: 'Gestionar accesos', route: '/admin/usuarios', permission: 'VER-ROLES' },
+    { id: 13, icon: 'dashboard_customize', titulo: 'Roles', sub: '', route: '/admin/roles', permission: 'VER-ROLES' },
+    // CREAR-CODIGOS
+    { id: 14, icon: 'verified_green', titulo: 'Verificación', sub: '', route: '/admin/verificacion', permission: 'CREAR-CODIGOS' },
+    { id: 15, icon: 'fact_check', titulo: 'Autorizaciones', sub: '', route: '/admin/autorizaciones', permission: 'CREAR-CODIGOS' },
+    { id: 2, icon: 'credit_card_gear', titulo: 'Banner', sub: '', route: '/admin/banner', permission: 'CREAR-CODIGOS' },
+
+    { id: 16, icon: 'how_to_reg', titulo: 'Comunidad UCC', sub: '', route: '/admin/comunidad-ucc', permission: 'VER-USUARIOS' },
+
 ].filter(item => hasPermission(item.permission)))
 
 // ── onMounted ──────────────────────────────────────────────────────
@@ -514,10 +516,12 @@ onMounted(async () => {
     justify-content: center;
     flex-shrink: 0;
     transition: background 0.18s;
+    color: #3d6520;
 }
 
 .opcion-card:hover .opcion-icon {
     background: rgba(127, 211, 68, 0.15);
+    color: white;
 }
 
 .opcion-icon :deep(svg) {
@@ -528,9 +532,6 @@ onMounted(async () => {
     transition: fill 0.18s;
 }
 
-.opcion-card:hover .opcion-icon :deep(svg) {
-    fill: #7FD344;
-}
 
 /* ── Opcion text ──────────────────────────────── */
 .opcion-body {

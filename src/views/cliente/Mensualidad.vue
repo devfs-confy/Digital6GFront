@@ -126,7 +126,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -154,8 +154,7 @@
                         </span>
                     </div>
 
-                    <button  v-if="m.btnTarjeta"
-                        @click="abrirModalTarjeta(m)"
+                    <button v-if="m.btnTarjeta" @click="abrirModalTarjeta(m)"
                         class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
                             viewBox="0 0 24 24">
@@ -344,7 +343,7 @@
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
                                         <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
@@ -354,13 +353,13 @@
                                         </div>
                                         <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                             <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex justify-between text-[0.85rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                             <span>Total a pagar</span>
                                             <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -379,25 +378,28 @@
                                         :class="opcionSeleccionada?.modalidad === op.modalidad
                                             ? 'border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9]'
                                             : 'border-gray-200'">
-                        
+
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }} <span v-if="op.tarjeta"> + TARJETA</span>
                                                     <template v-if="op.cantidadMeses > 0">
                                                         · <template v-if="op.modalidad === 'QUINCENA'">15
                                                             días</template>
-                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses === 1 ? 'mes' : 'meses' }}</template>
+                                                        <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses ===
+                                                            1 ? 'mes' : 'meses' }}</template>
                                                     </template>
                                                 </span>
                                             </div>
                                             <div class="flex flex-col items-end gap-0.5">
-                                             
-                                                <span class="text-base font-black text-[#299261]">{{formatPrecio(op.totalFinal) }}</span>
-                                                
+
+                                                <span
+                                                    class="text-base font-black text-[#299261]">{{ formatPrecio(op.totalFinal)
+                                                    }}</span>
+
                                             </div>
                                         </div>
                                         <!-- Desglose -->
@@ -405,15 +407,16 @@
                                             class="flex flex-col gap-[5px] pt-2.5 border-t border-gray-200">
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
-                                                <span>{{ op.modalidad }}</span><span>{{ formatPrecio(op.desglose.total)}}</span>
+                                                <span>{{ op.modalidad }}</span><span>{{
+                                                    formatPrecio(op.desglose.total)}}</span>
                                             </div>
-                                           <div v-if="op.tarjeta"
-                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                            <div v-if="op.tarjeta"
+                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>TARJETA</span>
-                                                 <span> {{ formatPrecio(op.tarjeta.total)}}</span>
-                                                
+                                                <span> {{ formatPrecio(op.tarjeta.total) }}</span>
+
                                             </div>
-                                            
+
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
                                                 <span>Total a pagar</span><span class="text-[#299261]">{{
@@ -494,7 +497,8 @@
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
                                     {{ errPago }}
                                 </div>
-                                <div ref="formBillingRef" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
+                                <div ref="formBillingRef"
+                                    class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                     <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2
               after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r
               after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -605,14 +609,16 @@
                         </template>
 
                         <!-- ── Scroll hint al formulario ── -->
-                        <div class="sticky bottom-0 left-0 right-0 px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-[#c8e6c9] flex-shrink-0">
-                                <button @click="scrollAlFormularioPago"
-                                    class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-black border border-[#1a4a2e] transition-all active:translate-y-px">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
-                                    </svg>
-                                    Completar datos de facturación
-                                </button>
+                        <div
+                            class="sticky bottom-0 left-0 right-0 px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-[#c8e6c9] flex-shrink-0">
+                            <button @click="scrollAlFormularioPago"
+                                class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-black border border-[#1a4a2e] transition-all active:translate-y-px">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" />
+                                </svg>
+                                Completar datos de facturación
+                            </button>
                         </div>
                     </div>
 
@@ -751,7 +757,7 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
@@ -775,18 +781,18 @@
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -1133,7 +1139,7 @@ const cargarMisMensualidades = async () => {
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
         mensualidades.value = raw.map(m => ({
             _raw: m,
-            btnTarjeta : m.RequiereTarjeta,
+            btnTarjeta: m.RequiereTarjeta,
             cobroTarjetaPermitido: !!(m.CobroTarjeta),
             id: m.IdPersonaAutorizada,
             nombre: m.NombreApellidos ?? '—',
@@ -1774,11 +1780,49 @@ const cerrarModales = () => {
 }
 
 @media (max-width: 767px) {
-    @keyframes shimmer { from {} to {} }
-    @keyframes cardIn  { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
-    @keyframes popIn   { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
-    @keyframes popOut  { from { opacity:0; } to { opacity:0; } }
+    @keyframes shimmer {
+        from {}
+
+        to {}
+    }
+
+    @keyframes cardIn {
+        from {
+            opacity: 1;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 1;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes popOut {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
     .hint-slide-enter-active,
-    .hint-slide-leave-active { transition-duration: 0ms !important; }
+    .hint-slide-leave-active {
+        transition-duration: 0ms !important;
+    }
 }
 </style>

@@ -38,22 +38,35 @@ export const adminMenuItems = [
     permission: "VER-MENSUALIDADES",
   },
   {
-    label: "Historial Cambio <br> Placas",
-    icon: icoPlacas,
-    route: "/admin/historial-cambio-placas",
-    permission: "VER-MENSUALIDADES",
-  },
-  {
     label: "Historial <br> Pagos",
     icon: icoPagos,
     route: "/admin/historial-pagos",
     permission: "VER-MENSUALIDADES",
   },
   {
+    label: "Historial Cambio <br> Placas",
+    icon: icoPlacas,
+    route: "/admin/historial-cambio-placas",
+    permission: "VER-MENSUALIDADES",
+  },
+
+  {
     label: "Consignaciones",
     icon: icoArqueos,
     route: "/admin/consignaciones",
     permission: "EDITAR-SEDES",
+  },
+  {
+    label: "Facturación",
+    icon: icoFacturacion,
+    route: "/admin/facturacion",
+    permission: "EDITAR-SEDES",
+  },
+  {
+    label: "Modalidades<br>de Pago",
+    icon: icoTarifas,
+    route: "/admin/modalidades-pagos",
+    permission: "VER-SEDES",
   },
   {
     label: "Administrar<br>Sedes",
@@ -100,23 +113,12 @@ export const adminMenuItems = [
     route: "/admin/banner",
     permission: "CREAR-CODIGOS",
   },
-  {
-    label: "Modalidades<br>de Pago",
-    icon: icoTarifas,
-    route: "/admin/modalidades-pagos",
-    permission: "VER-SEDES",
-  },
+
   {
     label: "Comunidad<br>UCC",
     icon: icoUCC,
     route: "/admin/comunidad-ucc",
     permission: "VER-USUARIOS",
-  },
-  {
-    label: "Facturación",
-    icon: icoFacturacion,
-    route: "/admin/facturacion",
-    permission: "EDITAR-SEDES",
   },
 ];
 
@@ -167,6 +169,11 @@ export const adminRoutes = {
       meta: { permission: "VER-MENSUALIDADES" },
     },
     {
+      path: "facturacion",
+      component: () => import("@/views/administrador/Facturacion.vue"),
+      meta: { permission: "EDITAR-SEDES" },
+    },
+    {
       path: "tarifas-admin",
       component: () => import("@/views/administrador/AdministrarTarifas.vue"),
       meta: { permission: "VER-SEDES" },
@@ -207,11 +214,7 @@ export const adminRoutes = {
       component: () => import("@/views/administrador/ComunidadUCC.vue"),
       meta: { permission: "VER-USUARIOS" },
     },
-    {
-      path: "facturacion",
-      component: () => import("@/views/administrador/Facturacion.vue"),
-      meta: { permission: "EDITAR-SEDES" },
-    },
+
     { path: "", redirect: "dashboard" },
   ],
 };
