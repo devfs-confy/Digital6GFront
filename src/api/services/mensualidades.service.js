@@ -40,25 +40,6 @@ class MensualidadesService {
   // POST /v1/mensualidades/clientes/cambio-autorizacion
   // cambio de placas si es carro a moto no cobra nada, si cambia de moto a carro cobra el excedente
 
-  // 200 =
-  // {
-  //   "success": true,
-  //   "message": "Cambio requiere pago del excedente",
-  //   "statusCode": 200,
-  //   "data": {
-  //     "requierePago": true,
-  //     "aplicado": false,
-  //     "autorizacionAnterior": "Mensualidad Moto",
-  //     "autorizacionNueva": "Mensualidad Carro",
-  //     "IdAutorizacionNueva": "5",
-  //     "excedente": {
-  //       "valorNeto": 40000,
-  //       "subtotal": 33613,
-  //       "iva": 6387,
-  //       "total": 40000
-  //     }
-  //   }
-  // }
   async cambiarAutorizacion({ IdPersonaAutorizada, Placas }) {
     try {
       const { data } = await api.post(`${BASE_CLIENT}/cambio-autorizacion`, {
@@ -203,11 +184,16 @@ class MensualidadesService {
 
   // Historial Cambio de placas
 
-  async getHistorialCambioPlacas({ page = 1, limit = 10, search = '', sede = '' } = {}) {
+  async getHistorialCambioPlacas({
+    page = 1,
+    limit = 10,
+    search = "",
+    sede = "",
+  } = {}) {
     try {
-      const params = { page, limit }
-      if (search) params.search = search
-      if (sede) params.sede = sede
+      const params = { page, limit };
+      if (search) params.search = search;
+      if (sede) params.sede = sede;
       const { data } = await api.get(`${BASE_ADMIN}/cambio-placas`, { params });
       return data;
     } catch (error) {

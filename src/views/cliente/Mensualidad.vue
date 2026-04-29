@@ -126,7 +126,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                            }}</span>
+                                }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -246,7 +246,7 @@
                     </div>
 
                     <!-- Body (scrollable) -->
-                    <div ref="modalBodyRef"
+                    <div ref="modalBodyRef" @scroll="onModalBodyScroll"
                         class="flex flex-col bg-white overflow-y-auto flex-1 min-h-0 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
 
                         <!-- Loading -->
@@ -343,7 +343,7 @@
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
                                         <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                        }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
@@ -353,13 +353,13 @@
                                         </div>
                                         <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                             <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex justify-between text-[0.85rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                             <span>Total a pagar</span>
                                             <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -382,7 +382,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                }}</span>
+                                                    }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }} <span v-if="op.tarjeta"> + TARJETA</span>
@@ -396,8 +396,8 @@
                                             </div>
                                             <div class="flex flex-col items-end gap-0.5">
 
-                                                <span
-                                                    class="text-base font-black text-[#299261]">{{ formatPrecio(op.totalFinal)
+                                                <span class="text-base font-black text-[#299261]">{{
+                                                    formatPrecio(op.totalFinal)
                                                     }}</span>
 
                                             </div>
@@ -408,7 +408,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>{{ op.modalidad }}</span><span>{{
-                                                    formatPrecio(op.desglose.total)}}</span>
+                                                    formatPrecio(op.desglose.total) }}</span>
                                             </div>
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -609,7 +609,7 @@
                         </template>
 
                         <!-- ── Scroll hint al formulario ── -->
-                        <div
+                        <div v-show="!enFondoScroll"
                             class="sticky bottom-0 left-0 right-0 px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-[#c8e6c9] flex-shrink-0">
                             <button @click="scrollAlFormularioPago"
                                 class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-black border border-[#1a4a2e] transition-all active:translate-y-px">
@@ -757,7 +757,7 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
@@ -781,18 +781,18 @@
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                }}</span>
+                                                    }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">
@@ -926,7 +926,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { showError, showSuccess, showConfirm, showInfo } from '@/utils/swal'
 import MensualidadesService from '@/api/services/mensualidades.service'
@@ -948,6 +948,13 @@ const mensualidades = ref([])
 // ── Scroll hint formulario pago ───────────────────────────────
 const modalBodyRef = ref(null)
 const formBillingRef = ref(null)
+const enFondoScroll = ref(false)
+
+const onModalBodyScroll = (e) => {
+    const el = e.target
+    enFondoScroll.value = el.scrollTop + el.clientHeight >= el.scrollHeight - 24
+}
+
 const scrollAlFormularioPago = () => {
     formBillingRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
@@ -955,6 +962,8 @@ const scrollAlFormularioPago = () => {
 // ── Estado de modales ─────────────────────────────────────────
 const modalCodigo = ref(false)
 const modalPago = ref(false)
+
+watch(modalPago, (val) => { if (val) enFondoScroll.value = false })
 const modalCongelar = ref(false)
 const modalDetalle = ref(false)
 const modalPlacas = ref(false)

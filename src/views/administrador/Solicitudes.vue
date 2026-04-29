@@ -1051,9 +1051,8 @@ const cambiarEstado = async () => {
     guardandoEstado.value = true
     try {
         await PqrsService.changeStatusPqrs(pqrsAccion.value.Id, fEstado.value)
-        const idx = pqrsList.value.findIndex(p => p.Id === pqrsAccion.value.Id)
-        if (idx !== -1) pqrsList.value[idx] = { ...pqrsList.value[idx], Estado: fEstado.value }
         modalEstado.value = false
+        await cargarPqrs()
     } catch (e) {
         const msg = e.response?.data?.message
         errEstado.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al cambiar el estado.')
@@ -1075,9 +1074,8 @@ const cambiarPrioridad = async () => {
     guardandoPrioridad.value = true
     try {
         await PqrsService.changePriorityPqrs(pqrsAccion.value.Id, fPrioridad.value)
-        const idx = pqrsList.value.findIndex(p => p.Id === pqrsAccion.value.Id)
-        if (idx !== -1) pqrsList.value[idx] = { ...pqrsList.value[idx], Prioridad: fPrioridad.value }
         modalPrioridad.value = false
+        await cargarPqrs()
     } catch (e) {
         const msg = e.response?.data?.message
         errPrioridad.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al cambiar la prioridad.')

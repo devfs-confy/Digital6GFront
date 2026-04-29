@@ -92,25 +92,27 @@ const AutorizacionesService = {
   // ── Admin /v1/autorizaciones ───────────────────────────────────────
 
   // GET /v1/autorizaciones?page&limit&search&idSede
-  async listar({ page = 1, limit = 10, search = '', idSede } = {}) {
+  async listar({ page = 1, limit = 10, search = "", idSede } = {}) {
     try {
-      const params = { page, limit }
-      if (search) params.search = search
-      if (idSede) params.idSede = idSede
-      const response = await api.get(this.nameRouteAdmin, { params })
-      return response.data
+      const params = { page, limit };
+      if (search) params.search = search;
+      if (idSede) params.idSede = idSede;
+      const response = await api.get(this.nameRouteAdmin, { params });
+      return response.data;
     } catch (error) {
-      return handleError(error)
+      return handleError(error);
     }
   },
 
   // GET /v1/autorizaciones/sede/{IdEstacionamiento}
   async listarPorSede(IdEstacionamiento) {
     try {
-      const response = await api.get(`${this.nameRouteAdmin}/sede/${IdEstacionamiento}`)
-      return response.data
+      const response = await api.get(
+        `${this.nameRouteAdmin}/sede/${IdEstacionamiento}`,
+      );
+      return response.data;
     } catch (error) {
-      return handleError(error)
+      return handleError(error);
     }
   },
 
@@ -120,13 +122,12 @@ const AutorizacionesService = {
       const response = await api.put(
         `${this.nameRouteAdmin}/habilitar-quincena/${IdEstacionamiento}`,
         { Estado },
-      )
-      return response.data
+      );
+      return response.data;
     } catch (error) {
-      return handleError(error)
+      return handleError(error);
     }
   },
-
 };
 
 export default AutorizacionesService;

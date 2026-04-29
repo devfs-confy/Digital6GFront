@@ -17,12 +17,27 @@ class ParqueosServices {
     }
   }
 
-   async getAllAdmin(idsede, documento) {
+  // http://localhost:3001/api/v1/transacciones/mensualidad/admin/paginated?IdSede=32&FechaInicio=2026-01-01&FechaFin=2026-06-01&search=1097493230
+
+  async getAllAdmin({
+    page = 1,
+    limit = 10,
+    IdSede = "",
+    search = "",
+    FechaInicio = "",
+    FechaFin = "",
+  } = {}) {
     try {
-      const response = await api.get(`${this.secondRoute}?IdSede=${idsede}&Documento=${documento}`);
-      return response.data;
+      const params = { page, limit, IdSede };
+      if (search) params.search = search;
+      if (FechaInicio) params.FechaInicio = FechaInicio;
+      if (FechaFin) params.FechaFin = FechaFin;
+      const { data } = await api.get(`${this.secondRoute}/paginated`, {
+        params,
+      });
+      return data;
     } catch (error) {
-      handleError(error);
+      return handleError(error);
     }
   }
 }

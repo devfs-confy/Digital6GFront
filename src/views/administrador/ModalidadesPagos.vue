@@ -476,7 +476,16 @@ const onSedeChange = async () => {
     autorizaciones.value = []
     return
   }
-  await cargarAutorizaciones()
+  await Promise.all([cargarAutorizaciones(), cargarEstadoQuincena()])
+}
+
+const cargarEstadoQuincena = async () => {
+  try {
+    const res = await ModalidadesPagosService.getByIdStatus(idSedeSeleccionada.value)
+    quincenaHabilitada.value = res?.data?.Estado ?? null
+  } catch {
+    quincenaHabilitada.value = null
+  }
 }
 
 const cargarAutorizaciones = async () => {

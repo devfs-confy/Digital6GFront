@@ -2,9 +2,27 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
-        <AdminPageHeader title="Clientes" />
+        <AdminPageHeader title="Clientes">
+            <template #right>
+                <button v-permission="'CREAR-USUARIOS'" @click="abrirNuevo"
+                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-[#0D291C]"
+                    style="box-shadow: #051510 0px 2px 0">
+                    <AppIcon name="add" :size="16" />
+                    <span class="hidden sm:inline">Nuevo cliente</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
 
+
+        <!-- Sin permiso VER -->
+        <div v-if="!hasPermission('VER-USUARIOS')"
+            class="bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center gap-3 py-20 text-gray-300">
+            <AppIcon name="lock" :size="48" />
+            <span class="text-sm font-medium text-gray-400">No tienes permiso para ver clientes</span>
+        </div>
+
+        <template v-if="hasPermission('VER-USUARIOS')">
 
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
@@ -111,12 +129,12 @@
                             </td>
                             <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button @click="abrirEditar(cliente)"
+                                    <button v-permission="'EDITAR-USUARIOS'" @click="abrirEditar(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all"
                                         title="Editar">
                                         <AppIcon name="person_edit" :size="30" style="color:black;" />
                                     </button>
-                                    <button @click="abrirCambioEstado(cliente)"
+                                    <button v-permission="'INACTIVAR-USUARIOS'" @click="abrirCambioEstado(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent transition-all"
                                         :class="cliente.Estado
                                             ? 'text-gray-400 hover:bg-red-100 hover:text-red-500'
@@ -136,6 +154,8 @@
             <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
+
+        </template><!-- /VER-USUARIOS -->
 
         <!-- MODAL NUEVO CLIENTE -->
         <Transition name="modal">
@@ -375,11 +395,14 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { useAuth } from '@/composables/useAuth'
 import ClientService from '@/api/services/client.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 import ModalInhabilitar from '@/components/modals/ModalInhabilitar.vue'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
+
+const { hasPermission } = useAuth()
 
 // ── Estado ─────────────────────────────────────────────────────────
 const clientes = ref([])

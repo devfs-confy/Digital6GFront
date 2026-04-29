@@ -152,9 +152,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import PagosService from '@/api/services/pagos.service'
+import { DateTime } from 'luxon'
 
 const transacciones = ref([])
-const loading = ref(false)
+const loading = ref(true)
 const errorCarga = ref('')
 
 const cargarHistorial = async () => {
@@ -162,13 +163,7 @@ const cargarHistorial = async () => {
     errorCarga.value = ''
     try {
         const res = await PagosService.getHistorialTransacciones()
-        // res puede ser { data: [...] } o directamente un array
-        const raw = Array.isArray(res) ? res : (Array.isArray(res?.data) ? res.data : [])
-
-        // Ordenar por fecha más reciente y tomar las últimas 5
-        transacciones.value = raw
-            .sort((a, b) => new Date(b.FechaCreacion) - new Date(a.FechaCreacion))
-            .slice(0, 5)
+        transacciones.value = res?.data ?? []
     } catch (e) {
         console.error('[HistorialTransacciones]', e)
         errorCarga.value = 'No se pudo cargar el historial de transacciones.'
@@ -190,11 +185,10 @@ const formatCOP = (valor) =>
         style: 'currency', currency: 'COP', maximumFractionDigits: 0
     }).format(valor ?? 0)
 
+const stripZ = (s) => s.replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, '')
+
 const formatFecha = (f) => {
     if (!f) return '—'
-    return new Date(f).toLocaleDateString('es-CO', {
-        day: '2-digit', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-    })
+    return DateTime.fromISO(stripZ(f), { zone: 'America/Bogota' }).toFormat('dd/MM/yyyy HH:mm')
 }
 </script>

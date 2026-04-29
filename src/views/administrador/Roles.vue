@@ -2,13 +2,27 @@
     <div class="h-full flex flex-col gap-4">
 
         <!-- Header -->
-        <AdminPageHeader title="Roles" />
+        <AdminPageHeader title="Roles">
+            <template #right>
+                <!-- <button v-permission="'CREAR-ROLES'"
+                    class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-[#0D291C]"
+                    style="box-shadow: #051510 0px 2px 0">
+                    <AppIcon name="add" :size="16" />
+                    <span class="hidden sm:inline">Nuevo rol</span>
+                </button> -->
+            </template>
+        </AdminPageHeader>
 
         <!-- Layout -->
         <div class="flex flex-col lg:flex-row gap-3 flex-1 min-h-0">
 
             <!-- ── Lista de roles ── -->
-            <div class="lg:w-[280px] flex-shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
+            <div v-if="!hasPermission('VER-ROLES')"
+                class="lg:w-[280px] flex-shrink-0 bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center gap-3 py-16 text-gray-300">
+                <AppIcon name="lock" :size="40" />
+                <span class="text-xs font-medium text-gray-400">Sin permiso para ver roles</span>
+            </div>
+            <div v-else class="lg:w-[280px] flex-shrink-0 bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
                 <div class="px-4 py-3 border-b-2 border-[#e8f5e9] flex-shrink-0">
                     <p class="text-[0.65rem] font-black uppercase tracking-widest text-[#0D291C] opacity-50">
                         Selecciona un rol
@@ -23,11 +37,15 @@
                 </div>
 
                 <div v-else class="flex-1 overflow-y-auto p-2 flex flex-col gap-1 scrollbar-thin">
-                    <button v-for="rol in roles" :key="rol.Id" @click="seleccionarRol(rol)"
-                        class="w-full flex items-center justify-between gap-3 px-3 py-3 rounded-xl text-left transition-all border-2 cursor-pointer"
-                        :class="rolSeleccionado?.Id === rol.Id
-                            ? 'bg-[#0D291C] border-[#0D291C] text-white'
-                            : 'bg-white border-transparent hover:border-[#e8f5e9] hover:bg-[#f8fdf9] text-[#0D291C]'">
+                    <button v-for="rol in roles" :key="rol.Id"
+                        @click="hasPermission('EDITAR-ROLES') && seleccionarRol(rol)"
+                        class="w-full flex items-center justify-between gap-3 px-3 py-3 rounded-xl text-left transition-all border-2"
+                        :class="[
+                            rolSeleccionado?.Id === rol.Id
+                                ? 'bg-[#0D291C] border-[#0D291C] text-white'
+                                : 'bg-white border-transparent hover:border-[#e8f5e9] hover:bg-[#f8fdf9] text-[#0D291C]',
+                            hasPermission('EDITAR-ROLES') ? 'cursor-pointer' : 'cursor-default opacity-60'
+                        ]">
                         <div class="flex items-center gap-2.5 min-w-0">
                             <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-[0.7rem] font-black"
                                 :class="rolSeleccionado?.Id === rol.Id ? 'bg-[#7FD344] text-[#0D291C]' : 'bg-[#e8f5e9] text-[#299261]'">
@@ -92,28 +110,28 @@
                     </div>
 
                     <!-- Toolbar -->
-                    <div class="bg-white rounded-2xl shadow-sm px-3 py-2.5 flex items-center gap-2 flex-shrink-0">
+                    <div v-if="hasPermission('VER-PERMISOS')"
+                        class="bg-white rounded-2xl shadow-sm px-3 py-2.5 flex items-center gap-2 flex-shrink-0">
                         <div
                             class="flex items-center gap-2 flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 focus-within:border-[#299261] transition-colors">
                             <AppIcon name="search" :size="12" class="text-gray-400 flex-shrink-0" />
-
                             <input v-model="busquedaPerm" type="text" placeholder="Buscar permiso..."
                                 class="flex-1 min-w-0 text-xs text-gray-700 bg-transparent border-none outline-none" />
                             <button v-if="busquedaPerm" @click="busquedaPerm = ''"
                                 class="text-[0.6rem] font-black text-gray-400 hover:text-red-500 bg-none border-none cursor-pointer">✕</button>
                         </div>
-                        <button @click="selectAll"
+                        <button v-permission="'ASIGNAR-PERMISOS'" @click="selectAll"
                             class="text-[0.65rem] font-black px-2.5 py-1.5 rounded-full border cursor-pointer bg-green-50 text-green-700 border-green-200 hover:bg-green-100 whitespace-nowrap flex-shrink-0">
                             Todos
                         </button>
-                        <button @click="clearAll"
+                        <button v-permission="'INACTIVAR-PERMISOS'" @click="clearAll"
                             class="text-[0.65rem] font-black px-2.5 py-1.5 rounded-full border cursor-pointer bg-red-50 text-red-600 border-red-200 hover:bg-red-100 whitespace-nowrap flex-shrink-0">
                             Ninguno
                         </button>
                     </div>
 
                     <!-- Grid permisos -->
-                    <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
+                    <div v-if="hasPermission('VER-PERMISOS')" class="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
                         <div v-if="loadingPermisos" class="flex flex-col items-center justify-center py-16 gap-3">
                             <div class="loader" />
                             <span class="text-xs text-gray-400 font-semibold">Cargando permisos...</span>
@@ -132,27 +150,31 @@
                                 <div class="flex items-center justify-between gap-1 px-2.5 py-2 rounded-t-2xl border-b"
                                     :class="countActivos(grupo) > 0 ? 'bg-[#f0faf4] border-[#d7eeda]' : 'bg-gray-50 border-gray-100'">
                                     <span class="text-[0.72rem] font-black text-[#0D291C] truncate">{{ grupo.label
-                                        }}</span>
+                                    }}</span>
                                     <div class="flex items-center gap-1.5 flex-shrink-0">
                                         <span class="text-[0.6rem] font-black rounded-full px-1.5 py-0.5"
                                             :class="countActivos(grupo) > 0 ? 'bg-[#0D291C] text-[#7FD344]' : 'bg-gray-200 text-gray-400'">
                                             {{ countActivos(grupo) }}/{{ grupo.permisos.length }}
                                         </span>
-                                        <button @click="toggleGrupo(grupo)"
-                                            class="text-[0.6rem] font-black rounded-full px-2 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity"
-                                            :class="countActivos(grupo) === grupo.permisos.length
-                                                ? 'bg-red-50 text-red-600 border-red-200'
-                                                : 'bg-[#e8f5e9] text-[#299261] border-[#a5d6a7]'">
-                                            {{ countActivos(grupo) === grupo.permisos.length ? 'Quitar' : 'Todos' }}
+                                        <button v-if="countActivos(grupo) === grupo.permisos.length"
+                                            v-permission="'INACTIVAR-PERMISOS'" @click="toggleGrupo(grupo)"
+                                            class="text-[0.6rem] font-black rounded-full px-2 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-red-50 text-red-600 border-red-200">
+                                            Quitar
+                                        </button>
+                                        <button v-else v-permission="'ASIGNAR-PERMISOS'" @click="toggleGrupo(grupo)"
+                                            class="text-[0.6rem] font-black rounded-full px-2 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-[#e8f5e9] text-[#299261] border-[#a5d6a7]">
+                                            Todos
                                         </button>
                                     </div>
                                 </div>
                                 <!-- Items -->
                                 <div class="p-1.5 flex flex-col gap-0.5">
                                     <div v-for="perm in grupo.permisos" :key="perm.value"
-                                        class="flex items-center gap-2 px-2 py-2 sm:py-1.5 rounded-lg cursor-pointer select-none transition-colors"
-                                        :class="isSelected(perm.value) ? 'bg-[#f0faf4]' : 'hover:bg-[#f0faf4]'"
-                                        @click="togglePerm(perm.value)">
+                                        class="flex items-center gap-2 px-2 py-2 sm:py-1.5 rounded-lg select-none transition-colors"
+                                        :class="[
+                                            isSelected(perm.value) ? 'bg-[#f0faf4]' : (canTogglePerm ? 'hover:bg-[#f0faf4]' : ''),
+                                            canTogglePerm ? 'cursor-pointer' : 'cursor-default'
+                                        ]" @click="canTogglePerm && togglePerm(perm.value)">
                                         <div class="w-4 h-4 rounded-[4px] flex-shrink-0 flex items-center justify-center border-2 transition-all"
                                             :class="isSelected(perm.value) ? 'bg-[#0D291C] border-[#0D291C]' : 'bg-white border-gray-300'">
                                             <AppIcon v-if="isSelected(perm.value)" name="verified_green" :size="9"
@@ -176,7 +198,7 @@
                             style="box-shadow:0 3px 0 #000">
                             Cancelar
                         </button>
-                        <button @click="guardarPermisos" :disabled="loadingPermisos"
+                        <button v-permission="'ASIGNAR-PERMISOS'" @click="guardarPermisos" :disabled="loadingPermisos"
                             class="flex-[3] py-3 rounded-full text-xs font-black uppercase tracking-wide cursor-pointer bg-[#0D291C] text-white border-2 border-black flex items-center justify-center gap-2 hover:bg-[#132e21] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             style="box-shadow:0 3px 0 #000">
                             <div v-if="loadingPermisos" class="btn-spinner" />
@@ -192,8 +214,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useAuth } from '@/composables/useAuth'
 import RolService from '@/api/services/rol.service'
 import { cargarCatalogo, permisosCatalogo } from '@/constants/permisions'
+
+const { hasPermission, hasAnyPermission } = useAuth()
+const canTogglePerm = computed(() => hasAnyPermission(['ASIGNAR-PERMISOS', 'INACTIVAR-PERMISOS']))
 
 // ── Formato y agrupación dinámica ──────────────────────────────────
 const formatLabel = (nombre) =>

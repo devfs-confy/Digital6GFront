@@ -110,8 +110,17 @@
                         </div>
                     </div>
 
+                    <!-- Video -->
+                    <div v-if="pasoActualObj.video" class="relative overflow-hidden bg-[#0A1F13]" style="height: 290px">
+                        <video :key="pasoActualObj.video" :src="pasoActualObj.video"
+                            class="w-full h-full object-contain"
+                            controls
+                            preload="metadata"
+                            playsinline />
+                    </div>
+
                     <!-- Carousel de imágenes -->
-                    <div v-if="pasoActualObj.imgs?.length" class="relative overflow-hidden select-none bg-[#0A1F13]"
+                    <div v-else-if="pasoActualObj.imgs?.length" class="relative overflow-hidden select-none bg-[#0A1F13]"
                         style="height: 290px" @touchstart.passive="swipeStart" @touchend.passive="swipeEnd">
 
                         <!-- Imagen con fade -->
@@ -178,15 +187,21 @@
                             <p class="text-[10px] font-black uppercase tracking-widest text-[#0D291C]/40">Información
                             </p>
                             <div v-for="(item, i) in pasoActualObj.info" :key="i"
-                                class="flex items-center gap-3 bg-[#f0faf4] rounded-xl px-3.5 py-3 border border-[#c8e6c9]">
+                                class="flex items-center gap-3 bg-[#f0faf4] rounded-xl px-3.5 py-3 border border-[#c8e6c9] transition-all"
+                                :class="item.linkTo ? 'cursor-pointer hover:border-[#7FD344] hover:bg-[#e4f5db] active:scale-[0.98]' : ''"
+                                @click="item.linkTo && seleccionarCategoria(item.linkTo)">
                                 <div
                                     class="w-7 h-7 rounded-lg bg-[#0D291C] flex items-center justify-center flex-shrink-0 text-[#7FD344]">
                                     <AppIcon :name="item.icon || 'fact_check'" :size="15" />
                                 </div>
-                                <div>
+                                <div class="flex-1">
                                     <p class="text-[12px] font-bold text-[#0D291C]">{{ item.titulo }}</p>
                                     <p class="text-[11px] text-gray-500 leading-snug mt-0.5">{{ item.desc }}</p>
                                 </div>
+                                <svg v-if="item.linkTo" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"
+                                    class="text-[#299261] flex-shrink-0">
+                                    <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
+                                </svg>
                             </div>
                         </div>
 
@@ -309,6 +324,7 @@ import { useRouter } from 'vue-router'
 import pago1 from '@/assets/img/tutorial/pago1.png'
 import pago2 from '@/assets/img/tutorial/pago2.png'
 import pago3 from '@/assets/img/tutorial/pago3.png'
+import tutorialpagos from '@/assets/img/tutorial/tutorialpagos.mp4'
 
 
 const router = useRouter()
@@ -337,12 +353,13 @@ const categorias = [
                 desc: 'Al ingresar al aplicativo podras visualizar 6 opciones de navegación: Inicio, Mis Mensualidades, Pagos Recientes, Parqueos, PQRS y más, donde puedes acceder a tus servicios y recibir ayuda.',
                 info: [
                     { icon: 'home', titulo: 'Inicio', desc: 'Accede a la sección de inicio para ver tus opciones de navegación.' },
-                    { icon: 'event_available', titulo: 'Mis mensualidades', desc: 'Verás cuántas mensualidades tienes vigentes y su fecha de vencimiento.' },
-                    { icon: 'receipt_long', titulo: 'Pagos recientes', desc: 'Los pagos más recientes aparecen en el inicio para acceso rápido.' },
-                    { icon: 'parking_sign', titulo: 'Parqueos', desc: 'Verás el historial de tus parqueos recientes.' },
-                    { icon: 'contract_edit', titulo: 'PQRS', desc: 'Accede a la sección de PQRS para reportar cualquier problema.' },
+                    { icon: 'event_available', titulo: 'Mis mensualidades', desc: 'Verás cuántas mensualidades tienes vigentes y su fecha de vencimiento.', linkTo: 'mensualidades' },
+                    { icon: 'receipt_long', titulo: 'Pagos recientes', desc: 'Los pagos más recientes aparecen en el inicio para acceso rápido.', linkTo: 'pagos' },
+                    { icon: 'credit_card_gear', titulo: 'Transacciones', desc: 'Consulta el historial de tus transacciones realizadas en la pasarela de pagos AvalPay.', linkTo: 'transacciones' },
+                    { icon: 'parking_sign', titulo: 'Parqueos', desc: 'Verás el historial de tus parqueos recientes.', linkTo: 'parqueos' },
+                    { icon: 'contract_edit', titulo: 'PQRS', desc: 'Accede a la sección de PQRS para reportar cualquier problema.', linkTo: 'pqrs' },
                     { icon: 'info_i', titulo: 'Tutorial', desc: 'Puedes encontrar las respuestas a tus dudas en la sección de ayuda.' },
-                    { icon: 'account_circle', titulo: 'Información', desc: 'Accede a la sección de información para obtener información importante.' },
+                    { icon: 'account_circle', titulo: 'Información Personal', desc: 'Accede a la sección de información para obtener información importante.', linkTo: 'perfil' },
                 ],
                 tips: [
                     'El ícono de campana muestra notificaciones pendientes',
@@ -360,7 +377,8 @@ const categorias = [
                 titulo: 'Pagar mensualidad',
                 subtitulo: 'Renovar o saldar una deuda',
                 icon: 'payment_card',
-                imgs: [pago1, pago2, pago3],
+                imgs: [],
+                video: tutorialpagos,
                 desc: 'Toca tu mensualidad en el listado y selecciona "Pagar". Si es renovación elige la nueva fecha de inicio y serás dirigido a la pasarela AvalPay para completar el pago.',
                 info: [
                     { icon: 'credit_score', titulo: 'Métodos aceptados', desc: 'Tarjeta Visa, Mastercard, débito y otros métodos habilitados en AvalPay.' },
@@ -455,6 +473,26 @@ const categorias = [
                 tips: [
                     'El comprobante incluye número de transacción, fecha y valor exacto',
                     'Es válido como soporte ante el parqueadero o tu banco',
+                ],
+            },
+        ],
+    },
+    {
+        id: 'transacciones', label: 'Transacciones Tutorial', icon: 'credit_card_gear',
+        pasos: [
+            {
+                titulo: 'Historial de transacciones',
+                subtitulo: 'Tus pagos en la pasarela AvalPay',
+                icon: 'credit_card_gear', imgs: [],
+                desc: 'En "Historial de Transacciones" verás todas las operaciones realizadas a través de la pasarela AvalPay: monto, estado, referencia y fecha de cada transacción.',
+                info: [
+                    { icon: 'verified', titulo: 'Aprobado', desc: 'El pago fue procesado y confirmado exitosamente.' },
+                    { icon: 'gpp_maybe', titulo: 'Pendiente', desc: 'El pago está en proceso de confirmación por la pasarela.' },
+                    { icon: 'close', titulo: 'Rechazado / Fallido', desc: 'El pago no fue autorizado. Verifica tu método de pago e intenta de nuevo.' },
+                ],
+                tips: [
+                    'Se muestran las últimas 5 transacciones, ordenadas del más reciente al más antiguo',
+                    'El total pagado solo suma las transacciones con estado Aprobado',
                 ],
             },
         ],

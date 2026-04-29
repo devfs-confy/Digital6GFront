@@ -1,14 +1,16 @@
 import { api } from "@/api/axios";
 import { handleError } from "@/utils/error.handler";
 
-class ModalidadesPagosService  {
-  constructor(){
-    this.nameRoute = "/v1/modalidades-pagos"
+class ModalidadesPagosService {
+  constructor() {
+    this.nameRoute = "/v1/modalidades-pagos";
   }
 
   async getAutorizaciones(idEstacionamiento) {
     try {
-      const response = await api.get(`/v1/autorizaciones/sede/${idEstacionamiento}`);
+      const response = await api.get(
+        `/v1/autorizaciones/sede/${idEstacionamiento}`,
+      );
       return response.data?.data ?? response.data ?? [];
     } catch (error) {
       handleError(error, "ModalidadesPagosService.getAutorizaciones");
@@ -17,9 +19,14 @@ class ModalidadesPagosService  {
 
   async getTiposPagos(idEstacionamiento, idAutorizacion) {
     try {
-      const response = await api.get(`${this.nameRoute}/sede/${idEstacionamiento}/autorizacion/${idAutorizacion}`);
+      const response = await api.get(
+        `${this.nameRoute}/sede/${idEstacionamiento}/autorizacion/${idAutorizacion}`,
+      );
       // Response shape: { data: { autorizacion_base: {...}, reglas: [...] } }
-      return response.data?.data ?? response.data ?? { autorizacion_base: null, reglas: [] };
+      return (
+        response.data?.data ??
+        response.data ?? { autorizacion_base: null, reglas: [] }
+      );
     } catch (error) {
       handleError(error, "ModalidadesPagosService.getTiposPagos");
     }
@@ -27,8 +34,9 @@ class ModalidadesPagosService  {
 
   async habilitarQuincena(idEstacionamiento, estado) {
     try {
-      const response = await api.put(`/v1/autorizaciones/habilitar-quincena/${idEstacionamiento}`,
-        { Estado: estado }
+      const response = await api.put(
+        `/v1/autorizaciones/habilitar-quincena/${idEstacionamiento}`,
+        { Estado: estado },
       );
       return response.data;
     } catch (error) {
@@ -40,11 +48,22 @@ class ModalidadesPagosService  {
     try {
       const response = await api.post(
         `${this.nameRoute}/sede/${idEstacionamiento}/autorizacion/${idAutorizacion}`,
-        { Modalidades: modalidades }
+        { Modalidades: modalidades },
       );
       return response.data;
     } catch (error) {
       handleError(error, "ModalidadesPagosService.agregarTiposPagos");
+    }
+  }
+
+  async getByIdStatus(IdEstacionamiento) {
+    try {
+      const response = await api.get(
+        `/v1/autorizaciones/estado/quincena/${IdEstacionamiento}`,
+      );
+      return response.data;
+    } catch (error) {
+      return handleError(error);
     }
   }
 }

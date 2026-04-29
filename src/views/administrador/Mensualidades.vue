@@ -433,7 +433,7 @@
                                     <p class="text-[0.9rem] font-extrabold text-white truncate">Últimos Pagos</p>
                                     <p class="text-[0.65rem] text-white/50 font-semibold truncate mt-[1px]">
                                         {{ selectedMensual?.NombreApellidos }} · #{{
-                                        selectedMensual?.IdPersonaAutorizada }}
+                                            selectedMensual?.IdPersonaAutorizada }}
                                     </p>
                                 </div>
                             </div>
@@ -476,8 +476,9 @@
                                     <tbody>
                                         <tr v-for="p in pagosData" :key="p.idPago"
                                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
-                                            <td class="td-cell font-mono text-xs text-gray-500">{{ p.idEstacionamiento
-                                                }}</td>
+                                            <td class="td-cell font-mono text-xs text-gray-500">{{
+                                                p.nombreEstacionamiento
+                                            }}</td>
                                             <td class="td-cell">
                                                 <span class="badge badge--dark">{{ p.idModulo }}</span>
                                             </td>
@@ -486,11 +487,12 @@
                                             <td class="td-cell font-black text-[#299261]">
                                                 {{ Number(p.total).toLocaleString('es-CO', {
                                                     style: 'currency',
-                                                currency: 'COP',
-                                                minimumFractionDigits: 0 }) }}
+                                                    currency: 'COP',
+                                                    minimumFractionDigits: 0
+                                                }) }}
                                             </td>
                                             <td class="td-cell">
-                                                <span class="badge badge--blue">{{ p.idTipoPago }}</span>
+                                                <span class="badge badge--blue">{{ p.tipoPago }}</span>
                                             </td>
                                             <td class="td-cell text-xs text-gray-500">{{ formatFecha(p.fechaPago) }}
                                             </td>
@@ -524,7 +526,7 @@
                                     <p class="text-[0.9rem] font-extrabold text-white truncate">Transacciones</p>
                                     <p class="text-[0.65rem] text-white/50 font-semibold truncate mt-[1px]">
                                         {{ selectedMensual?.NombreApellidos }} · #{{
-                                        selectedMensual?.IdPersonaAutorizada }}
+                                            selectedMensual?.IdPersonaAutorizada }}
                                     </p>
                                 </div>
                             </div>
@@ -561,6 +563,33 @@
                                             {{ s.Nombre.trim() }}
                                         </button>
                                     </div>
+                                </div>
+
+                                <!-- Filtros fecha -->
+                                <div class="flex flex-wrap gap-3 items-end flex-shrink-0">
+                                    <div class="flex flex-col gap-1">
+                                        <label
+                                            class="text-[0.62rem] font-black uppercase tracking-widest text-[#0D291C]/50">Desde</label>
+                                        <input type="date" v-model="txFechaInicio"
+                                            @change="selectedSedeTransaccion && buscarTx()"
+                                            class="rounded-lg border-2 border-[#e8f5e9] px-3 py-1.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] transition-all" />
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <label
+                                            class="text-[0.62rem] font-black uppercase tracking-widest text-[#0D291C]/50">Hasta</label>
+                                        <input type="date" v-model="txFechaFin"
+                                            @change="selectedSedeTransaccion && buscarTx()"
+                                            class="rounded-lg border-2 border-[#e8f5e9] px-3 py-1.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] transition-all" />
+                                    </div>
+                                    <button @click="buscarTx"
+                                        :disabled="!selectedSedeTransaccion || loadingTransaccionesTable"
+                                        class="px-4 py-1.5 rounded-lg bg-[#0D291C] text-white text-sm font-bold disabled:opacity-40 hover:bg-[#1a3d2b] transition-all">
+                                        Buscar
+                                    </button>
+                                    <span v-if="txTotalRecords > 0"
+                                        class="text-[0.7rem] font-semibold text-gray-400 self-end pb-1">
+                                        {{ txTotalRecords }} registros
+                                    </span>
                                 </div>
 
                                 <!-- Loading tabla -->
@@ -615,8 +644,11 @@
                                                     {{ t.placaSalida }}</td>
                                                 <td class="td-cell text-xs text-gray-500">{{ formatFecha(t.fechaSalida)
                                                     }}</td>
+
                                                 <td class="td-cell td-cell--center">
-                                                    <span class="badge badge--blue">{{ t.idTipoVehiculo }}</span>
+                                                    <span class="badge badge--blue"> {{ t.IdTipoVehiculo === '1' ?
+                                                        'Carro' : 'Moto' }}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -625,6 +657,17 @@
                             </template>
 
                         </div>
+
+                        <!-- Paginación transacciones -->
+                        <TablePaginacion
+                            v-if="txTotalRecords > 0"
+                            :pagina-actual="txPage"
+                            :total-paginas="txTotalPages"
+                            :total-registros="txTotalRecords"
+                            :limit="txLimit"
+                            @pagina="txIrPagina"
+                            @limit="txOnLimitChange" />
+
                     </div>
                 </div>
             </Transition>
@@ -861,12 +904,30 @@ const loadingSedesTransacciones = ref(false)
 const selectedSedeTransaccion = ref(null)
 const transaccionesTable = ref([])
 const loadingTransaccionesTable = ref(false)
+const txFechaInicio = ref('')
+const txFechaFin = ref('')
+const txTotalRecords = ref(0)
+const txTotalPages = ref(1)
+const txPage = ref(1)
+const txLimit = ref(10)
+
+const txHoy = () => new Date().toISOString().slice(0, 10)
+const txHace30 = () => {
+    const d = new Date()
+    d.setDate(d.getDate() - 30)
+    return d.toISOString().slice(0, 10)
+}
 
 const abrirModalTransacciones = async (m) => {
     selectedMensual.value = m
     sedesTransacciones.value = []
     selectedSedeTransaccion.value = null
     transaccionesTable.value = []
+    txTotalRecords.value = 0
+    txTotalPages.value = 1
+    txPage.value = 1
+    txFechaInicio.value = txHace30()
+    txFechaFin.value = txHoy()
     loadingSedesTransacciones.value = true
     modalTransacciones.value = true
     try {
@@ -879,19 +940,51 @@ const abrirModalTransacciones = async (m) => {
     }
 }
 
-const seleccionarSedeTransaccion = async (sede) => {
-    if (selectedSedeTransaccion.value?.IdEstacionamiento === sede.IdEstacionamiento) return
-    selectedSedeTransaccion.value = sede
+const buscarTransacciones = async () => {
+    if (!selectedSedeTransaccion.value) return
     transaccionesTable.value = []
     loadingTransaccionesTable.value = true
     try {
-        const res = await ParqueosService.getAllAdmin(sede.IdEstacionamiento, selectedMensual.value.Documento)
+        const res = await ParqueosService.getAllAdmin({
+            IdSede: selectedSedeTransaccion.value.IdEstacionamiento,
+            search: selectedMensual.value.Documento,
+            FechaInicio: txFechaInicio.value,
+            FechaFin: txFechaFin.value,
+            page: txPage.value,
+            limit: txLimit.value,
+        })
         transaccionesTable.value = res?.data ?? []
+        txTotalRecords.value = res?.totalRecords ?? 0
+        txTotalPages.value = res?.totalPages ?? 1
     } catch (e) {
         console.error('[Transacciones tabla]', e)
     } finally {
         loadingTransaccionesTable.value = false
     }
+}
+
+const buscarTx = () => {
+    txPage.value = 1
+    buscarTransacciones()
+}
+
+const txIrPagina = (p) => {
+    if (p < 1 || p > txTotalPages.value) return
+    txPage.value = p
+    buscarTransacciones()
+}
+
+const txOnLimitChange = (val) => {
+    txLimit.value = Number(val)
+    txPage.value = 1
+    buscarTransacciones()
+}
+
+const seleccionarSedeTransaccion = async (sede) => {
+    if (selectedSedeTransaccion.value?.IdEstacionamiento === sede.IdEstacionamiento) return
+    selectedSedeTransaccion.value = sede
+    txPage.value = 1
+    await buscarTransacciones()
 }
 
 // ── Aside ver detalle (read-only) ────────────────────────────────
