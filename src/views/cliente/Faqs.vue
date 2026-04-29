@@ -296,7 +296,7 @@ const categorias = [
             },
             {
                 id: 21,
-                pregunta: '¿Qué debo hacer si mi transacción no concluyó?',
+                pregunta: '¿Qué debo hacer si mi pago no concluyó?',
                 respuesta: 'En primera instancia, revisar si llegó un email de confirmación de la transacción a la cuenta de correo electrónico inscrito en el momento de realizar el pago. En caso de no haberlo recibido, deberás contactar a contabilidad de Parquearse para confirmar el estado de la transacción.',
             },
             {

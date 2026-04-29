@@ -93,6 +93,7 @@
                                 <th class="th-cell">IVA</th>
                                 <th class="th-cell">Total</th>
                                 <th class="th-cell">Fecha de pago</th>
+                                <th class="th-cell">Concepto</th>
                                 <th class="th-cell">Factura</th>
                             </tr>
                         </thead>
@@ -124,6 +125,9 @@
                                     </div>
                                 </td>
                                 <td class="td-cell">
+                                    <span class="valor-text">{{ pago.concepto }}</span>
+                                </td>
+                                <td class="td-cell">
                                     <button v-if="pago.tokenFactura" @click="descargarFactura(pago)"
                                         :disabled="descargando === pago.numeroFactura" class="btn-factura"
                                         :class="{ 'btn-factura--loading': descargando === pago.numeroFactura }"
@@ -134,7 +138,7 @@
                                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                                         </svg>
                                         <span>{{ descargando === pago.numeroFactura ? 'Descargando...' : 'Factura'
-                                        }}</span>
+                                            }}</span>
                                     </button>
                                     <span v-else class="sin-factura">—</span>
                                 </td>
@@ -180,7 +184,6 @@ const descargando = ref(null)
 const errDescarga = ref('')
 
 // ── Carga del historial ───────────────────────────────────────────
-// Respuesta: { success, data: [{ IdEstacionamiento, pagos: [...] }] }
 const cargarHistorial = async () => {
     loading.value = true
     errorCarga.value = ''
@@ -198,6 +201,7 @@ const cargarHistorial = async () => {
                 numeroFactura: p.NumeroFactura ?? '—',
                 total: p.Total ?? 0,
                 subtotal: p.Subtotal ?? 0,
+                concepto: p.Concepto ?? '—',
                 iva: p.Iva ?? 0,
                 fecha: (p.FechaPago ?? '').slice(0, 10),
                 tokenFactura: p.Token || null,
@@ -622,7 +626,28 @@ const formatMes = (fecha) => {
 }
 
 @media (max-width: 767px) {
-    @keyframes cardIn { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
-    @keyframes rowIn  { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes cardIn {
+        from {
+            opacity: 1;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes rowIn {
+        from {
+            opacity: 1;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
 }
 </style>
