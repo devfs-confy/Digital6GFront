@@ -278,10 +278,6 @@ async function handleLogin() {
 }
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-</style>
-
 <style scoped>
 /* ── Root ─────────────────────────────────────── */
 .login-root {
@@ -294,6 +290,8 @@ async function handleLogin() {
     overflow: hidden;
     position: relative;
     font-family: 'Funnel Display', 'Roboto', sans-serif;
+    padding: 24px 20px;
+    box-sizing: border-box;
 }
 
 /* ── Background blobs ─────────────────────────── */
@@ -327,8 +325,8 @@ async function handleLogin() {
     z-index: 10;
     display: flex;
     flex-direction: row;
-    width: 92%;
-    max-width: 860px;
+    width: 94%;
+    max-width: 960px;
     border-radius: 28px;
     overflow: hidden;
     box-shadow:
@@ -428,7 +426,7 @@ async function handleLogin() {
 
 .form-inner {
     width: 100%;
-    max-width: 310px;
+    max-width: 360px;
 }
 
 /* ── Form header ──────────────────────────────── */
@@ -491,9 +489,9 @@ async function handleLogin() {
 
 .field-icon {
     position: absolute;
-    left: 13px;
-    width: 15px;
-    height: 15px;
+    left: 14px;
+    width: 17px;
+    height: 17px;
     color: #b0bec5;
     transition: color 0.2s ease;
     pointer-events: none;
@@ -502,11 +500,11 @@ async function handleLogin() {
 
 .input-wrap input {
     width: 100%;
-    padding: 11px 14px 11px 38px;
+    padding: 14px 16px 14px 42px;
     background: #f7f8fa;
     border: 1.5px solid #e8ecf0;
-    border-radius: 12px;
-    font-size: 0.875rem;
+    border-radius: 14px;
+    font-size: 0.95rem;
     font-family: 'Funnel Display', 'Roboto', sans-serif;
     color: #232B3A;
     outline: none;

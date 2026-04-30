@@ -665,9 +665,10 @@
             <div v-if="modalPrioridad"
                 class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
                 @click.self="modalPrioridad = false">
-                <div class="bg-[#B8E19E] border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[380px] flex flex-col overflow-hidden modal-card"
+                <div class="bg-white border-[2.5px] border-[#0D291C] rounded-[28px] w-full max-w-[380px] flex flex-col overflow-hidden modal-card"
                     style="box-shadow: 0 7px 0 #0D291C">
 
+                    <!-- Head -->
                     <div
                         class="flex items-center justify-between gap-3 px-6 pt-5 pb-4 flex-shrink-0 bg-gradient-to-br from-[#0D291C] to-[#1a4a2e] border-b-2 border-[#0D291C]/30">
                         <div class="flex items-center gap-3 min-w-0">
@@ -687,45 +688,39 @@
                         <button @click="modalPrioridad = false"
                             class="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center font-black cursor-pointer flex-shrink-0 bg-white/10 border border-white/18 text-white/55 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
+
+                    <!-- Body -->
                     <div class="px-6 py-5 flex flex-col gap-3">
                         <div class="flex flex-col gap-2">
                             <button v-for="pri in ['ALTA', 'MEDIA', 'BAJA']" :key="pri" @click="fPrioridad = pri"
                                 class="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all"
                                 :class="fPrioridad === pri
-                                    ? {
-                                        'bg-red-600 text-white border-red-700 shadow-[0_3px_0_#991b1b]': pri === 'ALTA',
-                                        'bg-amber-500 text-white border-amber-600 shadow-[0_3px_0_#b45309]': pri === 'MEDIA',
-                                        'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#050e09]': pri === 'BAJA',
-                                    }
+                                    ? 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#050e09]'
                                     : 'bg-white text-[#0D291C] border-[#0D291C]/15 hover:border-[#0D291C]/40 hover:bg-[#f0faf4]'">
                                 <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
                                     :class="fPrioridad === pri
-                                        ? 'bg-white/20'
+                                        ? 'bg-[#7FD344]/15'
                                         : {
                                             'bg-red-50': pri === 'ALTA',
                                             'bg-amber-50': pri === 'MEDIA',
                                             'bg-gray-100': pri === 'BAJA',
                                         }">
-                                    <AppIcon name="arrow_shape_up_stack" :size="16" :class="fPrioridad === pri
-                                        ? 'text-white'
-                                        : {
-                                            'text-red-500': pri === 'ALTA',
-                                            'text-amber-500': pri === 'MEDIA',
-                                            'text-gray-400': pri === 'BAJA',
+                                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                        :class="{
+                                            'bg-red-500': pri === 'ALTA',
+                                            'bg-amber-400': pri === 'MEDIA',
+                                            'bg-gray-400': pri === 'BAJA',
                                         }" />
                                 </div>
                                 <div class="flex flex-col items-start gap-[2px]">
                                     <span class="text-[0.85rem] font-black">{{ pri }}</span>
-                                    <span class="text-[0.62rem] font-semibold opacity-60">
-                                        {{ {
-                                            ALTA: 'Atención inmediata', MEDIA: 'Seguimiento normal',
-                                            BAJA: 'Sin urgencia'
-                                        }[pri] }}
+                                    <span class="text-[0.62rem] font-semibold opacity-50">
+                                        {{ { ALTA: 'Atención inmediata', MEDIA: 'Seguimiento normal', BAJA: 'Sin urgencia' }[pri] }}
                                     </span>
                                 </div>
                                 <span v-if="pqrsAccion?.Prioridad === pri"
                                     class="ml-auto text-[0.6rem] font-black uppercase tracking-wide px-2 py-[2px] rounded-full"
-                                    :class="fPrioridad === pri ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400'">
+                                    :class="fPrioridad === pri ? 'bg-[#7FD344]/20 text-[#7FD344]' : 'bg-gray-100 text-gray-400'">
                                     actual
                                 </span>
                             </button>
@@ -735,6 +730,7 @@
                             ⚠ {{ errPrioridad }}
                         </div>
                     </div>
+
                     <!-- Foot -->
                     <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
                         <button @click="modalPrioridad = false"

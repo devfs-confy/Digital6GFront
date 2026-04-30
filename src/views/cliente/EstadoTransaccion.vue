@@ -2,19 +2,16 @@
     <div class="flex flex-col gap-6 min-h-full pb-6">
 
         <!-- Header -->
-        <div class="header-bar flex items-center justify-between px-5 py-4">
-            <button @click="$router.push('/cliente/mensualidad')"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow:#595858 0px 2px 0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-                </svg>
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Resultado del pago</h2>
-            <div
-                class="flex items-center gap-1.5 bg-transparent text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full" />
-        </div>
+        <AdminPageHeader title="Resultado del pago">
+            <template #left>
+                <button @click="$router.push('/cliente/mensualidad')"
+                    class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                    style="box-shadow: #595858 0px 2px 0">
+                    <AppIcon name="arrow_left_alt" :size="14" />
+                    <span class="hidden sm:inline">Volver</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
         <!-- ── Cargando estado ── -->
         <div v-if="cargando" class="estado-card">
@@ -218,7 +215,7 @@
                             <div class="info-row" v-if="transaccion.Valor">
                                 <span class="info-row__label">Valor pagado</span>
                                 <span class="info-row__val info-row__val--precio">{{ formatPrecio(transaccion.Valor)
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -997,6 +994,16 @@ onMounted(cargarEstado)
 }
 
 @media (max-width: 767px) {
-    @keyframes fadeUp { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes fadeUp {
+        from {
+            opacity: 1;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
 }
 </style>

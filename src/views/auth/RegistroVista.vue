@@ -1,7 +1,7 @@
 <template>
     <!-- Root -->
     <div class="relative min-h-screen w-full bg-[#0D291C] flex items-center justify-center max-[767px]:items-start
-                px-4 py-5 max-[767px]:p-3 box-border overflow-hidden font-[Plus_Jakarta_Sans,sans-serif]">
+                px-5 py-6 max-[767px]:px-4 max-[767px]:py-4 box-border overflow-hidden font-[Plus_Jakarta_Sans,sans-serif]">
 
         <!-- Blobs -->
         <div class="fixed rounded-full pointer-events-none z-0 blur-[90px]
@@ -47,9 +47,9 @@
 
                 <!-- Scroll -->
                 <div class="flex-1 overflow-y-auto flex flex-col gap-5
-                            px-7 pt-6 pb-7
-                            md:px-10 md:pt-7 md:pb-10
-                            max-[767px]:px-[18px] max-[767px]:py-5">
+                            px-8 pt-7 pb-8
+                            md:px-12 md:pt-8 md:pb-11
+                            max-[767px]:px-5 max-[767px]:py-5">
 
 
                     <button @click="$router.back()"
@@ -938,10 +938,6 @@ const submit = async () => {
 }
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-</style>
-
 <style scoped>
 /* ── Animación card entrada ── */
 .reg-card {
@@ -988,9 +984,9 @@ const submit = async () => {
     width: 100%;
     box-sizing: border-box;
     border: 1.5px solid #e8ecf0 !important;
-    border-radius: 12px !important;
-    padding: 10px 14px !important;
-    font-size: 0.875rem !important;
+    border-radius: 14px !important;
+    padding: 13px 16px !important;
+    font-size: 0.92rem !important;
     color: #0D291C !important;
     background: #f7f8fa !important;
     outline: none !important;

@@ -2,18 +2,7 @@
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Transacciones - Pasarela de Pagos
-            </h2>
-            <div
-                class="flex items-center gap-1.5 bg-transparent text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full" />
-        </div>
+        <AdminPageHeader title="Historial de Transacciones - Pasarela de Pagos" />
 
         <!-- Loading -->
         <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
@@ -41,7 +30,7 @@
                 <div
                     class="bg-white rounded-[18px] px-[18px] py-4 flex flex-col gap-1 border-2 border-[#e8f5e9] shadow-[0_3px_0_#e2ede7]">
                     <span class="text-[1.2rem] font-black text-[#0D291C] leading-none">{{ formatCOP(totalPagado)
-                        }}</span>
+                    }}</span>
                     <span class="text-[0.65rem] font-bold uppercase tracking-[0.07em] text-gray-400">Total pagado</span>
                 </div>
                 <div

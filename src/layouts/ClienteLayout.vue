@@ -5,5 +5,5 @@
 
 <script setup>
 import AppLayout from './AppLayout.vue'
-import { clienteMenuItems } from '../router/routes/clienteRoutes.js'
+import { clienteMenuItems } from '../router/routes/clienteMenu.js'
 </script>

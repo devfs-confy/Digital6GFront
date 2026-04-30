@@ -19,7 +19,7 @@
 
     </div>
 
-    <ModalBanner :imagenes="bannerUrl" :autoshow="true" />
+    <ModalBanner :imagenes="bannerUrl" :enlaces="bannerEnlaces" :autoshow="true" />
 
 
 </template>
@@ -40,20 +40,24 @@ import icoPagos from "@/assets/img/receipt_long_green.svg?raw";
 
 
 const bannerUrl = ref([])
+const bannerEnlaces = ref([])
 
 onMounted(async () => {
     const res = await publicidadService.getMiPublicidad()
+    console.log('[Banner] res crudo:', res)
 
     if (res?.error) return
 
     const items = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+    console.log('[Banner] items:', items)
+    console.log('[Banner] keys de cada item:', items.map(i => Object.keys(i)))
     if (!items.length) return
 
     const urls = await Promise.all(
         items.map(async (item) => {
             const resultado = await publicidadService.getimgpublicidad(item.IdPublicidad)
+            console.log(`[Banner] getimgpublicidad(${item.IdPublicidad}):`, resultado)
 
-            // ← el base64 está en resultado.data.data
             const base64 = resultado?.data?.data
             const contentType = resultado?.data?.contentType ?? 'image/webp'
 
@@ -63,10 +67,12 @@ onMounted(async () => {
         })
     )
 
-    // Opción más simple — usar el campo Imagen que ya viene en el listado
-    bannerUrl.value = items
-        .map(item => item.Imagen)
-        .filter(Boolean)
+    const filteredItems = items.filter(item => item.Imagen)
+    bannerUrl.value = filteredItems.map(item => item.Imagen)
+    bannerEnlaces.value = filteredItems.map(item => item.Enlace ?? '')
+
+    console.log('[Banner] bannerUrl final:', bannerUrl.value)
+    console.log('[Banner] bannerEnlaces final:', bannerEnlaces.value)
 })
 
 const router = useRouter()

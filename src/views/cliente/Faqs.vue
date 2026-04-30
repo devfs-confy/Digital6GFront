@@ -2,17 +2,7 @@
     <div class="flex flex-col gap-5 min-h-full overflow-y-auto pb-6">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Preguntas Frecuentes</h2>
-            <div
-                class="flex items-center gap-1.5 bg-transparent text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full" />
-        </div>
+        <AdminPageHeader title="Preguntas Frecuentes" />
 
         <!-- Buscador -->
         <div class="bg-white rounded-2xl px-4 py-3 flex items-center gap-3 border-2 border-gray-100 shadow-sm">
@@ -173,59 +163,31 @@ const categorias = [
         faqs: [
             {
                 id: 1,
-                pregunta: '¿Cómo agrego una mensualidad?',
-                respuesta: 'Dirígete a "Mis Mensualidades" y haz clic en el botón "Añadir". Selecciona la sede y completa el formulario con el código de verificación que te entregó el Operario.',
+                pregunta: '¿Cómo puedo pagar mis mensualidades en línea?',
+                respuesta: 'Una vez registrado en nuestro portal, ingrese a "Mis Mensualidades", oprima el botón "Pagar", seleccione el valor de la mensualidad a cancelar y siga los pasos del proceso de pago.',
                 link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
             },
             {
                 id: 2,
-                pregunta: '¿Porqué no puedo congelar la mensualidad si acabé de pagar mensualidad y la tarjeta?',
-                respuesta: 'Tienes que dirigirte ',
+                pregunta: '¿Cómo inicio mi mensualidad en el parqueadero?',
+                respuesta: 'Una vez esté paga la mensualidad, queda activa desde la fecha de inicio registrada en el portal. Si el acceso a la sede es con tarjeta y no la tiene aún, ingrese al parqueadero retirando una tarjeta del módulo de ingreso y acérquese al punto de pago para que el operador le haga entrega de la tarjeta de mensualidad y le gestione la salida de este primer día.',
             },
             {
                 id: 3,
-                pregunta: '¿Cómo renuevo mi mensualidad?',
-                respuesta: 'En la tarjeta de tu mensualidad, haz clic en el botón "Pagar". Selecciona el plan y el número de meses, luego confirma para ser redirigido a la pasarela de pago.',
+                pregunta: '¿Cómo actualizo mis placas?',
+                respuesta: 'Ingrese a "Mis Mensualidades", oprima el botón "Más info" y luego "Cambiar placa". Modifique la placa PRINCIPAL y/o PLACA 2. Solo se permite un cambio de placa por mes. Si tiene un pago activo por Moto e incluye una placa de Carro, el sistema le cobrará un excedente.',
                 link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
             },
             {
                 id: 4,
-                pregunta: '¿Puedo congelar mi mensualidad?',
-                respuesta: 'Sí. En la tarjeta de tu mensualidad activa, haz clic en "Congelar", selecciona la fecha de regreso y escribe una observación. El periodo se pausará y la fecha de vencimiento se extenderá automáticamente.',
+                pregunta: 'Perdí mi tarjeta de acceso, ¿qué hago?',
+                respuesta: 'Ingrese a "Mis Mensualidades", oprima el botón "Perdí mi tarjeta" y confirme con "SÍ, PERDÍ MI TARJETA". Siga los pasos del proceso de pago y reclame la nueva tarjeta con el operador en la sede correspondiente.',
                 link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
             },
             {
                 id: 5,
-                pregunta: '¿Cómo cambio mis placas?',
-                respuesta: 'Ingresa al detalle de tu mensualidad y haz clic en "Cambiar placa". Solo se permite un cambio por mes. Si deseas cambiar de tipo de vehículo (moto a carro) en caso que no tengas carro asignado, se te cobrara un excedente.',
-                link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
-            },
-            {
-                id: 6,
-                pregunta: '¿Cómo puedo adquirir la tarjeta del parqueadero?',
-                respuesta: 'Para adquirirla, dirígete a "Mis Mensualidades" y haz clic en el botón "Pagar". Selecciona el plan y el número de meses, luego confirma para ser redirigido a la pasarela de pago. Después de haber realizado el pago, podrás acercarte al parqueadero y reclamar tu tarjeta con el Operario.',
-                link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
-            },
-            {
-                id: 7,
-                pregunta: '¿Cuántas mensualidades puedo tener a mi nombre?',
-                respuesta: '',
-            },
-            {
-                id: 8,
                 pregunta: '¿Dónde puedo consultar los días disponibles de mi mensualidad?',
-                respuesta: 'En el apartado de "Mis Mensualidades" en el menú principal podrás ver los días disponibles de tu mensualidad.',
-                link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
-            },
-            {
-                id: 9,
-                pregunta: '¿Qué debo presentar para iniciar mi mensualidad en el parqueadero?',
-                respuesta: 'Una vez habiendo pagado la mensualidad ya tendrás activa tu mensualidad en la sede para tu uso.',
-            },
-            {
-                id: 10,
-                pregunta: '¿Cómo puedo crear otra mensualidad en otra con mi usuario actual?',
-                respuesta: 'En el apartado de añadir mensualidad puedes agregar una mensualidad nueva, pero tendrás que acercarte al parqueadero que deseas la mensualidad y pedir un codigo de verificacion al Operario.',
+                respuesta: 'Ingrese a "Mis Mensualidades". En la parte superior derecha de la pantalla encontrará el número de días que aún tiene disponibles.',
                 link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
             },
         ]
@@ -235,28 +197,16 @@ const categorias = [
         nombre: 'Pagos',
         faqs: [
             {
-                id: 11,
+                id: 6,
                 pregunta: '¿Cómo consulto mis pagos?',
-                respuesta: 'En el menú principal selecciona "Pagos Recientes" para ver el historial de tus últimas transacciones con su estado y valor.',
+                respuesta: 'Ingrese a "Pagos Recientes". Aquí encontrará el historial de los últimos tres pagos efectuados con fecha de pago, valor y una opción para descargar la factura en PDF.',
                 link: { label: 'Ir a Pagos Recientes', route: '/cliente/pagos' },
             },
             {
-                id: 12,
+                id: 7,
                 pregunta: '¿Qué hago si mi pago quedó pendiente?',
-                respuesta: 'Al intentar pagar nuevamente, el sistema detectará automáticamente la transacción pendiente y te mostrará un enlace para completarla.',
+                respuesta: 'Al intentar pagar nuevamente, el sistema detectará automáticamente la transacción pendiente y le mostrará un enlace para completarla.',
                 link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
-            },
-            {
-                id: 13,
-                pregunta: '¿Cómo puedo pagar mis mensualidades en línea?',
-                respuesta: 'Una vez registrado en nuestro Portal, puedes pagar tus mensualidades desde el Portal, en la opción de Mis Mensualidades oprimir el botón pagar, seleccionar el valor de la mensualidad a cancelar y seguir los pasos del proceso de compra.',
-                link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
-            },
-            {
-                id: 14,
-                pregunta: '¿Dónde puedo consultar los pagos realizados de mi mensualidad?',
-                respuesta: 'En el apartado de "Pagos Recientes" puedes acceder a los ultimos 3 pagos realizados en tu mensualidad.',
-                link: { label: 'Ir a Pagos Recientes', route: '/cliente/pagos' },
             },
         ]
     },
@@ -265,44 +215,45 @@ const categorias = [
         nombre: 'AvalPay',
         faqs: [
             {
-                id: 15,
+                id: 8,
                 pregunta: '¿Qué es AvalPay?',
                 respuesta: 'AvalPay es la plataforma de pagos electrónicos que usa Parquearse para procesar en línea las transacciones generadas en la tienda virtual con las formas de pago habilitadas para tal fin.',
             },
             {
-                id: 16,
+                id: 9,
                 pregunta: '¿Cómo puedo pagar?',
-                respuesta: 'En la tienda virtual de Parquearse usted podrá realizar su pago con los medios habilitados para tal fin. Usted, de acuerdo con las opciones de pago escogidas por el comercio, podrá pagar a través de tarjetas de crédito Visa, y MasterCard y Cuentas debito ahorro y corriente PSE.',
+                respuesta: 'En la tienda virtual de Parquearse podrá realizar su pago con los medios habilitados: tarjetas de crédito Visa, cuentas débito de ahorro y corriente mediante PSE y próximamente Bre-V.',
             },
             {
-                id: 17,
+                id: 10,
                 pregunta: '¿Es seguro ingresar mis datos bancarios en este sitio web?',
-                respuesta: 'Para proteger tus datos Parquearse delega en AVALPAY la captura de la información sensible. Nuestra plataforma de pagos cumple con los más altos estándares exigidos por la norma internacional PCI DSS de seguridad en transacciones con tarjeta de crédito. Además, tiene certificado de seguridad SSL expedido por GeoTrust una compañía Verisign, el cual garantiza comunicaciones seguras mediante la encriptación de todos los datos hacia y desde el sitio.',
+                respuesta: 'Sí. Parquearse delega en AVALPAY la captura de la información sensible. La plataforma cumple con los estándares internacionales PCI DSS y cuenta con certificado de seguridad SSL, garantizando comunicaciones encriptadas.',
             },
             {
-                id: 18,
+                id: 11,
                 pregunta: '¿Puedo realizar el pago cualquier día y a cualquier hora?',
-                respuesta: 'Sí, en Parquearse podrás realizar tus compras en línea los 7 días de la semana, las 24 horas del día a sólo un clic de distancia.',
+                respuesta: 'Sí, en Parquearse podrá realizar sus pagos en línea los 7 días de la semana, las 24 horas del día.',
             },
             {
-                id: 19,
+                id: 12,
                 pregunta: '¿Puedo cambiar la forma de pago?',
-                respuesta: 'Si aún no has finalizado tu pago, podrás volver al paso inicial y elegir la forma de pago que prefieras. Una vez finalizada la compra no es posible cambiar la forma de pago.',
+                respuesta: 'Si aún no ha finalizado su pago, podrá volver al paso inicial y elegir otra forma de pago. Una vez finalizada la compra, no es posible cambiar la forma de pago.',
             },
             {
-                id: 20,
-                pregunta: '¿Pagar electrónicamente tiene algún valor para mí como comprador?',
+                id: 13,
+                pregunta: '¿Pagar electrónicamente tiene algún costo adicional?',
                 respuesta: 'No, los pagos electrónicos realizados a través de AVALPAY no generan costos adicionales para el comprador.',
             },
             {
-                id: 21,
-                pregunta: '¿Qué debo hacer si mi pago no concluyó?',
-                respuesta: 'En primera instancia, revisar si llegó un email de confirmación de la transacción a la cuenta de correo electrónico inscrito en el momento de realizar el pago. En caso de no haberlo recibido, deberás contactar a contabilidad de Parquearse para confirmar el estado de la transacción.',
+                id: 14,
+                pregunta: '¿Qué debo hacer si el pago no concluyó?',
+                respuesta: 'Revise si llegó a su correo un email de confirmación. En caso de no recibirlo, contacte al departamento de contabilidad de Parquearse en contabilidad@parquearse.com.',
             },
             {
-                id: 22,
+                id: 15,
                 pregunta: '¿Qué debo hacer si no recibí el comprobante de pago?',
-                respuesta: 'Por cada transacción aprobada a través de AVALPAY, recibirás un comprobante del pago con la referencia de compra en la dirección de correo electrónico que indicaste al momento de pagar. Si no lo recibes, podrás contactar a contabilidad o a la línea 607683042 o al correo electrónico contabilidad@parquearse.com, para solicitar el reenvío del comprobante.',
+                respuesta: 'Ingrese a "Pagos Recientes" y oprima el botón "FACTURA" del pago correspondiente para descargar el comprobante en PDF. Si el pago no aparece en el historial, contacte a contabilidad al número 6076803042 o al correo contabilidad@parquearse.com.',
+                link: { label: 'Ir a Pagos Recientes', route: '/cliente/pagos' },
             },
         ]
     },
@@ -311,27 +262,21 @@ const categorias = [
         nombre: 'Cuenta y acceso',
         faqs: [
             {
-                id: 23,
+                id: 16,
                 pregunta: '¿Cómo actualizo mis datos personales?',
-                respuesta: 'Ve a "Información Personal" desde el menú principal. Allí podrás actualizar tu nombre, teléfono y correo electrónico.',
+                respuesta: 'Ingrese a "Información Personal". Allí puede actualizar su nombre, teléfono y correo electrónico.',
                 link: { label: 'Ir a Información Personal', route: '/cliente/informacion' },
             },
             {
-                id: 24,
-                pregunta: 'Perdí mi tarjeta de acceso, ¿qué hago?',
-                respuesta: 'En la tarjeta de tu mensualidad activa verás el botón "Perdí mi tarjeta". Al confirmarlo, se habilitará el cobro de tarjeta y podrás tramitar una nueva desde el botón "Pagar".',
-                link: { label: 'Ir a Mis Mensualidades', route: '/cliente/mensualidad' },
-            },
-            {
-                id: 25,
-                pregunta: '¿Qué hago si registré mal el número de cédula cuando creé el usuario y ya realicé pago virtual de la mensualidad?',
-                respuesta: 'En el apartado de "PQRS" podrás realizar la solicitud de cambio de cédula.',
+                id: 17,
+                pregunta: '¿Qué hago si registré mal el número de cédula cuando creé el usuario?',
+                respuesta: 'Ingrese a "PQRS" y realice la solicitud de cambio de cédula.',
                 link: { label: 'Ir a PQRS', route: '/cliente/pqrs' },
             },
             {
-                id: 26,
+                id: 18,
                 pregunta: '¿Qué hago si seleccioné mal la sede en el momento del registro?',
-                respuesta: 'En el apartado de "PQRS" podrás realizar la solicitud de cambio de sede.',
+                respuesta: 'Ingrese a "PQRS" y realice la solicitud de cambio de sede.',
                 link: { label: 'Ir a PQRS', route: '/cliente/pqrs' },
             },
         ]

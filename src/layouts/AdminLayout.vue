@@ -13,7 +13,7 @@
 import { computed } from 'vue'
 import AppLayout from './AppLayout.vue'
 import AppLayoutSkeleton from './AppLayout.skeleton.vue'
-import { adminMenuItems } from '../router/routes/adminRoutes.js'
+import { adminMenuItems } from '../router/routes/adminMenu.js'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()

@@ -2,16 +2,16 @@
     <div class="flex flex-col gap-6 min-h-full pb-6">
 
         <!-- Header -->
-        <div class="header-bar">
-            <div class="header-bar__desktop">
-                <button @click="$router.push('/cliente/mensualidad')" class="btn-3d opacity-0">Volver</button>
-                <h2 class="header-bar__title">Resultado del pago</h2>
-                <div class="w-[100px]" />
-            </div>
-            <div class="header-bar__mobile">
-                <h2 class="header-bar__title">Resultado del pago</h2>
-            </div>
-        </div>
+        <AdminPageHeader title="Resultado del pago">
+            <template #left>
+                <button @click="$router.push('/cliente/mensualidad')"
+                    class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
+                    style="box-shadow: #595858 0px 2px 0">
+                    <AppIcon name="arrow_left_alt" :size="14" />
+                    <span class="hidden sm:inline">Volver</span>
+                </button>
+            </template>
+        </AdminPageHeader>
 
         <!-- Loading inicial -->
         <div v-if="cargando" class="estado-card">

@@ -1,17 +1,7 @@
 <template>
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
-        <div class="flex items-center justify-between bg-white rounded-full p-3 sm:p-4 flex-shrink-0">
-            <button @click="$router.back()"
-                class="flex items-center gap-1.5 bg-[#7FD344] text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
-                style="box-shadow: #595858 0px 2px 0">
-                <AppIcon name="arrow_left_alt" :size="14" />
-                <span class="hidden sm:inline">Volver</span>
-            </button>
-            <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Historial de Pagos en la Plataforma</h2>
-            <div
-                class="flex items-center gap-1.5 bg-transparent text-[#232B3A] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full" />
-        </div>
+        <AdminPageHeader title="Historial de Pagos en la Plataforma" />
 
         <!-- Loading -->
         <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
@@ -93,7 +83,8 @@
                                 <th class="th-cell">IVA</th>
                                 <th class="th-cell">Total</th>
                                 <th class="th-cell">Fecha de pago</th>
-                                <th class="th-cell">Concepto</th>
+                                <th class="th-cell">Tipo de Pago</th>
+                                <th class="th-cell">Autorización</th>
                                 <th class="th-cell">Factura</th>
                             </tr>
                         </thead>
@@ -125,7 +116,10 @@
                                     </div>
                                 </td>
                                 <td class="td-cell">
-                                    <span class="valor-text">{{ pago.concepto }}</span>
+                                    <span class="concepto-badge">{{ pago.tipoPago }}</span>
+                                </td>
+                                <td class="td-cell">
+                                    <span class="valor-text">{{ pago.nombreAutorizacion }}</span>
                                 </td>
                                 <td class="td-cell">
                                     <button v-if="pago.tokenFactura" @click="descargarFactura(pago)"
@@ -138,7 +132,7 @@
                                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                                         </svg>
                                         <span>{{ descargando === pago.numeroFactura ? 'Descargando...' : 'Factura'
-                                            }}</span>
+                                        }}</span>
                                     </button>
                                     <span v-else class="sin-factura">—</span>
                                 </td>
@@ -201,7 +195,8 @@ const cargarHistorial = async () => {
                 numeroFactura: p.NumeroFactura ?? '—',
                 total: p.Total ?? 0,
                 subtotal: p.Subtotal ?? 0,
-                concepto: p.Concepto ?? '—',
+                tipoPago: (p.TipoPago ?? []).join(', ') || '—',
+                nombreAutorizacion: (p.NombreAutorizacion ?? []).join(', ') || '—',
                 iva: p.Iva ?? 0,
                 fecha: (p.FechaPago ?? '').slice(0, 10),
                 tokenFactura: p.Token || null,
@@ -558,6 +553,20 @@ const formatMes = (fecha) => {
     font-size: 0.78rem;
     font-weight: 600;
     color: #d1d5db;
+}
+
+.concepto-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #0D291C;
+    background: #e8f5e9;
+    border: 1.5px solid #c8e6c9;
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────── */

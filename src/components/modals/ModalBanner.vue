@@ -15,7 +15,10 @@
                 <!-- Carousel de imágenes -->
                 <div class="banner-img-wrap">
                     <div class="carousel-track" :style="{ transform: `translateX(-${indiceActual * 100}%)` }">
-                        <div v-for="(img, i) in imagenes" :key="i" class="carousel-slide">
+                        <div v-for="(img, i) in imagenes" :key="i"
+                            class="carousel-slide"
+                            :class="{ 'has-link': enlaces[i] }"
+                            @click="enlaces[i] && window.open(enlaces[i], '_blank')">
                             <!-- Skeleton mientras carga -->
                             <div v-if="!imgEstados[i]?.cargada && !imgEstados[i]?.error" class="banner-skeleton" />
 
@@ -69,9 +72,11 @@
 <script setup>
 import { ref, watch, onMounted, reactive } from 'vue'
 
+const window = globalThis.window
+
 const props = defineProps({
-    // Array de imágenes en base64 (ej: ['data:image/png;base64,...', ...]) o URLs
     imagenes: { type: Array, default: () => [] },
+    enlaces: { type: Array, default: () => [] },
     altTexto: { type: String, default: 'Publicidad' },
     autoshow: { type: Boolean, default: true },
 })
@@ -198,6 +203,10 @@ defineExpose({ abrir: () => { visible.value = true } })
     min-width: 100%;
     height: 100%;
     position: relative;
+}
+
+.carousel-slide.has-link {
+    cursor: pointer;
 }
 
 .banner-img {
