@@ -35,7 +35,7 @@ export const adminMenuItems = [
     label: "Solicitudes <br> PQRS",
     icon: icoSolicitudes,
     route: "/admin/solicitudes",
-    permission: "VER-MENSUALIDADES",
+    permission: "VER-PQRS",
   },
   {
     label: "Historial <br> Pagos",
@@ -60,13 +60,13 @@ export const adminMenuItems = [
     label: "Facturación",
     icon: icoFacturacion,
     route: "/admin/facturacion",
-    permission: "EDITAR-SEDES",
+    permission: "VER-FACTURACIONS",
   },
   {
     label: "Modalidades<br>de Pago",
     icon: icoTarifas,
     route: "/admin/modalidades-pagos",
-    permission: "VER-SEDES",
+    permission: "ASIGNAR-MODALIDADES_PAGOS",
   },
   {
     label: "Administrar<br>Sedes",
@@ -78,7 +78,7 @@ export const adminMenuItems = [
     label: "Administrar<br>Tarifas",
     icon: icoTarifas,
     route: "/admin/tarifas-admin",
-    permission: "VER-SEDES",
+    permission: "VER-TARIFAS",
   },
 
   {
@@ -105,20 +105,20 @@ export const adminMenuItems = [
     label: "Autorizaciones",
     icon: icoAuth,
     route: "/admin/autorizaciones",
-    permission: "CREAR-CODIGOS",
+    permission: "VER-AUTORIZACIONES",
   },
   {
     label: "Banner",
     icon: icoTarjetas,
     route: "/admin/banner",
-    permission: "CREAR-CODIGOS",
+    permission: "VER-PUBLICIDAD",
   },
 
   {
     label: "Comunidad<br>UCC",
     icon: icoUCC,
     route: "/admin/comunidad-ucc",
-    permission: "VER-USUARIOS",
+    permission: "SUBIR-ESTUDIANTES",
   },
 ];
 

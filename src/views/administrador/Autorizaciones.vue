@@ -41,7 +41,7 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-            <div class="overflow-x-auto flex-1">
+            <div class="table-scroll-wrapper">
                 <table class="border-collapse min-w-[700px] w-full">
                     <thead>
                         <tr>
@@ -52,7 +52,7 @@
                             <th class="th-cell">Prioridad</th>
                             <th class="th-cell">Estado</th>
                             <th class="th-cell text-center">Quincena</th>
-                            <th class="th-cell text-center">Opciones</th>
+                            <th v-permission="'EDITAR-AUTORIZACIONES'" class="th-cell text-center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,7 +149,7 @@
                                 <span v-else class="text-gray-300 text-xs">—</span>
                             </td>
 
-                            <td class="px-5 py-3 text-center">
+                            <td v-permission="'EDITAR-AUTORIZACIONES'" class="px-5 py-3 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <button @click="abrirEditar(a)"
                                         class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-[#299261] hover:bg-[#e8f5e9] transition-all">

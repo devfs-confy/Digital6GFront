@@ -25,7 +25,7 @@
       </div>
 
       <!-- Botón abrir modal quincenas -->
-      <Transition name="fade-up">
+      <Transition v-permission="'HABILITAR-QUINCENAS'" name="fade-up">
         <div v-if="idSedeSeleccionada" class="flex flex-col gap-1 flex-shrink-0">
           <label class="text-[0.65rem] font-extrabold uppercase tracking-wider text-[#232B3A] pl-1">
             Quincenas

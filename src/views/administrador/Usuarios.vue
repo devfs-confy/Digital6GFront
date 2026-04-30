@@ -25,7 +25,7 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
-            <div class="overflow-x-auto flex-1 scrollbar-thin">
+            <div class="table-scroll-wrapper">
                 <table class="w-full border-collapse" style="min-width:300px">
                     <thead>
                         <tr>

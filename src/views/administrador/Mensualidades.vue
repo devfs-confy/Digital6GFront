@@ -44,7 +44,7 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-            <div class="overflow-x-auto flex-1 table-scroll-wrapper">
+            <div class="table-scroll-wrapper">
                 <table class="border-collapse min-w-[700px] w-full">
                     <thead>
                         <tr>
@@ -156,7 +156,8 @@
                                         class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-blue-500 hover:bg-blue-50 transition-all">
                                         <AppIcon name="visibility" :size="30" />
                                     </button>
-                                    <button @click="abrirDetalle(m)" title="Editar"
+                                    <button v-permission="'EDITAR-MENSUALIDADES'" @click="abrirDetalle(m)"
+                                        title="Editar"
                                         class="w-8 h-8 inline-flex items-center justify-center rounded-xl cursor-pointer border-none bg-transparent text-black hover:text-[#299261] hover:bg-[#e8f5e9] transition-all">
                                         <AppIcon name="edit_square" :size="30" />
                                     </button>
@@ -255,7 +256,7 @@
                         <div class="detail-pill">
                             <span class="dp-label">ID Autorización</span>
                             <span class="dp-value font-mono">{{ detalleVer.T_Autorizaciones?.IdAutorizacion ?? '—'
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="detail-pill">
                             <span class="dp-label">Fecha inicio</span>
@@ -405,7 +406,7 @@
                     </select>
                     <p class="text-[0.65rem] text-gray-400 pl-0.5">
                         Actual: <strong class="text-[#0D291C]">{{ detalle?.T_Autorizaciones?.NombreAutorizacion ?? '—'
-                        }}</strong>
+                            }}</strong>
                     </p>
                 </div>
 
@@ -478,12 +479,12 @@
                                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
                                             <td class="td-cell font-mono text-xs text-gray-500">{{
                                                 p.nombreEstacionamiento
-                                            }}</td>
+                                                }}</td>
                                             <td class="td-cell">
                                                 <span class="badge badge--dark">{{ p.idModulo }}</span>
                                             </td>
                                             <td class="td-cell font-mono font-bold text-[#0D291C]">#{{ p.numeroFactura
-                                                }}</td>
+                                            }}</td>
                                             <td class="td-cell font-black text-[#299261]">
                                                 {{ Number(p.total).toLocaleString('es-CO', {
                                                     style: 'currency',
@@ -636,14 +637,14 @@
                                                 <td class="td-cell font-mono font-bold text-[#0D291C] tracking-widest">
                                                     {{ t.placaEntrada }}</td>
                                                 <td class="td-cell text-xs text-gray-500">{{ formatFecha(t.fechaEntrada)
-                                                    }}</td>
+                                                }}</td>
                                                 <td class="td-cell">
                                                     <span class="badge badge--violet">{{ t.moduloSalida }}</span>
                                                 </td>
                                                 <td class="td-cell font-mono font-bold text-[#0D291C] tracking-widest">
                                                     {{ t.placaSalida }}</td>
                                                 <td class="td-cell text-xs text-gray-500">{{ formatFecha(t.fechaSalida)
-                                                    }}</td>
+                                                }}</td>
 
                                                 <td class="td-cell td-cell--center">
                                                     <span class="badge badge--blue"> {{ t.IdTipoVehiculo === '1' ?
@@ -659,13 +660,8 @@
                         </div>
 
                         <!-- Paginación transacciones -->
-                        <TablePaginacion
-                            v-if="txTotalRecords > 0"
-                            :pagina-actual="txPage"
-                            :total-paginas="txTotalPages"
-                            :total-registros="txTotalRecords"
-                            :limit="txLimit"
-                            @pagina="txIrPagina"
+                        <TablePaginacion v-if="txTotalRecords > 0" :pagina-actual="txPage" :total-paginas="txTotalPages"
+                            :total-registros="txTotalRecords" :limit="txLimit" @pagina="txIrPagina"
                             @limit="txOnLimitChange" />
 
                     </div>

@@ -10,11 +10,11 @@
                 <span class="hidden sm:inline">Volver</span>
             </button>
             <h2 class="text-base sm:text-2xl font-bold text-[#232B3A]">Mis Mensualidades</h2>
-            <button @click="modalCodigo = true"
+            <!-- <button @click="modalCodigo = true"
                 class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black">
                 <AppIcon name="add" :size="14" />
                 <span class="hidden sm:inline">Añadir</span>
-            </button>
+            </button> -->
         </div>
 
         <!-- Grid -->
@@ -126,7 +126,7 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
-                                }}</span>
+                            }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
@@ -343,7 +343,7 @@
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
                                         <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                     <div
                                         class="flex flex-col gap-1.5 rounded-xl bg-white border border-[#c8e6c9] px-3 py-2.5">
@@ -353,13 +353,13 @@
                                         </div>
                                         <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                             <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div
                                             class="flex justify-between text-[0.85rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                             <span>Total a pagar</span>
                                             <span class="text-[#299261]">{{ formatPrecio(infoExcedente.excedente?.total)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -382,7 +382,7 @@
                                         <div class="flex items-center justify-between">
                                             <div class="flex flex-col gap-0.5 text-left">
                                                 <span class="text-[0.9rem] font-black text-[#0D291C]">{{ op.nombre
-                                                    }}</span>
+                                                }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
                                                     {{ op.modalidad }} <span v-if="op.tarjeta"> + TARJETA</span>
@@ -398,7 +398,7 @@
 
                                                 <span class="text-base font-black text-[#299261]">{{
                                                     formatPrecio(op.totalFinal)
-                                                    }}</span>
+                                                }}</span>
 
                                             </div>
                                         </div>
@@ -757,7 +757,7 @@
                                                 <path d="M8 5v14l11-7z" />
                                             </svg>
                                             <span class="font-black text-[#0D291C]">{{ infoExcedente.autorizacionNueva
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div
                                             class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[0.7rem] font-semibold text-amber-800 leading-relaxed">
@@ -781,18 +781,18 @@
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>Subtotal</span><span>{{
                                                     formatPrecio(infoExcedente.excedente?.subtotal)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div class="flex justify-between text-[0.7rem] font-semibold text-gray-500">
                                                 <span>IVA</span><span>{{ formatPrecio(infoExcedente.excedente?.iva)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-black text-[#0D291C] border-t border-[#e8f5e9] pt-1.5 mt-0.5">
                                                 <span>Total a pagar</span>
                                                 <span class="text-[#299261]">{{
                                                     formatPrecio(infoExcedente.excedente?.total)
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                         <p class="text-[0.68rem] font-semibold text-gray-400 leading-relaxed">

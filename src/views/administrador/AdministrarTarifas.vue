@@ -51,7 +51,7 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
-            <div class="overflow-x-auto flex-1 table-scroll-wrapper">
+            <div class="table-scroll-wrapper">
                 <table class="border-collapse min-w-[760px] w-full">
                     <thead>
                         <tr>
@@ -154,7 +154,7 @@
                                 <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
                             <td class="td-cell td-cell--center">
-                                <button @click="abrirEditar(t)"
+                                <button v-permission="'EDITAR-TARIFAS'" @click="abrirEditar(t)"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-bold text-[#0D291C]  transition-all">
                                     <AppIcon name="car_tag" :size="30" />
 

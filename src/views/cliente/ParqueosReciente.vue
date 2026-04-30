@@ -102,22 +102,22 @@
                         <thead>
                             <tr>
                                 <th
-                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-left whitespace-nowrap">
+                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-center whitespace-nowrap">
                                     Placa</th>
                                 <th
-                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-left whitespace-nowrap">
+                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-center whitespace-nowrap">
                                     Vehículo</th>
                                 <th
-                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-left whitespace-nowrap">
+                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-center whitespace-nowrap">
                                     Entrada</th>
                                 <th
-                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-left whitespace-nowrap">
+                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-center whitespace-nowrap">
                                     Salida</th>
                                 <th
-                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-left whitespace-nowrap">
+                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-center whitespace-nowrap">
                                     Duración</th>
                                 <th
-                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-left whitespace-nowrap">
+                                    class="bg-[#0D291C] text-[#7FD344] text-[0.68rem] font-black uppercase tracking-[0.08em] px-4 py-[14px] text-center whitespace-nowrap">
                                     Estado</th>
                             </tr>
                         </thead>
@@ -161,7 +161,7 @@
                                         <span class="text-[0.8rem] font-bold text-[#232B3A]">{{ fmtFecha(r.entrada) }} ·
                                             {{ fmtHora(r.entrada) }}</span>
                                         <span class="text-[0.68rem] font-semibold text-gray-400">{{ r.moduloEntrada
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </td>
 
@@ -206,7 +206,7 @@
                     class="flex items-center justify-between flex-wrap gap-3 px-4 py-3 border-t border-gray-100 bg-white">
                     <span class="text-xs text-gray-400">
                         <strong>{{ rangoInicio }}–{{ rangoFin }}</strong> de <strong>{{ registrosFiltrados.length
-                        }}</strong>
+                            }}</strong>
                     </span>
                     <div class="flex items-center gap-1">
                         <button @click="pagina--" :disabled="pagina === 1" class="page-btn">
@@ -460,7 +460,30 @@ const calcDuracion = (entrada, salida) => {
 }
 
 @media (max-width: 767px) {
-    @keyframes pulseDot { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:1; transform:scale(1); } }
-    @keyframes rowIn    { from { opacity:1; transform:none; } to { opacity:1; transform:none; } }
+    @keyframes pulseDot {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes rowIn {
+        from {
+            opacity: 1;
+            transform: none;
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
 }
 </style>

@@ -4,7 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="PQRS">
             <template #right>
-                <button @click="abrirMotivos"
+                <button v-permission="'CREAR-PQRS-MOTIVO'" @click="abrirMotivos"
                     class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
                     style="box-shadow: #595858 0px 2px 0">
                     <AppIcon name="assignment" :size="14" />
@@ -59,7 +59,7 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col w-full max-w-[100%] ">
-            <div class="table-scroll-wrapper overflow-x-auto">
+            <div class="table-scroll-wrapper">
                 <table class="border-collapse min-w-[800px] w-full">
                     <thead>
                         <tr>
@@ -155,7 +155,7 @@
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-amber-50 hover:text-amber-500 transition-all border-0">
                                         <AppIcon name="arrow_shape_up_stack" :size="30" />
                                     </button>
-                                    <button @click="abrirAsignar(pqrs)" title="Asignar"
+                                    <button v-permission="'ASIGNAR-PQRS'" @click="abrirAsignar(pqrs)" title="Asignar"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-purple-50 hover:text-purple-500 transition-all border-0">
                                         <AppIcon name="manage_accounts" :size="30" />
                                     </button>
@@ -457,7 +457,7 @@
                     <div class="px-6 py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
                         <button @click="modalDetalle = false"
                             class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="responderPqrs"
+                        <button v-permission="'RESPONDER-PQRS'" @click="responderPqrs"
                             :disabled="guardandoR || !fR.Respuesta.trim() || fR.Respuesta.trim() === respuestaOriginal.trim()"
                             class="btn-modal-dark"> <span v-if="guardandoR"
                                 class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
@@ -641,9 +641,9 @@
                                         :class="m.Estado ? 'bg-green-50 text-green-600 border-green-200' : 'bg-gray-100 text-gray-400 border-gray-200'">
                                         {{ m.Estado ? 'Activo' : 'Inactivo' }}
                                     </span>
-                                    <button @click="editarMotivo(m)"
+                                    <button v-permission="'EDITAR-PQRS-MOTIVO'" @click="editarMotivo(m)"
                                         class="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all border-0">
-                                        <AppIcon name="edit_square" :size="16" />
+                                        <AppIcon name="edit_square" :size="20" />
                                     </button>
                                 </div>
                             </div>

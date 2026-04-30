@@ -109,7 +109,7 @@
                                 <span v-if="r.Estado" class="estado--activo">● Activo</span>
                                 <span v-else class="estado--inactivo">● Inactivo</span>
                             </td>
-                            <td class="td-cell td-cell--center">
+                            <td v-permission="'EDITAR-FACTURACION'" class="td-cell td-cell--center flex ">
                                 <button @click="abrirDetalle(r)" class="action-btn" title="Ver / Editar">
                                     <AppIcon name="visibility" :size="30" />
                                 </button>

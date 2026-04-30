@@ -4,7 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="Gestión de Publicidad">
             <template #right>
-                <button @click="abrirModalCrear"
+                <button v-permission="'CREAR-PUBLICIDAD'" @click="abrirModalCrear"
                     class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
                     style="box-shadow: #595858 0px 2px 0">
                     <AppIcon name="add" :size="14" />
@@ -139,7 +139,7 @@
 
                 <!-- Acciones -->
                 <div class="flex gap-2 px-4 pb-4">
-                    <button @click="abrirModalEditar(p)"
+                    <button v-permission="'EDITAR-PUBLICIDAD'" @click="abrirModalEditar(p)"
                         class="flex-1 flex items-center justify-center gap-1.5 py-[9px] px-3 rounded-[12px] text-[0.74rem] font-black cursor-pointer border-2 transition-all active:translate-y-[1px] bg-white text-[#0D291C] border-[#e8f5e9] shadow-[0_2px_0_#e2ede7] hover:bg-[#f0faf4]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
                             viewBox="0 0 24 24">
@@ -384,7 +384,7 @@
                                     {{ pe.T_Estacionamientos?.Nombre?.slice(0, 2).toUpperCase() }}
                                 </div>
                                 <span class="text-[0.82rem] font-black text-[#0D291C]">{{ pe.T_Estacionamientos?.Nombre
-                                }}</span>
+                                    }}</span>
                             </div>
                             <button @click="toggleSede(pe)"
                                 class="relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0"
