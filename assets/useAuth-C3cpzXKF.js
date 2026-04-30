@@ -1,0 +1,1 @@
+import{X as i}from"./vendor-vue-B2TLvYn5.js";import{u as a}from"./index-BuG5eM4o.js";function A(){const o=a(),{user:t,role:u}=i(o),{isAdmin:n}=i(o),r=s=>!s||n.value?!0:(t.value?.permisos??[]).some(m=>m.toUpperCase()===s.toUpperCase());return{user:t,role:u,isAdmin:n,hasPermission:r,hasAllPermissions:(s=[])=>s.every(e=>r(e)),hasAnyPermission:(s=[])=>s.some(e=>r(e))}}export{A as u};
