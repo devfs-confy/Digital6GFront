@@ -1,1 +1,0 @@
-import{u as m,Y as i}from"./index-C70Qwn9V.js";function A(){const o=m(),{user:t,role:u}=i(o),{isAdmin:n}=i(o),r=s=>!s||n.value?!0:(t.value?.permisos??[]).some(a=>a.toUpperCase()===s.toUpperCase());return{user:t,role:u,isAdmin:n,hasPermission:r,hasAllPermissions:(s=[])=>s.every(e=>r(e)),hasAnyPermission:(s=[])=>s.some(e=>r(e))}}export{A as u};
