@@ -3,8 +3,8 @@
 
         <!-- Header -->
         <AdminPageHeader title="Clientes">
-            <template #right>
-                <button v-permission="'CREAR-USUARIOS'" @click="abrirNuevo"
+             <template #right>
+                <button @click="abrirCrearCliente"
                     class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-[#0D291C]"
                     style="box-shadow: #051510 0px 2px 0">
                     <AppIcon name="add" :size="16" />
@@ -157,173 +157,235 @@
 
         </template><!-- /VER-USUARIOS -->
 
-        <!-- MODAL NUEVO CLIENTE -->
-        <Transition name="modal">
-            <div v-if="modalNuevo"
-                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
-                @click.self="modalNuevo = false">
-                <div class="bg-[#B8E19E] border-[2.5px] border-[#0D291C] rounded-[40px] w-full max-w-[660px] max-h-[88vh] flex flex-col overflow-hidden modal-card"
-                    style="box-shadow: 0 7px 0 #0D291C">
+        <!-- ───────────────── MODAL: CREAR CLIENTE ───────────────── -->
+        <Transition name="modal-fade">
+            <div v-if="modalCrearCliente"
+                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[80] p-4">
+                <div
+                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)]">
 
                     <!-- Head -->
                     <div
-                        class="flex items-center justify-between gap-3 px-[26px] pt-[22px] pb-4 border-b-2 border-[rgba(13,41,28,0.14)] flex-shrink-0">
-                        <div class="flex items-center gap-3 min-w-0">
+                        class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15] flex-shrink-0">
+                        <div class="flex items-center gap-3">
                             <div
-                                class="w-11 h-11 rounded-full bg-[#0D291C] text-[#7FD344] flex items-center justify-center font-black text-[0.9rem] flex-shrink-0 border-2 border-[rgba(13,41,28,0.4)]">
-                                +</div>
+                                class="w-9 h-9 rounded-xl bg-[#7FD344] flex items-center justify-center flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                </svg>
+                            </div>
                             <div>
-                                <p
-                                    class="text-[1rem] font-black text-[#0D291C] italic uppercase tracking-[-0.01em] truncate">
-                                    Nuevo cliente</p>
-                                <p
-                                    class="text-[0.65rem] font-bold uppercase tracking-[0.07em] text-[#0D291C] opacity-45 mt-0.5">
-                                    Completa los datos de registro</p>
+                                <p class="text-[0.9rem] font-extrabold text-white">Registrar cliente</p>
+                                <p class="text-[0.65rem] text-white/50 font-semibold">Completa los campos obligatorios
+                                    *</p>
                             </div>
                         </div>
-                        <button @click="modalNuevo = false"
-                            class="text-[1.1rem] font-black text-[#0D291C] opacity-35 hover:opacity-100 transition-opacity bg-transparent border-none cursor-pointer leading-none flex-shrink-0">✕</button>
+                        <button @click="modalCrearCliente = false"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
                     </div>
 
                     <!-- Body -->
-                    <div class="flex-1 overflow-y-auto px-[26px] py-5 flex flex-col gap-3.5 modal-body">
+                    <div
+                        class="flex flex-col gap-4 px-5 py-5 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
+
+                        <!-- Datos personales -->
                         <p
-                            class="text-[0.62rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-45 border-b-[1.5px] border-[rgba(13,41,28,0.12)] pb-1 mt-0.5">
-                            Datos personales</p>
-                        <div class="grid grid-cols-2 gap-[11px] max-[500px]:grid-cols-1">
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                            Datos personales
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
-                                <label class="field-label">Documento *</label>
-                                <input v-model="fN.Documento" type="text" class="field-input"
-                                    placeholder="1098617878" />
+                                <label
+                                    class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Documento
+                                    <span class="text-red-400">*</span></label>
+                                <input v-model="fCrear.Documento" type="text" placeholder="1122334455"
+                                    class="crear-input" />
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label class="field-label">Sede *</label>
-                                <select v-model="fN.IdEstacionamiento" class="field-input">
-                                    <option value="">Seleccionar</option>
-                                    <option v-for="s in sedes" :key="s.IdEstacionamiento"
-                                        :value="Number(s.IdEstacionamiento)">
-                                        {{ s.Nombre }}</option>
-                                </select>
+                                <label
+                                    class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Teléfono
+                                    <span class="text-red-400">*</span></label>
+                                <input v-model="fCrear.Telefono" type="text" maxlength="15" placeholder="3001234567"
+                                    class="crear-input" />
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label class="field-label">Nombres *</label>
-                                <input v-model="fN.Nombres" type="text" class="field-input" placeholder="Juan Felipe" />
+                                <label
+                                    class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Nombres
+                                    <span class="text-red-400">*</span></label>
+                                <input v-model="fCrear.Nombres" type="text" maxlength="50" placeholder="Andrés Felipe"
+                                    class="crear-input" />
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label class="field-label">Apellidos *</label>
-                                <input v-model="fN.Apellidos" type="text" class="field-input"
-                                    placeholder="García Ospina" />
+                                <label
+                                    class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Apellidos
+                                    <span class="text-red-400">*</span></label>
+                                <input v-model="fCrear.Apellidos" type="text" maxlength="50"
+                                    placeholder="García Ospina" class="crear-input" />
                             </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="field-label">Teléfono *</label>
-                                <input v-model="fN.Telefono" type="text" class="field-input" placeholder="3001234567" />
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label
+                                class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Correo
+                                electrónico <span class="text-red-400">*</span></label>
+                            <input v-model="fCrear.Email" type="email" maxlength="100"
+                                placeholder="correo@ejemplo.com" class="crear-input" />
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label
+                                class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Contraseña
+                                <span class="text-red-400">*</span></label>
+                            <div class="relative">
+                                <input v-model="fCrear.Password" :type="verPassCrear ? 'text' : 'password'"
+                                    maxlength="50" placeholder="••••••••"
+                                    class="crear-input pr-10" />
+                                <button type="button" @click="verPassCrear = !verPassCrear"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 opacity-50 hover:opacity-100 transition-opacity">
+                                    <svg v-if="!verPassCrear" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        viewBox="0 0 24 24" fill="#0D291C">
+                                        <path
+                                            d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                        viewBox="0 0 24 24" fill="#0D291C">
+                                        <path
+                                            d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
+                                    </svg>
+                                </button>
                             </div>
+                        </div>
+
+                        <!-- Sede y vehículos -->
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                            Sede y vehículos
+                        </p>
+
+                        <div class="flex flex-col gap-1">
+                            <label
+                                class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Sede
+                                <span class="text-red-400">*</span></label>
+                            <select v-model="fCrear.IdEstacionamiento" class="crear-select">
+                                <option value="">Seleccionar sede</option>
+                                <option v-for="s in sedes" :key="s.IdEstacionamiento"
+                                    :value="Number(s.IdEstacionamiento)">{{ s.Nombre }}</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
-                                <label class="field-label">Email *</label>
-                                <input v-model="fN.Email" type="email" class="field-input"
-                                    placeholder="correo@ejemplo.com" />
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="field-label">Contraseña *</label>
-                                <div class="relative">
-                                    <input v-model="fN.Password" :type="verPass ? 'text' : 'password'"
-                                        class="field-input pr-10" placeholder="••••••••" />
-                                    <button type="button" @click="verPass = !verPass"
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 opacity-50 hover:opacity-100 transition-opacity">
-                                        <svg v-if="!verPass" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            viewBox="0 0 24 24" fill="#0D291C">
-                                            <path
-                                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                                        </svg>
-                                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            viewBox="0 0 24 24" fill="#0D291C">
-                                            <path
-                                                d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
-                                        </svg>
-                                    </button>
+                                <label
+                                    class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Placa
+                                    1 <span class="text-red-400">*</span></label>
+                                <div
+                                    class="flex items-center gap-2 bg-white border-2 border-gray-200 rounded-xl px-3 py-2 focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)] transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#9ca3af"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z" />
+                                        <circle cx="7.5" cy="14.5" r="1.5" />
+                                        <circle cx="16.5" cy="14.5" r="1.5" />
+                                    </svg>
+                                    <input v-model="fCrear.Placa1" type="text" maxlength="6" placeholder="ABC123"
+                                        class="crear-placa-input"
+                                        @input="fCrear.Placa1 = fCrear.Placa1.toUpperCase()" />
                                 </div>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label class="field-label">ID Autorización</label>
-                                <input v-model.number="fN.IdAutorizacion" type="number" class="field-input"
-                                    placeholder="123" />
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="field-label">Fecha inicio</label>
-                                <input v-model="fN.FechaInicio" type="date" class="field-input" />
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="field-label">Fecha fin</label>
-                                <input v-model="fN.FechaFin" type="date" class="field-input" />
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-x-5 gap-y-2 mt-1">
-                            <label
-                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]"><input
-                                    type="checkbox" v-model="fN.Estado" class="check" /><span>Activo</span></label>
-                            <label
-                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]"><input
-                                    type="checkbox" v-model="fN.EstudianteUcc" class="check" /><span>Estudiante
-                                    UCC</span></label>
-                            <label
-                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]"><input
-                                    type="checkbox" v-model="fN.Old" class="check" /><span>Registro
-                                    antiguo</span></label>
-                            <label
-                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]"><input
-                                    type="checkbox" v-model="fN.Sincronizacion"
-                                    class="check" /><span>Sincronizado</span></label>
-                        </div>
-
-                        <div v-if="fN.EstudianteUcc" class="flex flex-col gap-1 mt-2">
-                            <label class="field-label">Código estudiante UCC</label>
-                            <input v-model="fN.CodigoEstudianteUCC" type="text" class="field-input"
-                                placeholder="765432" />
-                        </div>
-
-                        <p
-                            class="text-[0.62rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-45 border-b-[1.5px] border-[rgba(13,41,28,0.12)] pb-1 mt-0.5">
-                            Vehículos</p>
-                        <div class="grid grid-cols-2 gap-[11px] max-[500px]:grid-cols-1">
-                            <div v-for="(_, idx) in fN.placas" :key="idx" class="flex flex-col gap-1">
-                                <label class="field-label">Placa {{ idx + 1 }}{{ idx === 0 ? ' *' : '' }}</label>
-                                <div class="flex gap-2 items-center">
-                                    <input v-model="fN.placas[idx]" type="text" class="field-input placa-input flex-1"
-                                        :placeholder="`ABC${idx + 1}23`" maxlength="6" />
-                                    <button v-if="fN.placas.length > 1" type="button" @click="fN.placas.splice(idx, 1)"
-                                        class="w-8 h-8 rounded-xl bg-red-100 border-none flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all cursor-pointer flex-shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                            viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                                        </svg>
-                                    </button>
+                                <label
+                                    class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Placa
+                                    2</label>
+                                <div
+                                    class="flex items-center gap-2 bg-white border-2 border-gray-200 rounded-xl px-3 py-2 focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)] transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#9ca3af"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z" />
+                                        <circle cx="7.5" cy="14.5" r="1.5" />
+                                        <circle cx="16.5" cy="14.5" r="1.5" />
+                                    </svg>
+                                    <input v-model="fCrear.Placa2" type="text" maxlength="6" placeholder="DEF456"
+                                        class="crear-placa-input"
+                                        @input="fCrear.Placa2 = fCrear.Placa2.toUpperCase()" />
                                 </div>
                             </div>
                         </div>
-                        <button v-if="fN.placas.length < 5" type="button" @click="fN.placas.push('')"
-                            class="self-start flex items-center gap-1.5 text-[0.75rem] font-bold text-[#0D291C] hover:text-[#299261] transition-colors border-none bg-transparent p-0 cursor-pointer mt-1">
-                            <span
-                                class="w-5 h-5 rounded-lg bg-[#0D291C] text-[#7FD344] flex items-center justify-center">
-                                <AppIcon name="add" :size="30" />
-                            </span>
-                            Agregar placa
-                        </button>
 
-                        <div v-if="errNuevo"
-                            class="px-3.5 py-2.5 rounded-xl text-[0.78rem] font-bold bg-red-50 border-[1.5px] border-red-200 text-red-700">
-                            ⚠ {{ errNuevo }}</div>
+                        <!-- Opciones -->
+                        <p
+                            class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                            Opciones
+                        </p>
+
+                        <div class="flex flex-wrap gap-x-5 gap-y-2.5">
+                            <label
+                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]">
+                                <input type="checkbox" v-model="fCrear.Old"
+                                    class="w-3.5 h-3.5 accent-[#299261] cursor-pointer" />
+                                <span>Registro antiguo</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]">
+                                <input type="checkbox" v-model="fCrear.EstudianteUcc"
+                                    class="w-3.5 h-3.5 accent-[#299261] cursor-pointer" />
+                                <span>Estudiante UCC</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-1.5 cursor-pointer text-[0.78rem] font-bold text-[#0D291C]">
+                                <input type="checkbox" v-model="fCrear.Estado"
+                                    class="w-3.5 h-3.5 accent-[#299261] cursor-pointer" />
+                                <span>Activo</span>
+                            </label>
+                        </div>
+
+                        <template v-if="fCrear.Old">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="flex flex-col gap-1">
+                                    <label
+                                        class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">ID
+                                        Tarjeta <span class="text-red-400">*</span></label>
+                                    <input v-model="fCrear.IdTarjeta" type="text" placeholder="ABD1214"
+                                        class="crear-input" />
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label
+                                        class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">ID
+                                        Autorización <span class="text-red-400">*</span></label>
+                                    <input v-model.number="fCrear.IdAutorizacion" type="number" placeholder="123"
+                                        class="crear-input" />
+                                </div>
+                            </div>
+                        </template>
+
+                        <div v-if="fCrear.EstudianteUcc" class="flex flex-col gap-1">
+                            <label
+                                class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Código
+                                estudiante UCC</label>
+                            <input v-model="fCrear.CodigoEstudianteUCC" type="text" placeholder="765432"
+                                class="crear-input" />
+                        </div>
+
+                        <div v-if="errCrear"
+                            class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.72rem] font-semibold text-red-600">
+                            ⚠ {{ errCrear }}
+                        </div>
                     </div>
 
                     <!-- Foot -->
-                    <div class="px-[26px] py-4 border-t-2 border-[rgba(13,41,28,0.1)] flex gap-2.5 flex-shrink-0">
-                        <button @click="modalNuevo = false"
-                            class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
-                        <button @click="crearCliente" :disabled="guardandoN" class="btn-modal-dark">
-                            <span v-if="guardandoN"
-                                class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin mr-1" />
-                            {{ guardandoN ? 'Creando...' : 'Crear cliente' }}
+                    <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200 flex-shrink-0">
+                        <button @click="modalCrearCliente = false"
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            Cancelar
+                        </button>
+                        <button @click="crearClienteNuevo" :disabled="guardandoCrear"
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            <div v-if="guardandoCrear"
+                                class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
+                            {{ guardandoCrear ? 'Creando...' : 'Crear cliente' }}
                         </button>
                     </div>
                 </div>
@@ -396,6 +458,7 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
+import { showSuccess } from '@/utils/swal'
 import ClientService from '@/api/services/client.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
@@ -552,44 +615,69 @@ const limpiarFiltros = () => {
     cargarClientes()
 }
 
-// ── Modal Nuevo ────────────────────────────────────────────────────
-const abrirNuevo = () => {
-    errNuevo.value = ''
-    verPass.value = false
-    Object.assign(fN, {
-        Documento: '', IdEstacionamiento: '', Nombres: '', Apellidos: '',
-        Telefono: '', Email: '', Password: '', IdAutorizacion: null,
-        FechaInicio: '', FechaFin: '', Estado: true, EstudianteUcc: false,
-        CodigoEstudianteUCC: '', Old: false, Sincronizacion: false, placas: [''],
-    })
-    modalNuevo.value = true
+
+// ── Crear cliente ─────────────────────────────────────────────────
+const modalCrearCliente = ref(false)
+const guardandoCrear = ref(false)
+const errCrear = ref('')
+const verPassCrear = ref(false)
+const fCrear = ref({
+    Documento: '', Nombres: '', Apellidos: '', Email: '', Telefono: '',
+    Password: '', IdEstacionamiento: '', Placa1: '', Placa2: '',
+    Old: false, Estado: true, IdTarjeta: '', IdAutorizacion: null,
+    EstudianteUcc: false, CodigoEstudianteUCC: '',
+})
+
+const abrirCrearCliente = () => {
+    errCrear.value = ''
+    verPassCrear.value = false
+    fCrear.value = {
+        Documento: '', Nombres: '', Apellidos: '', Email: '', Telefono: '',
+        Password: '', IdEstacionamiento: '', Placa1: '', Placa2: '',
+        Old: false, Estado: true, IdTarjeta: '', IdAutorizacion: null,
+        EstudianteUcc: false, CodigoEstudianteUCC: '',
+    }
+    modalCrearCliente.value = true
 }
 
-const crearCliente = async () => {
-    errNuevo.value = ''
-    if (!fN.Documento || !fN.Nombres || !fN.Apellidos || !fN.Email || !fN.Telefono || !fN.Password) {
-        errNuevo.value = 'Completa todos los campos obligatorios (*).'; return
+const crearClienteNuevo = async () => {
+    errCrear.value = ''
+    const f = fCrear.value
+    if (!f.Documento || !f.Nombres || !f.Apellidos || !f.Email || !f.Telefono || !f.Password || !f.IdEstacionamiento || !f.Placa1) {
+        errCrear.value = 'Completa todos los campos obligatorios (*).'
+        return
     }
-    guardandoN.value = true
+    if (f.Old && (!f.IdTarjeta || !f.IdAutorizacion)) {
+        errCrear.value = 'IdTarjeta e IdAutorizacion son requeridos en modo Registro antiguo.'
+        return
+    }
+    guardandoCrear.value = true
     try {
-        const { placas, ...rest } = fN
         await ClientService.createClient({
-            ...rest,
-            IdEstacionamiento: Number(rest.IdEstacionamiento) || 0,
-            Placa1: placas[0] || null, Placa2: placas[1] || null,
-            Placa3: placas[2] || null, Placa4: placas[3] || null, Placa5: placas[4] || null,
+            Documento: f.Documento,
+            Nombres: f.Nombres,
+            Apellidos: f.Apellidos,
+            Email: f.Email,
+            Telefono: f.Telefono,
+            Password: f.Password,
+            IdEstacionamiento: Number(f.IdEstacionamiento),
+            Placa1: f.Placa1 || null,
+            Placa2: f.Placa2 || null,
+            Old: f.Old,
+            Estado: f.Estado,
+            ...(f.Old && { IdTarjeta: f.IdTarjeta, IdAutorizacion: f.IdAutorizacion }),
+            EstudianteUcc: f.EstudianteUcc,
+            ...(f.EstudianteUcc && { CodigoEstudianteUCC: f.CodigoEstudianteUCC }),
         })
-        paginaActual.value = 1
-        await cargarClientes()
-        modalNuevo.value = false
+        modalCrearCliente.value = false
+        showSuccess('¡Cliente registrado!', 'El cliente ha sido creado exitosamente.')
     } catch (e) {
-        const msg = e.response?.data?.message
-        errNuevo.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al crear el cliente.')
+        const msg = e?.response?.data?.message
+        errCrear.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al crear el cliente.')
     } finally {
-        guardandoN.value = false
+        guardandoCrear.value = false
     }
 }
-
 // ── Modal Editar ───────────────────────────────────────────────────
 
 const abrirEditar = (c) => {
@@ -872,5 +960,64 @@ input[type=number]::-webkit-outer-spin-button {
     .td-cell--sticky {
         min-width: auto;
     }
+}
+
+/* ── inputs / select del modal crear cliente (sobreescribe reset) ── */
+.crear-input {
+    background-color: white !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 8px 12px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    color: #0D291C !important;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+}
+
+.crear-input:focus {
+    border-color: #299261 !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.12) !important;
+}
+
+.crear-select {
+    background-color: white !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 8px 12px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    color: #0D291C !important;
+    outline: none !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.crear-select:focus {
+    border-color: #299261 !important;
+    box-shadow: 0 0 0 3px rgba(41, 146, 97, 0.12) !important;
+}
+
+.crear-placa-input {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    font-family: 'Courier New', monospace !important;
+    font-weight: 900 !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: #0D291C !important;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    min-width: 0;
 }
 </style>

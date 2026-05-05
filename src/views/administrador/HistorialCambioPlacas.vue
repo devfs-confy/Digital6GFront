@@ -65,7 +65,7 @@
                         </tr>
 
                         <!-- Vacío -->
-                        <tr v-else-if="registros.length === 0">
+                        <tr v-else-if="registrosFiltrados.length === 0">
                             <td colspan="9" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <AppIcon name="history" :size="48" class="text-gray-300" />
@@ -76,7 +76,7 @@
                         </tr>
 
                         <!-- Filas -->
-                        <tr v-else v-for="r in registros" :key="r.IdSolicitud" class="tr-row">
+                        <tr v-else v-for="r in registrosFiltrados" :key="r.IdSolicitud" class="tr-row">
 
                             <td class="td-cell">
                                 <span class="font-mono text-xs text-gray-400">#{{ r.IdSolicitud }}</span>
@@ -135,7 +135,8 @@
             </div>
 
             <!-- Paginación -->
-            <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas" :total-registros="total"
+            <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
+                :total-registros="filtros.search ? registrosFiltrados.length : total"
                 :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
@@ -296,6 +297,17 @@ const filtros = ref({ search: '', sede: '' })
 let busquedaTimer = null
 
 // ── Computed ──────────────────────────────────────────────────
+const registrosFiltrados = computed(() => {
+    const q = filtros.value.search.trim().toLowerCase()
+    if (!q) return registros.value
+    return registros.value.filter(r => {
+        const nombre = (r.T_PersonasAutorizadas?.NombreApellidos ?? '').toLowerCase()
+        const documento = (r.DocumentoUsuario ?? '').toLowerCase()
+        const placas = (r.Detalles ?? []).flatMap(d => [d.PlacaAnterior, d.PlacaNueva]).join(' ').toLowerCase()
+        return nombre.includes(q) || documento.includes(q) || placas.includes(q)
+    })
+})
+
 const totalPaginas = computed(() => Math.max(1, Math.ceil(total.value / limit.value)))
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -314,13 +326,12 @@ const cargarHistorial = async (page = 1) => {
     try {
         const res = await MensualidadesService.getHistorialCambioPlacas({
             page,
-            limit: limit.value,
-            search: filtros.value.search,
+            limit: 9999,
             sede: filtros.value.sede,
         })
         registros.value = Array.isArray(res?.data) ? res.data : []
         total.value = res?.total ?? registros.value.length
-        paginaActual.value = res?.page ?? page
+        paginaActual.value = page
     } catch (e) {
         console.error('[HistorialCambioPlacas]', e)
     } finally {

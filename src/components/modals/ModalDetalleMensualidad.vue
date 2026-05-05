@@ -122,13 +122,13 @@
                                     Vehículos registrados
                                 </p>
                                 <div class="flex flex-wrap gap-2">
-                                    <!-- <button @click="emit('cambiarPlaca')"
+                                    <!-- <button @click="emit('cambiarPlacas')"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all"
                                         :class="placaCambiada
                                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                             : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] hover:opacity-80'"
                                         :disabled="placaCambiada">
-                                        {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placa' }}
+                                        {{ placaCambiada ? 'Cambio realizado este mes' : 'Cambiar placas' }}
                                     </button> -->
                                     <button @click="emit('cambiarTipo')" :disabled="detalle?.solicitud"
                                         class="flex items-center gap-1.5 text-[0.65rem] font-black px-3 py-1.5 rounded-full border-2 cursor-pointer transition-all"
@@ -136,7 +136,7 @@
                                             ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                             : 'bg-[#7FD344] text-[#0D291C] border-[#7FD344] hover:opacity-80'">
                                         <AppIcon name="swap_driving_apps" :size="12" />
-                                        Cambiar placa
+                                        Cambiar placas
                                     </button>
                                 </div>
                             </div>

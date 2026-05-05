@@ -12,14 +12,12 @@ class FacturaService {
     page = 1,
     limit = 10,
     IdSede = "",
-    IdModulo = "",
     NumeroFactura = "",
     IdTransaccion = "",
   } = {}) {
     try {
       const params = { page, limit };
       if (IdSede) params.IdSede = IdSede;
-      if (IdModulo) params.IdModulo = IdModulo;
       if (NumeroFactura) params.NumeroFactura = NumeroFactura;
       if (IdTransaccion) params.IdTransaccion = IdTransaccion;
       const response = await api.get(this.facturadmin, { params });

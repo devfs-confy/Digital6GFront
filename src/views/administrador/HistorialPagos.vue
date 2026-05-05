@@ -18,17 +18,11 @@
                     </option>
                 </select>
             </div>
-            <!-- Módulo -->
-            <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
+            <!-- Fecha pago -->
+            <div class="flex flex-col gap-1 flex-1 min-w-[150px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
-                    class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Módulo</label>
-                <div class="relative">
-                    <input v-model="filtros.modulo" type="text" placeholder="Ej: VUPT"
-                        class="w-full rounded-full bg-[#EAEAEA] border-2 border-[#299261] px-4 py-2.5 pr-10 text-sm text-black outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all"
-                        @input="onDebounce" />
-                    <AppIcon name="category" :size="18"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
+                    class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Fecha pago</label>
+                <DatePickerInput v-model="filtros.fecha" placeholder="Seleccionar día" />
             </div>
             <!-- N° Factura -->
             <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
@@ -72,6 +66,7 @@
                             <th class="th-cell">Fecha</th>
                             <th class="th-cell">Módulo</th>
                             <th class="th-cell">Factura</th>
+                            <th class="th-cell">Forma Pago</th>
                             <th class="th-cell">Total</th>
                             <th class="th-cell th-cell--center">Tipo</th>
                             <th class="th-cell th-cell--center">Ver</th>
@@ -79,7 +74,7 @@
                     </thead>
                     <tbody>
                         <tr v-if="loading">
-                            <td colspan="8" class="py-20 text-center">
+                            <td colspan="9" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <div
                                         class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
@@ -87,15 +82,15 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr v-else-if="registros.length === 0">
-                            <td colspan="8" class="py-20 text-center text-gray-300">
+                        <tr v-else-if="registrosFiltrados.length === 0">
+                            <td colspan="9" class="py-20 text-center text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
                                     <AppIcon name="receipt_long" :size="48" class="text-gray-300" />
                                     <span class="text-sm font-medium">No se encontraron pagos</span>
                                 </div>
                             </td>
                         </tr>
-                        <tr v-else v-for="p in registros" :key="p.IdPago" class="tr-row">
+                        <tr v-else v-for="p in registrosFiltrados" :key="p.IdPago" class="tr-row">
                             <td class="td-cell">
                                 <span class="font-mono text-xs text-gray-400">#{{ p.IdPago }}</span>
                             </td>
@@ -116,6 +111,9 @@
                             <td class="td-cell">
                                 <span class="text-sm font-semibold text-gray-700"># {{ p.NumeroFactura ?? '—' }}</span>
                             </td>
+                            <td class="td-cell">
+                                <span class="text-sm text-gray-700">{{ formaPagoLabel(p.IdFormaPago) }}</span>
+                            </td>
                             <td class="td-cell font-bold text-[#0D291C]">
                                 {{ formatPrecio(p.Total) }}
                             </td>
@@ -129,7 +127,7 @@
                                     <span v-if="!p.PagoMensual && !p.Anulada" class="text-gray-400 text-xs">—</span>
                                 </div>
                             </td>
-                            <td class="td-cell flex justify-center ">
+                            <td class="td-cell flex justify-center">
                                 <button @click="verDetalle(p)" class="action-btn th-cell--center" title="Ver detalle">
                                     <AppIcon name="visibility" :size="30" />
                                 </button>
@@ -140,8 +138,13 @@
             </div>
 
             <!-- Paginación -->
-            <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas" :total-registros="total"
-                :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
+            <TablePaginacion
+                :pagina-actual="filtros.fecha ? 1 : paginaActual"
+                :total-paginas="filtros.fecha ? 1 : totalPaginas"
+                :total-registros="filtros.fecha ? registrosFiltrados.length : total"
+                :limit="limit"
+                @pagina="irPagina"
+                @limit="onLimitChange" />
         </div>
 
         <!-- ───── ASIDE: DETALLE ───── -->
@@ -167,51 +170,37 @@
                             </span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Fecha
-                                pago</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(activo.FechaPago)
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Fecha pago</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(activo.FechaPago) }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">ID
-                                Transacción</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C] font-mono">{{ activo.IdTransaccion
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">ID Transacción</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C] font-mono">{{ activo.IdTransaccion }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Módulo</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C] font-mono">{{ activo.IdModulo ?? '—'
-                            }}</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C] font-mono">{{ activo.IdModulo ?? '—' }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">N°
-                                Factura</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.NumeroFactura ?? '—'
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">N° Factura</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.NumeroFactura ?? '—' }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">ID
-                                Autorizado</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdAutorizado ?? '—'
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">ID Autorizado</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdAutorizado ?? '—' }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Tipo
-                                pago</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Tipo pago</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdTipoPago ?? '—' }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Forma
-                                pago</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdFormaPago?.trim() ?? '—'
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Forma pago</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formaPagoLabel(activo.IdFormaPago) }}</span>
                         </div>
                         <div
                             class="col-span-2 flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Identificación
-                                cliente</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdentificacionCliente ?? '—'
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Identificación cliente</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ activo.IdentificacionCliente ?? '—' }}</span>
                         </div>
                     </div>
                 </section>
@@ -225,8 +214,7 @@
                     </p>
                     <div class="grid grid-cols-2 gap-2">
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Pago
-                                mensual</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Pago mensual</span>
                             <span v-if="activo.PagoMensual" class="text-[0.82rem] font-black text-[#299261]">● Sí</span>
                             <span v-else class="text-[0.82rem] font-black text-gray-400">● No</span>
                         </div>
@@ -252,10 +240,8 @@
                             <span class="text-[1rem] font-black text-[#0D291C]">{{ formatPrecio(activo.Total) }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
-                            <span
-                                class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Subtotal</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.Subtotal)
-                            }}</span>
+                            <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">Subtotal</span>
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatPrecio(activo.Subtotal) }}</span>
                         </div>
                         <div class="flex flex-col gap-0.5 bg-white rounded-xl px-3 py-2.5 border border-gray-200">
                             <span class="text-[0.6rem] font-black uppercase tracking-wider text-gray-400">IVA</span>
@@ -270,12 +256,19 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import FacturaService from '@/api/services/factura.service'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import AppIcon from '@/components/shared/AppIcon.vue'
+import DatePickerInput from '@/components/shared/DatePickerInput.vue'
+
+const FORMA_PAGO = { '47': 'Transferencia' }
+const formaPagoLabel = (id) => {
+    const key = id?.trim()
+    return FORMA_PAGO[key] ?? key ?? '—'
+}
 
 const loading = ref(false)
 const registros = ref([])
@@ -283,14 +276,21 @@ const total = ref(0)
 const limit = ref(20)
 const paginaActual = ref(1)
 const sedes = ref([])
-const filtros = ref({ sede: '', modulo: '', factura: '', transaccion: '' })
+const filtros = ref({ sede: '', fecha: '', factura: '', transaccion: '' })
 let debounceTimer = null
 
 const asideDetalle = ref(false)
 const activo = ref(null)
 
 const totalPaginas = computed(() => Math.max(1, Math.ceil(total.value / limit.value)))
-const hayFiltros = computed(() => filtros.value.sede || filtros.value.modulo || filtros.value.factura || filtros.value.transaccion)
+const hayFiltros = computed(() =>
+    filtros.value.sede || filtros.value.fecha || filtros.value.factura || filtros.value.transaccion
+)
+
+const registrosFiltrados = computed(() => {
+    if (!filtros.value.fecha) return registros.value
+    return registros.value.filter(p => p.FechaPago?.startsWith(filtros.value.fecha))
+})
 
 const formatFecha = (f) => {
     if (!f) return '—'
@@ -308,17 +308,16 @@ const cargar = async (page = 1) => {
     loading.value = true
     try {
         const res = await FacturaService.GetFacturasAdmin({
-            page,
-            limit: limit.value,
+            page: filtros.value.fecha ? 1 : page,
+            limit: filtros.value.fecha ? 9999 : limit.value,
             IdSede: filtros.value.sede,
-            IdModulo: filtros.value.modulo,
             NumeroFactura: filtros.value.factura,
             IdTransaccion: filtros.value.transaccion,
         })
         const d = res?.data
         registros.value = Array.isArray(d?.data) ? d.data : (Array.isArray(d) ? d : [])
         total.value = d?.meta?.total ?? registros.value.length
-        paginaActual.value = d?.meta?.page ?? page
+        paginaActual.value = filtros.value.fecha ? 1 : (d?.meta?.page ?? page)
     } catch (e) {
         console.error('[HistorialPagos]', e)
         registros.value = []
@@ -326,6 +325,8 @@ const cargar = async (page = 1) => {
         loading.value = false
     }
 }
+
+watch(() => filtros.value.fecha, () => cargar(1))
 
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
@@ -345,7 +346,7 @@ const onDebounce = () => {
 }
 
 const limpiarFiltros = () => {
-    filtros.value = { sede: '', modulo: '', factura: '', transaccion: '' }
+    filtros.value = { sede: '', fecha: '', factura: '', transaccion: '' }
     cargar(1)
 }
 

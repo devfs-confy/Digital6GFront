@@ -669,6 +669,7 @@
             </Transition>
         </Teleport>
 
+        
     </div>
 </template>
 
@@ -865,6 +866,7 @@ const onSedeChange = () => {
     mensualidades.value = []
     cargarMensualidades()
 }
+
 
 // ── Mount ──────────────────────────────────────────────────────────
 onMounted(async () => {

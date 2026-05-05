@@ -193,7 +193,6 @@ import { ref, onMounted } from 'vue'
 import AppIcon from '@/components/shared/AppIcon.vue'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import PqrsService from '@/api/services/pqrs.service'
-import { fechaSinDate } from '@/utils/formats.date'
 import formats from '@/utils/formats.date'
 
 // ── Estado ─────────────────────────────────────────────────────────
