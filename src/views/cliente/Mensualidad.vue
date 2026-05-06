@@ -63,7 +63,7 @@
                     </div>
                     <!-- Days counter -->
                     <div
-                        class="flex flex-col items-center flex-shrink-0 bg-gray-50 rounded-xl px-3 py-2 border border-[1.5px] border-gray-200">
+                        class="flex flex-col items-center flex-shrink-0 bg-gray-50 rounded-xl px-3 py-2 border-[1.5px] border-gray-200">
                         <span class="text-[1.4rem] font-black leading-none" :class="{
                             'text-[#299261]': m.estado === 'activa',
                             'text-amber-600': m.estado === 'por_vencer',
@@ -109,7 +109,7 @@
                 <!-- Dates block -->
                 <template v-if="m.fechaInicio && m.fechaFin">
                     <div
-                        class="flex flex-col gap-[7px] bg-gray-50 rounded-[14px] px-3.5 py-3 border border-[1.5px] border-gray-200">
+                        class="flex flex-col gap-[7px] bg-gray-50 rounded-[14px] px-3.5 py-3 border-[1.5px] border-gray-200">
                         <div class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 class="text-gray-400 flex-shrink-0" viewBox="0 0 24 24">
@@ -445,7 +445,7 @@
                                     </button>
                                 </div>
                                 <p v-if="mesesExtra === 2"
-                                    class="flex items-start gap-1.5 text-[0.7rem] font-semibold text-green-800 bg-[#f0fdf4] border border-[1.5px] border-[#c8e6c9] rounded-[10px] px-3 py-2 leading-relaxed">
+                                    class="flex items-start gap-1.5 text-[0.7rem] font-semibold text-green-800 bg-[#f0fdf4] border-[1.5px] border-[#c8e6c9] rounded-[10px] px-3 py-2 leading-relaxed">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#299261"
                                         viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
@@ -478,7 +478,7 @@
                             <!-- Notice -->
                             <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <div
-                                    class="flex items-start gap-2 px-3 py-2.5 bg-[#f0fdf4] border border-[1.5px] border-[#c8e6c9] rounded-[10px] text-[0.72rem] font-semibold text-green-800 leading-relaxed">
+                                    class="flex items-start gap-2 px-3 py-2.5 bg-[#f0fdf4] border-[1.5px] border-[#c8e6c9] rounded-[10px] text-[0.72rem] font-semibold text-green-800 leading-relaxed">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#299261"
                                         viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                         <path
@@ -675,7 +675,7 @@
                         <!-- Warning -->
                         <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                             <div
-                                class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-[1.5px] border-amber-200 rounded-[10px] text-[0.72rem] font-semibold text-amber-800 leading-relaxed">
+                                class="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border-[1.5px] border-amber-200 rounded-[10px] text-[0.72rem] font-semibold text-amber-800 leading-relaxed">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706"
                                     viewBox="0 0 24 24" class="shrink-0 mt-[1px]">
                                     <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
@@ -693,7 +693,7 @@
                             </p>
                             <div class="flex flex-col gap-3">
                                 <div v-for="(_, idx) in nuevasPlacas" :key="idx"
-                                    class="flex flex-col gap-1 px-3 py-2.5 rounded-[14px] bg-gray-50 border border-[1.5px] border-gray-200">
+                                    class="flex flex-col gap-1 px-3 py-2.5 rounded-[14px] bg-gray-50 border-[1.5px] border-gray-200">
                                     <div class="flex items-center mb-0.5">
                                         <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">
                                             {{ idx === 0 ? 'Principal' : `Placa ${idx + 1}` }}
