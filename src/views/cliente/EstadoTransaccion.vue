@@ -135,7 +135,7 @@
                         <strong style="color:#92400e">607683042 </strong>
                         o escríbenos a
                         <a href="mailto:contabilidad@parquearse.com"
-                            style="color:#d97706;font-weight:800;text-decoration:underline">
+                            style="color:#d97706;font-weight:700;text-decoration:underline">
                             contabilidad@parquearse.com
                         </a>
                         indicando tu número de referencia.
@@ -447,7 +447,7 @@ onMounted(cargarEstado)
 
 .pendiente-titulo {
     font-size: 1.25rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #0D291C;
 }
 
@@ -482,7 +482,7 @@ onMounted(cargarEstado)
 
 .pendiente-dato__label {
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #d97706;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -491,14 +491,14 @@ onMounted(cargarEstado)
 
 .pendiente-dato__val {
     font-size: 0.82rem;
-    font-weight: 700;
+    font-weight: 500;
     color: #92400e;
     text-align: right;
 }
 
 .pendiente-dato__val--precio {
     font-size: 0.95rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #d97706;
 }
 
@@ -572,7 +572,7 @@ onMounted(cargarEstado)
 
 .estado-titulo {
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #0D291C
 }
 
@@ -607,7 +607,7 @@ onMounted(cargarEstado)
     padding: 11px 24px;
     border-radius: 999px;
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -684,7 +684,7 @@ onMounted(cargarEstado)
 
 .estado-badge-titulo {
     font-size: 0.95rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #0D291C;
 }
 
@@ -714,7 +714,7 @@ onMounted(cargarEstado)
     background: #f0fdf4;
     border-bottom: 1.5px solid #e8f5e9;
     font-size: 0.65rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #299261;
@@ -740,7 +740,7 @@ onMounted(cargarEstado)
 
 .info-row__label {
     font-size: 0.68rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #9ca3af;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -749,7 +749,7 @@ onMounted(cargarEstado)
 
 .info-row__val {
     font-size: 0.85rem;
-    font-weight: 700;
+    font-weight: 500;
     color: #0D291C;
     text-align: right
 }
@@ -757,7 +757,7 @@ onMounted(cargarEstado)
 .info-row__val--precio {
     color: #299261;
     font-size: 1rem;
-    font-weight: 900
+    font-weight: 700
 }
 
 /* ── Botones de acción ── */
@@ -770,7 +770,7 @@ onMounted(cargarEstado)
     padding: 12px 18px;
     border-radius: 999px;
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -827,7 +827,7 @@ onMounted(cargarEstado)
     background: #f0fdf4;
     border-bottom: 1.5px solid #e8f5e9;
     font-size: 0.65rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #299261;
@@ -891,7 +891,7 @@ onMounted(cargarEstado)
 
 .rechazo-titulo {
     font-size: 1.25rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #0D291C;
 }
 
@@ -926,7 +926,7 @@ onMounted(cargarEstado)
 
 .rechazo-dato__label {
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #f87171;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -935,7 +935,7 @@ onMounted(cargarEstado)
 
 .rechazo-dato__val {
     font-size: 0.82rem;
-    font-weight: 700;
+    font-weight: 500;
     color: #7f1d1d;
     text-align: right;
 }
@@ -957,7 +957,7 @@ onMounted(cargarEstado)
     padding: 12px 18px;
     border-radius: 999px;
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;

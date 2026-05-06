@@ -19,7 +19,7 @@
 /* Título */
 .swal-title {
   font-size: 1.05rem !important;
-  font-weight: 900 !important;
+  font-weight: 700 !important;
   color: #0d291c !important;
   margin-top: 8px !important;
   padding: 0 24px !important;
@@ -52,7 +52,7 @@
   padding: 11px 20px !important;
   border-radius: 999px !important;
   font-size: 0.78rem !important;
-  font-weight: 900 !important;
+  font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
   cursor: pointer !important;
@@ -82,7 +82,7 @@
   padding: 11px 20px !important;
   border-radius: 999px !important;
   font-size: 0.78rem !important;
-  font-weight: 900 !important;
+  font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
   cursor: pointer !important;

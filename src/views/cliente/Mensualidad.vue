@@ -289,7 +289,7 @@
                                             class="flex items-center justify-between border-t border-amber-100 pt-1.5 mt-0.5">
                                             <span class="text-[0.62rem] font-black uppercase tracking-[0.08em]"
                                                 style="color:#d97706">ID Transacción</span>
-                                            <span class="font-mono text-[0.75rem] font-black" style="color:#92400e">{{
+                                            <span class="font-mono text-[0.75rem] font-medium" style="color:#92400e">{{
                                                 pagoPendiente.cus }}</span>
                                         </div>
                                     </div>
@@ -708,7 +708,7 @@
                                             <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'"
                                                 :size="14" :style="{ color: idx === 0 ? '#299261' : '#9ca3af' }" />
                                             <input v-model="nuevasPlacas[idx]" type="text" maxlength="6"
-                                                class="flex-1 bg-transparent border-none outline-none font-mono font-black text-[0.95rem] tracking-[0.15em] uppercase text-[#0D291C] min-w-0 placeholder:text-gray-300 placeholder:font-semibold placeholder:tracking-[0.05em]"
+                                                class="flex-1 bg-transparent border-none outline-none font-mono font-semibold text-[0.95rem] tracking-[0.15em] uppercase text-[#0D291C] min-w-0 placeholder:text-gray-300 placeholder:font-semibold placeholder:tracking-[0.05em]"
                                                 :placeholder="placasDetalle[idx] || (idx === 0 ? 'ABC123' : 'Opcional')"
                                                 @input="nuevasPlacas[idx] = nuevasPlacas[idx].toUpperCase()" />
                                         </div>

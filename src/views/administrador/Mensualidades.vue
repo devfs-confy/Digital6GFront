@@ -1141,7 +1141,7 @@ const guardar = async () => {
 
 .dp-label {
     font-size: 0.58rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: #299261;
@@ -1166,7 +1166,7 @@ const guardar = async () => {
 /* ── Field helpers para usar dentro del slot del AsideEditar ─────── */
 .aside-field-label {
     font-size: 0.72rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #4b5563;
     text-transform: uppercase;
     letter-spacing: 0.05em;

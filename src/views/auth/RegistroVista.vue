@@ -992,7 +992,7 @@ const submit = async () => {
     outline: none !important;
     box-shadow: none !important;
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    font-family: 'Funnel Display', 'Roboto', sans-serif;
+    font-family: "Funnel Display", sans-serif;
 }
 
 .field-input:focus {
@@ -1013,7 +1013,7 @@ const submit = async () => {
 
 .field-label-sm {
     font-size: 0.58rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #0D291C;
@@ -1024,13 +1024,13 @@ const submit = async () => {
 .placa-input {
     text-transform: uppercase !important;
     letter-spacing: 0.12em !important;
-    font-weight: 800 !important
+    font-weight: 600 !important
 }
 
 /* ── Section label ── */
 .section-label {
     font-size: 0.56rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: #0D291C;
@@ -1046,12 +1046,12 @@ const submit = async () => {
     padding: 8px 10px;
     border-radius: 10px;
     font-size: 0.72rem;
-    font-weight: 800;
+    font-weight: 700;
     cursor: pointer;
     border: 1.5px solid #d1d5db;
     background: white;
     color: #6b7280;
-    font-family: 'Funnel Display', 'Roboto', sans-serif;
+    font-family: "Funnel Display", sans-serif;
     transition: all 0.15s;
 }
 
@@ -1076,8 +1076,8 @@ const submit = async () => {
     border: none;
     border-radius: 14px;
     font-size: 0.88rem;
-    font-weight: 900;
-    font-family: 'Funnel Display', 'Roboto', sans-serif;
+    font-weight: 700;
+    font-family: "Funnel Display", sans-serif;
     cursor: pointer;
     display: flex;
     align-items: center;

@@ -484,7 +484,7 @@ const generarConsignacion = async () => {
     padding: 12px 20px;
     border-radius: 14px;
     font-size: 0.88rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     font-family: inherit;
     background: rgba(13, 41, 28, 0.12);
@@ -512,7 +512,7 @@ const generarConsignacion = async () => {
     padding: 12px 20px;
     border-radius: 14px;
     font-size: 0.88rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     font-family: inherit;
     background: #0D291C;

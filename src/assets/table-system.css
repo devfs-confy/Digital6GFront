@@ -26,7 +26,7 @@
   padding: 13px 18px;
   text-align: left;
   font-size: 0.68rem;
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.09em;
   color: white;
@@ -91,7 +91,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 0.75rem;
   flex-shrink: 0;
   border: 2px solid #e8f5e9;
@@ -130,18 +130,18 @@
   background: #0d291c;
   color: #7fd344;
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* ── Estado ── */
 .estado--activo {
   color: #299261;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 0.8rem;
 }
 .estado--inactivo {
   color: #dc2626;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 0.8rem;
 }
 
@@ -187,7 +187,7 @@
 /* ── Filtros ── */
 .filter-label {
   font-size: 0.65rem;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #232b3a;

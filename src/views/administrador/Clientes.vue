@@ -201,21 +201,21 @@
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Documento
                                     <span class="text-red-400">*</span></label>
-                                <input v-model="fCrear.Documento" type="text" placeholder="1122334455"
+                                <input v-model="fCrear.Documento" type="text" placeholder="11..."
                                     class="crear-input" />
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Teléfono
                                     <span class="text-red-400">*</span></label>
-                                <input v-model="fCrear.Telefono" type="text" maxlength="15" placeholder="3001234567"
+                                <input v-model="fCrear.Telefono" type="text" maxlength="15" placeholder="300..."
                                     class="crear-input" />
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Nombres
                                     <span class="text-red-400">*</span></label>
-                                <input v-model="fCrear.Nombres" type="text" maxlength="50" placeholder="Andrés Felipe"
+                                <input v-model="fCrear.Nombres" type="text" maxlength="50" placeholder="And..."
                                     class="crear-input" />
                             </div>
                             <div class="flex flex-col gap-1">
@@ -223,7 +223,7 @@
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Apellidos
                                     <span class="text-red-400">*</span></label>
                                 <input v-model="fCrear.Apellidos" type="text" maxlength="50"
-                                    placeholder="García Ospina" class="crear-input" />
+                                    placeholder="Gar..." class="crear-input" />
                             </div>
                         </div>
 
@@ -232,7 +232,7 @@
                                 class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Correo
                                 electrónico <span class="text-red-400">*</span></label>
                             <input v-model="fCrear.Email" type="email" maxlength="100"
-                                placeholder="correo@ejemplo.com" class="crear-input" />
+                                placeholder="cor..." class="crear-input" />
                         </div>
 
                         <div class="flex flex-col gap-1">
@@ -241,7 +241,7 @@
                                 <span class="text-red-400">*</span></label>
                             <div class="relative">
                                 <input v-model="fCrear.Password" :type="verPassCrear ? 'text' : 'password'"
-                                    maxlength="50" placeholder="••••••••"
+                                    maxlength="50" placeholder="••"
                                     class="crear-input pr-10" />
                                 <button type="button" @click="verPassCrear = !verPassCrear"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 opacity-50 hover:opacity-100 transition-opacity">
@@ -290,7 +290,7 @@
                                         <circle cx="7.5" cy="14.5" r="1.5" />
                                         <circle cx="16.5" cy="14.5" r="1.5" />
                                     </svg>
-                                    <input v-model="fCrear.Placa1" type="text" maxlength="6" placeholder="ABC123"
+                                    <input v-model="fCrear.Placa1" type="text" maxlength="6" placeholder="ABC..."
                                         class="crear-placa-input"
                                         @input="fCrear.Placa1 = fCrear.Placa1.toUpperCase()" />
                                 </div>
@@ -308,7 +308,7 @@
                                         <circle cx="7.5" cy="14.5" r="1.5" />
                                         <circle cx="16.5" cy="14.5" r="1.5" />
                                     </svg>
-                                    <input v-model="fCrear.Placa2" type="text" maxlength="6" placeholder="DEF456"
+                                    <input v-model="fCrear.Placa2" type="text" maxlength="6" placeholder="DEF..."
                                         class="crear-placa-input"
                                         @input="fCrear.Placa2 = fCrear.Placa2.toUpperCase()" />
                                 </div>
@@ -348,14 +348,14 @@
                                     <label
                                         class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">ID
                                         Tarjeta <span class="text-red-400">*</span></label>
-                                    <input v-model="fCrear.IdTarjeta" type="text" placeholder="ABD1214"
+                                    <input v-model="fCrear.IdTarjeta" type="text" placeholder="AB..."
                                         class="crear-input" />
                                 </div>
                                 <div class="flex flex-col gap-1">
                                     <label
                                         class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">ID
                                         Autorización <span class="text-red-400">*</span></label>
-                                    <input v-model.number="fCrear.IdAutorizacion" type="number" placeholder="123"
+                                    <input v-model.number="fCrear.IdAutorizacion" type="number" placeholder="1..."
                                         class="crear-input" />
                                 </div>
                             </div>
@@ -365,7 +365,7 @@
                             <label
                                 class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Código
                                 estudiante UCC</label>
-                            <input v-model="fCrear.CodigoEstudianteUCC" type="text" placeholder="765432"
+                            <input v-model="fCrear.CodigoEstudianteUCC" type="text" placeholder="76..."
                                 class="crear-input" />
                         </div>
 
@@ -426,7 +426,7 @@
             <div class="flex flex-col gap-2 pt-3 border-t border-gray-100">
                 <div class="flex flex-col gap-[3px] px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
                     <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">Documento actual</span>
-                    <span class="text-[1rem] font-black text-[#0D291C] font-mono tracking-widest">{{
+                    <span class="text-[1rem] font-medium text-[#0D291C] font-mono tracking-widest">{{
                         clienteAccion?.Documento }}</span>
                 </div>
                 <p class="text-[0.65rem] font-black uppercase tracking-[0.08em] text-gray-400">Cambiar documento</p>
@@ -825,7 +825,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .field-label {
     font-size: 0.63rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #0D291C;
@@ -878,7 +878,7 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 14px;
     padding: 12px 20px;
     font-size: 0.88rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 0 #050e09;
     transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;
@@ -1010,7 +1010,7 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 0 !important;
     padding: 0 !important;
     font-family: 'Courier New', monospace !important;
-    font-weight: 900 !important;
+    font-weight: 600 !important;
     font-size: 0.9rem !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;

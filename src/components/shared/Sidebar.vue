@@ -246,7 +246,7 @@ const colorearSVG = (svgRaw, color) =>
 
 .menu-label--active {
     color: #0D291C !important;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 /* ── Active dot ───────────────────────────────── */

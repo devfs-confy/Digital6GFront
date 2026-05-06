@@ -289,7 +289,7 @@ async function handleLogin() {
     background-color: #0D291C;
     overflow: hidden;
     position: relative;
-    font-family: 'Funnel Display', 'Roboto', sans-serif;
+    font-family: "Funnel Display", sans-serif;
     padding: 24px 20px;
     box-sizing: border-box;
 }
@@ -373,7 +373,7 @@ async function handleLogin() {
 .brand-copy h2 {
     color: #fff;
     font-size: 1.65rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.03em;
     margin-bottom: 10px;
@@ -447,7 +447,7 @@ async function handleLogin() {
 .form-header h1 {
     color: #232B3A;
     font-size: 1.8rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.15;
     letter-spacing: -0.03em;
     margin-bottom: 7px;
@@ -474,7 +474,7 @@ async function handleLogin() {
 
 .field-group label {
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #232B3A;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -505,7 +505,7 @@ async function handleLogin() {
     border: 1.5px solid #e8ecf0;
     border-radius: 14px;
     font-size: 0.95rem;
-    font-family: 'Funnel Display', 'Roboto', sans-serif;
+    font-family: "Funnel Display", sans-serif;
     color: #232B3A;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -596,7 +596,7 @@ async function handleLogin() {
     border-radius: 14px;
     font-size: 0.875rem;
     font-weight: 700;
-    font-family: 'Funnel Display', 'Roboto', sans-serif;
+    font-family: "Funnel Display", sans-serif;
     cursor: pointer;
     transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
     letter-spacing: 0.01em;

@@ -530,7 +530,7 @@ const iniciales = (nombre = '') =>
 
 .factura-head__title {
     font-size: 0.92rem;
-    font-weight: 800;
+    font-weight: 600;
     color: white;
     line-height: 1.2;
 }
@@ -552,7 +552,7 @@ const iniciales = (nombre = '') =>
     align-items: center;
     justify-content: center;
     font-size: 0.8rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     border: 1.5px solid rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.08);
@@ -650,7 +650,7 @@ const iniciales = (nombre = '') =>
     padding: 13px 20px;
     border-radius: 16px;
     font-size: 0.85rem;
-    font-weight: 800;
+    font-weight: 600;
     cursor: pointer;
     border: 2px solid;
     transition: all 0.15s;
@@ -706,7 +706,7 @@ const iniciales = (nombre = '') =>
 
 .factura-label {
     font-size: 0.6rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: #0D291C;
@@ -816,14 +816,14 @@ const iniciales = (nombre = '') =>
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 0.85rem;
     flex-shrink: 0;
 }
 
 .factura-cliente-nombre {
     font-size: 0.88rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #0D291C;
     line-height: 1.2;
 }
@@ -857,7 +857,7 @@ const iniciales = (nombre = '') =>
     display: inline-block;
     margin-top: 4px;
     font-size: 0.72rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #299261;
     background: transparent;
     border: none;
@@ -900,7 +900,7 @@ const iniciales = (nombre = '') =>
     padding: 8px 10px;
     border-radius: 10px;
     font-size: 0.75rem;
-    font-weight: 800;
+    font-weight: 600;
     cursor: pointer;
     border: 1.5px solid #e2e8f0;
     background: #f8fafb;
@@ -949,7 +949,7 @@ const iniciales = (nombre = '') =>
     padding: 11px 14px;
     border-radius: 999px;
     font-size: 0.78rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;

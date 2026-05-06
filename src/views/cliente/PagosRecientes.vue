@@ -316,13 +316,13 @@ const formatMes = (fecha) => {
 
 .resumen-card__num {
     font-size: 1.2rem;
-    font-weight: 900;
+    font-weight: 700;
     line-height: 1;
 }
 
 .resumen-card__label {
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: #9ca3af;
@@ -375,7 +375,7 @@ const formatMes = (fecha) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 0.82rem;
     flex-shrink: 0;
     border: 2px solid #e8f5e9;
@@ -383,7 +383,7 @@ const formatMes = (fecha) => {
 
 .sede-header__title {
     font-size: 0.95rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #0D291C;
     line-height: 1.2;
 }
@@ -413,7 +413,7 @@ const formatMes = (fecha) => {
     background-color: #0D291C;
     color: #7FD344;
     font-size: 0.7rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     padding: 12px 16px;
@@ -464,19 +464,19 @@ const formatMes = (fecha) => {
 
 /* Valores */
 .valor-text {
-    font-weight: 900;
+    font-weight: 700;
     color: #0D291C;
     font-size: 0.9rem;
 }
 
 .subtotal-text {
-    font-weight: 700;
+    font-weight: 500;
     color: #374151;
     font-size: 0.84rem;
 }
 
 .iva-text {
-    font-weight: 700;
+    font-weight: 500;
     color: #d97706;
     font-size: 0.84rem;
 }
@@ -490,7 +490,7 @@ const formatMes = (fecha) => {
 
 .fecha-dia {
     font-size: 0.82rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #232B3A;
 }
 
@@ -511,7 +511,7 @@ const formatMes = (fecha) => {
     background: white;
     color: #0D291C;
     font-size: 0.68rem;
-    font-weight: 800;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 0 #0D291C;
     transition: transform 0.1s, box-shadow 0.1s, background 0.12s, color 0.12s;
@@ -558,7 +558,7 @@ const formatMes = (fecha) => {
 .concepto-badge {
     display: inline-block;
     font-size: 0.68rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #0D291C;

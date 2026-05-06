@@ -261,7 +261,7 @@
 
                         <!-- Código grande -->
                         <div class="bg-[#f0faf4] border-2 border-[#299261] rounded-[18px] py-6 px-4 flex items-center justify-center">
-                            <span class="font-mono text-[1.8rem] font-black text-[#0D291C] tracking-[0.18em] break-all text-center">
+                            <span class="font-mono text-[1.8rem] font-semibold text-[#0D291C] tracking-[0.18em] break-all text-center">
                                 {{ codigoResultado }}
                             </span>
                         </div>
@@ -516,14 +516,14 @@ const copiarResultado = async () => {
 
 .header-bar__title {
     font-size: 1.4rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #232B3A;
     text-align: center;
 }
 
 .add-btn {
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #232B3A;
     background: #7FD344;
     cursor: pointer;
@@ -588,7 +588,7 @@ const copiarResultado = async () => {
 
 .codigo-card__title {
     font-size: 1.3rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #0D291C;
     line-height: 1.2;
 }
@@ -627,7 +627,7 @@ const copiarResultado = async () => {
     background: #0D291C;
     color: #7FD344;
     font-size: 0.72rem;
-    font-weight: 900;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -650,7 +650,7 @@ const copiarResultado = async () => {
     border: 2px solid #0D291C;
     border-radius: 14px;
     font-size: 0.92rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 5px 0 #051510;
     display: flex;
@@ -680,7 +680,7 @@ const copiarResultado = async () => {
 
 .historial-titulo {
     font-size: 0.6rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #9ca3af;
@@ -701,7 +701,7 @@ const copiarResultado = async () => {
 
 .historial-item__sede {
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #0D291C;
 }
 
@@ -714,7 +714,7 @@ const copiarResultado = async () => {
 .historial-item__codigo {
     font-family: monospace;
     font-size: 0.85rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #299261;
     letter-spacing: 0.08em;
     background: #f0fdf4;
@@ -796,7 +796,7 @@ const copiarResultado = async () => {
 
 .modal-head__name {
     font-size: 0.9rem;
-    font-weight: 800;
+    font-weight: 600;
     color: white;
 }
 
@@ -808,7 +808,7 @@ const copiarResultado = async () => {
 
 .modal-close {
     font-size: 1rem;
-    font-weight: 900;
+    font-weight: 700;
     color: white;
     opacity: 0.4;
     background: none;
@@ -860,7 +860,7 @@ const copiarResultado = async () => {
 .resultado-codigo {
     font-family: monospace;
     font-size: 1.6rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #7FD344;
     letter-spacing: 0.18em;
     word-break: break-all;
@@ -875,7 +875,7 @@ const copiarResultado = async () => {
     border: 2px solid rgba(127, 211, 68, 0.35);
     border-radius: 14px;
     font-size: 0.82rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -903,7 +903,7 @@ const copiarResultado = async () => {
     border-radius: 14px;
     padding: 12px 20px;
     font-size: 0.88rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 0 #050e09;
     transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;
@@ -947,7 +947,7 @@ const copiarResultado = async () => {
 
 .field-label {
     font-size: 0.63rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #0D291C;

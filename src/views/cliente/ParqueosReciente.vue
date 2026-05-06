@@ -140,7 +140,7 @@
                                         class="inline-flex items-center gap-1.5 bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-[10px] py-1">
 
                                         <span
-                                            class="font-mono text-[0.82rem] font-black text-[#0D291C] tracking-[0.06em]">{{
+                                            class="font-mono text-[0.82rem] font-medium text-[#0D291C] tracking-[0.06em]">{{
                                                 r.placa }}</span>
                                     </div>
                                 </td>

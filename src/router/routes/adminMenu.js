@@ -57,7 +57,7 @@ export const adminMenuItems = [
     label: "Facturación",
     icon: icoFacturacion,
     route: "/admin/facturacion",
-    permission: "VER-FACTURACIONS",
+    permission: "VER-FACTURACION",
   },
   {
     label: "Modalidades<br>de Pago",

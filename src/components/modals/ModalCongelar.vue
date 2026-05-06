@@ -318,9 +318,6 @@ const confirmar = () => {
 }
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-</style>
 
 <style scoped>
 /* ── Overlay ──────────────────────────────────────── */
@@ -349,7 +346,7 @@ const confirmar = () => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
 }
 
 /* ── Head ─────────────────────────────────────────── */
@@ -378,14 +375,14 @@ const confirmar = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 0.78rem;
     flex-shrink: 0
 }
 
 .modal-head__name {
     font-size: 0.92rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #fff;
     line-height: 1.2
 }
@@ -484,7 +481,7 @@ const confirmar = () => {
 
 .block-alert__title {
     font-size: 0.85rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #991b1b
 }
 
@@ -517,7 +514,7 @@ const confirmar = () => {
 
 .info-chip__label {
     font-size: 0.55rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #64748b
@@ -525,7 +522,7 @@ const confirmar = () => {
 
 .info-chip__val {
     font-size: 0.85rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #0c4a6e
 }
 
@@ -573,7 +570,7 @@ const confirmar = () => {
 
 .field-label {
     font-size: 0.62rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: #0c4a6e;
@@ -618,7 +615,7 @@ const confirmar = () => {
 
 .cal-mes-label {
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #fff;
     text-transform: capitalize;
     letter-spacing: -0.01em
@@ -657,7 +654,7 @@ const confirmar = () => {
 .cal-dow {
     text-align: center;
     font-size: 0.57rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #0369a1;
     text-transform: uppercase;
     padding: 4px 0;
@@ -677,7 +674,7 @@ const confirmar = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
 }
 
 .cal-day:hover:not(.cal-day--disabled):not(.cal-day--selected) {
@@ -687,7 +684,7 @@ const confirmar = () => {
 }
 
 .cal-day--hoy {
-    font-weight: 900;
+    font-weight: 700;
     color: #0369a1;
     background: #e0f2fe;
     border: 1.5px solid #7dd3fc
@@ -696,7 +693,7 @@ const confirmar = () => {
 .cal-day--selected {
     background: linear-gradient(135deg, #0369a1, #0284c7) !important;
     color: #fff !important;
-    font-weight: 800;
+    font-weight: 600;
     box-shadow: 0 2px 8px rgba(3, 105, 161, 0.35);
     transform: scale(1.08)
 }
@@ -728,7 +725,7 @@ const confirmar = () => {
     border-radius: 12px !important;
     padding: 10px 13px !important;
     font-size: 0.86rem !important;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
     color: #1e3a5f !important;
     outline: none !important;
     width: 100%;
@@ -776,8 +773,8 @@ const confirmar = () => {
     padding: 11px 14px;
     border-radius: 999px;
     font-size: 0.78rem;
-    font-weight: 800;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-weight: 600;
+    font-family: "Funnel Display", sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;

@@ -153,9 +153,6 @@ const iniciales = (nombre = '') =>
     nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
-</style>
 
 <style scoped>
 /* ── Overlay ──────────────────────────────────────── */
@@ -182,7 +179,7 @@ const iniciales = (nombre = '') =>
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
 }
 
 .modal-card--danger {
@@ -227,7 +224,7 @@ const iniciales = (nombre = '') =>
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 0.88rem;
     flex-shrink: 0;
     letter-spacing: 0.02em;
@@ -247,7 +244,7 @@ const iniciales = (nombre = '') =>
 
 .modal-head__name {
     font-size: 0.98rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #ffffff;
     letter-spacing: -0.01em;
     white-space: nowrap;
@@ -349,7 +346,7 @@ const iniciales = (nombre = '') =>
 }
 
 .alert-text strong {
-    font-weight: 800;
+    font-weight: 600;
     color: #111827;
 }
 
@@ -372,7 +369,7 @@ const iniciales = (nombre = '') =>
 
 .field-label {
     font-size: 0.62rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: #374151;
@@ -389,7 +386,7 @@ const iniciales = (nombre = '') =>
     border-radius: 12px !important;
     padding: 9px 13px !important;
     font-size: 0.86rem !important;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
     color: #111827 !important;
     outline: none !important;
     box-shadow: none !important;
@@ -428,7 +425,7 @@ const iniciales = (nombre = '') =>
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 0.72rem;
     flex-shrink: 0;
 }
@@ -440,7 +437,7 @@ const iniciales = (nombre = '') =>
 
 .confirm-name {
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #111827;
     line-height: 1.2;
 }
@@ -448,13 +445,13 @@ const iniciales = (nombre = '') =>
 .confirm-doc {
     font-size: 0.7rem;
     color: #9ca3af;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
     margin-top: 2px;
 }
 
 .estado-badge {
     color: #dc2626;
-    font-weight: 800;
+    font-weight: 600;
     font-size: 0.72rem;
     white-space: nowrap;
 }
@@ -478,9 +475,9 @@ const iniciales = (nombre = '') =>
     gap: 6px;
     padding: 11px 18px;
     border-radius: 12px;
-    font-weight: 800;
+    font-weight: 600;
     font-size: 0.8rem;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
     cursor: pointer;
     transition: background 0.2s, transform 0.12s, box-shadow 0.2s, opacity 0.2s;
 }

@@ -203,7 +203,7 @@
 
         <div class="flex flex-col gap-[3px] px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
             <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">Valor actual</span>
-            <span class="text-[1rem] font-black text-[#0D291C] font-mono">
+            <span class="text-[1rem] font-semibold text-[#0D291C] font-mono">
                 ${{ Number(tarifaActual?.Valor ?? 0).toLocaleString('es-CO') }}
             </span>
         </div>
@@ -251,7 +251,7 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wide text-[#0D291C] opacity-50">Valor
                                 actual</span>
-                            <span class="text-[1rem] font-black text-[#0D291C] font-mono">
+                            <span class="text-[1rem] font-semibold text-[#0D291C] font-mono">
                                 ${{ Number(tarifaActual?.Valor ?? 0).toLocaleString('es-CO') }}
                             </span>
                         </div>
@@ -260,7 +260,7 @@
                             <span
                                 class="text-[0.6rem] font-black uppercase tracking-wide text-[#7FD344] opacity-70">Nuevo
                                 valor</span>
-                            <span class="text-[1rem] font-black text-[#7FD344] font-mono">
+                            <span class="text-[1rem] font-semibold text-[#7FD344] font-mono">
                                 ${{ Number(formEditar.Valor ?? 0).toLocaleString('es-CO') }}
                             </span>
                         </div>
@@ -516,7 +516,7 @@ onMounted(() => {
     border-radius: 14px;
     padding: 12px 20px;
     font-size: 0.88rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 0 #050e09;
     transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;

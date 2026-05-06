@@ -243,9 +243,6 @@ onMounted(async () => {
 })
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-</style>
 
 <style scoped>
 /* ── Root grid ────────────────────────────────── */
@@ -256,7 +253,7 @@ onMounted(async () => {
     align-content: start;
     width: 100%;
     box-sizing: border-box;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
 }
 
 /* ── Page header ──────────────────────────────── */
@@ -403,7 +400,7 @@ onMounted(async () => {
 
 .chart-kpi__val {
     font-size: 1.6rem;
-    font-weight: 900;
+    font-weight: 800;
     line-height: 1;
     letter-spacing: -0.02em;
 }
@@ -441,7 +438,7 @@ onMounted(async () => {
     color: #374151;
     cursor: pointer;
     outline: none;
-    font-family: "Funnel Display", "Roboto", sans-serif;
+    font-family: "Funnel Display", sans-serif;
     transition: border-color 0.15s;
 }
 

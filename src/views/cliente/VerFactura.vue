@@ -309,7 +309,7 @@ onMounted(cargarFactura)
 
 .header-bar__title {
     font-size: 1.3rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #232B3A;
     text-align: center
 }
@@ -364,7 +364,7 @@ onMounted(cargarFactura)
 
 .estado-titulo {
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #0D291C
 }
 
@@ -399,7 +399,7 @@ onMounted(cargarFactura)
     padding: 11px 24px;
     border-radius: 999px;
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -452,7 +452,7 @@ onMounted(cargarFactura)
 
 .info-row__label {
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #9ca3af;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -461,7 +461,7 @@ onMounted(cargarFactura)
 
 .info-row__val {
     font-size: 0.85rem;
-    font-weight: 700;
+    font-weight: 500;
     color: #0D291C;
     text-align: right
 }
@@ -469,7 +469,7 @@ onMounted(cargarFactura)
 .info-row__val--precio {
     color: #299261;
     font-size: 1rem;
-    font-weight: 900
+    font-weight: 700
 }
 
 /* ── Botones de acción ── */
@@ -482,7 +482,7 @@ onMounted(cargarFactura)
     padding: 12px 18px;
     border-radius: 999px;
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;

@@ -632,7 +632,7 @@ onMounted(() => {
   padding: 12px 20px;
   text-align: left;
   font-size: 0.68rem;
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: white;

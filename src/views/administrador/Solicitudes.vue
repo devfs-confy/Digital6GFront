@@ -205,29 +205,29 @@
 
                         <!-- Info pills -->
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
                                 <span
-                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
-                                <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ tipoLabel(pqrsAccion?.Tipo)
+                                    class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Tipo</span>
+                                <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ tipoLabel(pqrsAccion?.Tipo)
                                     }}</span>
                             </div>
-                            <div class="flex flex-col gap-[3px] px-3 py-2 rounded-xl border" :class="{
+                            <div class="flex flex-col gap-[3px] px-3 py-2.5 rounded-xl border" :class="{
                                 'bg-red-50 border-red-100': pqrsAccion?.Prioridad === 'ALTA',
                                 'bg-amber-50 border-amber-100': pqrsAccion?.Prioridad === 'MEDIA',
                                 'bg-gray-50 border-gray-100': pqrsAccion?.Prioridad === 'BAJA',
                             }">
                                 <span
-                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Prioridad</span>
-                                <span class="text-[0.8rem] font-bold" :class="{
+                                    class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Prioridad</span>
+                                <span class="text-[0.88rem] font-bold" :class="{
                                     'text-red-600': pqrsAccion?.Prioridad === 'ALTA',
                                     'text-amber-600': pqrsAccion?.Prioridad === 'MEDIA',
                                     'text-gray-500': pqrsAccion?.Prioridad === 'BAJA',
                                 }">{{ pqrsAccion?.Prioridad ?? '—' }}</span>
                             </div>
-                            <div class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
                                 <span
-                                    class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Estado</span>
-                                <span class="text-[0.8rem] font-bold" :class="{
+                                    class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Estado</span>
+                                <span class="text-[0.88rem] font-bold" :class="{
                                     'text-[#299261]': pqrsAccion?.Estado === 'CERRADO',
                                     'text-amber-500': pqrsAccion?.Estado === 'EN_PROCESO',
                                     'text-blue-500': pqrsAccion?.Estado === 'ABIERTO',
@@ -250,47 +250,47 @@
                             </p>
                             <div class="grid grid-cols-2 gap-2">
                                 <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
                                     <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{
+                                        class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Nombre</span>
+                                    <span class="text-[0.88rem] font-bold text-[#0D291C] truncate">{{
                                         pqrsAccion?.NombreCliente
                                         ?? '—' }}</span>
                                 </div>
                                 <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
                                     <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Documento</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] font-mono">{{
+                                        class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Documento</span>
+                                    <span class="text-[0.88rem] font-bold text-[#0D291C] font-mono">{{
                                         pqrsAccion?.DocumentoUsuario ?? '—' }}</span>
                                 </div>
                                 <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                                    class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
                                     <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—'
+                                        class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Teléfono</span>
+                                    <span class="text-[0.88rem] font-bold text-[#0D291C]">{{ pqrsAccion?.Telefono ?? '—'
                                         }}</span>
                                 </div>
                                 <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
+                                    class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100 col-span-2">
                                     <span
-                                        class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Email
+                                        class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Correo</span>
+                                    <span class="text-[0.88rem] font-bold text-[#0D291C] truncate">{{ pqrsAccion?.Email
                                         ?? '—'
                                         }}</span>
                                 </div>
                                 <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha
+                                    class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Fecha
                                         creación</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{
+                                    <span class="text-[0.88rem] font-bold text-[#0D291C]">{{
                                         formatFecha(pqrsAccion?.FechaCreacion) }}</span>
                                 </div>
                                 <div
-                                    class="flex flex-col gap-[3px] px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                                    <span class="text-[0.58rem] font-black uppercase tracking-wide text-gray-400">Fecha
+                                    class="flex flex-col gap-[3px] px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                                    <span class="text-[0.65rem] font-black uppercase tracking-wide text-gray-400">Fecha
                                         respuesta</span>
-                                    <span class="text-[0.8rem] font-bold text-[#0D291C]">{{
+                                    <span class="text-[0.88rem] font-bold text-[#0D291C]">{{
                                         formatFecha(pqrsAccion?.FechaRespuesta) }}</span>
                                 </div>
                             </div>
@@ -304,17 +304,22 @@
                                 Mensualidad relacionada
                             </p>
                             <div
-                                class="flex items-center gap-3 px-3 py-2.5 bg-[#f0faf4] rounded-xl border border-[#c8e6c9]">
+                                class="flex items-center gap-3 px-4 py-3 bg-[#f0faf4] rounded-xl border border-[#c8e6c9]">
                                 <div
-                                    class="w-8 h-8 rounded-[10px] bg-[#0D291C] flex items-center justify-center flex-shrink-0">
-                                    <AppIcon name="directions_car" :size="16" class="text-[#7FD344]" />
+                                    class="w-10 h-10 rounded-[12px] bg-[#0D291C] flex items-center justify-center flex-shrink-0">
+                                    <AppIcon name="directions_car" :size="18" class="text-[#7FD344]" />
                                 </div>
-                                <div class="flex flex-col gap-0.5 min-w-0">
-                                    <span class="text-[0.8rem] font-black text-[#0D291C] truncate">{{
+                                <div class="flex flex-col gap-1 min-w-0">
+                                    <span class="text-[0.92rem] font-black text-[#0D291C] truncate">{{
                                         pqrsAccion.PersonaAutorizada.NombreApellidos }}</span>
-                                    <span class="text-[0.65rem] font-semibold text-gray-500 font-mono">CC {{
-                                        pqrsAccion.PersonaAutorizada.Documento }} · ID #{{
-                                            pqrsAccion.PersonaAutorizada.IdPersonaAutorizada }}</span>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-[0.8rem] font-bold text-[#0D291C] font-mono bg-white px-2 py-[2px] rounded-lg border border-[#c8e6c9]">
+                                            CC {{ pqrsAccion.PersonaAutorizada.Documento }}
+                                        </span>
+                                        <span class="text-[0.8rem] font-bold text-[#299261] font-mono bg-white px-2 py-[2px] rounded-lg border border-[#c8e6c9]">
+                                            ID #{{ pqrsAccion.PersonaAutorizada.IdPersonaAutorizada }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -324,7 +329,7 @@
                             <p
                                 class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
                                 Asunto</p>
-                            <p class="text-[0.88rem] font-semibold text-[#0D291C]">{{ pqrsAccion?.Asunto ?? '—' }}</p>
+                            <p class="text-[0.95rem] font-semibold text-[#0D291C]">{{ pqrsAccion?.Asunto ?? '—' }}</p>
                         </div>
 
                         <!-- Descripción -->
@@ -332,7 +337,7 @@
                             <p
                                 class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
                                 Descripción del cliente</p>
-                            <p class="text-[0.88rem] text-gray-600 leading-relaxed font-medium whitespace-pre-wrap">{{
+                            <p class="text-[0.95rem] text-gray-600 leading-relaxed font-medium whitespace-pre-wrap">{{
                                 pqrsAccion?.Descripcion ?? '—' }}</p>
                         </div>
 
@@ -426,20 +431,26 @@
                         <!-- Formulario responder -->
                         <div class="flex flex-col gap-3 mt-1">
                             <p
-                                class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
+                                class="text-[0.68rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
                                 {{ pqrsAccion?.Respuesta ? 'Actualizar respuesta' : 'Responder' }}
                             </p>
                             <div class="flex flex-col gap-[5px]">
                                 <div class="flex items-center justify-between">
                                     <label class="field-label">Respuesta *</label>
-                                    <span class="text-[0.58rem] font-semibold text-[#0D291C] opacity-35">{{
+                                    <span class="text-[0.65rem] font-semibold text-[#0D291C] opacity-35">{{
                                         fR.Respuesta.length }}/250</span>
                                 </div>
-                                <textarea v-model="fR.Respuesta" class="field-input resize-y min-h-[100px]"
+                                <textarea v-model="fR.Respuesta" class="field-input resize-y min-h-[110px]"
                                     placeholder="Escribe la respuesta para el cliente..." maxlength="250" />
                             </div>
                             <div class="flex flex-col gap-[5px]">
-                                <label class="field-label">Estado al responder</label>
+                                <div class="flex items-center justify-between">
+                                    <label class="field-label">Estado al responder *</label>
+                                    <span v-if="fR.Estado === pqrsAccion?.Estado"
+                                        class="text-[0.62rem] font-bold text-amber-500">
+                                        ↑ Debes cambiar el estado
+                                    </span>
+                                </div>
                                 <select v-model="fR.Estado" class="field-input">
                                     <option value="ABIERTO">Abierto</option>
                                     <option value="EN_PROCESO">En proceso</option>
@@ -458,7 +469,7 @@
                         <button @click="modalDetalle = false"
                             class="btn-modal-dark btn-modal-dark--cancel">Cancelar</button>
                         <button v-permission="'RESPONDER-PQRS'" @click="responderPqrs"
-                            :disabled="guardandoR || !fR.Respuesta.trim() || fR.Respuesta.trim() === respuestaOriginal.trim()"
+                            :disabled="guardandoR || !fR.Respuesta.trim() || fR.Estado === pqrsAccion?.Estado"
                             class="btn-modal-dark"> <span v-if="guardandoR"
                                 class="inline-block w-4 h-4 border-2 border-[#7FD344] border-t-transparent rounded-full animate-spin" />
                             {{ guardandoR ? 'Enviando...' : 'Enviar respuesta' }}
@@ -1267,7 +1278,7 @@ input.search-input {
 
 .field-label {
     font-size: 0.63rem;
-    font-weight: 900;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #0D291C;
@@ -1283,7 +1294,7 @@ input.search-input {
     border-radius: 14px;
     padding: 12px 20px;
     font-size: 0.88rem;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 4px 0 #050e09;
     transition: background-color 0.15s, transform 0.1s, box-shadow 0.1s;

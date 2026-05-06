@@ -118,7 +118,7 @@ const iniciales = (texto = '') => {
     flex: 1;
     padding: 13px 20px;
     border-radius: 999px;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;

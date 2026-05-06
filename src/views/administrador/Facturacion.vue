@@ -109,7 +109,7 @@
                                 <span v-if="r.Estado" class="estado--activo">● Activo</span>
                                 <span v-else class="estado--inactivo">● Inactivo</span>
                             </td>
-                            <td v-permission="'EDITAR-FACTURACION'" class="td-cell td-cell--center flex ">
+                            <td v-permission="'EDITAR-FACTURACION'" class="td-cell td-cell--center flex justify-center ">
                                 <button @click="abrirDetalle(r)" class="action-btn" title="Ver / Editar">
                                     <AppIcon name="visibility" :size="30" />
                                 </button>
@@ -418,7 +418,7 @@ const guardar = async () => {
 <style scoped>
 .field-label {
     font-size: 0.63rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #0D291C;

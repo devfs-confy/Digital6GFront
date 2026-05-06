@@ -73,7 +73,7 @@ const paginasVisibles = computed(() => {
     justify-content: center;
     border-radius: 8px;
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #6b7280;
     border: none;
     background: transparent;

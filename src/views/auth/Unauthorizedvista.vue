@@ -92,7 +92,7 @@ function irAMiDashboard() {
 
 .unauth-title {
     font-size: 1.5rem;
-    font-weight: 900;
+    font-weight: 700;
     color: #0D291C;
     text-transform: uppercase;
     font-style: italic;
@@ -108,7 +108,7 @@ function irAMiDashboard() {
 
 .unauth-sub strong {
     opacity: 1;
-    font-weight: 800;
+    font-weight: 600;
     color: #0D291C;
 }
 
@@ -124,7 +124,7 @@ function irAMiDashboard() {
     width: 100%;
     padding: 13px;
     border-radius: 999px;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -145,7 +145,7 @@ function irAMiDashboard() {
     width: 100%;
     padding: 12px;
     border-radius: 999px;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;

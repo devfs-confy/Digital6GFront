@@ -407,7 +407,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
     background: #dc2626;
     border: 2px solid #0D291C;
     font-size: 9px;
-    font-weight: 900;
+    font-weight: 700;
     color: white;
     display: flex;
     align-items: center;
@@ -468,7 +468,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 .head-title {
     color: white;
     font-size: 0.88rem;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .head-sub {
@@ -488,7 +488,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
     border-radius: 999px;
     padding: 5px 12px;
     font-size: 0.58rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     cursor: pointer;
@@ -533,7 +533,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 /* ── Tabs ────────────────────────────────────── */
 .notif-tab {
     font-size: 0.6rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     padding: 5px 12px;
@@ -586,7 +586,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 /* ── Section label ───────────────────────────── */
 .section-label {
     font-size: 0.58rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #299261;
@@ -631,7 +631,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 /* ── Textos del item ─────────────────────────── */
 .item-title {
     font-size: 0.78rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #0D291C;
 }
 
@@ -726,7 +726,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 /* ── Badge categoría ─────────────────────────── */
 .notif-cat-badge {
     font-size: 0.55rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     padding: 2px 7px;
@@ -847,7 +847,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 
 .modal-section__label {
     font-size: 0.6rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #299261;
@@ -920,7 +920,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
     border-radius: 999px;
     border: 2px solid;
     font-size: 0.65rem;
-    font-weight: 800;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 9px 20px;

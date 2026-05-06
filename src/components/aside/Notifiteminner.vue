@@ -113,7 +113,7 @@ const iconPath = {
 /* ── Badge de categoría ────────────────────────── */
 .notif-cat-badge {
     font-size: 0.55rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     padding: 2px 7px;

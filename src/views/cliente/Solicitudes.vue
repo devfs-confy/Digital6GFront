@@ -305,7 +305,7 @@ const badgePrioridad = (p) => {
 
 .detail-label {
     font-size: 0.62rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: #299261;

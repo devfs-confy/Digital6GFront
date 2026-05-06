@@ -567,7 +567,7 @@ onMounted(async () => {
     padding: 14px 20px;
     text-align: left;
     font-size: 0.68rem;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: white;
@@ -584,7 +584,7 @@ onMounted(async () => {
 
 .aside-field-label {
     font-size: 0.72rem;
-    font-weight: 800;
+    font-weight: 600;
     color: #4b5563;
     text-transform: uppercase;
     letter-spacing: 0.05em;

@@ -175,7 +175,7 @@ function handleLogout() {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 800;
     font-size: 0.72rem;
     flex-shrink: 0;
 }
@@ -234,7 +234,7 @@ function handleLogout() {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 900;
+    font-weight: 800;
     font-size: 0.8rem;
     flex-shrink: 0;
 }

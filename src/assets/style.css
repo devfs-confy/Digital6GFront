@@ -4,7 +4,6 @@
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
-@import url("https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap");
 
 .modern-table {
   --easy-table-border: 1px solid #e5e7eb;
@@ -143,7 +142,7 @@
 
 .btn-3d {
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 700;
   color: #0d291c;
   background-color: #7fd344;
   border: 2px solid #000;

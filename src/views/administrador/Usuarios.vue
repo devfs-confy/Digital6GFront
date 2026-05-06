@@ -327,7 +327,7 @@ const iniciales = (nombre = '') =>
 <style scoped>
 .field-label {
     font-size: 0.72rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #4b5563;
     text-transform: uppercase;
     letter-spacing: 0.05em;

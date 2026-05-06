@@ -156,7 +156,7 @@ import { useRouter } from 'vue-router'
 
 .opcion-title {
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #0D291C;
     line-height: 1.2;
     white-space: nowrap;
