@@ -5645,6 +5645,10 @@ input[type="range"]::-ms-fill-lower {
     padding-top: 1.25rem;
     padding-bottom: 1.25rem;
   }
+
+  .max-\[767px\]\:text-\[0\.7rem\] {
+    font-size: 0.7rem;
+  }
 }
 
 @media (max-width: 720px) {

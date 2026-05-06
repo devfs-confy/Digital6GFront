@@ -26,8 +26,8 @@
                 <!-- Header mobile -->
                 <div class="flex items-center justify-between px-5 py-3.5 border-b-[1.5px] border-slate-100 mt-[3px]
                             md:hidden">
-                    <button @click="$router.back()"
-                        class="flex items-center gap-1.5 text-[0.76rem] font-extrabold text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261]">
+                    <button @click="window.history.length > 1 ? $router.back() : router.push({ name: 'login' })"
+                        class="flex items-center gap-1.5 text-[0.76rem] font-extrabold text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261] max-[767px]:text-[0.7rem]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -52,7 +52,7 @@
                             max-[767px]:px-5 max-[767px]:py-5">
 
 
-                    <button @click="$router.back()"
+                    <button @click="window.history.length > 1 ? $router.back() : router.push({ name: 'login' })"
                         class="hidden md:flex items-center gap-1.5 text-[0.76rem] font-extrabold text-[#0D291C] bg-transparent border-none cursor-pointer p-0 transition-colors hover:text-[#299261] w-fit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
