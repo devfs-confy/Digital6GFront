@@ -12,6 +12,7 @@ Referencia completa y actualizada de todos los servicios del frontend. Cada serv
 - [ClientService](#-clientservice)
 - [MensualidadesService](#️-mensualidadesservice)
 - [PaymentsService](#-paymentsservice)
+- [PagosService](#-pagosservice)
 - [SedesService](#️-sedesservice)
 - [SedesDisponibilidadService](#-sedesdisponibilidadservice-legacy)
 - [AutorizacionesService](#-autorizacionesservice)
@@ -19,6 +20,18 @@ Referencia completa y actualizada de todos los servicios del frontend. Cada serv
 - [CodigoValidationService](#-codigovalidationservice)
 - [RolService](#-rolservice)
 - [TarifasService](#-tarifasservice)
+- [AuthService](#-authservice)
+- [BannerService](#-bannerservice)
+- [ClientBillService](#-clientbillservice)
+- [ComunidadUccService](#-comunidaduccservice)
+- [ConsignacionesService](#-consignacionesservice)
+- [FacturacionService](#-facturacionservice)
+- [FacturaService](#-facturaservice)
+- [ModalidadesPagosService](#-modalidadespagosservice)
+- [NotificacionesService](#-notificacionesservice)
+- [ParqueosService](#-parqueosservice)
+- [PqrsService](#-pqrsservice)
+- [ReglasEstacionamientoService](#-reglasestacionamientoservice)
 - [Axios Base](#️-axios-base-srcapiaaxiosjs)
 - [Manejo de Errores](#manejo-de-errores)
 
@@ -735,6 +748,738 @@ const tarifas = await TarifasService.getAll({ sede: 5 });
 ```
 
 **HTTP:** `GET /v1/tarifas`
+
+---
+
+## 🔐 AuthService
+
+**Archivo:** `src/api/services/auth.service.js`
+**Rutas base:** `auth/forgot-password`, `/v1/auth/verify-code`, `/auth/reset-password`, `/auth/change-password`
+
+Flujo de recuperación de contraseña y cambio de password.
+
+### Métodos
+
+#### `sendCode(documento)`
+
+Envía un código de verificación al email del usuario.
+
+```js
+import AuthService from "@/api/services/auth.service";
+
+const result = await AuthService.sendCode(123456789);
+```
+
+**HTTP:** `POST /auth/forgot-password` con body `{ Documento }`
+
+---
+
+#### `verifyCode(documento, codigo)`
+
+Verifica que el código recibido sea válido.
+
+```js
+const result = await AuthService.verifyCode(123456789, "AB1234");
+```
+
+**HTTP:** `POST /v1/auth/verify-code` con body `{ Documento, Codigo }`
+
+---
+
+#### `resetPassword(documento, codigo, newPassword)`
+
+Establece una nueva contraseña tras verificar el código.
+
+```js
+const result = await AuthService.resetPassword(123456789, "AB1234", "nuevaClave123");
+```
+
+**HTTP:** `POST /auth/reset-password` con body `{ Documento, Codigo, NewPassword }`
+
+---
+
+#### `changePassword(currentPassword, newPassword)`
+
+Cambia la contraseña del usuario autenticado (requiere conocer la actual).
+
+```js
+const result = await AuthService.changePassword("claveActual", "nuevaClave123");
+```
+
+**HTTP:** `POST /auth/change-password` con body `{ CurrentPassword, NewPassword }`
+
+---
+
+## 🖼️ BannerService (PublicidadService)
+
+**Archivo:** `src/api/services/banner.service.js`
+**Ruta base:** `v1/publicidad`
+
+Gestión de banners/publicidad del sistema. Soporta subida de imágenes (`multipart/form-data`).
+
+### Métodos
+
+#### `getallPublicidad()`
+
+Lista toda la publicidad (solo admin).
+
+```js
+import BannerService from "@/api/services/banner.service";
+
+const banners = await BannerService.getallPublicidad();
+```
+
+**HTTP:** `GET /v1/publicidad`
+
+---
+
+#### `createPublicidad(payload)`
+
+Crea un nuevo banner. Acepta `FormData` con imagen.
+
+```js
+const formData = new FormData();
+formData.append("titulo", "Promo Navidad");
+formData.append("imagen", fileInput.files[0]);
+
+const result = await BannerService.createPublicidad(formData);
+```
+
+**HTTP:** `POST /v1/publicidad` con `Content-Type: multipart/form-data`
+
+---
+
+#### `updatePublicidad(id, payload)`
+
+Actualiza un banner existente. Acepta `FormData`.
+
+```js
+await BannerService.updatePublicidad(5, formData);
+```
+
+**HTTP:** `PATCH /v1/publicidad/{id}`
+
+---
+
+#### `enablePublicidad(id, idEstacionamiento, activo)`
+
+Activa o desactiva un banner para una sede específica.
+
+```js
+await BannerService.enablePublicidad(5, 32, true);
+```
+
+**HTTP:** `PATCH /v1/publicidad/{id}/estacionamiento/{idEstacionamiento}?activo=true`
+
+---
+
+#### `getimgpublicidad(id)`
+
+Obtiene la imagen de un banner.
+
+```js
+const imgData = await BannerService.getimgpublicidad(5);
+```
+
+**HTTP:** `GET /v1/publicidad/imagen/{id}`
+
+---
+
+#### `getMiPublicidad()`
+
+Obtiene la publicidad visible para el usuario autenticado.
+
+```js
+const misBanners = await BannerService.getMiPublicidad();
+```
+
+**HTTP:** `GET /v1/publicidad/mi-publicidad`
+
+---
+
+## 🧾 ClientBillService
+
+**Archivo:** `src/api/services/clientefactura.service.js`
+**Ruta base:** `v1/usuarios/clientes/facturacion/`
+
+Gestión de facturación del cliente autenticado.
+
+### Métodos
+
+#### `GetFacturacionCliente(id)`
+
+```js
+import ClientBillService from "@/api/services/clientefactura.service";
+
+const facturacion = await ClientBillService.GetFacturacionCliente(42);
+```
+
+**HTTP:** `GET /v1/usuarios/clientes/facturacion/{id}`
+
+---
+
+#### `CreateFacturacionCliente(documento, dto)`
+
+```js
+await ClientBillService.CreateFacturacionCliente("1234567890", {
+  // campos de facturación
+});
+```
+
+**HTTP:** `POST /v1/usuarios/clientes/facturacion/{documento}`
+
+---
+
+## 🎓 ComunidadUccService
+
+**Archivo:** `src/api/services/comunidadUcc.service.js`
+**Ruta base:** `v1/comunidad-ucc`
+
+Gestión de miembros de la comunidad UCC (Universidad Cooperativa de Colombia). Soporta carga masiva vía Excel.
+
+### Métodos
+
+#### `getAll(params?)`
+
+```js
+import ComunidadUccService from "@/api/services/comunidadUcc.service";
+
+const miembros = await ComunidadUccService.getAll({
+  page: 1,
+  limit: 20,
+  search: "garcia",
+});
+```
+
+**HTTP:** `GET /v1/comunidad-ucc`
+
+---
+
+#### `create(dto)`
+
+Crea un miembro individual.
+
+```js
+const result = await ComunidadUccService.create({
+  Documento: "1234567890",
+  Nombre1: "Carlos",
+  Nombre2: "Andrés",    // opcional
+  Apellido1: "García",
+  Apellido2: "López",   // opcional
+});
+```
+
+**HTTP:** `POST /v1/comunidad-ucc`
+
+---
+
+#### `uploadExcel(file)`
+
+Carga masiva de miembros desde un archivo Excel.
+
+```js
+const file = fileInput.files[0];
+const result = await ComunidadUccService.uploadExcel(file);
+```
+
+**HTTP:** `POST /v1/comunidad-ucc/import` con `Content-Type: multipart/form-data`
+
+---
+
+## 💰 ConsignacionesService
+
+**Archivo:** `src/api/services/consignaciones.service.js`
+**Ruta base:** `v1/consignaciones`
+
+Gestión de consignaciones/arqueos de caja por sede.
+
+### Métodos
+
+#### `getAllArqueos(params?)`
+
+```js
+import ConsignacionesService from "@/api/services/consignaciones.service";
+
+const consignaciones = await ConsignacionesService.getAllArqueos({
+  page: 1,
+  limit: 10,
+  search: "",
+  IdEstacionamiento: 32,
+});
+```
+
+**HTTP:** `GET /v1/consignaciones`
+
+---
+
+#### `generarConsignaciones(Fecha)`
+
+Genera consignaciones para una fecha específica.
+
+```js
+const result = await ConsignacionesService.generarConsignaciones("2026-05-08");
+```
+
+**HTTP:** `POST /v1/consignaciones` con body `{ Fecha }`
+
+---
+
+#### `getById(id)`
+
+```js
+const detalle = await ConsignacionesService.getById(42);
+```
+
+**HTTP:** `GET /v1/consignaciones/{id}`
+
+---
+
+## 📄 FacturacionService
+
+**Archivo:** `src/api/services/facturacion.service.js`
+**Ruta base:** `v1/facturacion`
+
+Administración general de facturación (admin).
+
+### Métodos
+
+#### `getAll(params?)`
+
+```js
+import FacturacionService from "@/api/services/facturacion.service";
+
+const facturas = await FacturacionService.getAll({
+  page: 1,
+  limit: 10,
+  search: "",
+  IdEstacionamiento: 32,
+});
+```
+
+**HTTP:** `GET /v1/facturacion`
+
+---
+
+#### `getById(id)`
+
+```js
+const factura = await FacturacionService.getById(42);
+```
+
+**HTTP:** `GET /v1/facturacion/{id}`
+
+---
+
+#### `update(id, dto)`
+
+```js
+await FacturacionService.update(42, { /* campos */ });
+```
+
+**HTTP:** `PUT /v1/facturacion/{id}`
+
+---
+
+## 🧾 FacturaService
+
+**Archivo:** `src/api/services/factura.service.js`
+**Rutas base:** `v1/facturas/pos`, `v1/payments/mensualidad/consultar-estado/`, `v1/facturas/admin/pagos`
+
+Generación de facturas POS (PDF) y consulta de estado de transacciones.
+
+### Métodos
+
+#### `GetFacturasAdmin(params?)`
+
+Lista facturas de admin con filtros.
+
+```js
+import FacturaService from "@/api/services/factura.service";
+
+const facturas = await FacturaService.GetFacturasAdmin({
+  page: 1,
+  limit: 10,
+  IdSede: 32,
+  NumeroFactura: "FAC-001",
+  IdTransaccion: "TX-123",
+});
+```
+
+**HTTP:** `GET /v1/facturas/admin/pagos`
+
+---
+
+#### `GetEstado(rquid)`
+
+Consulta el estado de una transacción de pago.
+
+```js
+const estado = await FacturaService.GetEstado("rqu-abc123");
+```
+
+**HTTP:** `GET /v1/payments/mensualidad/consultar-estado/{rquid}`
+
+---
+
+#### `GetFacturaPos(token)`
+
+Genera y descarga una factura POS en PDF. Retorna `{ blob, fileName }`.
+
+```js
+const { blob, fileName } = await FacturaService.GetFacturaPos("token-pos-xyz");
+
+// Descargar:
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = fileName;
+a.click();
+URL.revokeObjectURL(url);
+```
+
+**HTTP:** `POST /v1/facturas/pos?token=...` con `responseType: blob`
+
+---
+
+#### `getUltimosPagos(documento)`
+
+Obtiene los últimos pagos de un cliente.
+
+```js
+const pagos = await FacturaService.getUltimosPagos("1234567890");
+```
+
+**HTTP:** `GET /v1/facturas/admin/ultimos/{documento}`
+
+---
+
+## 💳 ModalidadesPagosService
+
+**Archivo:** `src/api/services/modalidades.pagos.js`
+**Rutas base:** `/v1/modalidades-pagos`, `/v1/autorizaciones`
+
+Gestión de modalidades/tipos de pago por sede y autorización.
+
+### Métodos
+
+#### `getAutorizaciones(idEstacionamiento)`
+
+```js
+import ModalidadesPagosService from "@/api/services/modalidades.pagos";
+
+const autorizaciones = await ModalidadesPagosService.getAutorizaciones(32);
+```
+
+**HTTP:** `GET /v1/autorizaciones/sede/{idEstacionamiento}`
+
+---
+
+#### `getTiposPagos(idEstacionamiento, idAutorizacion)`
+
+Retorna `{ autorizacion_base, reglas[] }`.
+
+```js
+const { autorizacion_base, reglas } = await ModalidadesPagosService.getTiposPagos(32, 100);
+```
+
+**HTTP:** `GET /v1/modalidades-pagos/sede/{idEstacionamiento}/autorizacion/{idAutorizacion}`
+
+---
+
+#### `habilitarQuincena(idEstacionamiento, estado)`
+
+Habilita o deshabilita el pago por quincena para una sede.
+
+```js
+await ModalidadesPagosService.habilitarQuincena(32, true);
+```
+
+**HTTP:** `PUT /v1/autorizaciones/habilitar-quincena/{idEstacionamiento}` con body `{ Estado }`
+
+---
+
+#### `agregarTiposPagos(idEstacionamiento, idAutorizacion, modalidades)`
+
+Agrega modalidades de pago a una autorización.
+
+```js
+await ModalidadesPagosService.agregarTiposPagos(32, 100, [
+  { tipo: "mensual", precio: 150000 },
+  { tipo: "quincenal", precio: 80000 },
+]);
+```
+
+**HTTP:** `POST /v1/modalidades-pagos/sede/{idEstacionamiento}/autorizacion/{idAutorizacion}`
+
+---
+
+#### `getByIdStatus(IdEstacionamiento)`
+
+Consulta el estado de habilitación de quincena.
+
+```js
+const estado = await ModalidadesPagosService.getByIdStatus(32);
+```
+
+**HTTP:** `GET /v1/autorizaciones/estado/quincena/{IdEstacionamiento}`
+
+---
+
+## 🔔 NotificacionesService
+
+**Archivo:** `src/api/services/notificaciones.service.js`
+**Ruta base:** `v1/notificaciones`
+
+Notificaciones del usuario autenticado.
+
+### Métodos
+
+#### `GetNotifiaciones()`
+
+```js
+import NotificacionesService from "@/api/services/notificaciones.service";
+
+const notificaciones = await NotificacionesService.GetNotifiaciones();
+```
+
+**HTTP:** `GET /v1/notificaciones`
+
+---
+
+#### `GetNotifiacionesById(id)`
+
+```js
+const notif = await NotificacionesService.GetNotifiacionesById(42);
+```
+
+**HTTP:** `GET /v1/notificaciones/{id}`
+
+---
+
+## 🅿️ ParqueosService
+
+**Archivo:** `src/api/services/parqueos.service.js`
+**Rutas base:** `v1/transacciones/mensualidad/mis-transacciones`, `v1/transacciones/mensualidad/admin`
+
+Historial de transacciones de parqueo (cliente y admin).
+
+### Métodos
+
+#### `getallParqueos(id)`
+
+Transacciones del cliente (por ID de mensualidad).
+
+```js
+import ParqueosService from "@/api/services/parqueos.service";
+
+const parqueos = await ParqueosService.getallParqueos(42);
+```
+
+**HTTP:** `GET /v1/transacciones/mensualidad/mis-transacciones/{id}`
+
+---
+
+#### `getAllAdmin(params?)`
+
+Transacciones de admin con filtros por sede, fechas y búsqueda.
+
+```js
+const transacciones = await ParqueosService.getAllAdmin({
+  page: 1,
+  limit: 10,
+  IdSede: 32,
+  search: "1097493230",
+  FechaInicio: "2026-01-01",
+  FechaFin: "2026-06-01",
+});
+```
+
+**HTTP:** `GET /v1/transacciones/mensualidad/admin/paginated`
+
+---
+
+## 📬 PqrsService
+
+**Archivo:** `src/api/services/pqrs.service.js`
+**Rutas base:** `v1/pqrs/cliente`, `v1/pqrs/admin`
+
+Sistema completo de PQRS (Peticiones, Quejas, Reclamos, Sugerencias). Tiene contexto **Cliente** y **Admin**.
+
+### Métodos — Cliente
+
+#### `getMotivos()`
+
+Lista los motivos disponibles para crear PQRS.
+
+```js
+import PqrsService from "@/api/services/pqrs.service";
+
+const motivos = await PqrsService.getMotivos();
+```
+
+**HTTP:** `GET /v1/pqrs/cliente/motivos`
+
+---
+
+#### `create(dto)`
+
+Crea una PQRS. Acepta JSON o `FormData` (con imágenes adjuntas).
+
+```js
+// Con JSON:
+await PqrsService.create({
+  IdMotivo: 1,
+  Descripcion: "Mi queja es...",
+});
+
+// Con imágenes (FormData):
+const fd = new FormData();
+fd.append("IdMotivo", 1);
+fd.append("Descripcion", "Mi queja es...");
+fd.append("imagenes", fileInput.files[0]);
+await PqrsService.create(fd);
+```
+
+**HTTP:** `POST /v1/pqrs/cliente`
+
+---
+
+#### `getMisPqrs(params?)`
+
+```js
+const misPqrs = await PqrsService.getMisPqrs({ page: 1 });
+```
+
+**HTTP:** `GET /v1/pqrs/cliente/mis-pqrs`
+
+---
+
+#### `getById(id)`
+
+```js
+const pqr = await PqrsService.getById(42);
+```
+
+**HTTP:** `GET /v1/pqrs/cliente/{id}`
+
+---
+
+#### `getImagenesPqrs(id)`
+
+```js
+const imagenes = await PqrsService.getImagenesPqrs(42);
+```
+
+**HTTP:** `GET /v1/pqrs/cliente/imagen/{id}`
+
+---
+
+### Métodos — Admin
+
+#### `getAllPqrs(params?)`
+
+```js
+const todasPqrs = await PqrsService.getAllPqrs({ page: 1, IdSede: 32 });
+```
+
+**HTTP:** `GET /v1/pqrs/admin`
+
+---
+
+#### `getDetailPqrs(id)`
+
+```js
+const detalle = await PqrsService.getDetailPqrs(42);
+```
+
+**HTTP:** `GET /v1/pqrs/admin/{id}`
+
+---
+
+#### `responsePqrs(id, dto)`
+
+Responde una PQRS.
+
+```js
+await PqrsService.responsePqrs(42, { Respuesta: "Atendido..." });
+```
+
+**HTTP:** `PUT /v1/pqrs/admin/{id}/responder`
+
+---
+
+#### `changeStatusPqrs(id, estado)`
+
+```js
+await PqrsService.changeStatusPqrs(42, "resuelto");
+```
+
+**HTTP:** `PUT /v1/pqrs/admin/{id}/estado/{estado}`
+
+---
+
+#### `changePriorityPqrs(id, prioridad)`
+
+```js
+await PqrsService.changePriorityPqrs(42, "alta");
+```
+
+**HTTP:** `PUT /v1/pqrs/admin/{id}/prioridad/{prioridad}`
+
+---
+
+#### `assignPqrsAdmin(dto)`
+
+Asigna una PQRS a un administrador.
+
+```js
+await PqrsService.assignPqrsAdmin({ IdPqrs: 42, IdAdmin: 5 });
+```
+
+**HTTP:** `POST /v1/pqrs/admin/asignar`
+
+---
+
+#### `getHistorialAssignaciones(id)`
+
+Historial de asignaciones de una PQRS.
+
+```js
+const historial = await PqrsService.getHistorialAssignaciones(42);
+```
+
+**HTTP:** `GET /v1/pqrs/admin/{id}/asignaciones`
+
+---
+
+### Métodos — Motivos Admin
+
+#### `getAllMotivos()`, `createMotivo(dto)`, `updateMotivo(id, dto)`
+
+CRUD de motivos de PQRS desde el panel admin.
+
+**HTTP:** `GET/POST/PUT /v1/pqrs/admin/motivos[/{id}]`
+
+---
+
+## 📏 ReglasEstacionamientoService
+
+**Archivo:** `src/api/services/reglas.estacionamiento.service.js`
+**Ruta base:** `v1/reglas-estacionamiento`
+
+Consulta de reglas de acceso/estacionamiento por sede.
+
+### Métodos
+
+#### `getEstacionamientoAcceso(idSede)`
+
+```js
+import ReglasEstacionamientoService from "@/api/services/reglas.estacionamiento.service";
+
+const reglas = await ReglasEstacionamientoService.getEstacionamientoAcceso(32);
+```
+
+**HTTP:** `GET /v1/reglas-estacionamiento/pago/{idSede}`
 
 ---
 

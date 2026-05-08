@@ -1,122 +1,188 @@
 # Digital6G Frontend
 
-Sistema de gestión para **Digital6G**, desarrollado con Vue 3 y Vite. Esta aplicación proporciona una interfaz robusta y reactiva para administradores, operadores y clientes, facilitando la gestión de sedes, mensualidades y servicios de transporte.
+> Sistema de gestión de parqueaderos — Panel de administración y portal de clientes.
+
+[![Vue 3](https://img.shields.io/badge/Vue-3.5.25-4FC08D?logo=vue.js)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.3.1-646CFF?logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.17-06B6D4?logo=tailwind-css)](https://tailwindcss.com/)
+[![Pinia](https://img.shields.io/badge/Pinia-3.0.2-FFD859?logo=pinia)](https://pinia.vuejs.org/)
 
 ---
 
-## Tecnologías Principales
+## Vista Rápida
 
-El proyecto utiliza un stack moderno y eficiente diseñado para la escalabilidad:
+| Rol | Panel | Acceso |
+|:---|:---|:---|
+| **Admin** | Dashboard, clientes, sedes, mensualidades, roles, PQRS, facturación | `/admin/**` |
+| **Cliente** | Mis mensualidades, pagos, parqueos, notificaciones, PQRS | `/cliente/**` |
 
-- **[Vue 3](https://vuejs.org/) (v3.5.25)**: Framework progresivo con Composition API y `<script setup>`.
-- **[Vite](https://vitejs.dev/) (v7.3.1)**: Herramienta de construcción ultra rápida para el desarrollo frontend moderno.
-- **[Tailwind CSS](https://tailwindcss.com/) (v3.4.17)**: Framework de CSS "utility-first" para un diseño rápido y personalizado.
-- **[Pinia](https://pinia.vuejs.org/) (v3.0.2)**: Almacén de estado intuitivo y tipado para Vue.
-- **[Vue Router](https://router.vuejs.org/) (v4.x)**: Enrutador oficial para aplicaciones Single Page (SPA).
+## Stack Tecnológico
+
+| Tecnología | Versión | Rol |
+|:---|:---|:---|
+| Vue 3 | 3.5.25 | Framework SPA (Composition API + `<script setup>`) |
+| Vite | 7.3.1 | Build tool + dev server |
+| Vue Router | 4 | Enrutamiento SPA con guards RBAC |
+| Pinia | 3.0.2 | Estado global + persistencia en localStorage |
+| Tailwind CSS | 3.4.17 | Estilos utilitarios |
+| Flowbite | 3.1.2 | Componentes UI |
+| Axios | 1.13.5 | HTTP client con interceptores de auth + refresh token |
+| Chart.js | 4.5.1 | Gráficos en dashboard admin |
+| SweetAlert2 | 11.19.1 | Alertas y confirmaciones |
+| Luxon | 3.6.1 | Manejo de fechas (timezone Colombia) |
 
 ---
 
-## Paquetes y Dependencias Clave
+## Inicio Rápido
 
-| Paquete | Versión | Propósito |
-| :--- | :--- | :--- |
-| `axios` | `^1.13.5` | Cliente HTTP para comunicación con el Backend. |
-| `flowbite` | `3.1.2` | Biblioteca de componentes de UI basada en Tailwind CSS. |
-| `pinia-plugin-persistedstate` | `^4.7.1` | Persistencia del estado de Pinia en `localStorage`. |
-| `luxon` | `3.6.1` | Manejo avanzado de fechas y tiempos. |
-| `sweetalert2` | `11.19.1` | Modales y notificaciones elegantes. |
-| `chart.js` & `vue-chartjs` | `^4.5.1` / `^5.3.3` | Generación de reportes y gráficas estadísticas. |
-| `qrcode` | `1.5.4` | Generación de códigos QR para validaciones. |
-| `@vueuse/core` | `13.0.0` | Colección de utilidades esenciales para Vue Composition API. |
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar variables de entorno
+cp .env.development .env
+# Editar .env → VITE_API_URL=https://tu-api.com/api
+
+# 3. Iniciar servidor de desarrollo
+npm run dev
+
+# 4. (Opcional) Compilar Tailwind CSS
+npm run style
+```
+
+### Scripts disponibles
+
+| Comando | Descripción |
+|:---|:---|
+| `npm run dev` | Servidor de desarrollo en `0.0.0.0:5173` |
+| `npm run build` | Build de producción → `dist/` |
+| `npm run preview` | Preview del build de producción |
+| `npm run style` | Compilar Tailwind CSS (watch mode) |
 
 ---
 
 ## Estructura del Proyecto
 
-El proyecto sigue una organización modular basada en responsabilidades:
-
-```text
+```
 src/
-├── api/                  # Configuración de Axios y servicios de API por módulo.
-│   └── services/         # Clases de servicio (admin, clientes, roles, sedes, pagos, etc).
-├── assets/               # Recursos estáticos (imágenes, SVGs) y estilos globales.
-├── components/           # Componentes reutilizables.
-│   ├── modals/           # Ventanas modales específicas del sistema.
-│   └── shared/           # Componentes comunes (Navbar, Sidebar).
-├── composables/          # Lógica reutilizable con Composition API.
-│   └── useAuth.js        # Validación de permisos y acceso al estado de sesión.
-├── constants/            # Constantes centralizadas del sistema.
-│   └── permisions.js     # Objeto PERMS con todos los strings de permisos.
-├── directives/           # Directivas Vue personalizadas.
-│   └── v-permission.js   # Directiva para control de visibilidad por permiso.
-├── layouts/              # Envoltorios de diseño (Admin, Cliente, Operador).
-├── router/               # Configuración de rutas y guardias de navegación.
-│   ├── guards/           # authGuards.js con lógica RBAC de 5 pasos.
-│   └── routes/           # Rutas separadas por rol (auth, admin, cliente, operador).
-├── stores/               # Estado global de la aplicación (Autenticación).
-├── views/                # Vistas principales divididas por roles de usuario.
-│   ├── administrador/    # Vistas del panel de administración.
-│   ├── auth/             # Login, Registro y página de acceso no autorizado.
-│   └── cliente/          # Vistas del portal del cliente.
-└── App.vue               # Componente raíz de la aplicación.
+├── main.js                          # Punto de entrada
+├── App.vue                          # Raíz: RouterView + restoreSession()
+├── api/
+│   ├── axios.js                     # Axios instance + interceptores JWT
+│   └── services/                    # 22 servicios API (singleton pattern)
+├── assets/
+│   ├── img/                         # 90+ iconos SVG + imágenes
+│   ├── main.css                     # Tailwind compilado
+│   ├── base.css                     # Resets globales
+│   ├── swal.css                     # SweetAlert2 custom styles
+│   └── table-system.css             # Tablas custom
+├── components/
+│   ├── shared/                      # Sidebar, Navbar, Paginacion, AppIcon, DatePicker
+│   ├── modals/                      # BaseModal, ModalCongelar, ModalFacturacion, etc.
+│   └── aside/                       # NotificacionesBtn, AsideEditar
+├── composables/
+│   └── useAuth.js                   # hasPermission(), hasAnyPermission()
+├── constants/
+│   └── permisions.js                # PERMS.* — strings de permisos del JWT
+├── directives/
+│   └── v-permission.js              # Oculta elementos del DOM sin permiso
+├── layouts/
+│   ├── AppLayout.vue                # Layout base (sidebar + navbar + router-view)
+│   ├── AdminLayout.vue              # Layout admin (filtra menú por permisos + Suspense)
+│   ├── ClienteLayout.vue            # Layout cliente
+│   └── AppLayout.skeleton.vue       # Skeleton de carga
+├── router/
+│   ├── index.js                     # Combina rutas + aplica authGuard
+│   ├── guards/
+│   │   └── authGuards.js            # Guard de 5 pasos (auth, rol, permiso)
+│   └── routes/
+│       ├── authRoutes.js            # Rutas públicas
+│       ├── adminRoutes.js           # Rutas admin + adminMenuItems
+│       └── clienteRoutes.js         # Rutas cliente + clienteMenuItems
+├── stores/
+│   └── auth.js                      # Auth store (login, logout, restoreSession, refresh)
+├── utils/
+│   ├── error.handler.js             # Manejo centralizado de errores Axios
+│   ├── formats.date.js              # Formateo de fechas (Luxon, Colombia)
+│   └── swal.js                      # Wrappers de SweetAlert2
+└── views/
+    ├── auth/                        # Login, Registro, SeleccionSede, ForgotPassword
+    ├── administrador/               # 18 vistas admin (Dashboard, Clientes, Sedes, etc.)
+    └── cliente/                     # 14 vistas cliente (Inicio, Mensualidad, PQRS, etc.)
 ```
 
 ---
 
-## Puntos Importantes
+## Arquitectura Clave
 
-### 1. Gestión de API y Autenticación
+### Autenticación
 
-La capa de API (`src/api/`) cuenta con un sistema de **interceptores** que gestiona automáticamente el envío de tokens JWT y el **refresco de sesión** sin intervención manual del desarrollador.
+- **JWT** con access token + refresh token
+- **Auto-refresh**: interceptor de Axios maneja 401 automáticamente con cola de peticiones
+- **Persistencia**: `pinia-plugin-persistedstate` guarda token/user/role en localStorage
+- **Restore**: al recargar la página, `restoreSession()` decodifica el JWT y restaura el estado
 
-> Consulta la [Documentación de la API](./doc/api/README.md) para más detalles.
+### Control de Acceso (RBAC) — 3 capas
 
-### 2. Sistema de Roles y Permisos (RBAC)
+| Capa | Mecanismo | Archivo |
+|:---|:---|:---|
+| **Ruta** | `authGuard` verifica `meta.role` y `meta.permission` | `router/guards/authGuards.js` |
+| **Componente** | `useAuth()` → `hasPermission()`, `hasAnyPermission()` | `composables/useAuth.js` |
+| **DOM** | `v-permission` elimina elementos sin permiso | `directives/v-permission.js` |
 
-Las rutas están protegidas mediante un guardia de navegación de 5 pasos (`src/router/guards/authGuards.js`) que verifica autenticación, rol y permisos específicos antes de permitir el acceso a cualquier módulo.
+> **Bypass**: usuarios con rol `SUPER-ADMIN` o `ADMIN` tienen acceso total sin importar permisos.
 
-La aplicación implementa tres capas de control:
-- **Capa de Ruta**: El `authGuard` bloquea la navegación según `meta.role` y `meta.permission`.
-- **Capa de Componente**: El composable `useAuth` expone funciones de validación (`hasPermission`, `hasAllPermissions`).
-- **Capa de DOM**: La directiva `v-permission` elimina elementos del DOM si el usuario no tiene el permiso necesario.
+### API Layer
 
-> Consulta la [Guía del Sistema de Permisos](./doc/V_PERMISSION_IMPLEMENTATION.md) para la implementación completa.
-
-### 3. Diseño Responsivo
-
-Gracias a Tailwind CSS y Flowbite, la aplicación es totalmente compatible con dispositivos móviles y escritorio, adaptando los layouts según la resolución de pantalla.
-
----
-
-## Documentación del Sistema
-
-Para un mayor detalle sobre la arquitectura y el funcionamiento interno, consulta las siguientes guías:
-
-- **[Capa de API](./doc/api/README.md)**: Configuración de Axios, interceptores y referencia de servicios.
-- **[Enrutamiento](./doc/router/README.md)**: Definición de rutas, guardias de seguridad y RBAC.
-- **[Gestión de Estado](./doc/stores/README.md)**: Estructura de Pinia stores y persistencia de sesión.
-- **[Sistema de Permisos (V-Permission)](./doc/V_PERMISSION_IMPLEMENTATION.md)**: Guía completa sobre cómo funciona y cómo implementar la validación de permisos en el sistema.
+- **22 servicios** en `api/services/`, cada uno como singleton (`export default new Service()`)
+- **Dos patrones de error**: `handleError` (retorna objeto) o `throw` (lanza error)
+- **Servicios que lanzan**: `SedesService`, `RolService`, `SedesDisponibilidadService`
 
 ---
 
-## Instalación y Desarrollo
+## Documentación Completa
 
-1. **Clonar el repositorio**
-2. **Instalar dependencias**:
-   ```bash
-   npm install
-   ```
-3. **Configurar variables de entorno**:
-   Crea un archivo `.env` basado en `.env.development` y configura `VITE_API_URL`.
-4. **Ejecutar modo desarrollo**:
-   ```bash
-   npm run dev
-   ```
-5. **Generar estilos Tailwind** (opcional para watch dinámico):
-   ```bash
-   npm run style
-   ```
+Toda la documentación del proyecto está en [`doc/`](./doc/):
+
+| Sección | Contenido |
+|:---|:---|
+| [Getting Started](./doc/getting-started/SETUP.md) | Setup, convenciones, cómo agregar features |
+| [API](./doc/api/README.md) | Axios, 22 servicios, manejo de errores |
+| [Router](./doc/router/README.md) | Rutas, guards, menús |
+| [Stores](./doc/stores/README.md) | Auth store, persistencia |
+| [Componentes](./doc/components/README.md) | Shared, modals, aside |
+| [Composables](./doc/composables/useAuth.md) | useAuth — permisos |
+| [Utils](./doc/utils/README.md) | Error handler, fechas, SweetAlert2 |
+| [Arquitectura](./doc/PLATFORM_FLOW.md) | Flujo end-to-end de la plataforma |
+| [Permisos (RBAC)](./doc/architecture/RBAC.md) | Sistema de permisos detallado |
+| [Design Tokens](./doc/design/TOKENS.md) | Colores, tipografía, iconos |
 
 ---
 
-*Digital6G - Desarrollado con dedicación para la eficiencia en transporte y gestión.*
+## Variables de Entorno
+
+| Variable | Descripción | Ejemplo |
+|:---|:---|:---|
+| `VITE_API_URL` | URL base del backend | `http://localhost:3000/api` |
+
+Crear archivo `.env` en la raíz:
+
+```env
+VITE_API_URL=http://localhost:3000/api
+```
+
+---
+
+## Convenciones de Código
+
+- **JavaScript** (no TypeScript)
+- **Composition API** con `<script setup>`
+- Alias `@` para imports desde `src/`
+- Servicios como clases singleton con `handleError`
+- Permisos siempre vía `PERMS.*` (nunca strings literales)
+
+Ver [CONVENTIONS.md](./doc/getting-started/CONVENTIONS.md) para detalles completos.
+
+---
+
+*Digital6G — Sistema de gestión de parqueaderos.*
