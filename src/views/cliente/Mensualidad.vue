@@ -1340,14 +1340,25 @@ const confirmarPagoExcedente = () => {
     consentimientoAceptado.value = false
     errPago.value = ''
 
-    // Pre-cargar correo y teléfono del token (mismo que abrirPago)
+    // Pre-cargar datos del usuario y la mensualidad
     const u = authStore.user
     if (u) {
         avalpayinformacion.value.telefono = avalpayinformacion.value.telefono || u.telefono || ''
         avalpayinformacion.value.correo = avalpayinformacion.value.correo || u.email || ''
     }
 
-    modalPago.value = true  // necesita datos de facturación antes de proceder
+    const m = mensualidadAccion.value
+    if (m?.nombre) {
+        const partes = m.nombre.trim().split(' ')
+        avalpayinformacion.value.nombre = avalpayinformacion.value.nombre || partes[0] || ''
+        avalpayinformacion.value.apellido = avalpayinformacion.value.apellido || (partes.length > 1 ? partes.slice(1).join(' ') : '')
+    }
+    if (m?.documento && m.documento !== '—') {
+        avalpayinformacion.value.documento = avalpayinformacion.value.documento || String(m.documento).replace(/[^0-9]/g, '')
+        avalpayinformacion.value.tipoDocumento = avalpayinformacion.value.tipoDocumento || 'CC'
+    }
+
+    modalPago.value = true
 }
 
 
@@ -1403,11 +1414,22 @@ const abrirPago = async (m) => {
     loadingOpciones.value = true
     modalPago.value = true
 
-    // Pre-cargar correo y celular del token
+    // Pre-cargar datos del usuario y la mensualidad
     const u = authStore.user
     if (u) {
         avalpayinformacion.value.telefono = avalpayinformacion.value.telefono || u.telefono || ''
         avalpayinformacion.value.correo = avalpayinformacion.value.correo || u.email || ''
+    }
+
+    // Auto-completar datos desde la mensualidad seleccionada
+    if (m.nombre) {
+        const partes = m.nombre.trim().split(' ')
+        avalpayinformacion.value.nombre = avalpayinformacion.value.nombre || partes[0] || ''
+        avalpayinformacion.value.apellido = avalpayinformacion.value.apellido || (partes.length > 1 ? partes.slice(1).join(' ') : '')
+    }
+    if (m.documento && m.documento !== '—') {
+        avalpayinformacion.value.documento = avalpayinformacion.value.documento || String(m.documento).replace(/[^0-9]/g, '')
+        avalpayinformacion.value.tipoDocumento = avalpayinformacion.value.tipoDocumento || 'CC'
     }
 
     try {
