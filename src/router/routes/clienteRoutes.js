@@ -47,6 +47,6 @@ export const clienteRoutes = {
       path: "tutorial",
       component: () => import("@/views/cliente/Tutorial.vue"),
     },
-    { path: "", redirect: "inicio" },
+    { path: "", redirect: "mensualidad" },
   ],
 };

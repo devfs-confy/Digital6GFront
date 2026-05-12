@@ -18,7 +18,7 @@ function decodeJwt(token) {
 const roleRedirects = {
   administrador: "/admin/dashboard",
   admin: "/admin/dashboard",
-  cliente: "/cliente/inicio",
+  cliente: "/cliente/mensualidad",
 };
 export const useAuthStore = defineStore(
   "auth",

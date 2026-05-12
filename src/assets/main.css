@@ -1056,6 +1056,10 @@ input[type="range"]::-ms-fill-lower {
   right: -110px;
 }
 
+.-top-1 {
+  top: -0.25rem;
+}
+
 .-top-20 {
   top: -5rem;
 }
@@ -1146,6 +1150,26 @@ input[type="range"]::-ms-fill-lower {
 
 .top-\[calc\(100\%\+6px\)\] {
   top: calc(100% + 6px);
+}
+
+.-top-0 {
+  top: -0px;
+}
+
+.-top-10 {
+  top: -2.5rem;
+}
+
+.-top-11 {
+  top: -2.75rem;
+}
+
+.left-2\/4 {
+  left: 50%;
+}
+
+.left-1\/3 {
+  left: 33.333333%;
 }
 
 .z-0 {
@@ -1279,6 +1303,10 @@ input[type="range"]::-ms-fill-lower {
 
 .mb-8 {
   margin-bottom: 2rem;
+}
+
+.mb-\[-4px\] {
+  margin-bottom: -4px;
 }
 
 .mb-\[3px\] {
@@ -2159,6 +2187,22 @@ input[type="range"]::-ms-fill-lower {
 
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
 
 @keyframes pulse {
@@ -4610,6 +4654,12 @@ input[type="range"]::-ms-fill-lower {
 .shadow-\[0_6px_0_\#000\] {
   --tw-shadow: 0 6px 0 #000;
   --tw-shadow-colored: 0 6px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 

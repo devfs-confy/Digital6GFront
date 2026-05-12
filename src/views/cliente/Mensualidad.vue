@@ -1,7 +1,11 @@
 <template>
-    <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
+    
+   
 
-        <!-- Header -->
+    <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6 ">
+
+
+         <!-- Header -->
         <AdminPageHeader title="Mis Mensualidades" />
 
         <!-- <button @click="modalCodigo = true"
@@ -172,19 +176,37 @@
 
                 <!-- Card actions -->
                 <div class="grid grid-cols-2 gap-2 w-full">
+
                     <!-- Pay -->
-                    <button @click="pagarDeshabilitado(m) ? null : abrirPago(m)" :disabled="pagarDeshabilitado(m)"
-                        :class="pagarDeshabilitado(m)
-                            ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
-                            : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'"
-                        class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                        </svg>
-                        Pagar
-                    </button>
+                    <div class="relative flex">
+                        <!-- Indicador visual: acá puedes pagar -->
+                        <div
+                            v-if="m.estado === 'vencida' || m.estado === 'por_vencer'"
+                            class="absolute -top-20 left-1/3 -translate-x-1/2 z-10 flex flex-col items-center animate-bounce pointer-events-none"
+                        >
+                            <!-- Flecha apuntando hacia abajo -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#b45309" viewBox="0 0 24 24" class="mb-[-4px]">
+                                <path d="M12 16l-6-6h12l-6 6z"/>
+                            </svg>
+                            <!-- Texto -->
+                            <span class="whitespace-nowrap text-[0.92rem] font-black text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300 shadow-md">
+                                ¡Acá puedes pagar!
+                            </span>
+                        </div>
+
+                        <button @click="pagarDeshabilitado(m) ? null : abrirPago(m)" :disabled="pagarDeshabilitado(m)"
+                            :class="pagarDeshabilitado(m)
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
+                                : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'"
+                            class="w-full flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                            </svg>
+                            Pagar
+                        </button>
+                    </div>
                     <!-- View -->
                     <button @click="abrirDetalle(m)"
                         class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
