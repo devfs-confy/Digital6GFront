@@ -1375,23 +1375,28 @@ const confirmarPagoExcedente = () => {
     consentimientoAceptado.value = false
     errPago.value = ''
 
-    // Pre-cargar datos del usuario y la mensualidad
+    // Pre-cargar datos del usuario (token) y la mensualidad
     const u = authStore.user
     if (u) {
         avalpayinformacion.value.telefono = avalpayinformacion.value.telefono || u.telefono || ''
         avalpayinformacion.value.correo = avalpayinformacion.value.correo || u.email || ''
+        avalpayinformacion.value.nombre = avalpayinformacion.value.nombre || u.nombres || ''
+        avalpayinformacion.value.apellido = avalpayinformacion.value.apellido || u.apellidos || ''
     }
 
     const m = mensualidadAccion.value
-    if (m?.nombre) {
+    // Fallback a la mensualidad si el token no trae nombres
+    if (!avalpayinformacion.value.nombre && m?.nombre) {
         const partes = m.nombre.trim().split(' ')
-        avalpayinformacion.value.nombre = avalpayinformacion.value.nombre || partes[0] || ''
-        avalpayinformacion.value.apellido = avalpayinformacion.value.apellido || (partes.length > 1 ? partes.slice(1).join(' ') : '')
+        avalpayinformacion.value.nombre = partes[0] || ''
+        avalpayinformacion.value.apellido = partes.length > 1 ? partes.slice(1).join(' ') : ''
     }
     if (m?.documento && m.documento !== '—') {
         avalpayinformacion.value.documento = avalpayinformacion.value.documento || String(m.documento).replace(/[^0-9]/g, '')
         avalpayinformacion.value.tipoDocumento = avalpayinformacion.value.tipoDocumento || 'CC'
     }
+
+    console.log('[confirmarPagoExcedente] avalpayinformacion precargada:', avalpayinformacion.value)
 
     modalPago.value = true
 }
@@ -1453,23 +1458,28 @@ const abrirPago = async (m) => {
     loadingOpciones.value = true
     modalPago.value = true
 
-    // Pre-cargar datos del usuario y la mensualidad
+    // Pre-cargar datos del usuario (token) y la mensualidad
     const u = authStore.user
     if (u) {
         avalpayinformacion.value.telefono = avalpayinformacion.value.telefono || u.telefono || ''
-        avalpayinformacion.value.correo = avalpayinformacion.value.correo || u.email || ''
+        avalpayinformacion.value.correo   = avalpayinformacion.value.correo   || u.email    || ''
+        avalpayinformacion.value.nombre   = avalpayinformacion.value.nombre   || u.nombres  || ''
+        avalpayinformacion.value.apellido = avalpayinformacion.value.apellido || u.apellidos || ''
     }
 
-    // Auto-completar datos desde la mensualidad seleccionada
-    if (m.nombre) {
+    // Fallback a la mensualidad si el token no trae nombres
+    if (!avalpayinformacion.value.nombre && m.nombre) {
         const partes = m.nombre.trim().split(' ')
-        avalpayinformacion.value.nombre = avalpayinformacion.value.nombre || partes[0] || ''
-        avalpayinformacion.value.apellido = avalpayinformacion.value.apellido || (partes.length > 1 ? partes.slice(1).join(' ') : '')
+        avalpayinformacion.value.nombre = partes[0] || ''
+        avalpayinformacion.value.apellido = partes.length > 1 ? partes.slice(1).join(' ') : ''
     }
+
     if (m.documento && m.documento !== '—') {
         avalpayinformacion.value.documento = avalpayinformacion.value.documento || String(m.documento).replace(/[^0-9]/g, '')
         avalpayinformacion.value.tipoDocumento = avalpayinformacion.value.tipoDocumento || 'CC'
     }
+
+    console.log('[abrirPago] avalpayinformacion precargada:', avalpayinformacion.value)
 
     try {
         // ── 1. Verificar pago pendiente

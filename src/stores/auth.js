@@ -2,6 +2,19 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { api } from "@/api/axios";
 
+// Decodifica un JWT correctamente soportando UTF-8 (ñ, tildes, etc.)
+function decodeJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
+    window.atob(base64)
+      .split('')
+      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  );
+  return JSON.parse(jsonPayload);
+}
+
 const roleRedirects = {
   administrador: "/admin/dashboard",
   admin: "/admin/dashboard",
@@ -46,7 +59,7 @@ export const useAuthStore = defineStore(
         token.value = data.data?.token ?? null;
         refreshToken.value = data.data?.refreshToken ?? null;
 
-        const payload = JSON.parse(atob(token.value.split(".")[1]));
+        const payload = decodeJwt(token.value);
         role.value = payload.tipoUsuario?.toLowerCase() ?? null;
         user.value = {
           nombres: payload.nombres,
@@ -101,7 +114,7 @@ export const useAuthStore = defineStore(
       if (!token.value) return logout();
 
       try {
-        const payload = JSON.parse(atob(token.value.split(".")[1]));
+        const payload = decodeJwt(token.value);
         const exp = payload.exp * 1000;
 
         if (Date.now() > exp) {
@@ -142,7 +155,7 @@ export const useAuthStore = defineStore(
         if (newRefresh) refreshToken.value = newRefresh;
 
         // Restaurar user/role desde el nuevo JWT
-        const payload = JSON.parse(atob(newToken.split(".")[1]));
+        const payload = decodeJwt(newToken);
         role.value = payload.tipoUsuario?.toLowerCase() ?? null;
         user.value = {
           nombres: payload.nombres,
