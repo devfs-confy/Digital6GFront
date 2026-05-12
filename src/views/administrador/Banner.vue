@@ -76,10 +76,9 @@
             <div v-for="(p, i) in publicidades" :key="p.IdPublicidad"
                 class="bg-white rounded-3xl overflow-hidden border-2 border-[#e8f5e9] shadow-[0_4px_0_#e2ede7] flex flex-col transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_0_#c8ddd1]"
                 :style="{ animationDelay: `${i * 0.06}s` }">
-
                 <!-- Imagen -->
                 <div class="relative h-44 bg-gray-100 flex-shrink-0 overflow-hidden">
-                    <img v-if="imagenes[p.IdPublicidad]" :src="imagenes[p.IdPublicidad]"
+                    <img v-if="p.Imagen" :src="p.Imagen"
                         class="w-full h-full object-cover" />
                     <div v-else class="w-full h-full flex items-center justify-center text-gray-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
