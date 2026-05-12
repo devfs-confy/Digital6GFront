@@ -8,11 +8,11 @@ const BASE_MENSUALIDAD = `${BASE}/mensualidad`;
 class PagosService {
   // ── Mensualidad ──────────────────────────────────────────
 
-  async getOpcionesPago(idPersona, meses = 1) {
+  async getOpcionesPago(idPersona,sede, meses = 1) {
     try {
       const { data } = await api.get(
         `${BASE_MENSUALIDAD}/${idPersona}/opciones-pago`,
-        { params: { meses } },
+        { params: { meses, sede } },
       );
       return data;
     } catch (error) {
@@ -36,6 +36,7 @@ class PagosService {
       TipoDocumento,
       Nombre,
       Apellidos,
+      Sede,
     } = body;
 
     try {
@@ -53,6 +54,7 @@ class PagosService {
         ...(TipoDocumento && { TipoDocumento }),
         ...(Nombre && { Nombre }),
         ...(Apellidos && { Apellidos }),
+        ...(Sede && { Sede }),
       };
 
       const { data } = await api.post(

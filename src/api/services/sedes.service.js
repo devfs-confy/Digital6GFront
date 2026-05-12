@@ -78,6 +78,24 @@ class SedesService {
       handleError(error, "SedesService.updateDisponibilidad");
     }
   }
+
+  async getMySedes(idSede){
+    try {
+      const response = await api.get(`${this.nameRoute}/get-all/${idSede}`);
+      return response.data;
+    } catch (error) {
+      handleError(error, "SedesService.getMySedes");
+    }
+  }
+
+  async getSedesAccess(idSede){
+    try {
+      const response = await api.get(`${this.nameRoute}/get-access/${idSede}`);
+      return response.data;
+    } catch (error) {
+      handleError(error, "SedesService.getSedesAccess");
+    }
+  }
 }
 
 export default new SedesService();

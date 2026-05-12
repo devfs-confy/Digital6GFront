@@ -362,6 +362,33 @@
                             <div v-if="!infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
+                                    Sede
+                                </p>
+
+                                <select v-model="sedeInput" @change="cambiarSede"
+                                    class="p-3.5 px-4 rounded-2xl border-2 text-black border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9] cursor-pointer text-left w-full transition-all  hover:border-[#c8e6c9] hover:bg-[#f0fdf4] ">
+                                    <option v-for="sede in sedes" :key="sede.IdEstacionamiento"
+                                        :value="sede.IdEstacionamiento">
+                                        {{ sede.Nombre }}
+                                    </option>
+                                </select>
+                                <div class="space-y-1" v-if="infoSedes.length > 0 ">
+                                    <h2 class="text-md font-bold text-gray-800 mb-2">
+                                        Puede ingresar a las siguientes sedes
+                                    </h2>
+                                    <div v-for="sedeInfo in infoSedes"
+                                        class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-2 hover:bg-gray-100 transition">
+
+                                        <p class="text-sm text-gray-500">Sede</p>
+                                        <p class="font-semibold text-gray-800">
+                                            {{ sedeInfo.EstacionamientoAcceso.Nombre }}
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <p
+                                    class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                                     Elige tu plan
                                 </p>
                                 <div class="flex flex-col gap-2">
@@ -930,6 +957,7 @@ import ModalDetalleMensualidad from '@/components/modals/ModalDetalleMensualidad
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
 import FormDate from '@/utils/formats.date'
+import SedesService from '@/api/services/sedes.service'
 
 // ── Stores ────────────────────────────────────────────────────
 const authStore = useAuthStore()
@@ -1000,7 +1028,9 @@ const errPago = ref('')
 const fechaInicioManual = ref('')
 const mesesExtra = ref(1)
 const pagoPendiente = ref(null)
-
+const sedeInput = ref(null)
+const sedes = ref([])
+const infoSedes = ref(null)
 // ── envio de datos pasarela ────────────────────────────────────────
 const avalpayinformacion = ref({
     tipoDocumento: '',
@@ -1143,6 +1173,7 @@ const cargarMisMensualidades = async () => {
             _raw: m,
             btnTarjeta: m.RequiereTarjeta,
             cobroTarjetaPermitido: !!(m.CobroTarjeta),
+            idEstacionamiento: m?.T_Estacionamiento?.IdEstacionamiento,
             id: m.IdPersonaAutorizada,
             nombre: m.NombreApellidos ?? '—',
             documento: m.Documento ?? '—',
@@ -1253,8 +1284,10 @@ const confirmarCambioPlacas = async () => {
             IdPersonaAutorizada: Number(mensualidadAccion.value.id),
             Placas: placasPayload,
         }
+        console.log({payload})
 
         const res = await MensualidadesService.cambiarAutorizacion(payload)
+        console.log({res})
         guardandoPlacas.value = false
 
         // 200 con requierePago: true → informativo, mostrar banner
@@ -1318,6 +1351,8 @@ const confirmarCambioPlacas = async () => {
         _aplicarCambioPlacasLocal()
         modalPlacas.value = false
     }
+
+
 }
 
 // Helper: actualiza estado local de placas después de un cambio exitoso
@@ -1404,7 +1439,11 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
 
 // ── Pago ──────────────────────────────────────────────────────
 const abrirPago = async (m) => {
+
     mensualidadAccion.value = m
+    sedeInput.value = m.idEstacionamiento
+    await cargarSedes()
+    await getSedesAccess()
     opcionesPago.value = []
     opcionSeleccionada.value = null
     errPago.value = ''
@@ -1464,14 +1503,13 @@ const abrirPago = async (m) => {
         }
 
         // ── 2. Sin pendiente — cargar opciones normalmente
-        const res = await PagoService.getOpcionesPago(m.id, 1)
+        const res = await PagoService.getOpcionesPago(m.id, sedeInput.value, 1)
         const data = res?.data ?? res
         if (res?.success === false) {
             errPago.value = res?.message ?? 'Error al cargar opciones.'
             return
         }
         opcionesPago.value = Array.isArray(data) ? data : []
-        console.log(opcionesPago.value)
         opcionSeleccionada.value = opcionesPago.value[0] ?? null
 
     } catch (e) {
@@ -1482,9 +1520,52 @@ const abrirPago = async (m) => {
     }
 }
 
+//--cargar sedes 
+const cargarSedes = async () => {
+    try {
+        const res = await SedesService.getMySedes(sedeInput.value)
+        sedes.value = res.data
 
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
 
+const getSedesAccess = async () => {
+    try {
+        const res = await SedesService.getSedesAccess(sedeInput.value)
+        infoSedes.value = res.data
 
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+watch(sedeInput, async () => {
+    await getSedesAccess()
+})
+
+const cambiarSede = async () => {
+    loadingOpciones.value = true
+    errPago.value = ''
+    try {
+        const res = await PagoService.getOpcionesPago(mensualidadAccion.value.id, sedeInput.value, mesesExtra.value)
+        const data = res?.data ?? res
+        if (res?.success === false) {
+            errPago.value = res?.message ?? 'Error al cargar opciones.'
+            return
+        }
+        opcionesPago.value = Array.isArray(data) ? data : []
+        opcionSeleccionada.value = opcionesPago.value[0] ?? null
+    } catch (e) {
+        const msg = e?.response?.data?.message
+        errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'No se pudieron cargar las opciones de pago.')
+    } finally {
+        loadingOpciones.value = false
+    }
+}
 
 const seleccionarOpcion = async (op) => {
     if (mesesExtra.value !== 1) {
@@ -1492,7 +1573,7 @@ const seleccionarOpcion = async (op) => {
         loadingOpciones.value = true
         errPago.value = ''
         try {
-            const res = await PagoService.getOpcionesPago(mensualidadAccion.value.id, 1)
+            const res = await PagoService.getOpcionesPago(mensualidadAccion.value.id, sedeInput.value, 1)
             const data = res?.data ?? res
             if (res?.success === false) { errPago.value = res?.message ?? 'Error al recalcular.'; return }
             opcionesPago.value = Array.isArray(data) ? data : []
@@ -1514,7 +1595,7 @@ const seleccionarMesesExtra = async (n) => {
     loadingOpciones.value = true
     errPago.value = ''
     try {
-        const res = await PagoService.getOpcionesPago(mensualidadAccion.value.id, n)
+        const res = await PagoService.getOpcionesPago(mensualidadAccion.value.id,sedeInput.value, n)
         const data = res?.data ?? res
         if (res?.success === false) { errPago.value = res?.message ?? 'Error al recalcular.'; return }
         opcionesPago.value = Array.isArray(data) ? data : []
@@ -1619,8 +1700,10 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 ModalidadPago: 'CAMBIO_AUTORIZACION',
                 IdAutorizacionNueva: Number(excedentePendiente.IdAutorizacionNueva),
                 Placas: placasPayload,
+                Sede: Number(sedeInput.value),
                 IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             }
+            console.log('body', body)
 
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
@@ -1648,9 +1731,11 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             Apellidos: avalpayinformacion.value.apellido,
             CantidadMeses: cantidadMeses,
             ModalidadPago: opcionSeleccionada.value.modalidad,
+            Sede: Number(sedeInput.value),
             IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             ...((!m.fechaFin || m.estado === 'vencida') && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
+        console.log('body', body)
 
 
         showInfo("Un momento", "Redirigiendo a la página de pago...")
