@@ -827,7 +827,9 @@ const buscarDocumento = async (doc) => {
             Password: '',
             CodigoEstudianteUCC: '',
             EstudianteUcc: false,
-            placas: [d.placa1, d.placa2, d.placa3, d.placa4, d.placa5].filter(Boolean),
+            placas: [d.placa1, d.placa2, d.placa3, d.placa4, d.placa5]
+              .map(p => (p === null || p === undefined || p === 'null') ? '' : p)
+              .filter((p, i) => i === 0 || p !== ''),
         })
 
 
