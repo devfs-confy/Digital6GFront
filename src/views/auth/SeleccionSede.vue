@@ -1,4 +1,5 @@
 <template>
+    <!-- RF-025.1: Vista de selección y validación de sede — RF-025: el cliente selecciona la sede para la mensualidad. -->
     <div class="ss-root">
         <div class="blob blob-1" />
         <div class="blob blob-2" />
@@ -16,7 +17,7 @@
                 </svg>
                 Volver
             </button>
-            <!-- Header -->
+            <!-- RF-025.2: Encabezado de la vista — indica al usuario que debe elegir el parqueadero de su mensualidad. -->
             <div class="ss-header">
                 <div class="ss-icon-wrap">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7FD344" viewBox="0 0 24 24">
@@ -31,13 +32,14 @@
                 </div>
             </div>
 
-            <!-- Loading skeleton -->
+            <!-- RF-025.3: Skeleton de carga — estado intermedio mientras se consultan las sedes disponibles vía API. -->
             <div v-if="loading" class="sedes-grid">
                 <div v-for="n in 6" :key="n" class="skeleton-card" />
             </div>
 
-            <!-- Grid de sedes -->
+            <!-- RF-025.4: Grid de sedes disponibles — muestra cada sede activa como tarjeta seleccionable con indicador visual de selección. -->
             <div v-else class="sedes-grid">
+                <!-- RF-025.5: Estado vacío — se muestra cuando no existen sedes activas disponibles en el sistema. -->
                 <div v-if="sedes.length === 0" class="empty-state">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                         viewBox="0 0 24 24">
@@ -72,7 +74,7 @@
                 </div>
             </div>
 
-            <!-- Acciones -->
+            <!-- RF-025.6: Acciones finales — botón Continuar que valida la sede seleccionada y navega al registro, y botón Volver al login. -->
             <div class="ss-actions">
                 <button @click="continuar" :disabled="!sedeSeleccionada" class="btn-continuar">
                     <span>Continuar</span>
@@ -175,6 +177,7 @@
 </template>
 
 <script setup>
+// RF-025.7: Lógica de selección de sede — carga sedes activas, gestiona selección individual y navega al registro pasando parámetros de sede.
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import SedesService from '@/api/services/sedes.service'
@@ -185,6 +188,7 @@ const sedes = ref([])
 const loading = ref(true)
 const sedeSeleccionada = ref(null)
 
+// RF-025.8: Carga de sedes activas desde el servicio SedesService — filtra únicamente sedes con Estado = true.
 const cargarSedes = async () => {
     loading.value = true
     try {
@@ -201,8 +205,10 @@ const cargarSedes = async () => {
 
 onMounted(cargarSedes)
 
+// RF-025.9: Handler de selección — actualiza la sede elegida para activar estilos de selección y habilitar el botón Continuar.
 const seleccionarSede = (sede) => { sedeSeleccionada.value = sede }
 
+// RF-025.10: Navegación al registro — redirige a la vista de registro incluyendo el Id y Nombre de la sede seleccionada como query params.
 const continuar = () => {
     if (!sedeSeleccionada.value) return
     router.push({

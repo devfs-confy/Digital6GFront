@@ -1,7 +1,22 @@
 <template>
+    <!-- ═══════════════════════════════════════════════════════════
+         RF-032: ENVIAR PQRS
+         ───────────────────────────────────────────────────────────
+         Vista del cliente para el registro de Peticiones, Quejas,
+         Reclamos y Sugerencias (PQRS). Permite:
+         • Listado historial de PQRS con paginación.
+         • Crear nueva PQRS seleccionando tipo, motivo, asunto,
+           descripción, mensualidad relacionada e imagen adjunta.
+         • Solicitudes esporádicas soportadas: cambio autorización,
+           cambio data cédula/NIT, cambio sede, pago erróneo,
+           pagos Aval Pay, tema tarjetas, otros.
+         • Cada PQRS está categorizada con código de PQR y
+           descripción del motivo.
+         • Seguimiento de estado: ABIERTO → EN_PROCESO → CERRADO.
+    ═══════════════════════════════════════════════════════════ -->
     <div class="h-full flex flex-col gap-6 maincontainer">
 
-        <!-- Header -->
+        <!-- Header: título "Mis PQRS" + botón "Nueva" para radicar -->
         <AdminPageHeader title="Mis PQRS">
             <template #right>
                 <button @click="abrirNuevaPqrs"
@@ -13,7 +28,9 @@
             </template>
         </AdminPageHeader>
 
-        <!-- Tabla -->
+        <!-- Tabla de PQRS: muestra radicado, motivo, descripción,
+             estado con semáforo de color, fecha y opción de ver
+             detalle. Incluye estados vacío y loading. -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="overflow-x-auto">
                 <table class="border-collapse min-w-[700px] w-full">
@@ -101,7 +118,17 @@
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
-        <!-- ───── MODAL: NUEVA PQRS ───── -->
+        <!-- ───── MODAL: NUEVA PQRS ─────
+             Formulario de radicación según RF-032. Campos:
+             • Tipo (PETICION, QUEJA, RECLAMO, SUGERENCIA)
+             • Motivo: lista dinámica desde backend (códigos PQR)
+             • Asunto y Descripción (limitados en caracteres)
+             • Mensualidad relacionada: obligatoria si el cliente
+               tiene al menos una mensualidad; auto-selecciona si
+               solo existe una.
+             • Imagen adjunta opcional (JPG/PNG/WEBP ≤5MB).
+             • Datos de contacto pre-llenados desde authStore.
+        ───── -->
         <Transition name="pqrs-modal">
             <div v-if="modalNuevo"
                 class="fixed inset-0 z-[999] flex items-center justify-end-mobile justify-center p-4 bg-[#0D291C]/60 backdrop-blur-[6px]">
@@ -325,7 +352,12 @@
             </div>
         </Transition>
 
-        <!-- ───── MODAL: DETALLE PQRS ───── -->
+        <!-- ───── MODAL: DETALLE PQRS ─────
+             Visualización completa de una PQRS radicada:
+             estado actual, tipo, motivo, prioridad, asunto,
+             descripción, imagen adjunta descargable y la
+             respuesta administrativa cuando exista.
+        ───── -->
         <Transition name="pqrs-modal">
             <div v-if="modalDetalle"
                 class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[#0D291C]/60 backdrop-blur-[6px]">
@@ -506,31 +538,39 @@ import TablePaginacion from '@/components/shared/Paginacion.vue'
 import { useAuthStore } from '@/stores/auth'
 import { showSuccess, showError } from '@/utils/swal'
 
-const pqrsList = ref([])
-const motivos = ref([])
-const loading = ref(true)
-const loadingMotivos = ref(false)
-const loadingDetalle = ref(false)
+// ═══════════════════════════════════════════════════════════
+//  RF-032: ENVIAR PQRS — LÓGICA DEL SCRIPT
+// ═══════════════════════════════════════════════════════════
+
+const pqrsList = ref([])          // Lista cruda de PQRS desde API
+const motivos = ref([])           // Catálogo de motivos/códigos PQR
+const loading = ref(true)         // Spinner de carga tabla principal
+const loadingMotivos = ref(false) // Spinner carga select motivos
+const loadingDetalle = ref(false) // Spinner carga modal detalle
 const paginaActual = ref(1)
 const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
-const authStore = useAuthStore()
+const authStore = useAuthStore()  // Datos del cliente autenticado
 
-const modalNuevo = ref(false)
-const modalDetalle = ref(false)
-const pqrsAccion = ref(null)
-const detalleActivo = ref(null)
-const guardando = ref(false)
-const errNuevo = ref('')
+const modalNuevo = ref(false)     // Visibilidad modal radicación
+const modalDetalle = ref(false)   // Visibilidad modal detalle
+const pqrsAccion = ref(null)      // PQRS seleccionada para acción
+const detalleActivo = ref(null)   // Objeto detalle poblado por API
+const guardando = ref(false)      // Estado envío FormData
+const errNuevo = ref('')          // Error de validación/envío
 
-// ── Imagen ────────────────────────────────────────────────────
-const previewUrl = ref('')
-const selectedFile = ref(null)
-const errImagen = ref('')
-const imagenDetalle = ref(null)
-const loadingImagen = ref(false)
+// ── Gestión de imagen adjunta (opcional) ─────────────────────
+const previewUrl = ref('')        // URL base64 para previsualizar
+const selectedFile = ref(null)    // Archivo File seleccionado
+const errImagen = ref('')         // Error de tipo o tamaño imagen
+const imagenDetalle = ref(null)   // Imagen en base64 del detalle
+const loadingImagen = ref(false)  // Carga imagen detalle
 
+/**
+ * RF-032: Carga la imagen adjunta de una PQRS específica
+ * para mostrarla en el modal de detalle (descarga + preview).
+ */
 const cargarImagenPqrs = async (id) => {
     imagenDetalle.value = null
     loadingImagen.value = true
@@ -588,6 +628,11 @@ function quitarImagen() {
 }
 // ─────────────────────────────────────────────────────────────
 
+/**
+ * RF-032: Objeto reactivo del formulario de nueva PQRS.
+ * Incluye relación opcional/obligatoria con mensualidad
+ * mediante IdPersonaAutorizada.
+ */
 const fN = reactive({
     IdMotivo: '', Tipo: '', Asunto: '', Descripcion: '',
     NombreCliente: '', Telefono: '', Email: '', IdPersonaAutorizada: null,
@@ -612,6 +657,10 @@ const estadoLabel = (estado) => {
     return map[estado] ?? estado ?? '—'
 }
 
+/**
+ * RF-032: Obtiene el historial paginado de PQRS del cliente
+ * autenticado para el seguimiento de solicitudes enviadas.
+ */
 const cargarPqrs = async () => {
     loading.value = true
     try {
@@ -630,6 +679,10 @@ const cargarPqrs = async () => {
     }
 }
 
+/**
+ * RF-032: Carga el catálogo de motivos/códigos PQR desde backend.
+ * Cada motivo posee IdMotivo y Nombre (descripción del código).
+ */
 const cargarMotivos = async () => {
     loadingMotivos.value = true
     try { motivos.value = await PqrsService.getMotivos() }
@@ -642,9 +695,15 @@ onMounted(cargarPqrs)
 const irPagina = (p) => { if (p < 1 || p > totalPaginas.value) return; paginaActual.value = p; cargarPqrs() }
 const onLimitChange = (val) => { limit.value = val; paginaActual.value = 1; cargarPqrs() }
 
+// ── Mensualidades relacionadas a la PQRS ────────────────────
 const misMensualidades = ref([])
 const loadingMensualidades = ref(false)
 
+/**
+ * RF-032: Obtiene las mensualidades vigentes del cliente para
+ * asociar la PQRS a una mensualidad específica (requerido si
+ * existe al menos una mensualidad activa).
+ */
 const cargarMensualidades = async () => {
     if (misMensualidades.value.length) return
     loadingMensualidades.value = true
@@ -659,6 +718,13 @@ const cargarMensualidades = async () => {
     finally { loadingMensualidades.value = false }
 }
 
+/**
+ * RF-032: Prepara y abre el modal de radicación nueva.
+ * Limpia errores, pre-llena datos de contacto desde el
+ * perfil autenticado y carga motivos + mensualidades.
+ * Si el cliente tiene exactamente una mensualidad, la
+ * selecciona automáticamente como relacionada.
+ */
 const abrirNuevaPqrs = async () => {
     errNuevo.value = ''
     quitarImagen()
@@ -681,6 +747,13 @@ const abrirNuevaPqrs = async () => {
 }
 
 
+/**
+ * RF-032: Valida y envía la nueva PQRS al backend mediante
+ * FormData (soporta imagen adjunta). Registra peticiones,
+ * quejas, reclamos, sugerencias y solicitudes esporádicas
+ * (cambio autorización, data cédula/NIT, sede, pagos, etc.)
+ * categorizadas por código de motivo.
+ */
 const crearPqrs = async () => {
     errNuevo.value = ''
     if (!fN.IdMotivo) { errNuevo.value = 'Selecciona un motivo.'; return }
@@ -727,6 +800,11 @@ const crearPqrs = async () => {
     }
 }
 
+/**
+ * RF-032: Abre el modal de detalle de una PQRS radicada,
+ * recarga el objeto completo desde API y, si tiene imagen
+ * adjunta, la solicita para visualización/descarga.
+ */
 const abrirDetalle = async (pqrs) => {
     pqrsAccion.value = pqrs
     detalleActivo.value = pqrs

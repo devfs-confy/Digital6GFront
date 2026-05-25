@@ -1,6 +1,8 @@
 <template>
+    <!-- RF-029: Visualizar factura de pago/mensualidad - Vista de factura/detalle -->
     <div class="flex flex-col gap-6 min-h-full pb-6">
 
+        <!-- RF-029.14: Encabezado de visualización de factura -->
         <!-- Header -->
         <AdminPageHeader title="Resultado del pago">
             <template #left>
@@ -13,6 +15,7 @@
             </template>
         </AdminPageHeader>
 
+        <!-- RF-029.15: Estado de carga inicial al verificar la factura -->
         <!-- Loading inicial -->
         <div v-if="cargando" class="estado-card">
             <div class="estado-spinner" />
@@ -20,6 +23,7 @@
             <p class="estado-sub">Esto solo tomará un momento</p>
         </div>
 
+        <!-- RF-029.16: Estado de error al procesar la carga de la factura -->
         <!-- Error al procesar -->
         <div v-else-if="errorMsg" class="estado-card estado-card--error">
             <div class="estado-icono estado-icono--error">
@@ -35,6 +39,7 @@
             </button>
         </div>
 
+        <!-- RF-029.17: Estado de enlace inválido (sin token de referencia en URL) -->
         <!-- Sin token -->
         <div v-else-if="!token" class="estado-card estado-card--warn">
             <div class="estado-icono estado-icono--warn">
@@ -50,13 +55,16 @@
         </div>
 
 
+        <!-- RF-029.18: Contenido principal con detalle de factura y visualización PDF -->
         <!-- Contenido principal -->
         <template v-else>
             <div class="sections-grid">
 
+                <!-- RF-029.19: Panel izquierdo con información resumida de la factura -->
                 <!-- Panel izquierdo: estado + info -->
                 <div class="flex flex-col gap-4">
 
+                    <!-- RF-029.20: Tarjeta de detalle de factura (referencia, fecha, valor, sede, plan) -->
                     <!-- Info de la factura -->
                     <div v-if="factura" class="info-card">
                         <div class="info-card__rows">
@@ -86,6 +94,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-029.21: Acciones de descarga de PDF y navegación de retorno -->
                     <!-- Acciones -->
                     <div class="flex flex-col gap-3">
                         <button v-if="pdfUrl" @click="descargarPdf" class="btn-accion btn-accion--pdf">
@@ -103,6 +112,7 @@
 
                 </div>
 
+                <!-- RF-029.22: Panel derecho con visualización del PDF de la factura -->
                 <!-- Panel derecho: iframe PDF -->
                 <div class="pdf-panel">
                     <div v-if="cargandoPdf" class="pdf-loading">
@@ -130,12 +140,14 @@
 </template>
 
 <script setup>
+// RF-029: Script de visualización de factura de pago/mensualidad
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import FacturaService from '@/api/services/factura.service'
 
 const route = useRoute()
 
+// RF-029.23: Estado reactivo de carga, factura, PDF y mensajes de error
 // ── Estado ────────────────────────────────────────────────────────
 const cargando = ref(true)
 const cargandoPdf = ref(false)
@@ -146,6 +158,7 @@ const estadoPago = ref('aprobado')
 const fileName = ref("factura.pdf")
 
 
+// RF-029.24: Obtención del token de referencia desde la URL o sessionStorage
 // ── Token desde la URL ─────────────────────────────────────────────
 
 const token = computed(() =>
@@ -157,6 +170,7 @@ const token = computed(() =>
     ?? null
 )
 
+// RF-029.25: Labels del estado de pago para visualización
 // ── Labels ─────────────────────────────────────────────────────────
 const estadoLabel = computed(() => ({
     aprobado: 'Pago aprobado',
@@ -164,6 +178,7 @@ const estadoLabel = computed(() => ({
     rechazado: 'Pago rechazado',
 })[estadoPago.value] ?? 'Estado desconocido')
 
+// RF-029.26: Helpers de formato de fecha y precio para la factura
 // ── Helpers ─────────────────────────────────────────────────────────
 const formatFecha = (iso) => {
     if (!iso) return '—'
@@ -179,6 +194,7 @@ const formatPrecio = (valor) => {
     }).format(valor)
 }
 
+// RF-029.27: Lógica principal de carga de factura y determinación de estado de pago
 // ── Lógica principal ─────────────────────────────────────────────
 const cargarFactura = async () => {
     if (!token.value) { cargando.value = false; return }
@@ -219,6 +235,7 @@ const cargarFactura = async () => {
         sessionStorage.removeItem('pago_referencia')
     }
 }
+// RF-029.28: Carga del documento PDF de la factura desde el servicio
 const cargarPdf = async () => {
     if (!token.value) return
     cargandoPdf.value = true
@@ -241,6 +258,7 @@ const cargarPdf = async () => {
     }
 }
 
+// RF-029.29: Descarga del archivo PDF de la factura
 const descargarPdf = () => {
     if (!pdfUrl.value) return
     const a = document.createElement('a')

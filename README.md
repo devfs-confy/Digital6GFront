@@ -156,6 +156,7 @@ Toda la documentación del proyecto está en [`doc/`](./doc/):
 | [Arquitectura](./doc/PLATFORM_FLOW.md) | Flujo end-to-end de la plataforma |
 | [Permisos (RBAC)](./doc/architecture/RBAC.md) | Sistema de permisos detallado |
 | [Requerimientos Funcionales Admin](./doc/admin/RF-REFERENCE.md) | Tabla maestra RF-001 a RF-018, mapeo a vistas y permisos |
+| [Requerimientos Funcionales Cliente](./doc/cliente/RF-REFERENCE.md) | Tabla maestra RF-021 a RF-038, mapeo a vistas cliente y auth |
 | [Guía de Diseño](./doc/DESIGN-GUIDE.md) | Tokens, componentes, animaciones — para replicar el sistema de diseño |
 | [Design Tokens](./doc/design/TOKENS.md) | Colores, tipografía, iconos |
 

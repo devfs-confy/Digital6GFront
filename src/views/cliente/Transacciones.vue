@@ -1,15 +1,19 @@
 <template>
+    <!-- RF-030: Consultar historial de transacciones - Vista de transacciones de pasarela de pagos -->
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
+        <!-- RF-030.1: Encabezado de historial de transacciones -->
         <!-- Header -->
         <AdminPageHeader title="Historial de Transacciones - Pasarela de Pagos" />
 
+        <!-- RF-030.2: Estado de carga del historial de transacciones -->
         <!-- Loading -->
         <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
             <div class="w-8 h-8 rounded-full border-[3px] border-[#e8f5e9] border-t-[#299261] animate-spin" />
             <span class="text-sm font-semibold text-gray-400">Cargando historial...</span>
         </div>
 
+        <!-- RF-030.3: Mensaje de error al cargar el historial de transacciones -->
         <!-- Error -->
         <div v-else-if="errorCarga"
             class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-red-50 border-2 border-red-200">
@@ -25,6 +29,7 @@
         </div>
 
         <template v-else>
+            <!-- RF-030.4: Resumen de transacciones (total pagado y cantidad de transacciones) -->
             <!-- Resumen -->
             <div class="grid grid-cols-2 gap-3">
                 <div
@@ -41,8 +46,10 @@
                 </div>
             </div>
 
+            <!-- RF-030.5: Tabla de transacciones con estado, referencia, fecha y valor -->
             <!-- Tabla transacciones -->
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
+                <!-- RF-030.6: Encabezado de tabla de transacciones -->
                 <!-- Head tabla -->
                 <div class="px-5 py-3.5 bg-[#0D291C] border-b-[3px] border-[#7FD344] flex items-center justify-between">
                     <span class="text-[0.68rem] font-black uppercase tracking-widest text-white">Últimas
@@ -50,6 +57,7 @@
                     <span class="text-[0.65rem] font-bold text-[#7FD344]/70">{{ transacciones.length }} registros</span>
                 </div>
 
+                <!-- RF-030.7: Estado vacío cuando no hay transacciones registradas -->
                 <!-- Vacío -->
                 <div v-if="transacciones.length === 0" class="flex flex-col items-center gap-3 py-16 text-gray-300">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
@@ -60,6 +68,7 @@
                     <span class="text-sm font-semibold">Sin transacciones registradas</span>
                 </div>
 
+                <!-- RF-030.8: Lista de transacciones con badge de estado e iconografía -->
                 <!-- Lista de transacciones -->
                 <div v-else class="flex flex-col divide-y divide-gray-50">
                     <div v-for="(tx, i) in transacciones" :key="tx.RequestId"
@@ -126,6 +135,7 @@
                     </div>
                 </div>
 
+                <!-- RF-030.9: Footer con conteo de transacciones recientes -->
                 <!-- Footer -->
                 <div class="px-5 py-3 border-t border-gray-100 bg-white">
                     <span class="text-[0.75rem] text-gray-400">
@@ -139,14 +149,17 @@
 </template>
 
 <script setup>
+// RF-030: Script de historial de transacciones de pasarela de pagos
 import { ref, computed, onMounted } from 'vue'
 import PagosService from '@/api/services/pagos.service'
 import { DateTime } from 'luxon'
 
+// RF-030.10: Estado reactivo de transacciones, carga y errores
 const transacciones = ref([])
 const loading = ref(true)
 const errorCarga = ref('')
 
+// RF-030.11: Carga del historial de transacciones desde PagosService
 const cargarHistorial = async () => {
     loading.value = true
     errorCarga.value = ''
@@ -163,12 +176,14 @@ const cargarHistorial = async () => {
 
 onMounted(cargarHistorial)
 
+// RF-030.12: Cálculo del total pagado sumando solo transacciones aprobadas
 const totalPagado = computed(() =>
     transacciones.value
         .filter(t => t.Status === 'APROBADO')
         .reduce((acc, t) => acc + (t.Valor ?? 0), 0)
 )
 
+// RF-030.13: Helpers de formato para moneda COP y fechas de transacciones
 const formatCOP = (valor) =>
     new Intl.NumberFormat('es-CO', {
         style: 'currency', currency: 'COP', maximumFractionDigits: 0

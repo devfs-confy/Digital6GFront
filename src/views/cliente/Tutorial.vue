@@ -1,7 +1,17 @@
 <template>
+    <!-- ═══════════════════════════════════════════════════════════
+         ONBOARDING / GUÍA DE USO DEL SISTEMA PARA CLIENTES
+         ───────────────────────────────────────────────────────────
+         Tutorial interactivo dividido por categorías (Inicio,
+         Mensualidades, Pagos, Transacciones, Parqueos, PQRS, Perfil).
+         Cada categoría contiene pasos guiados con progreso visual,
+         videos, carruseles de imágenes, tips, notas de aviso y
+         navegación entre pasos. Incluye lightbox con zoom para
+         ampliar capturas de pantalla.
+    ═══════════════════════════════════════════════════════════ -->
     <div class="flex flex-col gap-4 min-h-full pb-6">
 
-        <!-- Header -->
+        <!-- Header con botón de retorno dinámico -->
         <AdminPageHeader :title="categoriaActiva ? categoriaActivaObj.label : 'Tutorial'">
             <template #left>
                 <button @click="handleBack()"
@@ -13,7 +23,11 @@
             </template>
         </AdminPageHeader>
 
-        <!-- ── GRID DE CATEGORÍAS ── -->
+        <!-- ── GRID DE CATEGORÍAS ──
+             Vista inicial del tutorial: presenta todas las
+             categorías disponibles como tarjetas con icono,
+             cantidad de pasos y preview de progreso.
+        ── -->
         <template v-if="!categoriaActiva">
 
             <!-- Intro banner -->
@@ -64,7 +78,13 @@
             </div>
         </template>
 
-        <!-- ── TUTORIAL GUIADO ── -->
+        <!-- ── TUTORIAL GUIADO ──
+             Vista paso a paso de la categoría seleccionada.
+             Muestra barra de progreso, indicador de paso actual,
+             contenido multimedia (video o carrusel de imágenes),
+             descripción, bloques de información, consejos y
+             notas de aviso importantes.
+        ── -->
         <template v-if="categoriaActiva">
 
             <!-- Progreso -->
@@ -248,7 +268,12 @@
         </template>
     </div>
 
-    <!-- ── LIGHTBOX ── -->
+    <!-- ── LIGHTBOX ──
+         Visor a pantalla completa para ampliar imágenes del
+         tutorial con navegación prev/sig, contador y soporte
+         de gestos táctiles (swipe). Desactiva scroll del body
+         mientras está abierto.
+    ── -->
     <Teleport to="body">
         <Transition name="lb-fade">
             <div v-if="lightboxOpen" class="fixed inset-0 z-[9999] bg-gray-900/90 backdrop-blur-sm flex flex-col"
@@ -327,19 +352,23 @@ import tutorialpagos from '@/assets/img/tutorial/tutorialpagos.mp4'
 
 const router = useRouter()
 
-// ── Estado ────────────────────────────────────────────────
-const categoriaActiva = ref(null)
-const pasoActual = ref(0)
-const transicion = ref('slide-forward')
-const carouselIdx = ref(0)
-const lightboxOpen = ref(false)
-const lightboxImg = ref(null)
-const swipeTouchStartX = ref(0)
+// ═══════════════════════════════════════════════════════════
+//  ONBOARDING / TUTORIAL — LÓGICA DEL SCRIPT
+// ═══════════════════════════════════════════════════════════
+
+// ── Estado del tutorial ───────────────────────────────────
+const categoriaActiva = ref(null)   // Id de categoría seleccionada
+const pasoActual = ref(0)             // Índice del paso actual
+const transicion = ref('slide-forward') // Dirección de animación
+const carouselIdx = ref(0)          // Índice imagen del carrusel
+const lightboxOpen = ref(false)     // Visibilidad lightbox
+const lightboxImg = ref(null)       // URL imagen en lightbox
+const swipeTouchStartX = ref(0)     // Coordenada X inicial swipe
 
 watch(pasoActual, () => { carouselIdx.value = 0 })
 watch(lightboxOpen, val => { document.body.style.overflow = val ? 'hidden' : '' })
 
-// ── Data ──────────────────────────────────────────────────
+// ── Data estática del tutorial por categoría ──────────────
 const categorias = [
     {
         id: 'inicio', label: 'Inicio Tutorial', icon: 'home',
@@ -581,7 +610,7 @@ const categorias = [
     },
 ]
 
-// ── Computed ──────────────────────────────────────────────
+// ── Computed de categoría y paso activo ───────────────────
 const categoriaActivaObj = computed(() =>
     categorias.find(c => c.id === categoriaActiva.value)
 )
@@ -589,13 +618,21 @@ const pasoActualObj = computed(() =>
     categoriaActivaObj.value?.pasos[pasoActual.value]
 )
 
-// ── Métodos ───────────────────────────────────────────────
+// ── Métodos de navegación del tutorial ──────────────────
+
+/**
+ * Selecciona una categoría y reinicia al primer paso.
+ */
 function seleccionarCategoria(id) {
     categoriaActiva.value = id
     pasoActual.value = 0
     transicion.value = 'slide-forward'
 }
 
+/**
+ * Avanza al siguiente paso o cierra el tutorial si
+ * se encuentra en el último paso de la categoría.
+ */
 function siguiente() {
     const total = categoriaActivaObj.value.pasos.length
     if (pasoActual.value < total - 1) {
@@ -607,6 +644,10 @@ function siguiente() {
     }
 }
 
+/**
+ * Retrocede al paso anterior o vuelve al grid de categorías
+ * si se encuentra en el primer paso.
+ */
 function anterior() {
     if (pasoActual.value > 0) {
         transicion.value = 'slide-back'
@@ -617,11 +658,19 @@ function anterior() {
     }
 }
 
+/**
+ * Salta directamente a un paso específico mediante los
+ * dots del indicador de progreso.
+ */
 function irAPaso(idx) {
     transicion.value = idx > pasoActual.value ? 'slide-forward' : 'slide-back'
     pasoActual.value = idx
 }
 
+/**
+ * Gestiona el botón de retroceso: si está dentro de una
+ * categoría vuelve al grid; si no, ejecuta router.back().
+ */
 function handleBack() {
     if (categoriaActiva.value) {
         categoriaActiva.value = null
@@ -630,6 +679,8 @@ function handleBack() {
         router.back()
     }
 }
+
+// ── Métodos del carrusel de imágenes ───────────────────────
 
 function carouselPrev() {
     const len = pasoActualObj.value.imgs.length
@@ -640,6 +691,8 @@ function carouselNext() {
     const len = pasoActualObj.value.imgs.length
     carouselIdx.value = (carouselIdx.value + 1) % len
 }
+
+// ── Métodos del lightbox ──────────────────────────────────
 
 function abrirLightbox(src) {
     lightboxImg.value = src
@@ -666,6 +719,8 @@ function saltoLightbox(i) {
     carouselIdx.value = i
     lightboxImg.value = pasoActualObj.value.imgs[i]
 }
+
+// ── Gestos táctiles (swipe) ───────────────────────────────
 
 function swipeStart(e) {
     swipeTouchStartX.value = e.touches[0].clientX

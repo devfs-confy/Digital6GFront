@@ -1,6 +1,8 @@
 <template>
+    <!-- RF-030: Consultar historial de entradas y salidas - Vista de parqueos recientes -->
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
+        <!-- RF-030.1: Encabezado con título dinámico según sede seleccionada -->
         <!-- Header -->
         <AdminPageHeader :title="sedeSeleccionada ? sedeSeleccionada.Nombre : 'Historial de Accesos'">
             <template #left>
@@ -13,6 +15,7 @@
             </template>
         </AdminPageHeader>
 
+        <!-- RF-030.2: PANTALLA 1 - Selección de sede para consultar historial de accesos -->
         <!-- ── PANTALLA 1: Selección de sede ── -->
         <template v-if="!sedeSeleccionada">
 
@@ -52,9 +55,11 @@
             </template>
         </template>
 
+        <!-- RF-030.3: PANTALLA 2 - Filtros y tabla de registros de entradas y salidas -->
         <!-- ── PANTALLA 2: Filtros + Tabla ── -->
         <template v-else>
 
+            <!-- RF-030.4: Filtros de búsqueda por placa, rango de fechas y tipo de vehículo -->
             <!-- Filtros -->
             <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
                 <div class="flex flex-col gap-1 flex-[2] min-w-[180px]">
@@ -92,10 +97,12 @@
                 <span class="text-sm font-semibold text-gray-400">Cargando historial...</span>
             </div>
 
+            <!-- RF-030.5: Tabla de registros de parqueos (entradas/salidas) con paginación -->
             <!-- Tabla -->
             <div v-else class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
                 <div class="overflow-x-auto flex-1" style="scrollbar-width:thin;scrollbar-color:#0D291C33 #f0f9f4">
                     <table class="w-full min-w-[700px] border-collapse">
+                        <!-- RF-030.6: Encabezados de tabla: Placa, Vehículo, Entrada, Salida, Duración, Estado -->
                         <thead>
                             <tr>
                                 <th
@@ -241,19 +248,23 @@
 </template>
 
 <script setup>
+// RF-030: Script de historial de entradas y salidas de parqueo
 import { ref, computed, watch, onMounted } from 'vue'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import ParqueosService from '@/api/services/parqueos.service'
 
+// RF-030.7: Estado de sedes disponibles para el cliente
 // ── Sedes ─────────────────────────────────────────────────────────
 const sedes = ref([])
 const loadingSedes = ref(false)
 const sedeSeleccionada = ref(null)
 
+// RF-030.8: Estado de registros de entradas y salidas
 // ── Registros ─────────────────────────────────────────────────────
 const registros = ref([])
 const loading = ref(false)
 
+// RF-030.9: Estado de filtros de búsqueda para el historial
 // ── Filtros ───────────────────────────────────────────────────────
 const busqueda = ref('')
 const filtroDesde = ref('')
@@ -271,6 +282,7 @@ const limpiarFiltros = () => {
     filtroTipo.value = ''
 }
 
+// RF-030.10: Carga de sedes desde el servicio de mensualidades del cliente
 // ── Cargar sedes desde mis mensualidades ─────────────────────────
 const cargarSedes = async () => {
     loadingSedes.value = true
@@ -302,6 +314,7 @@ const cargarSedes = async () => {
 
 onMounted(cargarSedes)
 
+// RF-030.11: Selección de sede y carga de registros de accesos (entradas/salidas)
 // ── Seleccionar sede y cargar accesos ────────────────────────────
 const seleccionarSede = async (sede) => {
     sedeSeleccionada.value = sede
@@ -342,6 +355,7 @@ const volverASedes = () => {
     pagina.value = 1
 }
 
+// RF-030.12: Filtrado y paginación del historial de registros de parqueo
 // ── Filtrado y paginación ────────────────────────────────────────
 const registrosFiltrados = computed(() => {
     const q = busqueda.value.toLowerCase()
@@ -367,6 +381,7 @@ const rangoFin = computed(() => Math.min(pagina.value * porPagina.value, registr
 
 watch([busqueda, filtroDesde, filtroHasta, filtroTipo], () => { pagina.value = 1 })
 
+// RF-030.13: Helpers de formato de fecha, hora y cálculo de duración de parqueo
 // ── Helpers ───────────────────────────────────────────────────────
 const fmtFecha = (iso) => new Date(iso).toLocaleDateString('es-CO', { year: 'numeric', day: '2-digit', month: 'short' })
 const fmtHora = (iso) => new Date(iso).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })

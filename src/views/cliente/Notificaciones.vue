@@ -1,15 +1,24 @@
 <template>
+    <!-- ═══════════════════════════════════════════════════════════
+         RF-024: NOTIFICACIONES DIARIAS (6 días antes vencimiento)
+         ───────────────────────────────────────────────────────────
+         Centro de notificaciones del cliente. Muestra listado de
+         notificaciones recibidas, incluyendo alertas de vencimiento
+         de mensualidad 6 días antes, respuestas a PQRS y otros
+         avisos del sistema. Cada tarjeta redirige al detalle o
+         acción correspondiente.
+    ═══════════════════════════════════════════════════════════ -->
     <div class="dashboard-grid">
 
         <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card card-animation"
             @click="router.push(opcion.route)">
 
-            <!-- Ícono -->
+            <!-- Ícono de la notificación / acceso -->
             <div class="opcion-icon">
                 <span v-html="opcion.icon" />
             </div>
 
-            <!-- Texto -->
+            <!-- Texto de la notificación -->
             <div class="opcion-text">
                 <h2 class="opcion-title">{{ opcion.titulo }}</h2>
                 <p class="opcion-sub">{{ opcion.sub }}</p>
@@ -21,7 +30,13 @@
 </template>
 
 <script setup>
+// ═══════════════════════════════════════════════════════════
+//  RF-024: CENTRO DE NOTIFICACIONES — LÓGICA DEL SCRIPT
+// ═══════════════════════════════════════════════════════════
 import { useRouter } from 'vue-router'
+
+// Router para navegar al detalle de cada notificación o
+// a la vista relacionada (mensualidades, PQRS, pagos, etc.).
 
 
 </script>

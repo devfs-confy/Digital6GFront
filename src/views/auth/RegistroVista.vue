@@ -1,5 +1,6 @@
 <template>
-    <!-- Root -->
+    <!-- RF-021.1: Vista de registro de clientes — RF-021 solicita información básica y credenciales de acceso para uso de servicios de parqueadero y mensualidades. -->
+        <!-- RF-021.2: Contenedor raíz de la vista de registro con fondo temático y layout centrado. -->
     <div class="relative min-h-screen w-full bg-[#0D291C] flex items-center justify-center max-[767px]:items-start
                 px-5 py-6 max-[767px]:px-4 max-[767px]:py-4 box-border overflow-hidden font-[Plus_Jakarta_Sans,sans-serif]">
 
@@ -16,7 +17,7 @@
                     overflow-hidden min-h-[580px] max-[767px]:min-h-0" style="border:1.5px solid rgba(127,211,68,0.15);
                    box-shadow:0 0 0 1px rgba(0,0,0,0.4),0 32px 80px rgba(0,0,0,0.55),0 0 60px rgba(127,211,68,0.05)">
 
-            <!-- ── Panel formulario ───────────────────────────── -->
+            <!-- RF-021.3: Panel de formulario — recopila datos personales, documento, vehículos y credenciales de acceso. -->
             <div class="flex-1 bg-white flex flex-col min-w-0 relative">
 
                 <!-- Top accent -->
@@ -82,7 +83,7 @@
                         </div>
                     </div>
 
-                    <!-- ── DOCUMENTO ── -->
+                    <!-- RF-021.4: Campo de identificación — número de documento obligatorio para buscar mensualidad activa o crear cuenta nueva. -->
                     <div class="flex flex-col gap-2.5">
                         <p class="section-label">Identificación</p>
                         <div class="flex flex-col gap-1">
@@ -142,7 +143,7 @@
                         </div>
                     </div>
 
-                    <!-- ── ESTUDIANTE sede 24 ── -->
+                    <!-- RF-021.5: Sección condicional para sede 24 — solicita código de estudiante UCC cuando aplica. -->
                     <Transition name="fade">
                         <div v-if="esSede24 && formularioListo"
                             class="bg-green-50 border-[1.5px] border-green-300 rounded-2xl p-4">
@@ -175,7 +176,7 @@
                         </div>
                     </Transition>
 
-                    <!-- ── FORMULARIO COMPLETO ── -->
+                    <!-- RF-021.6: Formulario completo visible tras validar el documento — incluye nombres, teléfono, correo, contraseña y placas. -->
                     <Transition name="reveal">
                         <div v-if="formularioListo" class="flex flex-col gap-5">
 
@@ -240,7 +241,7 @@
                                 </div>
                             </div>
 
-                            <!-- Vehículos -->
+                            <!-- RF-021.7: Sección de vehículos — permite registrar hasta dos placas asociadas al cliente. -->
                             <div class="flex flex-col gap-2.5">
                                 <p class="section-label">Vehículos</p>
 
@@ -293,7 +294,7 @@
                                 </div>
                             </div>
 
-                            <!-- Términos y condiciones -->
+                            <!-- RF-021.8: Checkbox de aceptación de términos y condiciones y política de privacidad obligatorio para el registro. -->
                             <label class="flex items-start gap-2.5 cursor-pointer select-none">
                                 <div class="relative flex-shrink-0 mt-0.5">
                                     <input type="checkbox" v-model="aceptoTerminos" class="sr-only" />
@@ -422,7 +423,7 @@
                                 </div>
                             </Transition>
 
-                            <!-- Submit -->
+                            <!-- RF-021.9: Botón de envío — ejecuta la validación completa y crea la cuenta del cliente mediante ClientService. -->
                             <button @click="submit" :disabled="guardando" class="submit-btn">
                                 <span v-if="guardando" class="spinner-sm spinner-sm--light" />
                                 {{ guardando ? 'Registrando...' : 'Crear cuenta' }}
@@ -443,7 +444,7 @@
 
 
 
-                    <!-- ── MODAL ÉXITO ── -->
+                    <!-- RF-021.10: Modal de confirmación de registro exitoso — indica que la cuenta fue creada y redirige al login. -->
                     <Transition name="modal">
                         <div v-if="modalExito" class="fixed inset-0 z-50 flex items-center justify-center p-4"
                             style="background:rgba(0,0,0,0.65)">
@@ -702,6 +703,7 @@
 </template>
 
 <script setup>
+// RF-021.11: Lógica de registro de clientes — gestiona estado del formulario, búsqueda de documento, validación y creación de cuenta.
 import { ref, reactive, computed, nextTick } from 'vue'
 import { showError, showSuccess, showConfirm } from '@/utils/swal'
 import { useRoute, useRouter } from 'vue-router'
@@ -743,6 +745,7 @@ const documentosBuscados = ref(new Set())
 const bloqueado = ref(false)
 const mensualidadData = ref(null)
 
+// RF-021.12: Objeto reactivo del formulario — almacena documento, nombres, contacto, correo, contraseña, placas y datos de estudiante UCC.
 const form = reactive({
     Documento: '', Nombres: '', Apellidos: '',
     Telefono: '', Email: '', Password: '',
@@ -750,6 +753,7 @@ const form = reactive({
     placas: [''],
 })
 
+// RF-021.13: Helper para detectar tipo de vehículo según formato de placa (carro: ABC123, moto: ABC12D).
 const detectarTipoVehiculo = (placa) => {
     if (!placa) return null
     const p = placa.trim().toUpperCase()
@@ -770,6 +774,7 @@ const habilitarEdicionDoc = () => {
     esEstudiante.value = null
 }
 
+// RF-021.14: Debounce en input de documento — inicia búsqueda automática tras 900 ms cuando el documento tiene ≥7 dígitos.
 let docTimer = null
 const onDocumentoInput = () => {
     if (bloqueado.value) return
@@ -783,6 +788,7 @@ const onDocumentoInput = () => {
     if (doc.length >= 7) docTimer = setTimeout(() => buscarDocumento(doc), 900)
 }
 
+// RF-021.15: Búsqueda de documento en API de mensualidades — pre-llena datos si existe mensualidad activa o habilita formulario manual.
 const buscarDocumento = async (doc) => {
     if (!documentosBuscados.value.has(doc)) {
         if (busquedasRealizadas.value >= LIMITE_BUSQUEDAS) {
@@ -847,6 +853,7 @@ const buscarDocumento = async (doc) => {
     }
 }
 
+// RF-021.16: Computed que bloquea edición de placas cuando el usuario encontrado tiene mensualidad vigente.
 // Placas bloqueadas si el usuario ya existe en el sistema (usuario antiguo)
 const placasBloqueadas = computed(() => {
     if (!usuarioEncontrado.value) return false
@@ -864,6 +871,7 @@ const limpiarCampos = () => {
 
 const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
+// RF-021.17: Validación completa del formulario — verifica campos obligatorios, formato de correo, longitud de contraseña y placas.
 const validarFormulario = () => {
     errSubmit.value = ''
     if (!form.Documento || !form.Nombres || !form.Apellidos) { errSubmit.value = 'Nombre, apellidos y documento son obligatorios.'; return false }
@@ -881,6 +889,7 @@ const validarFormulario = () => {
 }
 
 
+// RF-021.18: Construcción del payload para el servicio de creación de cliente — incluye datos personales, placas y flags de estudiante.
 const buildPayload = (esOld) => {
     const m = mensualidadData.value
     const { placas, CodigoEstudianteUCC, EstudianteUcc, ...rest } = form
@@ -910,6 +919,7 @@ const buildPayload = (esOld) => {
     }
 }
 
+// RF-021.19: Handler de registro — valida, construye payload, invoca ClientService.createClient y gestiona errores 409 (documento/correo duplicado).
 const submit = async () => {
     if (!validarFormulario()) return
     guardando.value = true

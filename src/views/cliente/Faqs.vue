@@ -1,10 +1,20 @@
 <template>
+    <!-- ═══════════════════════════════════════════════════════════
+         PREGUNTAS FRECUENTES DEL CLIENTE (FAQs)
+         ───────────────────────────────────────────────────────────
+         Centro de ayuda con buscador en tiempo real, categorías
+         desplegables y acordeón de preguntas/respuestas.
+         Cada FAQ puede incluir un enlace de acción a otra vista
+         del sistema (mensualidades, pagos, PQRS, perfil, etc.).
+    ═══════════════════════════════════════════════════════════ -->
     <div class="flex flex-col gap-5 min-h-full overflow-y-auto pb-6">
 
-        <!-- Header -->
+        <!-- Header: título "Preguntas Frecuentes" -->
         <AdminPageHeader title="Preguntas Frecuentes" />
 
-        <!-- Buscador -->
+        <!-- Buscador en tiempo real: filtra preguntas y respuestas
+             sin distinguir mayúsculas/minúsculas. Incluye botón para
+             limpiar el término de búsqueda. -->
         <div class="bg-white rounded-2xl px-4 py-3 flex items-center gap-3 border-2 border-gray-100 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0D291C" viewBox="0 0 24 24"
                 class="shrink-0 opacity-35">
@@ -21,7 +31,9 @@
             </button>
         </div>
 
-        <!-- Categorías (botones) — solo visibles cuando no se busca -->
+        <!-- Categorías (botones filtro) — solo visibles cuando no
+             se está buscando. Permite alternar entre categorías:
+             Mensualidades, Pagos, AvalPay, Cuenta y acceso. -->
         <div v-if="!busqueda" class="flex flex-wrap gap-2">
             <button v-for="cat in categorias" :key="cat.id" @click="seleccionarCategoria(cat.id)"
                 class="flex items-center gap-1.5 px-4 py-2 rounded-full text-[0.78rem] font-black border-2 transition-all cursor-pointer"
@@ -33,7 +45,8 @@
             </button>
         </div>
 
-        <!-- Sin resultados búsqueda -->
+        <!-- Estado vacío de búsqueda: se muestra cuando el término
+             ingresado no coincide con ninguna pregunta ni respuesta. -->
         <div v-if="busqueda && faqsBuscadas.length === 0" class="flex flex-col items-center gap-3 py-16 text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -42,7 +55,9 @@
             <span class="text-sm font-semibold">Sin resultados para "{{ busqueda }}"</span>
         </div>
 
-        <!-- Resultados búsqueda -->
+        <!-- Resultados de búsqueda: listado plano de FAQs que
+             coinciden con el término, mostrando la categoría de
+             origen (_cat) como etiqueta contexto. -->
         <template v-if="busqueda">
             <div class="flex flex-col gap-2">
                 <p class="text-[0.62rem] font-black uppercase tracking-[0.1em] text-gray-400 pl-1">
@@ -86,7 +101,8 @@
             </div>
         </template>
 
-        <!-- FAQs de categoría activa -->
+        <!-- FAQs de categoría activa: acordeón que muestra solo
+             las preguntas de la categoría seleccionada. -->
         <template v-else-if="categoriaActiva">
             <div class="flex flex-col gap-2">
                 <div v-for="faq in faqsCategoria" :key="faq.id"
@@ -123,7 +139,8 @@
             </div>
         </template>
 
-        <!-- Estado vacío: ninguna categoría seleccionada -->
+        <!-- Estado vacío inicial: se muestra cuando el usuario
+             aún no ha seleccionado ninguna categoría ni ha buscado. -->
         <template v-else>
             <div class="flex flex-col items-center gap-3 py-14 text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" viewBox="0 0 24 24">
@@ -141,21 +158,32 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
-const router = useRouter()
-const busqueda = ref('')
-const abierto = ref(null)
-const categoriaActiva = ref(null)
+// ═══════════════════════════════════════════════════════════
+//  PREGUNTAS FRECUENTES (FAQs) — LÓGICA DEL SCRIPT
+// ═══════════════════════════════════════════════════════════
 
+const router = useRouter()
+const busqueda = ref('')          // Término de búsqueda en tiempo real
+const abierto = ref(null)         // Id de la FAQ expandida (acordeón)
+const categoriaActiva = ref(null) // Id de categoría filtrada
+
+/**
+ * Alterna la apertura/cierre de una pregunta en el acordeón.
+ */
 const toggleFaq = (id) => {
     abierto.value = abierto.value === id ? null : id
 }
 
+/**
+ * Activa o desactiva una categoría de filtro y cierra cualquier
+ * FAQ expandida previamente.
+ */
 const seleccionarCategoria = (id) => {
     categoriaActiva.value = categoriaActiva.value === id ? null : id
     abierto.value = null
 }
 
-// ── Datos ─────────────────────────────────────────────────────────
+// ── Datos estáticos de FAQs organizados por categoría ─────
 const categorias = [
     {
         id: 1,
@@ -283,12 +311,22 @@ const categorias = [
     },
 ]
 
-// ── Computed ──────────────────────────────────────────────────────
+// ── Computed de filtrado ────────────────────────────────────────
+
+/**
+ * Devuelve el array de FAQs de la categoría activamente
+ * seleccionada; vacío si no hay categoría elegida.
+ */
 const faqsCategoria = computed(() => {
     if (!categoriaActiva.value) return []
     return categorias.find(c => c.id === categoriaActiva.value)?.faqs ?? []
 })
 
+/**
+ * Búsqueda transversal: recorre todas las categorías y filtra
+ * FAQs cuya pregunta o respuesta contenga el término ingresado.
+ * Inyecta _cat para mostrar contexto de categoría en resultados.
+ */
 const faqsBuscadas = computed(() => {
     const q = busqueda.value.trim().toLowerCase()
     if (!q) return []

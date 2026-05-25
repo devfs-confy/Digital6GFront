@@ -1,9 +1,12 @@
 <template>
+    <!-- RF-023: Gestión de información del cliente - Vista de edición y consulta -->
     <div class="flex flex-col gap-6 min-h-full pb-6">
 
+        <!-- RF-023.1: Encabezado de la vista de Información Personal del cliente -->
         <!-- Header -->
         <AdminPageHeader title="Información Personal" />
 
+        <!-- RF-023.2: Tarjeta de avatar con iniciales y estado activo del cliente -->
         <!-- Avatar + nombre -->
         <div
             class="relative overflow-hidden bg-[#0D291C] rounded-3xl p-7 flex items-center gap-5 flex-wrap
@@ -32,6 +35,7 @@
         <!-- Secciones -->
         <div class="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1">
 
+            <!-- RF-023.3: Sección de Datos personales - consulta y modificación de nombre, apellido e identificación -->
             <!-- Datos personales -->
             <div class="bg-white rounded-[22px] p-[22px] flex flex-col gap-[18px] border-2 border-gray-100"
                 style="box-shadow: 0 4px 0 #e8f5e9; animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both; animation-delay: 0s">
@@ -52,6 +56,7 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-3.5 max-[560px]:grid-cols-1">
+                    <!-- RF-023.4: Campo editable de Nombre (dato permitido para modificación) -->
                     <div class="flex flex-col gap-1.5">
                         <label
                             class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Nombre</label>
@@ -68,6 +73,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-023.5: Campo editable de Apellido (dato permitido para modificación) -->
                     <div class="flex flex-col gap-1.5">
                         <label
                             class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Apellido</label>
@@ -84,6 +90,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-023.6: Campo de Número de documento (solo consulta, no editable por el cliente) -->
                     <div class="flex flex-col gap-1.5">
                         <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Número de
                             documento</label>
@@ -96,6 +103,7 @@
                 </div>
             </div>
 
+            <!-- RF-023.7: Sección de Contacto - consulta y modificación de correo y teléfono -->
             <!-- Contacto -->
             <div class="bg-white rounded-[22px] p-[22px] flex flex-col gap-[18px] border-2 border-gray-100"
                 style="box-shadow: 0 4px 0 #e8f5e9; animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both; animation-delay: 0.08s">
@@ -115,6 +123,7 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-3.5 max-[560px]:grid-cols-1">
+                    <!-- RF-023.8: Campo editable de Correo electrónico (dato permitido para modificación) -->
                     <div class="flex flex-col gap-1.5 col-span-2">
                         <label class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Correo
                             electrónico</label>
@@ -131,6 +140,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-023.9: Campo editable de Teléfono (dato permitido para modificación) -->
                     <div class="flex flex-col gap-1.5 col-span-2">
                         <label
                             class="text-[0.62rem] font-black uppercase tracking-widest text-gray-400 pl-1">Teléfono</label>
@@ -151,6 +161,7 @@
                 </div>
             </div>
 
+            <!-- RF-023.10: Sección de Contraseña - cambio de credenciales de acceso -->
             <!-- Contraseña -->
             <div class="col-span-2 bg-white rounded-[22px] p-[22px] flex flex-col gap-[18px] border-2 border-[#e8f5e9] max-[700px]:col-span-1"
                 style="box-shadow: 0 4px 0 #c8e6c9; animation: card-anim-kf 0.35s cubic-bezier(0.34,1.2,0.64,1) both; animation-delay: 0.16s">
@@ -275,6 +286,7 @@
 
         </div>
 
+        <!-- RF-023.11: Barra flotante para guardar o descartar cambios en datos personales permitidos -->
         <!-- Barra guardar cambios -->
         <div v-if="hayCambios"
             class="sticky bottom-0 bg-[#0D291C] rounded-[20px] px-[22px] py-4 flex items-center justify-between gap-4 flex-wrap border-2 border-[rgba(127,211,68,0.2)]"
@@ -305,6 +317,7 @@
 </template>
 
 <script setup>
+// RF-023: Script de gestión de información personal del cliente
 import { ref, computed, reactive, onMounted } from 'vue'
 import icoeditsquare from '@/assets/img/edit_square.svg?raw'
 import visibility from '@/assets/img/visibility.svg?raw'
@@ -315,6 +328,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 
+// RF-023.13: Estado reactivo del formulario de información personal del cliente
 const form = reactive({
     nombre: '',
     apellido: '',
@@ -326,6 +340,7 @@ const form = reactive({
 
 const original = reactive({ ...form })
 
+// RF-023.14: Carga inicial de datos personales desde el store de autenticación
 onMounted(() => {
     const u = auth.user
     if (!u) return
@@ -340,6 +355,7 @@ onMounted(() => {
     Object.assign(original, { ...form })
 })
 
+// RF-023.15: Control de modo edición individual por cada campo permitido
 const editing = reactive({
     nombre: false, apellido: false,
     tipoDoc: false, documento: false,
@@ -352,6 +368,7 @@ const iniciales = computed(() =>
     `${form.nombre?.[0] ?? ''}${form.apellido?.[0] ?? ''}`.toUpperCase()
 )
 
+// RF-023.16: Detector de cambios pendientes en datos personales permitidos
 const hayCambios = computed(() =>
     form.correo !== original.correo ||
     form.telefono !== original.telefono ||
@@ -362,6 +379,7 @@ const hayCambios = computed(() =>
 const guardandoCambios = ref(false)
 const errCambios = ref('')
 
+// RF-023.17: Descartar cambios locales y restaurar valores originales
 const descartarCambios = () => {
     form.correo = original.correo
     form.telefono = original.telefono
@@ -374,6 +392,7 @@ const descartarCambios = () => {
     errCambios.value = ''
 }
 
+// RF-023.18: Guardar cambios de información personal vía ClientService
 const guardarCambios = async () => {
     errCambios.value = ''
     guardandoCambios.value = true
@@ -397,6 +416,7 @@ const guardarCambios = async () => {
         original.apellido = form.apellido
         original.nombre = form.nombre
 
+        // RF-023.19: Refrescar token tras actualización para sincronizar JWT con datos actualizados
         // Refrescar token para que el JWT contenga los datos actualizados
         await auth.refreshAccessToken()
 
@@ -412,6 +432,7 @@ const guardarCambios = async () => {
     }
 }
 
+// RF-023.20: Gestión de contraseña (cambio de credenciales de acceso)
 // ── Contraseña
 const showPassForm = ref(false)
 const passForm = reactive({ actual: '', nueva: '', confirmar: '' })
@@ -486,6 +507,10 @@ const guardarPass = async () => {
         passLoading.value = false
     }
 }
+
+// RF-023.21: Solicitar desactivación de cuenta - pendiente de implementación en UI
+// RF-026: Marcación para Facturación Electrónica (FE) - pendiente de UI en esta vista
+// RF-026.1: Marcar/desmarcar si requiere FE debe alinearse con la información del backend
 </script>
 
 <style scoped>

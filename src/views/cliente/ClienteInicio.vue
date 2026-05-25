@@ -1,4 +1,6 @@
 <template>
+    <!-- Vista del dashboard del cliente — punto de entrada a los módulos de mensualidades, pagos, parqueos, transacciones, PQRS e información personal. -->
+    <!-- Grid de tarjetas de navegación — cada card representa un módulo del portal del cliente. -->
     <div class="dashboard-grid">
 
         <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card card-animation"
@@ -19,12 +21,14 @@
 
     </div>
 
+    <!-- Componente de banners/publicidad — carga imágenes promocionales del backend y las muestra en modal automático al ingresar. -->
     <ModalBanner :imagenes="bannerUrl" :enlaces="bannerEnlaces" :autoshow="true" />
 
 
 </template>
 
 <script setup>
+// Lógica del dashboard del cliente — define las opciones de navegación y carga banners/publicidad activos desde el servicio de publicidad.
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import mensualidades from '@/assets/img/calendar_month.svg?raw'
@@ -42,6 +46,7 @@ import icoPagos from "@/assets/img/receipt_long_green.svg?raw";
 const bannerUrl = ref([])
 const bannerEnlaces = ref([])
 
+// Carga asíncrona de publicidad/banners al montar el componente — obtiene lista de publicidad y sus imágenes en base64.
 onMounted(async () => {
     const res = await publicidadService.getMiPublicidad()
 
@@ -71,6 +76,7 @@ onMounted(async () => {
 
 const router = useRouter()
 
+// Definición de las tarjetas de navegación del dashboard — cada opción vincula un ícono SVG, título y ruta del módulo cliente.
 const opciones = [
     {
         id: 1,

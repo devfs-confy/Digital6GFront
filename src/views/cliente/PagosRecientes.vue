@@ -1,14 +1,17 @@
 <template>
+    <!-- RF-029: Consultar historial de pagos - Vista de pagos recientes por sede -->
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
         <AdminPageHeader title="Historial de Pagos en la Plataforma" />
 
+        <!-- RF-029.1: Estado de carga del historial de pagos -->
         <!-- Loading -->
         <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
             <div class="det-loader" />
             <span class="text-sm font-semibold text-gray-400">Cargando historial...</span>
         </div>
 
+        <!-- RF-029.2: Mensaje de error al cargar el historial de pagos -->
         <!-- Error -->
         <div v-else-if="errorCarga"
             class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-red-50 border-2 border-red-200">
@@ -25,6 +28,7 @@
 
         <template v-else>
 
+            <!-- RF-029.3: Resumen rápido global del historial de pagos (suma todas las sedes) -->
             <!-- Resumen rápido global (suma todas las sedes) -->
             <div class="resumen-row">
                 <div class="resumen-card resumen-card--total">
@@ -45,10 +49,12 @@
                 </div>
             </div>
 
+            <!-- RF-029.4: Tabla de pagos agrupados por sede (últimos cinco pagos por sede) -->
             <!-- Una tabla por cada sede -->
             <div v-for="sede in sedes" :key="sede.idPersona"
                 class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
 
+                <!-- RF-029.5: Encabezado de sede con nombre y cantidad de pagos -->
                 <!-- Header de sede -->
                 <div class="sede-header flex justify-between">
                     <div class="flex gap-5 align-center items-center">
@@ -74,6 +80,7 @@
 
                 </div>
 
+                <!-- RF-029.6: Tabla con datos de facturas y pagos (N° Factura, Subtotal, IVA, Total, Fecha, Tipo, Autorización) -->
                 <div class="table-scroll-wrapper">
                     <table class="data-table">
                         <thead>
@@ -141,6 +148,7 @@
                     </table>
                 </div>
 
+                <!-- RF-029.8: Footer por sede con conteo de pagos recientes -->
                 <!-- Footer por sede -->
                 <div class="table-foot">
                     <span class="foot-counter">
@@ -166,10 +174,12 @@
 </template>
 
 <script setup>
+// RF-029: Script de historial de pagos del cliente
 import { ref, computed, onMounted } from 'vue'
 import PagosService from '@/api/services/pagos.service'
 import FacturaService from '@/api/services/factura.service'
 
+// RF-029.9: Estado reactivo para sedes, carga y errores
 // ── Estado ────────────────────────────────────────────────────────
 const sedes = ref([])
 const loading = ref(false)
@@ -177,6 +187,7 @@ const errorCarga = ref('')
 const descargando = ref(null)
 const errDescarga = ref('')
 
+// RF-029.10: Carga del historial de pagos desde el servicio PagosService
 // ── Carga del historial ───────────────────────────────────────────
 const cargarHistorial = async () => {
     loading.value = true
@@ -213,6 +224,7 @@ const cargarHistorial = async () => {
 
 onMounted(cargarHistorial)
 
+// RF-029.11: Descarga de factura electrónica asociada a un pago
 // ── Descarga de factura electrónica ──────────────────────────────
 const descargarFactura = async (pago) => {
     if (descargando.value) return
@@ -246,6 +258,7 @@ const descargarFactura = async (pago) => {
     }
 }
 
+// RF-029.12: Computeds para resumen global de pagos (total tx, total pagado, IVA, subtotal)
 // ── Computeds resumen global (todas las sedes) ────────────────────
 const todosPagos = computed(() => sedes.value.flatMap(s => s.pagos))
 const totalTx = computed(() => todosPagos.value.length)
@@ -253,6 +266,7 @@ const totalPagado = computed(() => todosPagos.value.reduce((acc, p) => acc + p.t
 const totalIva = computed(() => todosPagos.value.reduce((acc, p) => acc + p.iva, 0))
 const totalSubtotal = computed(() => todosPagos.value.reduce((acc, p) => acc + p.subtotal, 0))
 
+// RF-029.13: Helpers de formato para moneda COP y fechas
 // ── Helpers ───────────────────────────────────────────────────────
 const formatCOP = (valor) =>
     new Intl.NumberFormat('es-CO', {

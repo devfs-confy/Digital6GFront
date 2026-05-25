@@ -5,7 +5,8 @@
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6 ">
 
 
-         <!-- Header -->
+         <!-- RF-038: Vista principal que agrupa todas las mensualidades asociadas al cliente logueado (caso Notaría: un pagador puede gestionar mensualidades de diferentes usuarios) -->
+        <!-- Header -->
         <AdminPageHeader title="Mis Mensualidades" />
 
         <!-- <button @click="modalCodigo = true"
@@ -14,14 +15,17 @@
                 <span class="hidden sm:inline">Añadir</span>
             </button> -->
 
+        <!-- RF-038: Grid responsive de mensualidades del cliente logueado -->
         <!-- Grid -->
         <div class="grid grid-cols-2 max-[700px]:grid-cols-1 gap-5 content-start items-start">
+            <!-- RF-038: Skeleton loader del grid de mensualidades mientras se carga la información desde el backend -->
             <!-- Skeleton -->
             <template v-if="loading">
                 <div v-for="n in 2" :key="n" class="h-80 rounded-3xl animate-pulse"
                     style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%" />
             </template>
 
+            <!-- RF-038: Tarjeta individual de mensualidad con toda la información resumida del pagador/suscriptor -->
             <!-- Card -->
             <div v-for="(m, i) in mensualidades" :key="m.id"
                 class="bg-white rounded-3xl p-[22px] flex flex-col gap-4 relative overflow-hidden border-2 transition-all duration-200 hover:-translate-y-0.5 max-h-max"
@@ -31,6 +35,7 @@
                         : 'border-[#e8f5e9] shadow-[0_4px_0_#e2ede7,0_2px_16px_rgba(13,41,28,0.06)] hover:shadow-[0_6px_0_#c8ddd1,0_4px_20px_rgba(13,41,28,0.10)] '
                 ]" :style="{ animationDelay: `${i * 0.08}s`, }">
 
+                <!-- RF-024: Banda superior de color que indica visualmente el estado de la mensualidad (activa, por_vencer, vencida, congelada, pendiente) -->
                 <!-- Top band -->
                 <div class="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" :class="{
                     'bg-[#7FD344]': m.estado === 'activa',
@@ -40,6 +45,7 @@
                     'bg-[#b45309]': m.estado === 'pendiente',   // ← agregar
                 }" />
 
+                <!-- RF-038: Cabecera de la tarjeta con avatar, nombre, documento y estado de la mensualidad -->
                 <!-- Card head -->
                 <div class="flex items-start gap-3 mt-1.5">
                     <!-- Avatar -->
@@ -52,6 +58,7 @@
                         <h3 class="text-[0.88rem] font-extrabold text-[#0D291C] truncate leading-tight">{{ m.nombre }}
                         </h3>
                         <p class="text-[0.7rem] font-semibold text-gray-400 truncate mt-[2px]">CC {{ m.documento }}</p>
+                        <!-- RF-024: Badge de estado que refleja la vigencia y sirve de apoyo visual para las notificaciones de vencimiento -->
                         <!-- Badge -->
                         <span
                             class="inline-block text-[0.6rem] font-extrabold uppercase tracking-[0.07em] px-2 py-[2px] rounded-full mt-[4px] border"
@@ -65,6 +72,7 @@
                             {{ estadoLabel(m.estado) }}
                         </span>
                     </div>
+                    <!-- RF-024: Contador de días restantes; cuando restan 6 días o menos la tarjeta pasa a estado 'por_vencer' para alertar al usuario -->
                     <!-- Days counter -->
                     <div
                         class="flex flex-col items-center flex-shrink-0 bg-gray-50 rounded-xl px-3 py-2 border-[1.5px] border-gray-200">
@@ -83,6 +91,7 @@
                     </div>
                 </div>
 
+                <!-- RF-025, RF-028: Bloque de sede asociada, tipo de mensualidad y placas registradas del vehículo -->
                 <!-- Sede · Mensualidad + Placas -->
                 <div class="flex flex-col gap-2">
                     <p class="text-[0.7rem] font-bold text-gray-500 truncate">
@@ -90,10 +99,12 @@
                         <span class="mx-1 opacity-40">·</span>
                         <span>{{ m.mensualidad }}</span>
                     </p>
+                <!-- RF-024: Precio con IVA incluido del plan de mensualidad vigente -->
                     <p v-if="m.valorConIva" class="text-[0.72rem] font-black text-[#299261]">
                         {{ formatPrecio(m.valorConIva) }}
                         <span class="text-[0.62rem] font-semibold text-gray-400 ml-1">/ mes (IVA inc.)</span>
                     </p>
+                    <!-- RF-028: Listado de placas registradas para esta mensualidad (hasta 5 placas) -->
                     <div v-if="m.placas.length" class="flex flex-wrap gap-1.5">
                         <span v-for="placa in m.placas" :key="placa"
                             class="inline-flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest px-2.5 py-[3px] rounded-lg bg-[#0D291C] text-[#7FD344] border border-[#1a3d2a]">
@@ -110,6 +121,7 @@
                     <p v-else class="text-[0.65rem] text-gray-400 italic">Sin placas registradas</p>
                 </div>
 
+                <!-- RF-024: Bloque de fechas de vigencia (inicio y fin del periodo). Si la mensualidad está activa y se renueva, se suman 30 días a la fecha de vencimiento -->
                 <!-- Dates block -->
                 <template v-if="m.fechaInicio && m.fechaFin">
                     <div
@@ -136,6 +148,7 @@
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaFin) }}</span>
                         </div>
                     </div>
+                    <!-- RF-024: Barra de progreso visual del periodo de vigencia transcurrido -->
                     <!-- Progress bar -->
                     <div class="flex flex-col gap-[5px]">
                         <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -151,6 +164,7 @@
                         </span>
                     </div>
 
+                    <!-- RF-033, RF-028: Botón "Perdí mi tarjeta" que habilita el cobro de reposición de tarjeta de acceso cuando la sede lo requiere (btnTarjeta flag) -->
                     <button v-if="m.btnTarjeta" @click="abrirModalTarjeta(m)"
                         class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
@@ -162,6 +176,7 @@
                     </button>
                 </template>
 
+                <!-- RF-024: Aviso de pago pendiente cuando la mensualidad aún no tiene fechas de vigencia asignadas -->
                 <!-- Pending payment notice -->
                 <div v-else class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#d97706" viewBox="0 0 24 24"
@@ -174,11 +189,14 @@
                     </span>
                 </div>
 
+                <!-- RF-024, RF-038: Acciones principales de la tarjeta: pagar, ver detalle y congelar mensualidad -->
                 <!-- Card actions -->
                 <div class="grid grid-cols-2 gap-2 w-full">
 
+                    <!-- RF-024: Botón de pago habilitado desde cualquier dispositivo sin necesidad de estar físicamente en la sede -->
                     <!-- Pay -->
                     <div class="relative flex">
+                        <!-- RF-024: Indicador visual animado que guía al usuario para renovar su mensualidad antes del vencimiento -->
                         <!-- Indicador visual: acá puedes pagar -->
                         <div
                             v-if="m.estado === 'activa' || m.estado === 'por_vencer'"
@@ -194,6 +212,7 @@
                             </span>
                         </div>
 
+                        <!-- RF-024, RF-033, RF-034: Acción principal de pago que abre el modal con opciones de renovación, tarjeta y quincena -->
                         <button @click="pagarDeshabilitado(m) ? null : abrirPago(m)" :disabled="pagarDeshabilitado(m)"
                             :class="pagarDeshabilitado(m)
                                 ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
@@ -207,6 +226,7 @@
                             Pagar
                         </button>
                     </div>
+                    <!-- RF-038: Botón para ver el detalle completo de la mensualidad seleccionada -->
                     <!-- View -->
                     <button @click="abrirDetalle(m)"
                         class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
@@ -217,6 +237,7 @@
                         </svg>
                         <span class="xs:inline">Más info</span>
                     </button>
+                    <!-- RF-024: Botón de congelamiento disponible solo para mensualidades mensuales (no quincenales ni motos) con pago al día y fuera de vigencia activa -->
                     <!-- Freeze — fila completa si existe -->
                     <button v-if="mostrarCongelar(m)" @click="abrirCongelar(m)"
                         class=" col-span-2 flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
@@ -231,15 +252,18 @@
             </div>
         </div>
 
+        <!-- RF-038: Modal para vincular una nueva mensualidad mediante código (caso Notaría: pagador gestiona varias mensualidades) -->
         <!-- ───────────────── MODAL: AÑADIR CÓDIGO ───────────────── -->
         <ModalCodigoMensualidad v-model="modalCodigo" @confirmado="cargarMisMensualidades" />
 
+        <!-- RF-024, RF-025, RF-026, RF-033, RF-034: Modal de pago que permite renovar mensualidad, seleccionar sede, elegir plan (mensual/quincena/tarjeta), indicar fecha de inicio y completar datos de facturación electrónica -->
         <!-- ───────────────── MODAL: PAGO ───────────────── -->
         <Transition name="modal">
             <div v-if="modalPago"
                 class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[70] p-4">
                 <div
                     class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)] max-[720px]:max-h-[95%]">
+                    <!-- RF-038: Cabecera del modal con nombre del suscriptor y sede para confirmar la mensualidad que se va a pagar -->
                     <!-- Head -->
                     <div
                         class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15] flex-shrink-0">
@@ -264,6 +288,7 @@
                     <div ref="modalBodyRef" @scroll="onModalBodyScroll"
                         class="flex flex-col bg-white overflow-y-auto flex-1 min-h-0 [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
 
+                        <!-- RF-024: Loader mientras se consulta el estado de pagos pendientes y las opciones disponibles -->
                         <!-- Loading -->
                         <div v-if="loadingOpciones" class="flex flex-col items-center gap-3 py-10">
                             <div
@@ -273,6 +298,7 @@
 
 
 
+                        <!-- RF-024: Bloque informativo cuando existe una transacción previa en estado PENDIENTE; evita duplicar pagos y permite continuar el flujo -->
                         <!-- Pending payment -->
                         <template v-else-if="pagoPendiente && !opcionesPago.length">
                             <div class="px-5 py-4 border-b border-gray-100">
@@ -340,9 +366,11 @@
                             </div>
                         </div>
 
+                        <!-- RF-024, RF-025, RF-034: Opciones de pago disponibles según la sede seleccionada y las modalidades habilitadas por el administrador -->
                         <!-- Options -->
                         <template v-else>
 
+                            <!-- RF-028: Resumen de pago excedente generado al cambiar de autorización (moto↔carro) con diferencia de valor a cubrir -->
                             <!-- ── Excedente resumen (solo cuando infoExcedente) ── -->
                             <div v-if="infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
@@ -380,6 +408,7 @@
                                 </div>
                             </div>
 
+                            <!-- RF-025, RF-034: Selector de sede y plan de mensualidad; incluye validación de sedes múltiples y opciones quincenales habilitadas por admin -->
                             <!-- Plan selector (solo renovación normal) -->
                             <div v-if="!infoExcedente" class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
@@ -387,6 +416,7 @@
                                     Sede
                                 </p>
 
+                                <!-- RF-025: Selector de sede principal para el pago; al cambiar se recalculan las opciones disponibles -->
                                 <select v-model="sedeInput" @change="cambiarSede"
                                     class="p-3.5 px-4 rounded-2xl border-2 text-black border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9] cursor-pointer text-left w-full transition-all  hover:border-[#c8e6c9] hover:bg-[#f0fdf4] ">
                                     <option v-for="sede in sedes" :key="sede.IdEstacionamiento"
@@ -394,6 +424,7 @@
                                         {{ sede.Nombre }}
                                     </option>
                                 </select>
+                                <!-- RF-025: Listado de sedes adicionales a las que el cliente puede acceder con esta mensualidad (mensualidad asociada a múltiples sedes) -->
                                 <div class="space-y-1" v-if="infoSedes.length > 0 ">
                                     <h2 class="text-md font-bold text-gray-800 mb-2">
                                         Puede ingresar a las siguientes sedes
@@ -413,6 +444,7 @@
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                                     Elige tu plan
                                 </p>
+                                <!-- RF-024, RF-033, RF-034, RF-035: Listado de planes disponibles: mensual, quincenal, solo tarjeta o recarga 20 días según lo habilite el admin -->
                                 <div class="flex flex-col gap-2">
                                     <button v-for="op in opcionesPago" :key="op.modalidad + op.cantidadMeses"
                                         @click="seleccionarOpcion(op)"
@@ -470,6 +502,7 @@
                                 </div>
                             </div>
 
+                            <!-- RF-024: Selector de cantidad de meses a renovar (1 o 2 meses máximo en un solo pago); el segundo periodo inicia automáticamente cuando vence el primero -->
                             <!-- Month selector -->
                             <div v-if="!infoExcedente && opcionSeleccionada && !esQuincena && !esSoloTarjeta"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
@@ -503,6 +536,7 @@
                                 </p>
                             </div>
 
+                            <!-- RF-024: Fecha de inicio manual disponible solo cuando la mensualidad está vencida o no tiene fecha fin; si está activa el sistema usa automáticamente el día siguiente al vencimiento -->
                             <!-- Manual start date -->
                             <div v-if="!infoExcedente && (!mensualidadAccion?.fechaFin || mensualidadAccion?.estado === 'vencida') && !esSoloTarjeta"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
@@ -524,6 +558,7 @@
                                 </div>
                             </div>
 
+                            <!-- RF-024, RF-026: Aviso de redirección a pasarela de pago y sección de datos personales requeridos para la facturación electrónica -->
                             <!-- Notice -->
                             <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <div
@@ -539,6 +574,7 @@
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
                                     {{ errPago }}
                                 </div>
+                                <!-- RF-026: Formulario de datos de facturación requeridos para la pasarela AvalPay y la emisión de factura electrónica (FE) -->
                                 <div ref="formBillingRef"
                                     class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                     <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2
@@ -548,6 +584,7 @@
                                     </p>
                                     <div class="flex flex-col gap-2.5">
 
+                                        <!-- RF-026: Selector de tipo de documento para facturación electrónica (CC, CE, TI, NIT, RUT) -->
                                         <!-- Tipo documento -->
                                         <div class="flex flex-col gap-1">
                                             <label
@@ -566,6 +603,7 @@
                                             </select>
                                         </div>
 
+                                        <!-- RF-026: Número de documento del pagador con validación de formato según el tipo seleccionado -->
                                         <!-- Documento -->
                                         <div class="flex flex-col gap-1">
                                             <label
@@ -587,6 +625,7 @@
                                             </p>
                                         </div>
 
+                                        <!-- RF-026: Nombres y apellidos del pagador para la facturación electrónica -->
                                         <!-- Nombre + Apellido -->
                                         <div class="grid grid-cols-2 gap-2">
                                             <div class="flex flex-col gap-1">
@@ -615,6 +654,7 @@
                                             </div>
                                         </div>
 
+                                        <!-- RF-026: Teléfono de contacto del pagador para notificaciones de la pasarela -->
                                         <!-- Teléfono -->
                                         <div class="flex flex-col gap-1">
                                             <label
@@ -628,6 +668,7 @@
                        transition-all w-full placeholder:text-gray-300" />
                                         </div>
 
+                                        <!-- RF-026: Correo electrónico del pagador donde se enviará la factura electrónica y los comprobantes de pago -->
                                         <!-- Correo -->
                                         <div class="flex flex-col gap-1">
                                             <label
@@ -650,6 +691,7 @@
                             </div>
                         </template>
 
+                        <!-- RF-024, RF-026: Indicador flotante que solicita completar los datos de facturación antes de habilitar el botón de pago -->
                         <!-- ── Scroll hint al formulario ── -->
                         <div v-show="!enFondoScroll"
                             class="sticky bottom-0 left-0 right-0 px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-[#c8e6c9] flex-shrink-0">
@@ -664,6 +706,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-024, RF-026: Pie del modal con botón de confirmación que valida plan seleccionado, datos de facturación completos y redirige a la pasarela de pago -->
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200 flex-shrink-0">
                         <button @click="cerrarModales"
@@ -691,11 +734,13 @@
             :info-congelamiento="infoCongelamiento" :err-externo="errCongelar" :guardando-externo="guardandoCongelar"
             @confirmar="confirmarCongelar" @cerrar="errCongelar = ''" />
 
+        <!-- RF-038: Modal de detalle completo de la mensualidad seleccionada (placas, historial, solicitudes) -->
         <!-- ───────────────── MODAL: DETALLE ───────────────── -->
         <ModalDetalleMensualidad v-model="modalDetalle" :mensualidad="mensualidadAccion" :detalle="detalleCompleto"
             :placas="placasDetalle" :placa-cambiada="placaCambiada" :loading="loadingDetalle" :error="errDetalle"
             @cambiar-placa="abrirModalPlacas" @cambiar-tipo="abrirModalCambioTipo" />
 
+        <!-- RF-028: Modal de cambio de placas con límite de 1 cambio por mes y validación de excedente por cambio de autorización -->
         <!-- ───────────────── MODAL: CAMBIO DE PLACAS ───────────────── -->
         <Transition name="modal">
             <div v-if="modalPlacas"
@@ -721,6 +766,7 @@
                     </div>
                     <!-- Body -->
                     <div class="flex flex-col bg-white overflow-y-auto">
+                        <!-- RF-028: Advertencia sobre la restricción de máximo 1 cambio de placas por mes de calendario -->
                         <!-- Warning -->
                         <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                             <div
@@ -734,6 +780,7 @@
                                     realizar otro cambio hasta el próximo mes.</p>
                             </div>
                         </div>
+                        <!-- RF-028: Formulario de edición de placas con validación de placa principal obligatoria y comparación visual de cambios -->
                         <!-- Plate inputs -->
                         <div class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                             <p
@@ -777,6 +824,7 @@
                                 </div>
                             </div>
 
+                            <!-- RF-028: Banner de pago excedente que aparece cuando el cambio de autorización (tipo de vehículo) genera una diferencia de valor a cubrir -->
                             <Transition name="modal">
                                 <div v-if="infoExcedente"
                                     class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
@@ -885,6 +933,7 @@
             </div>
         </Transition>
 
+        <!-- RF-028, RF-033: Modal para reportar tarjeta perdida y habilitar el cobro de reposición en el flujo de pago -->
         <!-- ───────────────── MODAL: TARJETA PERDIDA ───────────────── -->
         <Transition name="modal">
             <div v-if="modalTarjeta"
@@ -956,9 +1005,11 @@
                 </div>
             </div>
         </Transition>
+        <!-- RF-026: Modal de consentimiento informado previo al pago, requerido para continuar con la facturación y la pasarela -->
         <!-- ───────────────── MODAL: CONSENTIMIENTO ───────────────── -->
         <ModalConsentimiento v-model="modalConsentimiento" @confirmar="confirmarConsentimiento" />
 
+        <!-- RF-026: Modal de facturación electrónica (FE) que permite marcar/desmarcar la emisión de factura y seleccionar el régimen tributario antes de ejecutar el pago -->
         <ModalFacturacion v-model="modalFacturacion" :documento-usuario="avalpayinformacion.documento"
             :tipo-documento-usuario="avalpayinformacion.tipoDocumento"
             :nombre-usuario="avalpayinformacion.nombre + ' ' + avalpayinformacion.apellido"
@@ -968,6 +1019,7 @@
 </template>
 
 <script setup>
+// RF-024, RF-025, RF-026, RF-028, RF-033, RF-034, RF-035, RF-038: Imports del componente principal de gestión de mensualidades del cliente
 import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { showError, showSuccess, showConfirm, showInfo } from '@/utils/swal'
@@ -981,13 +1033,16 @@ import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
 import FormDate from '@/utils/formats.date'
 import SedesService from '@/api/services/sedes.service'
 
+// RF-038: Store de autenticación para obtener los datos del usuario logueado que gestiona sus mensualidades
 // ── Stores ────────────────────────────────────────────────────
 const authStore = useAuthStore()
 
+// RF-038: Estado global del grid de mensualidades asociadas al cliente logueado (soporta caso Notaría: múltiples mensualidades bajo un mismo pagador)
 // ── Estado global ─────────────────────────────────────────────
 const loading = ref(false)
 const mensualidades = ref([])
 
+// RF-024: Referencias para el scroll automático hacia el formulario de facturación dentro del modal de pago
 // ── Scroll hint formulario pago ───────────────────────────────
 const modalBodyRef = ref(null)
 const formBillingRef = ref(null)
@@ -1002,6 +1057,7 @@ const scrollAlFormularioPago = () => {
     formBillingRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
+// RF-024, RF-028: Estado de visibilidad de todos los modales del flujo: pago, placas, tarjeta, congelamiento, detalle, facturación y consentimiento
 // ── Estado de modales ─────────────────────────────────────────
 const modalCodigo = ref(false)
 const modalPago = ref(false)
@@ -1013,15 +1069,18 @@ const modalPlacas = ref(false)
 const modalConsentimiento = ref(false)
 const modalFacturacion = ref(false)
 const consentimientoAceptado = ref(false)
+// RF-038: Mensualidad seleccionada sobre la cual se ejecuta una acción (pagar, ver detalle, cambiar placas, congelar, reportar tarjeta)
 // ── Mensualidad en acción ─────────────────────────────────────
 const mensualidadAccion = ref(null)
 
+// RF-038: Estado de carga y datos del detalle completo de una mensualidad incluyendo placas actuales e historial
 // ── Detalle ───────────────────────────────────────────────────
 const loadingDetalle = ref(false)
 const errDetalle = ref('')
 const detalleCompleto = ref(null)
 const placasDetalle = ref([])
 
+// RF-028: Estado del formulario de cambio de placas con hasta 5 posiciones y flags de bloqueo por límite mensual
 // ── Placas ────────────────────────────────────────────────────
 const nuevasPlacas = ref(['', '', '', '', ''])
 const guardandoPlacas = ref(false)
@@ -1030,16 +1089,19 @@ const placaCambiada = ref(false)
 const usandoCambioAutorizacion = ref(false)
 const cambioPlacaBloqueado = ref(false)
 
+// RF-028: Información de cambio de autorización (moto↔carro) y cálculo de excedente cuando la nueva autorización tiene diferente valor
 // ── Cambio de autorización (moto↔carro) ───────────────────
 const infoAutorizacion = ref(null)      // respuesta de getChangesByPersona
 const infoExcedente = ref(null)         // data cuando requierePago: true
 const loadingAutorizacion = ref(false)
 
+// RF-024: Estado del modal y datos del proceso de congelamiento de mensualidad (solo aplicable a planes mensuales)
 // ── Congelamiento ─────────────────────────────────────────────
 const infoCongelamiento = ref(null)
 const errCongelar = ref('')
 const guardandoCongelar = ref(false)
 
+// RF-024, RF-025, RF-034: Estado del flujo de pago: opciones disponibles, plan seleccionado, sede, meses extra y control de transacciones pendientes
 // ── Pago ──────────────────────────────────────────────────────
 const codigoInput = ref('')
 const opcionesPago = ref([])
@@ -1053,6 +1115,7 @@ const pagoPendiente = ref(null)
 const sedeInput = ref(null)
 const sedes = ref([])
 const infoSedes = ref(null)
+// RF-026: Datos personales del pagador requeridos por AvalPay y para la emisión de factura electrónica (FE)
 // ── envio de datos pasarela ────────────────────────────────────────
 const avalpayinformacion = ref({
     tipoDocumento: '',
@@ -1063,6 +1126,7 @@ const avalpayinformacion = ref({
     correo: '',
 })
 
+// RF-026: Expresiones regulares de validación de documento según tipo para garantizar datos correctos en la facturación electrónica
 const REGEX_DOCUMENTO = {
     CC: /^[1-9][0-9]{3,9}$/,
     CE: /^([a-zA-Z]{1,5})?[1-9][0-9]{3,7}$/,
@@ -1074,23 +1138,28 @@ const REGEX_DOCUMENTO = {
 
 
 
+// RF-028, RF-033: Estado del modal y proceso de reporte de tarjeta perdida para habilitar cobro de reposición
 // ── Tarjeta perdida ───────────────────────────────────────────
 const modalTarjeta = ref(false)
 const guardandoTarjeta = ref(false)
 const errTarjeta = ref('')
 
+// RF-024: Constantes de fecha ISO de hoy para limitar la fecha de inicio manual y mapeo de columnas de placas
 // ── Constantes ────────────────────────────────────────────────
 const hoyISO = new Date().toISOString().slice(0, 10)
 const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 
+// RF-033, RF-034: Computeds que determinan si la opción seleccionada es pago quincenal o solo tarjeta de acceso
 // ── Computeds ─────────────────────────────────────────────────
 const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINCENA')
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
 
+// RF-024: Lógica de visibilidad del botón Congelar: solo mensualidades mensuales (no quincenales ni motos) con pago al día y fuera de vigencia activa
 const mostrarCongelar = (m) =>
     m.conPago && m.estado !== 'congelada' && !m.esQuincena && !m.esMoto && m.estado !== 'activa' && m.estado !== 'pendiente' && m.estado !== 'por_vencer'
 
 
+// RF-024: Helpers de fecha para calcular vigencia, días restantes y porcentaje transcurrido del periodo de mensualidad
 // ── Helpers de fecha ──────────────────────────────────────────
 const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null
 
@@ -1113,6 +1182,7 @@ const estadoLabel = (e) =>
 
 
 
+// RF-024: Cálculo de días restantes hasta el vencimiento; cuando restan 7 días o menos se marca como 'por_vencer' para alertar al usuario (notificaciones 6 días antes)
 const diasRestantes = (m) => {
     const ff = typeof m === 'object' ? m?.fechaFin : (typeof m === 'string' ? m : null)
     if (!ff) return 0
@@ -1123,6 +1193,7 @@ const diasRestantes = (m) => {
     return Math.max(0, Math.ceil((fin - hoy) / 86400000))
 }
 
+// RF-024: Cálculo del porcentaje de vigencia transcurrida para la barra de progreso visual de cada mensualidad
 const porcentajeVigencia = (m) => {
     if (!m?.fechaInicio || !m?.fechaFin) return 0
     const ini = parseLocal(m.fechaInicio)
@@ -1131,6 +1202,7 @@ const porcentajeVigencia = (m) => {
     return Math.min(100, Math.max(0, Math.round(((new Date() - ini) / (fin - ini)) * 100)))
 }
 
+// RF-024: Resolución del estado de la mensualidad según fechas y flags de congelamiento para pintar la UI y habilitar/deshabilitar acciones
 // ── Resolver estado ───────────────────────────────────────────
 const resolverEstado = (m) => {
     if (m.Congelado === true || m.EstadoCongelamiento === 'CONGELADO') return 'congelada'
@@ -1153,18 +1225,21 @@ const resolverEstado = (m) => {
     return 'activa'
 }
 
+// RF-024, RF-033: Deshabilita el botón Pagar si la mensualidad está congelada o si está activa sin permiso de cobro de tarjeta
 const pagarDeshabilitado = (m) => {
     if (m.estado === 'congelada') return true
     if (m.estado === 'activa' && !m.cobroTarjetaPermitido) return true
     return false
 }
 
+// RF-028, RF-033: Abre el modal para reportar tarjeta perdida y prepara la mensualidad sobre la cual se habilitará el cobro de reposición
 const abrirModalTarjeta = (m) => {
     mensualidadAccion.value = m
     errTarjeta.value = ''
     modalTarjeta.value = true
 }
 
+// RF-033: Confirma el reporte de tarjeta perdida en backend, habilita el flag cobroTarjetaPermitido y redirige automáticamente al flujo de pago
 const confirmarTarjetaPerdida = async () => {
     guardandoTarjeta.value = true
     try {
@@ -1185,12 +1260,14 @@ const confirmarTarjetaPerdida = async () => {
 }
 
 
+// RF-038, RF-024, RF-034: Carga inicial del grid de mensualidades del cliente; normaliza datos de backend (estado, placas, quincena, moto, btnTarjeta)
 // ── Cargar mensualidades ──────────────────────────────────────
 const cargarMisMensualidades = async () => {
     loading.value = true
     try {
         const res = await MensualidadesService.getMisMensualidades()
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
+        // RF-024, RF-033, RF-034: Normalización de campos clave desde backend: estado resuelto, flag de tarjeta requerida, identificación de quincena y tipo de vehículo (moto por regex de placa)
         mensualidades.value = raw.map(m => ({
             _raw: m,
             btnTarjeta: m.RequiereTarjeta,
@@ -1222,6 +1299,7 @@ const cargarMisMensualidades = async () => {
 }
 onMounted(cargarMisMensualidades)
 
+// RF-038: Abre el modal de detalle cargando información completa de la mensualidad seleccionada desde el backend
 // ── Detalle ───────────────────────────────────────────────────
 const abrirDetalle = async (m) => {
     modalDetalle.value = true
@@ -1251,6 +1329,7 @@ const abrirDetalle = async (m) => {
     }
 }
 
+// RF-028: Abre el modal de cambio de placas en modo "cambio de autorización" (moto↔carro) preparando el formulario para recalcular excedentes
 const abrirModalCambioTipo = () => {
     cambioPlacaBloqueado.value = false
     errPlacas.value = ''
@@ -1260,6 +1339,7 @@ const abrirModalCambioTipo = () => {
     modalPlacas.value = true
 }
 
+// RF-028: Abre el modal de cambio de placas normal (sin cambio de autorización) cargando las placas actuales y consultando posibles cambios previos
 // ── Placas ────────────────────────────────────────────────────
 const abrirModalPlacas = () => {
     if (placaCambiada.value) return
@@ -1282,6 +1362,7 @@ const abrirModalPlacas = () => {
         .finally(() => { loadingAutorizacion.value = false })
 }
 
+// RF-028: Valida y envía el cambio de placas (normal o autorización); maneja respuesta 409 por límite mensual y excedentes de pago
 const confirmarCambioPlacas = async () => {
     errPlacas.value = ''
     infoExcedente.value = null
@@ -1375,7 +1456,7 @@ const confirmarCambioPlacas = async () => {
 
 }
 
-// Helper: actualiza estado local de placas después de un cambio exitoso
+// RF-028: Helper que actualiza el estado local de placas y recalcula si la placa principal corresponde a moto tras un cambio exitoso
 const _aplicarCambioPlacasLocal = () => {
     const nuevas = nuevasPlacas.value.map(p => p?.trim().toUpperCase() || null).filter(Boolean)
     placasDetalle.value = nuevas
@@ -1390,6 +1471,7 @@ const _aplicarCambioPlacasLocal = () => {
     if (idx !== -1) mensualidades.value[idx].esMoto = esMotoNuevo
 }
 
+// RF-028: Cierra el modal de placas y prepara el flujo de pago para cubrir el excedente generado por el cambio de autorización
 const confirmarPagoExcedente = () => {
     modalPlacas.value = false
     consentimientoAceptado.value = false
@@ -1420,6 +1502,7 @@ const confirmarPagoExcedente = () => {
 }
 
 
+// RF-024: Abre el modal de congelamiento consultando al backend la información de días disponibles y restricciones del plan
 // ── Congelamiento ─────────────────────────────────────────────
 const abrirCongelar = async (m) => {
     mensualidadAccion.value = m
@@ -1436,6 +1519,7 @@ const abrirCongelar = async (m) => {
     }
 }
 
+// RF-024: Envía la solicitud de congelamiento al backend y refresca el grid para reflejar el nuevo estado 'congelada'
 const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     guardandoCongelar.value = true
     errCongelar.value = ''
@@ -1460,6 +1544,7 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     showSuccess('¡Congelado!', 'Tu mensualidad ha sido congelada exitosamente.')
 }
 
+// RF-024, RF-025, RF-026, RF-033: Inicializa el modal de pago cargando sedes, opciones de plan y precargando los datos de facturación del usuario
 // ── Pago ──────────────────────────────────────────────────────
 const abrirPago = async (m) => {
 
@@ -1476,6 +1561,7 @@ const abrirPago = async (m) => {
     loadingOpciones.value = true
     modalPago.value = true
 
+    // RF-026: Pre-carga automática de datos de facturación desde el token del usuario logueado y fallback a la información de la mensualidad
     // Pre-cargar datos del usuario (token) y la mensualidad
     const u = authStore.user
     if (u) {
@@ -1499,6 +1585,7 @@ const abrirPago = async (m) => {
 
 
     try {
+        // RF-024: Paso 1 — verifica si existe una transacción previa en estado PENDIENTE para evitar pagos duplicados
         // ── 1. Verificar pago pendiente
         try {
             const historial = await PagoService.getHistorialTransacciones()
@@ -1529,6 +1616,7 @@ const abrirPago = async (m) => {
             console.warn('[abrirPago] No se pudo verificar historial:', e)
         }
 
+        // RF-024, RF-034: Paso 2 — sin pagos pendientes, carga las opciones de pago disponibles (mensual, quincenal, tarjeta) según la sede seleccionada
         // ── 2. Sin pendiente — cargar opciones normalmente
         const res = await PagoService.getOpcionesPago(m.id, sedeInput.value, 1)
         const data = res?.data ?? res
@@ -1547,6 +1635,7 @@ const abrirPago = async (m) => {
     }
 }
 
+// RF-025: Carga las sedes disponibles para el usuario en el selector del modal de pago
 //--cargar sedes 
 const cargarSedes = async () => {
     try {
@@ -1558,6 +1647,7 @@ const cargarSedes = async () => {
     }
 }
 
+// RF-025: Consulta las sedes adicionales a las que el cliente tiene acceso con la mensualidad seleccionada
 const getSedesAccess = async () => {
     try {
         const res = await SedesService.getSedesAccess(sedeInput.value)
@@ -1568,10 +1658,12 @@ const getSedesAccess = async () => {
     }
 }
 
+// RF-025: Watch que actualiza automáticamente la lista de sedes de acceso cada vez que el usuario cambia la sede principal en el modal de pago
 watch(sedeInput, async () => {
     await getSedesAccess()
 })
 
+// RF-025: Al cambiar la sede se recalculan automáticamente las opciones de pago disponibles para la nueva ubicación
 const cambiarSede = async () => {
     loadingOpciones.value = true
     errPago.value = ''
@@ -1592,6 +1684,7 @@ const cambiarSede = async () => {
     }
 }
 
+// RF-034: Selecciona una modalidad de pago (mensual, quincena, tarjeta); si venía con 2 meses seleccionados los resetea a 1
 const seleccionarOpcion = async (op) => {
     if (mesesExtra.value !== 1) {
         mesesExtra.value = 1
@@ -1614,6 +1707,7 @@ const seleccionarOpcion = async (op) => {
     opcionSeleccionada.value = opcionesPago.value.find(o => o.modalidad === op.modalidad) ?? op
 }
 
+// RF-024: Permite seleccionar 1 o 2 meses de renovación y recalcula las opciones de pago en backend (máximo 2 períodos mensuales en un solo pago)
 const seleccionarMesesExtra = async (n) => {
     if (mesesExtra.value === n) return
     mesesExtra.value = n
@@ -1636,6 +1730,7 @@ const seleccionarMesesExtra = async (n) => {
     }
 }
 
+// RF-024, RF-026: Valida formulario de facturación y, según el contexto, abre el modal de consentimiento o solicita confirmación de reclamo de tarjeta
 const confirmarPago = async () => {
     if (!infoExcedente.value && !opcionSeleccionada.value) return
 
@@ -1666,6 +1761,7 @@ const confirmarPago = async () => {
         return
     }
 
+    // RF-033: Si el pago incluye cobro de tarjeta de acceso, muestra recordatorio para reclamarla físicamente en la sede antes de continuar
     if (mensualidadAccion.value?.cobroTarjetaPermitido) {
         const { isConfirmed } = await showConfirm({
             title: '¿Recuerdas reclamar tu tarjeta?',
@@ -1682,11 +1778,13 @@ const confirmarPago = async () => {
 }
 
 
+// RF-026: Transición del consentimiento a la facturación electrónica (FE) donde el usuario marca/desmarca la emisión de factura
 const confirmarConsentimiento = () => {
     modalConsentimiento.value = false
     modalFacturacion.value = true
 }
 
+// RF-024, RF-026, RF-028: Ejecuta el pago final redirigiendo a la pasarela; soporta pago normal, excedente por cambio de autorización y recuperación ante errores de transacción pendiente
 const ejecutarPago = async ({ IdentificacionCliente }) => {
     errPago.value = ''
     iniciandoPago.value = true
@@ -1704,6 +1802,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
         }
         const user = authStore.user
 
+        // RF-028: Caso especial — pago de excedente generado por cambio de autorización (moto↔carro) incluyendo las nuevas placas
         // ── Caso: pago de excedente por cambio de autorización ──
         if (excedentePendiente) {
             // placasSnapshot capturado al inicio de ejecutarPago
@@ -1744,6 +1843,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             return
         }
 
+        // RF-024: Caso normal — renovación de mensualidad con envío de datos a la pasarela AvalPay incluyendo fecha de inicio manual cuando aplica
         // ── Caso normal: renovación de mensualidad ──
         const cantidadMeses = esSoloTarjeta.value ? 1 : (opcionSeleccionada.value?.cantidadMeses ?? 1)
         const body = {
@@ -1775,6 +1875,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
         modalPago.value = true
 
     } catch (e) {
+        // RF-024: Si el backend responde 409 con una URL de pago pendiente, se recupera la transacción previa para evitar duplicados
         const status = e?.response?.status
         const data = e?.response?.data
         const msg = data?.message
@@ -1788,6 +1889,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
         }
         errPago.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al iniciar el pago.')
         modalFacturacion.value = false
+        // RF-028: Si falla el pago de un excedente, restaura el banner en el modal de placas para que el usuario pueda reintentar
         if (excedentePendiente) {
             // ✅ Restaurar banner en modal de placas
             infoExcedente.value = excedentePendiente
@@ -1800,6 +1902,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
         iniciandoPago.value = false
     }
 }
+// RF-024, RF-028: Limpieza global de estado al cerrar modales: resetea opciones de pago, formularios de facturación, placas y excedentes
 // ── Cerrar modales ────────────────────────────────────────────
 const cerrarModales = () => {
     modalCodigo.value = false

@@ -1,6 +1,8 @@
 <template>
+    <!-- RF-024: Estado/resultado de una transacción de pago - Vista de resultado -->
     <div class="flex flex-col gap-6 min-h-full pb-6">
 
+        <!-- RF-024.1: Encabezado de resultado del pago -->
         <!-- Header -->
         <AdminPageHeader title="Resultado del pago">
             <template #left>
@@ -13,6 +15,7 @@
             </template>
         </AdminPageHeader>
 
+        <!-- RF-024.2: Estado de carga mientras se verifica la transacción -->
         <!-- ── Cargando estado ── -->
         <div v-if="cargando" class="estado-card">
             <div class="estado-spinner" />
@@ -20,6 +23,7 @@
             <p class="estado-sub">Esto solo tomará un momento</p>
         </div>
 
+        <!-- RF-024.3: Estado de error al procesar la transacción de pago -->
         <!-- ── Error ── -->
         <div v-else-if="errorMsg" class="estado-card estado-card--error">
             <div class="estado-icono estado-icono--error">
@@ -35,6 +39,7 @@
             </button>
         </div>
 
+        <!-- RF-024.4: Estado de enlace inválido (sin referencia de transacción en URL) -->
         <!-- ── Sin rquid ── -->
         <div v-else-if="!rquid" class="estado-card estado-card--warn">
             <div class="estado-icono estado-icono--warn">
@@ -49,9 +54,11 @@
             </button>
         </div>
 
+        <!-- RF-024.5: Contenido principal con el resultado de la transacción -->
         <!-- ── Contenido principal ── -->
         <template v-else>
 
+            <!-- RF-024.6: Estado RECHAZADO - layout especial con datos mínimos de la transacción fallida -->
             <!-- Estado RECHAZADO: layout especial centrado, sin PDF -->
             <div v-if="estadoPago === 'rechazado'" class="rechazo-card">
                 <div class="rechazo-icono">
@@ -65,6 +72,7 @@
                 <p class="rechazo-sub">La transacción fue rechazada por la pasarela de pago.<br>Verifica tu método de
                     pago e intenta de nuevo.</p>
 
+                <!-- RF-024.7: Datos mínimos de la transacción rechazada (fecha, monto, método) -->
                 <!-- Datos mínimos de la transacción fallida -->
                 <div v-if="transaccion" class="rechazo-datos">
                     <!-- <div class="rechazo-dato" v-if="transaccion.RequestId">
@@ -92,6 +100,7 @@
                 </div>
             </div>
 
+            <!-- RF-024.8: Estado PENDIENTE - layout centrado con datos de transacción en verificación -->
             <!-- Estado PENDIENTE: layout centrado sin PDF -->
             <div v-else-if="estadoPago === 'pendiente'" class="pendiente-card">
                 <div class="pendiente-icono">
@@ -104,6 +113,7 @@
                 <h3 class="pendiente-titulo">Pago en verificación</h3>
                 <p class="pendiente-sub">Estamos procesando tu transacción con la entidad financiera.</p>
 
+                <!-- RF-024.9: Datos de la transacción pendiente (referencia, fecha, valor) -->
                 <!-- Datos de la transacción -->
                 <div v-if="transaccion" class="pendiente-datos">
                     <div class="pendiente-dato" v-if="transaccion.IdTransaccion ?? transaccion.RequestId">
@@ -124,6 +134,7 @@
                     </div>
                 </div>
 
+                <!-- RF-024.10: Mensaje informativo para transacciones pendientes -->
                 <!-- Mensaje informativo -->
                 <div class="pendiente-aviso">
                     <p>
@@ -148,12 +159,14 @@
             </div>
 
 
+            <!-- RF-024.11: Estado APROBADO - layout normal con detalle de transacción y comprobante PDF -->
             <!-- Estado APROBADO / PENDIENTE: layout normal con PDF -->
             <div v-else class="sections-grid">
 
                 <!-- Panel izquierdo -->
                 <div class="flex flex-col gap-4">
 
+                    <!-- RF-024.12: Badge visual del estado de la transacción (aprobado, pendiente, rechazado) -->
                     <!-- Badge de estado -->
                     <div class="estado-badge-card" :class="`estado-badge-card--${estadoPago}`">
                         <div class="estado-badge-icono" :class="`estado-badge-icono--${estadoPago}`">
@@ -174,6 +187,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-024.13: Tarjeta de detalle de la transacción (método, concepto, valor pagado) -->
                     <!-- Info de la transacción -->
                     <div v-if="transaccion" class="info-card">
                         <div class="info-card__header">
@@ -220,6 +234,7 @@
                         </div>
                     </div>
 
+                    <!-- RF-024.14: Acciones disponibles según resultado (descargar PDF, volver) -->
                     <!-- Acciones -->
                     <div class="flex flex-col gap-3">
                         <button v-if="pdfUrl" @click="descargarPdf" class="btn-accion btn-accion--pdf">
@@ -238,6 +253,7 @@
 
                 </div>
 
+                <!-- RF-024.15: Panel de visualización del comprobante de pago en PDF -->
                 <!-- Panel derecho: PDF -->
                 <div class="pdf-panel">
                     <div class="pdf-panel__header">
@@ -272,12 +288,14 @@
 </template>
 
 <script setup>
+// RF-024: Script de estado/resultado de una transacción de pago
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import FacturaService from '@/api/services/factura.service'
 
 const route = useRoute()
 
+// RF-024.16: Estado reactivo de carga, transacción, PDF y mensajes de error
 // ── Estado ─────────────────────────────────────────────────────────
 const cargando = ref(true)
 const cargandoPdf = ref(false)
@@ -288,6 +306,7 @@ const pdfUrl = ref('')
 const fileName = ref('factura.pdf')
 const estadoPago = ref('pendiente')
 
+// RF-024.17: Obtención del identificador de transacción (rquid) desde la URL
 // ── rquid desde la URL ─────────────────────────────────────────────
 // Ajusta el nombre del query param si tu pasarela usa otro nombre
 const rquid = computed(() =>
@@ -297,6 +316,7 @@ const rquid = computed(() =>
     ?? null
 )
 
+// RF-024.18: Labels dinámicos según el estado de la transacción
 // ── Labels ─────────────────────────────────────────────────────────
 const estadoLabel = computed(() => ({
     aprobado: 'Pago aprobado',
@@ -310,6 +330,7 @@ const estadoSubLabel = computed(() => ({
     rechazado: 'La transacción no fue procesada. Intenta con otro método de pago.',
 })[estadoPago.value] ?? '')
 
+// RF-024.19: Helpers de formato de fecha y precio
 // ── Helpers ─────────────────────────────────────────────────────────
 const formatFecha = (iso) => {
     if (!iso) return '—'
@@ -332,6 +353,7 @@ const resolverEstado = (status = '') => {
     return 'pendiente'
 }
 
+// RF-024.20: Flujo principal de verificación del estado de pago y carga de comprobante PDF
 // ── Flujo principal ─────────────────────────────────────────────────
 const cargarEstado = async () => {
     if (!rquid.value) { cargando.value = false; return }
@@ -364,6 +386,7 @@ const cargarEstado = async () => {
     }
 }
 
+// RF-024.21: Carga del comprobante PDF de la transacción
 const cargarPdf = async (token) => {
     cargandoPdf.value = true
     try {
@@ -384,6 +407,7 @@ const cargarPdf = async (token) => {
     }
 }
 
+// RF-024.22: Descarga del comprobante PDF de pago
 const descargarPdf = () => {
     if (!pdfUrl.value) return
     const a = document.createElement('a')

@@ -1,15 +1,24 @@
 <template>
+    <!-- ═══════════════════════════════════════════════════════════
+         RF-032: ENVIAR PQRS / PETICIONES ESPECÍFICAS
+         ───────────────────────────────────────────────────────────
+         Vista gateway que presenta opciones de peticiones específicas
+         al cliente (ej. cambio autorización, cambio data cédula/NIT,
+         cambio sede, pago erróneo, pagos Aval Pay, tema tarjetas,
+         otros). Cada tarjeta redirige a su formulario correspondiente
+         mediante navegación programática (router.push).
+    ═══════════════════════════════════════════════════════════ -->
     <div class="dashboard-grid">
 
         <div v-for="opcion in opciones" :key="opcion.id" class="opcion-card card-animation"
             @click="router.push(opcion.route)">
 
-            <!-- Ícono -->
+            <!-- Ícono representativo de la petición específica -->
             <div class="opcion-icon">
                 <span v-html="opcion.icon" />
             </div>
 
-            <!-- Texto -->
+            <!-- Texto descriptivo de la petición -->
             <div class="opcion-text">
                 <h2 class="opcion-title">{{ opcion.titulo }}</h2>
                 <p class="opcion-sub">{{ opcion.sub }}</p>
@@ -21,8 +30,13 @@
 </template>
 
 <script setup>
+// ═══════════════════════════════════════════════════════════
+//  RF-032: PETICIONES ESPECÍFICAS — LÓGICA DEL SCRIPT
+// ═══════════════════════════════════════════════════════════
 import { useRouter } from 'vue-router'
 
+// Router para navegación programática hacia cada formulario
+// de petición específica definido en las opciones dinámicas.
 
 
 

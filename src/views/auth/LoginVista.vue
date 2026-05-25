@@ -1,10 +1,11 @@
 <template>
+    <!-- RF-022.1: Vista de autenticación de clientes — RF-022: login mediante correo electrónico o documento y contraseña. -->
     <div class="login-root">
         <div class="blob blob-1" />
         <div class="blob blob-2" />
 
         <div class="login-card">
-            <!-- Panel izquierdo: Marca -->
+            <!-- RF-022.2: Panel de marca visual — identificación de la plataforma Digital 6G y bienvenida. -->
             <div class="brand-side">
                 <div class="brand-inner">
                     <!-- <img src="@/assets/img/confy-blanco.png" alt="Confy" class="brand-logo" /> -->
@@ -17,7 +18,7 @@
 
             </div>
 
-            <!-- Panel derecho: Formulario -->
+            <!-- RF-022.3: Panel derecho de formulario — captura de documento y contraseña para autenticación del cliente. -->
             <div class="form-side">
                 <div class="top-accent" />
 
@@ -32,7 +33,7 @@
                     </div>
 
                     <div class="fields">
-                        <!-- Documento -->
+                        <!-- RF-022.4: Campo de documento — identificador único del cliente para el proceso de login. -->
                         <div class="field-group">
                             <label for="document">Documento</label>
                             <div class="input-wrap" :class="{ error: auth.errorMsg }">
@@ -47,7 +48,7 @@
                             </div>
                         </div>
 
-                        <!-- Contraseña -->
+                        <!-- RF-022.5: Campo de contraseña — credencial de acceso asociada a la cuenta del cliente. -->
                         <div class="field-group">
                             <label for="password">Contraseña</label>
                             <div class="input-wrap" :class="{ error: auth.errorMsg }">
@@ -77,7 +78,7 @@
                             </div>
                         </div>
 
-                        <!-- Olvidé mi contraseña -->
+                        <!-- RF-022.6: Enlace de recuperación de contraseña para clientes que olvidaron sus credenciales. -->
                         <div class="text-center -mt-1">
                             <router-link to="/forgot-password"
                                 style="color:#299261;font-size:0.78rem;font-weight:700;text-decoration:none;"
@@ -87,7 +88,7 @@
                             </router-link>
                         </div>
 
-                        <!-- Error -->
+                        <!-- RF-022.7: Alerta de error de autenticación — muestra mensaje devuelto por el store de auth. -->
                         <Transition name="error">
                             <div v-if="auth.errorMsg" class="error-alert">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#dc2626"
@@ -99,13 +100,13 @@
                             </div>
                         </Transition>
 
-                        <!-- Registro -->
+                        <!-- RF-022.8: Enlace al flujo de registro para clientes que aún no tienen cuenta. -->
                         <p class="register-text">
                             ¿No tienes cuenta?
                             <router-link to="/seleccionsede">Regístrate</router-link>
                         </p>
 
-                        <!-- Botón -->
+                        <!-- RF-022.9: Botón de ingreso — ejecuta auth.login con documento y contraseña, luego redirige a la ruta devuelta. -->
                         <button @click="handleLogin" class="submit-btn">
                             <span v-if="auth.loading" class="spinner" />
                             <span>{{ auth.loading ? 'Ingresando...' : 'Ingresar' }}</span>
@@ -259,6 +260,7 @@
 </template>
 
 <script setup>
+// RF-022.10: Lógica de autenticación — vincula inputs de documento/contraseña con el auth store y gestiona el login.
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -271,6 +273,7 @@ const password = ref('')
 const verPassword = ref(false)
 const showTutorial = ref(false)
 
+// RF-022.11: Handler de login — valida campos no vacíos, invoca auth.login y redirige al dashboard si las credenciales son correctas.
 async function handleLogin() {
     if (!documento.value || !password.value) return
     const ruta = await auth.login(documento.value, password.value)

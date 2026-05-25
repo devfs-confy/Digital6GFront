@@ -1,10 +1,19 @@
 <template>
+    <!-- ═══════════════════════════════════════════════════════════
+         RF-032: ENVIAR PQRS / SOLICITUDES
+         ───────────────────────────────────────────────────────────
+         Vista del cliente que presenta el historial de solicitudes
+         PQRS enviadas y permite el seguimiento de su estado en
+         formato de tarjetas (cards) con paginación.
+    ═══════════════════════════════════════════════════════════ -->
     <div class="h-full flex flex-col gap-4 maincontainer">
 
-        <!-- Header -->
+        <!-- Header: título "Mis Solicitudes" -->
         <AdminPageHeader title="Mis Solicitudes" />
 
-        <!-- Lista -->
+        <!-- Lista de solicitudes: muestra cards con icono según tipo,
+             badges de estado/prioridad, asunto, motivo, fecha y
+             preview de descripción. Al hacer clic abre modal detalle. -->
         <div class="flex-1 flex flex-col gap-3 overflow-y-auto min-h-0 pb-2">
 
             <!-- Loading -->
@@ -68,7 +77,10 @@
                 @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
-        <!-- Modal Detalle -->
+        <!-- Modal Detalle: visualiza la información completa de
+             la solicitud seleccionada, incluyendo descripción,
+             datos de contacto, grid de metadatos y respuesta
+             administrativa si ya fue atendida. -->
         <Teleport to="body">
             <Transition name="fade">
                 <div v-if="modalAbierto"
@@ -195,20 +207,28 @@ import TablePaginacion from '@/components/shared/Paginacion.vue'
 import PqrsService from '@/api/services/pqrs.service'
 import formats from '@/utils/formats.date'
 
-// ── Estado ─────────────────────────────────────────────────────────
-const solicitudes = ref([])
-const loading = ref(false)
+// ═══════════════════════════════════════════════════════════
+//  RF-032: SOLICITUDES — LÓGICA DEL SCRIPT
+// ═══════════════════════════════════════════════════════════
+
+// ── Estado del listado y paginación ──────────────────────────────
+const solicitudes = ref([])       // Array de PQRS del cliente
+const loading = ref(false)        // Spinner carga del listado
 const paginaActual = ref(1)
 const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
 
-// Modal
+// Modal detalle de solicitud
 const modalAbierto = ref(false)
 const loadingDetalle = ref(false)
-const detalle = ref(null)
+const detalle = ref(null)         // Objeto detalle de la PQRS
 
-// ── Carga ──────────────────────────────────────────────────────────
+// ── Carga del historial de solicitudes ───────────────────────────
+/**
+ * RF-032: Obtiene el historial paginado de solicitudes PQRS
+ * del cliente autenticado para seguimiento de estado.
+ */
 const cargar = async () => {
     loading.value = true
     try {
@@ -228,7 +248,12 @@ const onLimitChange = val => { limit.value = Number(val); paginaActual.value = 1
 
 onMounted(cargar)
 
-// ── Modal detalle ──────────────────────────────────────────────────
+// ── Modal detalle de solicitud ───────────────────────────────────
+
+/**
+ * RF-032: Abre el modal de detalle para realizar seguimiento
+ * de una solicitud específica por su Id.
+ */
 const verDetalle = async (id) => {
     modalAbierto.value = true
     loadingDetalle.value = true
@@ -247,12 +272,16 @@ const cerrarModal = () => {
     detalle.value = null
 }
 
-// ── Helpers visuales ───────────────────────────────────────────────
+// ── Helpers visuales para badges e iconos ─────────────────────────
 const formatFecha = (f) => {
     if (!f) return '—'
     return formats.fechaSinDate(f)
 }
 
+/**
+ * RF-032: Devuelve el icono Material correspondiente al tipo
+ * de PQRS para identificación visual rápida en la card.
+ */
 const iconoTipo = (tipo) => {
     const map = { QUEJA: 'sentiment_dissatisfied', PETICION: 'assignment', RECLAMO: 'gavel', SUGERENCIA: 'lightbulb' }
     return map[tipo] ?? 'help'
@@ -263,6 +292,11 @@ const iconoBg = (tipo) => {
     return map[tipo] ?? 'bg-gray-400'
 }
 
+/**
+ * RF-032: Devuelve las clases Tailwind del badge según el tipo
+ * de PQRS (color distintivo para Petición, Queja, Reclamo,
+ * Sugerencia).
+ */
 const badgeTipo = (tipo) => {
     const map = {
         QUEJA: 'bg-red-100 text-red-700 border border-red-200',
@@ -273,6 +307,11 @@ const badgeTipo = (tipo) => {
     return map[tipo] ?? 'bg-gray-100 text-gray-600'
 }
 
+/**
+ * RF-032: Devuelve las clases Tailwind del badge según el estado
+ * de la solicitud para el seguimiento visual: ABIERTO, EN_PROCESO,
+ * CERRADO.
+ */
 const badgeEstado = (estado) => {
     const map = {
         ABIERTO: 'bg-[#e8f5e9] text-[#299261] border border-[#c8e6c9]',
@@ -282,6 +321,10 @@ const badgeEstado = (estado) => {
     return map[estado] ?? 'bg-gray-100 text-gray-600'
 }
 
+/**
+ * RF-032: Devuelve las clases Tailwind del badge según la
+ * prioridad asignada a la solicitud: ALTA, MEDIA, BAJA.
+ */
 const badgePrioridad = (p) => {
     const map = {
         ALTA: 'bg-red-100 text-red-600',
