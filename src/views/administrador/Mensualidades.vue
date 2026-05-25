@@ -4,6 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="Mensualidades" />
 
+        <!-- RF-012.1 / RF-012.2: Filtros de búsqueda por nombre, documento, placa, #ID, sede (obligatoria) y estado — VER-MENSUALIDADES -->
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
 
@@ -42,6 +43,7 @@
 
         </div>
 
+        <!-- RF-012.1: Tabla de mensualidades con búsqueda por nombre, documento, placa y #ID — VER-MENSUALIDADES -->
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="table-scroll-wrapper">
@@ -61,6 +63,7 @@
 
 
 
+                        <!-- RF-012.1: Estado de carga del listado — VER-MENSUALIDADES -->
                         <!-- Loading -->
                         <tr v-if="loading">
                             <td colspan="6" class="py-20 text-center">
@@ -73,6 +76,7 @@
                             </td>
                         </tr>
 
+                        <!-- RF-012.1: Estado vacío del listado — VER-MENSUALIDADES -->
                         <!-- Vacío -->
                         <tr v-else-if="mensualidades.length === 0">
                             <td colspan="6" class="py-20 text-center text-gray-300">
@@ -83,10 +87,12 @@
                             </td>
                         </tr>
 
+                        <!-- RF-012.1 / RF-012.7: Filas de mensualidades con indicadores de vigencia — VER-MENSUALIDADES -->
                         <!-- Filas -->
                         <tr v-else v-for="m in mensualidadesFiltradas" :key="m.IdPersonaAutorizada"
                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors group">
 
+                            <!-- RF-012.1: Columna titular con nombre e ID — VER-MENSUALIDADES -->
                             <!-- Titular -->
                             <td class="td-cell">
                                 <div class="flex items-center gap-3  max-w-[155px]">
@@ -107,6 +113,7 @@
                                 </div>
                             </td>
 
+                            <!-- RF-012.1: Columna documento — VER-MENSUALIDADES -->
                             <!-- Documento -->
                             <td class="td-cell td-cell--sticky font-mono group-hover:bg-[#f0faf4]">
                                 {{ m.Documento }}
@@ -118,6 +125,7 @@
                                     {{ m._sedeName || sedeNombre || '—' }}
                                 </span>
                             </td>
+                            <!-- RF-012.1: Columna placas (vehículos) — VER-MENSUALIDADES -->
                             <!-- Placas -->
                             <td class="td-cell">
                                 <div class="flex gap-1 flex-wrap">
@@ -131,6 +139,7 @@
 
 
 
+                            <!-- RF-012.7: Indicadores de vigencia: Activa / Por vencer / Vencida — VER-MENSUALIDADES -->
                             <!-- Vigencia -->
                             <td class="td-cell">
                                 <div v-if="m.FechaInicio || m.FechaFin" class="flex flex-col gap-0.5">
@@ -142,6 +151,7 @@
                                 <span v-else class="text-gray-300 text-sm">Sin fechas</span>
                             </td>
 
+                            <!-- RF-012.2: Columna estado activo/inactivo — VER-MENSUALIDADES -->
                             <!-- Estado -->
                             <td class="td-cell">
                                 <span v-if="m.Estado" class="text-[#299261] font-extrabold text-[0.8rem]">●
@@ -149,6 +159,7 @@
                                 <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
 
+                            <!-- RF-012.3 / RF-012.4 / RF-012.5 / RF-012.6: Botones de acciones: ver detalle, editar, últimos pagos y transacciones — VER-MENSUALIDADES / EDITAR-MENSUALIDADES -->
                             <!-- Opciones -->
                             <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-1">
@@ -182,6 +193,7 @@
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
+        <!-- RF-012.4: Aside ver detalle read-only: badges, estado, titular, autorización, vigencia y vehículos — VER-MENSUALIDADES -->
         <!-- ── Aside Ver Detalle (read-only) ────────────────────────── -->
         <AsideEditar v-model="panelVer" :titulo="detalleVer?.NombreApellidos ?? '—'"
             :subtitulo="(detalleVer?.T_Estacionamiento?.Nombre ?? '') + (detalleVer?.Documento ? ' · Doc. ' + detalleVer.Documento : '')"
@@ -293,6 +305,7 @@
         </AsideEditar>
 
         <!-- ── Overlay ───────────────────────────────────────────── -->
+        <!-- RF-012.3: Panel editar mensualidad: nombre, NIT, empresa, fechas, estado, cobro tarjeta, hasta 5 placas y autorización — EDITAR-MENSUALIDADES -->
         <!-- ── Panel mensualidad ─────────────────────────────────────────── -->
         <AsideEditar v-model="panelAbierto" :titulo="detalle?.NombreApellidos ?? '—'"
             :subtitulo="(detalle?.T_Estacionamiento?.Nombre ?? sedeNombre) + ' · Doc. ' + (detalle?.Documento ?? '')"
@@ -306,6 +319,7 @@
 
             <template v-else>
 
+                <!-- RF-012.3: Toggle de estado y cobro de tarjeta — EDITAR-MENSUALIDADES -->
                 <!-- Estado + CobroTarjeta -->
                 <div class="flex gap-3">
                     <!-- Toggle Estado -->
@@ -351,12 +365,14 @@
                     </label>
                 </div>
 
+                <!-- RF-012.3: Campo nombre completo del titular — EDITAR-MENSUALIDADES -->
                 <!-- Nombre titular -->
                 <div class="flex flex-col gap-1.5">
                     <label class="aside-field-label">Nombre completo</label>
                     <input v-model="form.NombreApellidos" type="text" placeholder="JUAN..." class="aside-field-input" />
                 </div>
 
+                <!-- RF-012.3: Campos NIT y empresa — EDITAR-MENSUALIDADES -->
                 <!-- NIT + Empresa -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
@@ -370,6 +386,7 @@
                     </div>
                 </div>
 
+                <!-- RF-012.3: Campos de fecha de inicio y fin — EDITAR-MENSUALIDADES -->
                 <!-- Fechas -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
@@ -382,6 +399,7 @@
                     </div>
                 </div>
 
+                <!-- RF-012.3: Hasta 5 placas (vehículos) — EDITAR-MENSUALIDADES -->
                 <!-- Placas -->
                 <div class="flex flex-col gap-2">
                     <label class="aside-field-label">Vehículos</label>
@@ -395,6 +413,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- RF-012.3: Selector de autorización — EDITAR-MENSUALIDADES -->
                 <!-- Autorización -->
                 <div class="flex flex-col gap-1.5">
                     <label class="aside-field-label">Autorización</label>
@@ -414,6 +433,7 @@
 
         </AsideEditar>
 
+        <!-- RF-012.5: Modal de últimos pagos: historial de facturas del cliente — VER-MENSUALIDADES -->
         <!-- ── Modal Últimos Pagos ───────────────────────────────────────── -->
         <Teleport to="body">
             <Transition name="modal-fade">
@@ -507,6 +527,7 @@
             </Transition>
         </Teleport>
 
+        <!-- RF-012.6: Modal de transacciones: sede de acceso, filtro fecha y tabla de registros entrada/salida paginada — VER-MENSUALIDADES -->
         <!-- ── Modal Transacciones ───────────────────────────────────────── -->
         <Teleport to="body">
             <Transition name="modal-fade">
@@ -686,6 +707,7 @@ import { showConfirm } from '@/utils/swal'
 import formatsDate from '@/utils/formats.date'
 import SwalBase, { showError, showSuccess } from '@/utils/swal'
 import AutorizacionesService from '@/api/services/autorizaciones.service'
+// RF-012.1 / RF-012.2: Estado del listado de mensualidades, sedes y filtros — VER-MENSUALIDADES
 // ── Estado ─────────────────────────────────────────────────────────
 const mensualidades = ref([])
 const sedes = ref([])
@@ -695,6 +717,7 @@ const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
 const autorizaciones = ref([])
+// RF-012.3: Estado del panel de edición de mensualidad — EDITAR-MENSUALIDADES
 // Panel
 const panelAbierto = ref(false)
 const loadingDetalle = ref(false)
@@ -702,6 +725,7 @@ const guardando = ref(false)
 const errGuardar = ref('')
 const detalle = ref(null)
 
+// RF-012.2: Filtros reactivos de búsqueda, sede y estado — VER-MENSUALIDADES
 // Filtros
 const filtros = reactive({ search: '', sede: '', estado: '' })
 
@@ -717,11 +741,13 @@ const form = reactive({
     placas: ['', '', '', '', ''],
 })
 
+// RF-012.2: Computed del nombre de sede seleccionada — VER-MENSUALIDADES
 // ── Computed ───────────────────────────────────────────────────────
 const sedeNombre = computed(() =>
     sedes.value.find(s => String(s.IdEstacionamiento) === String(filtros.sede))?.Nombre ?? ''
 )
 
+// RF-012.1 / RF-012.2: Filtrado local por estado y búsqueda (nombre, documento, placa, #ID) — VER-MENSUALIDADES
 // Reemplaza mensualidadesFiltradas
 const mensualidadesFiltradas = computed(() => {
     let lista = mensualidades.value
@@ -755,6 +781,7 @@ const mensualidadesFiltradas = computed(() => {
     return lista.slice(desde, desde + limit.value)
 })
 
+// RF-012.1 / RF-012.7: Helpers de iniciales, placas, fechas y vigencia — VER-MENSUALIDADES
 // ── Helpers ────────────────────────────────────────────────────────
 const iniciales = (nombre = '') =>
     nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
@@ -784,6 +811,7 @@ const vigenciaLabel = (m) => {
     return 'Vigente'
 }
 
+// RF-012.1 / RF-012.2: Carga de mensualidades de todas las sedes sin filtro activo — VER-MENSUALIDADES
 // ── Carga todas las sedes (sin filtro activo) ──────────────────────
 const cargarTodasLasMensualidades = async () => {
     if (!sedes.value.length) return
@@ -811,6 +839,7 @@ const cargarTodasLasMensualidades = async () => {
     }
 }
 
+// RF-012.2: Carga de mensualidades filtradas por sede (obligatorio) y búsqueda — VER-MENSUALIDADES
 // ── Carga por sede seleccionada ────────────────────────────────────
 const cargarMensualidades = async () => {
     if (!filtros.sede) { await cargarTodasLasMensualidades(); return }
@@ -842,6 +871,7 @@ const cargarMensualidades = async () => {
     }
 }
 
+// RF-012.1: Paginación del listado de mensualidades — VER-MENSUALIDADES
 // ── Paginación ─────────────────────────────────────────────────────
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
@@ -854,6 +884,7 @@ const onLimitChange = (val) => {
     paginaActual.value = 1
 }
 
+// RF-012.2: Debounce de filtros de búsqueda y cambio de sede — VER-MENSUALIDADES
 // ── Filtros ────────────────────────────────────────────────────────
 let debTimer = null
 const onFiltroChange = () => {
@@ -868,6 +899,7 @@ const onSedeChange = () => {
 }
 
 
+// RF-012.1 / RF-012.2: Carga inicial de sedes y mensualidades — VER-MENSUALIDADES
 // ── Mount ──────────────────────────────────────────────────────────
 onMounted(async () => {
     sedes.value = await SedesService.getAll()
@@ -875,6 +907,7 @@ onMounted(async () => {
 })
 
 
+// RF-012.5 / RF-012.6: Estado de modales de últimos pagos y transacciones — VER-MENSUALIDADES
 // ── Modales Pagos / Transacciones ─────────────────────────────────
 const modalPagos = ref(false)
 const modalTransacciones = ref(false)
@@ -882,6 +915,7 @@ const selectedMensual = ref(null)
 const pagosData = ref([])
 const loadingPagos = ref(false)
 
+// RF-012.5: Apertura y carga del modal de últimos pagos del cliente — VER-MENSUALIDADES
 const abrirModalPagos = async (m) => {
     selectedMensual.value = m
     pagosData.value = []
@@ -916,6 +950,7 @@ const txHace30 = () => {
     return d.toISOString().slice(0, 10)
 }
 
+// RF-012.6: Apertura y carga del modal de transacciones con sedes de acceso — VER-MENSUALIDADES
 const abrirModalTransacciones = async (m) => {
     selectedMensual.value = m
     sedesTransacciones.value = []
@@ -938,6 +973,7 @@ const abrirModalTransacciones = async (m) => {
     }
 }
 
+// RF-012.6: Búsqueda paginada de registros de entrada/salida por sede y rango de fechas — VER-MENSUALIDADES
 const buscarTransacciones = async () => {
     if (!selectedSedeTransaccion.value) return
     transaccionesTable.value = []
@@ -985,12 +1021,14 @@ const seleccionarSedeTransaccion = async (sede) => {
     await buscarTransacciones()
 }
 
+// RF-012.4: Estado y apertura del aside de detalle read-only — VER-MENSUALIDADES
 // ── Aside ver detalle (read-only) ────────────────────────────────
 const panelVer = ref(false)
 const loadingVer = ref(false)
 const detalleVer = ref(null)
 const detalleVerSource = ref(null)
 
+// RF-012.4: Carga de detalle read-only con badges, estado, titular, autorización, vigencia y vehículos — VER-MENSUALIDADES
 const abrirVerDetalle = async (m) => {
     detalleVerSource.value = m
     detalleVer.value = null
@@ -1006,6 +1044,7 @@ const abrirVerDetalle = async (m) => {
     }
 }
 
+// RF-012.3: Apertura y carga del panel de edición de mensualidad — EDITAR-MENSUALIDADES
 // ── Panel detalle ──────────────────────────────────────────────────
 const abrirDetalle = async (m) => {
     panelAbierto.value = true
@@ -1060,6 +1099,7 @@ const cerrarPanel = () => {
     form.IdAutorizacion = null
 }
 
+// RF-012.3: Confirmación para activar/quitar cobro de tarjeta — EDITAR-MENSUALIDADES
 const toggleCobroTarjeta = async () => {
     const quitando = form.CobroTarjeta
     const { isConfirmed } = await showConfirm({
@@ -1075,6 +1115,7 @@ const toggleCobroTarjeta = async () => {
     form.CobroTarjeta = !form.CobroTarjeta
 }
 
+// RF-012.3: Guardar cambios de mensualidad: nombre, NIT, empresa, fechas, estado, placas, autorización — EDITAR-MENSUALIDADES
 // ── Guardar ────────────────────────────────────────────────────────
 const guardar = async () => {
     errGuardar.value = ''

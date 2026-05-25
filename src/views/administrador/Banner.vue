@@ -2,6 +2,7 @@
     <div class="flex flex-col gap-6 min-h-full overflow-y-auto pb-6">
 
         <!-- Header -->
+<!-- RF-004.2: Botón para crear nueva publicidad/banner — CREAR-PUBLICIDAD -->
         <AdminPageHeader title="Gestión de Publicidad">
             <template #right>
                 <button v-permission="'CREAR-PUBLICIDAD'" @click="abrirModalCrear"
@@ -14,6 +15,7 @@
         </AdminPageHeader>
 
         <!-- Filtros -->
+<!-- RF-004.1: Filtros de búsqueda y estado — CREAR-CÓDIGOS -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
             <div class="flex flex-col gap-1 flex-[2] min-w-[180px]">
                 <label class="text-[0.62rem] font-black uppercase tracking-[0.08em] text-gray-400 pl-1">Buscar</label>
@@ -34,6 +36,7 @@
         </div>
 
         <!-- Resumen -->
+<!-- RF-004.1: Resumen estadístico de publicidades — CREAR-CÓDIGOS -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div
                 class="bg-white rounded-[18px] px-[18px] py-4 flex flex-col gap-1 shadow-[0_3px_0_#e2ede7] border-2 border-gray-100">
@@ -54,12 +57,14 @@
         </div>
 
         <!-- Loading -->
+<!-- RF-004.1: Estado de carga del grid — CREAR-CÓDIGOS -->
         <div v-if="loading" class="flex flex-col items-center gap-3 py-16">
             <div class="w-8 h-8 rounded-full border-[3px] border-[#e8f5e9] border-t-[#299261] animate-spin" />
             <span class="text-sm font-semibold text-gray-400">Cargando publicidades...</span>
         </div>
 
         <!-- Grid de cards -->
+<!-- RF-004.1: Grid de cards con imagen, sede y estado — CREAR-CÓDIGOS -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
 
             <!-- Empty state -->
@@ -73,6 +78,7 @@
             </div>
 
             <!-- Card publicidad -->
+<!-- RF-004.1: Card de publicidad con imagen, datos y acciones — CREAR-CÓDIGOS -->
             <div v-for="(p, i) in publicidades" :key="p.IdPublicidad"
                 class="bg-white rounded-3xl overflow-hidden border-2 border-[#e8f5e9] shadow-[0_4px_0_#e2ede7] flex flex-col transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_0_#c8ddd1]"
                 :style="{ animationDelay: `${i * 0.06}s` }">
@@ -88,6 +94,7 @@
                         </svg>
                     </div>
                     <!-- Badge estado -->
+<!-- RF-004.1: Badge de estado activo/inactivo en card — CREAR-CÓDIGOS -->
                     <span
                         class="absolute top-3 left-3 text-[0.6rem] font-black uppercase tracking-[0.07em] px-2.5 py-1 rounded-full border"
                         :class="p.Estado
@@ -118,6 +125,7 @@
                     </div>
 
                     <!-- Sedes asignadas -->
+<!-- RF-004.1: Badges de sedes asignadas a la publicidad — CREAR-CÓDIGOS -->
                     <div class="flex flex-wrap gap-1.5">
                         <span v-if="!p.T_PublicidadEstacionamientos?.length"
                             class="text-[0.65rem] font-semibold text-gray-400">Sin sedes asignadas</span>
@@ -138,6 +146,7 @@
 
                 <!-- Acciones -->
                 <div class="flex gap-2 px-4 pb-4">
+<!-- RF-004.3: Botón editar banner — EDITAR-PUBLICIDAD -->
                     <button v-permission="'EDITAR-PUBLICIDAD'" @click="abrirModalEditar(p)"
                         class="flex-1 flex items-center justify-center gap-1.5 py-[9px] px-3 rounded-[12px] text-[0.74rem] font-black cursor-pointer border-2 transition-all active:translate-y-[1px] bg-white text-[#0D291C] border-[#e8f5e9] shadow-[0_2px_0_#e2ede7] hover:bg-[#f0faf4]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
@@ -147,6 +156,7 @@
                         </svg>
                         Editar
                     </button>
+<!-- RF-004.4: Botón gestionar sedes asignadas — EDITAR-PUBLICIDAD -->
                     <button @click="abrirModalSedes(p)"
                         class="flex-1 flex items-center justify-center gap-1.5 py-[9px] px-3 rounded-[12px] text-[0.74rem] font-black cursor-pointer border-2 transition-all active:translate-y-[1px] bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_2px_0_#051510] hover:bg-[#132e21]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
@@ -161,6 +171,7 @@
         </div>
 
         <!-- Paginación -->
+<!-- RF-004.1: Paginación del grid — CREAR-CÓDIGOS -->
         <div v-if="!loading && totalPaginas > 1"
             class="flex items-center justify-between flex-wrap gap-3 bg-white rounded-2xl px-4 py-3 shadow-sm">
             <span class="text-xs text-gray-400">
@@ -190,12 +201,14 @@
         </div>
 
         <!-- ── MODAL CREAR/EDITAR ── -->
+<!-- RF-004.2 / RF-004.3: Modal formulario crear/editar publicidad — CREAR-PUBLICIDAD / EDITAR-PUBLICIDAD -->
         <Transition name="modal">
             <div v-if="modalForm"
                 class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                 <div
                     class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[480px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)]">
                     <!-- Head -->
+<!-- RF-004.2 / RF-004.3: Cabecera del modal crear/editar — CREAR-PUBLICIDAD / EDITAR-PUBLICIDAD -->
                     <div
                         class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15] flex-shrink-0">
                         <div class="flex items-center gap-3">
@@ -221,6 +234,7 @@
                     <!-- Body -->
                     <div class="flex-1 overflow-y-auto flex flex-col gap-4 px-5 py-4 [scrollbar-width:thin]">
 
+<!-- RF-004.2 / RF-004.3: Campo título del banner — CREAR-PUBLICIDAD -->
                         <!-- Título -->
                         <div class="flex flex-col gap-1">
                             <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700">Título
@@ -230,6 +244,7 @@
                                 placeholder="Nombre de la publicidad" />
                         </div>
 
+<!-- RF-004.2 / RF-004.3: Campo descripción opcional — CREAR-PUBLICIDAD -->
                         <!-- Descripción -->
                         <div class="flex flex-col gap-1">
                             <label
@@ -239,6 +254,7 @@
                                 placeholder="Descripción opcional..." />
                         </div>
 
+<!-- RF-004.2 / RF-004.3: Campo enlace URL — CREAR-PUBLICIDAD -->
                         <!-- Enlace -->
                         <div class="flex flex-col gap-1">
                             <label
@@ -248,6 +264,7 @@
                                 placeholder="https://..." />
                         </div>
 
+<!-- RF-004.2 / RF-004.3: Campos fecha inicio y expiración — CREAR-PUBLICIDAD -->
                         <!-- Fechas -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
@@ -266,6 +283,7 @@
                         </div>
 
                         <!-- Imagen (crear y editar) -->
+<!-- RF-004.3: Toggle estado activo/inactivo (solo edición) — EDITAR-PUBLICIDAD -->
 
 
                         <!-- Estado (solo editar) -->
@@ -283,6 +301,7 @@
 
 
 
+<!-- RF-004.2 / RF-004.3: Campo imagen Base64/FormData — CREAR-PUBLICIDAD -->
                         <!-- Imagen (solo crear) -->
                         <div class="flex flex-col gap-1">
                             <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700">
@@ -296,6 +315,7 @@
                             </div>
                         </div>
 
+<!-- RF-004.2 / RF-004.3: Selector de sedes destino — CREAR-PUBLICIDAD -->
                         <!-- Sedes (crear y editar) -->
                         <div class="flex flex-col gap-1">
                             <label
@@ -324,6 +344,7 @@
                         </div>
 
                         <!-- Error -->
+<!-- RF-004.2 / RF-004.3: Mensaje de error de validación — CREAR-PUBLICIDAD -->
                         <div v-if="errForm"
                             class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
                             ⚠ {{ errForm }}
@@ -331,6 +352,7 @@
                     </div>
 
                     <!-- Foot -->
+<!-- RF-004.2 / RF-004.3: Botón guardar cambios — CREAR-PUBLICIDAD -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200 flex-shrink-0">
                         <button @click="modalForm = false"
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
@@ -348,12 +370,14 @@
         </Transition>
 
         <!-- ── MODAL SEDES ── -->
+<!-- RF-004.4: Modal activar/desactivar banner por sede — EDITAR-PUBLICIDAD -->
         <Transition name="modal">
             <div v-if="modalSedes"
                 class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                 <div
                     class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[400px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)]">
                     <!-- Head -->
+<!-- RF-004.4: Cabecera del modal de sedes — EDITAR-PUBLICIDAD -->
                     <div
                         class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15] flex-shrink-0">
                         <div>
@@ -366,6 +390,7 @@
 
                     <!-- Body -->
                     <div class="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3 [scrollbar-width:thin]">
+<!-- RF-004.4: Listado de sedes con toggle activar/desactivar — EDITAR-PUBLICIDAD -->
                         <p class="text-[0.72rem] font-semibold text-gray-400">Activa o desactiva la publicidad por sede.
                         </p>
 
@@ -410,11 +435,13 @@
 </template>
 
 <script setup>
+// RF-004: Imports y servicios del módulo de publicidad
 import { ref, computed, watch, onMounted } from 'vue'
 import { showError } from '@/utils/swal'
 import bannerService from '@/api/services/banner.service'
 import SedesService from '@/api/services/sedes.service'
 
+// RF-004.1: Estado reactivo para grid de publicidades — CREAR-CÓDIGOS
 // ── Estado ────────────────────────────────────────────────────────
 const publicidades = ref([])
 const imagenes = ref({})
@@ -426,6 +453,7 @@ const sedes = ref([])
 // En onMounted:
 const sedesRes = await SedesService.getAll()
 sedes.value = Array.isArray(sedesRes) ? sedesRes : (sedesRes?.data ?? [])
+// RF-004.1: Filtros de búsqueda y estado — CREAR-CÓDIGOS
 // ── Filtros ───────────────────────────────────────────────────────
 const busqueda = ref('')
 const filtroEstado = ref('')
@@ -439,6 +467,7 @@ const limpiarFiltros = () => {
     filtroEstado.value = ''
 }
 
+// RF-004.2 / RF-004.3 / RF-004.4: Estado de modales crear/editar/sedes — CREAR-PUBLICIDAD / EDITAR-PUBLICIDAD
 // ── Modales ───────────────────────────────────────────────────────
 const modalForm = ref(false)
 const modalSedes = ref(false)
@@ -449,6 +478,7 @@ const publicidadSedes = ref(null)
 const previewImagen = ref('')
 const imagenFile = ref(null)
 
+// RF-004.2 / RF-004.3: Formulario reactivo crear/editar publicidad — CREAR-PUBLICIDAD
 const formData = ref({
     IdPublicidad: null,
     Titulo: '',
@@ -461,6 +491,7 @@ const formData = ref({
 })
 
 
+// RF-004.1: Cargar grid de publicidades desde API — CREAR-CÓDIGOS
 // ── Carga ─────────────────────────────────────────────────────────
 const cargarPublicidades = async () => {
     loading.value = true
@@ -477,6 +508,7 @@ const cargarPublicidades = async () => {
 // Y en el template, para usar las imágenes cargadas por Blob:
 // <img :src="imagenes[p.IdPublicidad] || imgUrl(p.Imagen)" ... />
 
+// RF-004.1: Cargar imagen Base64 por publicidad — CREAR-CÓDIGOS
 const cargarImagen = async (id) => {
     try {
         const res = await bannerService.getimgpublicidad(id)
@@ -489,6 +521,7 @@ const cargarImagen = async (id) => {
         console.warn('[imagen]', id, e)
     }
 }
+// RF-004.1: Carga inicial de publicidades y sedes — CREAR-CÓDIGOS
 
 onMounted(async () => {
     await cargarPublicidades()
@@ -497,6 +530,7 @@ onMounted(async () => {
 })
 watch(page, () => cargarPublicidades())
 
+// RF-004.2: Abrir modal en modo crear publicidad — CREAR-PUBLICIDAD
 // ── Crear ─────────────────────────────────────────────────────────
 const abrirModalCrear = () => {
     modoEditar.value = false
@@ -516,6 +550,7 @@ const abrirModalCrear = () => {
     modalForm.value = true
 }
 
+// RF-004.2: Handler selección de imagen (file input) — CREAR-PUBLICIDAD
 const onImagenChange = (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -524,6 +559,7 @@ const onImagenChange = (e) => {
     previewImagen.value = URL.createObjectURL(file)
 }
 
+// RF-004.3: Abrir modal en modo editar publicidad — EDITAR-PUBLICIDAD
 // ── Editar ────────────────────────────────────────────────────────
 const abrirModalEditar = (p) => {
     modoEditar.value = true
@@ -546,6 +582,7 @@ const abrirModalEditar = (p) => {
     modalForm.value = true
 }
 
+// RF-004.2 / RF-004.3: Guardar publicidad (crear o editar con FormData) — CREAR-PUBLICIDAD
 // ── Guardar ───────────────────────────────────────────────────────
 const guardarPublicidad = async () => {
     errForm.value = ''
@@ -589,12 +626,14 @@ const guardarPublicidad = async () => {
     }
 }
 
+// RF-004.4: Abrir modal de gestión de sedes — EDITAR-PUBLICIDAD
 // ── Sedes ─────────────────────────────────────────────────────────
 const abrirModalSedes = (p) => {
     publicidadSedes.value = JSON.parse(JSON.stringify(p))  // copia profunda
     modalSedes.value = true
 }
 
+// RF-004.4: Activar/desactivar publicidad por sede — EDITAR-PUBLICIDAD
 const toggleSede = async (pe) => {
     const nuevoActivo = !pe.Activo
     const res = await bannerService.enablePublicidad(
@@ -612,6 +651,7 @@ const toggleSede = async (pe) => {
     }
 }
 
+// RF-004.1: Helper de formateo de fecha — CREAR-CÓDIGOS
 // ── Helpers ───────────────────────────────────────────────────────
 const fmtFecha = (iso) => {
     if (!iso) return '—'

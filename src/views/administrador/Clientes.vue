@@ -2,6 +2,7 @@
     <div class="h-full flex flex-col gap-6 maincontainer">
 
         <!-- Header -->
+<!-- RF-005.3: Botón registrar nuevo cliente — VER-USUARIOS -->
         <AdminPageHeader title="Clientes">
              <template #right>
                 <button @click="abrirCrearCliente"
@@ -16,6 +17,7 @@
 
 
         <!-- Sin permiso VER -->
+<!-- RF-005.1 / RF-005.2: Bloqueo de acceso sin permiso VER-USUARIOS — VER-USUARIOS -->
         <div v-if="!hasPermission('VER-USUARIOS')"
             class="bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center gap-3 py-20 text-gray-300">
             <AppIcon name="lock" :size="48" />
@@ -24,14 +26,17 @@
 
         <template v-if="hasPermission('VER-USUARIOS')">
 
+<!-- RF-005.2: Filtros de sede y estado activo/inactivo — VER-USUARIOS -->
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
+<!-- RF-005.1: Búsqueda por nombre, documento o #ID mensualidad — VER-USUARIOS -->
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
                     class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Buscar</label>
                 <input v-model="busqueda" type="text" placeholder="Nombre, documento o #ID mensualidad..."
                     class="search-input w-full" />
             </div>
+<!-- RF-005.2: Filtro por sede — VER-USUARIOS -->
             <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
                     class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Sede</label>
@@ -41,6 +46,7 @@
                     </option>
                 </select>
             </div>
+<!-- RF-005.2: Filtro por estado activo/inactivo — VER-USUARIOS -->
             <div class="flex flex-col gap-1 flex-1 min-w-[140px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
                     class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Estado</label>
@@ -56,6 +62,7 @@
             </button>
         </div>
 
+<!-- RF-005.1: Tabla paginada de clientes — VER-USUARIOS -->
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="table-scroll-wrapper">
@@ -71,6 +78,7 @@
                         </tr>
                     </thead>
                     <tbody>
+<!-- RF-005.1: Estado de carga de la tabla — VER-USUARIOS -->
                         <tr v-if="loading">
                             <td colspan="6" class="text-center py-20 text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
@@ -80,6 +88,7 @@
                                 </div>
                             </td>
                         </tr>
+<!-- RF-005.1: Estado vacío sin resultados — VER-USUARIOS -->
                         <tr v-else-if="listaClientes.length === 0">
                             <td colspan="6" class="text-center py-20 text-gray-300">
                                 <div class="flex flex-col items-center gap-3">
@@ -92,9 +101,11 @@
                                 </div>
                             </td>
                         </tr>
+<!-- RF-005.1: Filas de clientes con datos principales — VER-USUARIOS -->
                         <tr v-else v-for="cliente in listaClientes" :key="cliente.Documento"
                             class="border-b border-[#e8f5e9] last:border-b-0 transition-colors duration-150 hover:bg-[#f0faf4] group">
 
+<!-- RF-005.6: Badges de IDs mensualidades asociadas — VER-USUARIOS -->
                             <td class="td-cell  group-hover:bg-[#f0faf4] max-w-[155px]">
                                 <div class="flex items-center gap-3">
                                     <div
@@ -122,18 +133,22 @@
                                 </span>
                             </td>
                             <td class="td-cell">{{ cliente.Telefono ?? '—' }}</td>
+<!-- RF-005.1: Indicador visual de estado activo/inactivo — VER-USUARIOS -->
                             <td class="td-cell">
                                 <span v-if="cliente.Estado" class="text-[#299261] font-extrabold text-[0.8rem]">●
                                     Activo</span>
                                 <span v-else class="text-[#dc2626] font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
+<!-- RF-005.4 / RF-005.5: Botones editar y activar/inhabilitar cliente — EDITAR-USUARIOS / INACTIVAR-USUARIOS -->
                             <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-2">
+<!-- RF-005.4: Botón editar cliente — EDITAR-USUARIOS -->
                                     <button v-permission="'EDITAR-USUARIOS'" @click="abrirEditar(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent text-gray-400 hover:bg-[#e8f5e9] hover:text-[#299261] transition-all"
                                         title="Editar">
                                         <AppIcon name="person_edit" :size="30" style="color:black;" />
                                     </button>
+<!-- RF-005.5: Botón activar/inhabilitar cliente — INACTIVAR-USUARIOS -->
                                     <button v-permission="'INACTIVAR-USUARIOS'" @click="abrirCambioEstado(cliente)"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer bg-transparent transition-all"
                                         :class="cliente.Estado
@@ -150,6 +165,7 @@
                 </table>
             </div>
 
+<!-- RF-005.1: Paginación de la tabla — VER-USUARIOS -->
             <!-- Paginación -->
             <TablePaginacion :pagina-actual="paginaActual" :total-paginas="totalPaginas"
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
@@ -157,6 +173,7 @@
 
         </template><!-- /VER-USUARIOS -->
 
+<!-- RF-005.3: Modal registrar nuevo cliente — VER-USUARIOS -->
         <!-- ───────────────── MODAL: CREAR CLIENTE ───────────────── -->
         <Transition name="modal-fade">
             <div v-if="modalCrearCliente"
@@ -164,6 +181,7 @@
                 <div
                     class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)]">
 
+<!-- RF-005.3: Cabecera del modal registrar cliente — VER-USUARIOS -->
                     <!-- Head -->
                     <div
                         class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15] flex-shrink-0">
@@ -190,12 +208,14 @@
                     <div
                         class="flex flex-col gap-4 px-5 py-5 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#c8e6c9_transparent]">
 
+<!-- RF-005.3: Sección datos personales del cliente — VER-USUARIOS -->
                         <!-- Datos personales -->
                         <p
                             class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                             Datos personales
                         </p>
 
+<!-- RF-005.3: Campo documento del cliente — VER-USUARIOS -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
                                 <label
@@ -204,6 +224,7 @@
                                 <input v-model="fCrear.Documento" type="text" placeholder="11..."
                                     class="crear-input" />
                             </div>
+<!-- RF-005.3: Campo teléfono del cliente — VER-USUARIOS -->
                             <div class="flex flex-col gap-1">
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Teléfono
@@ -211,6 +232,7 @@
                                 <input v-model="fCrear.Telefono" type="text" maxlength="15" placeholder="300..."
                                     class="crear-input" />
                             </div>
+<!-- RF-005.3: Campo nombres del cliente — VER-USUARIOS -->
                             <div class="flex flex-col gap-1">
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Nombres
@@ -218,6 +240,7 @@
                                 <input v-model="fCrear.Nombres" type="text" maxlength="50" placeholder="And..."
                                     class="crear-input" />
                             </div>
+<!-- RF-005.3: Campo apellidos del cliente — VER-USUARIOS -->
                             <div class="flex flex-col gap-1">
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Apellidos
@@ -227,6 +250,7 @@
                             </div>
                         </div>
 
+<!-- RF-005.3: Campo email del cliente — VER-USUARIOS -->
                         <div class="flex flex-col gap-1">
                             <label
                                 class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Correo
@@ -235,6 +259,7 @@
                                 placeholder="cor..." class="crear-input" />
                         </div>
 
+<!-- RF-005.3: Campo contraseña del cliente — VER-USUARIOS -->
                         <div class="flex flex-col gap-1">
                             <label
                                 class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Contraseña
@@ -259,12 +284,14 @@
                             </div>
                         </div>
 
+<!-- RF-005.3: Sección sede y placas del vehículo — VER-USUARIOS -->
                         <!-- Sede y vehículos -->
                         <p
                             class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                             Sede y vehículos
                         </p>
 
+<!-- RF-005.3: Campo sede del cliente — VER-USUARIOS -->
                         <div class="flex flex-col gap-1">
                             <label
                                 class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Sede
@@ -276,6 +303,7 @@
                             </select>
                         </div>
 
+<!-- RF-005.3: Campo Placa 1 del vehículo — VER-USUARIOS -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="flex flex-col gap-1">
                                 <label
@@ -295,6 +323,7 @@
                                         @input="fCrear.Placa1 = fCrear.Placa1.toUpperCase()" />
                                 </div>
                             </div>
+<!-- RF-005.3: Campo Placa 2 del vehículo — VER-USUARIOS -->
                             <div class="flex flex-col gap-1">
                                 <label
                                     class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Placa
@@ -315,6 +344,7 @@
                             </div>
                         </div>
 
+<!-- RF-005.3: Flags Old, Estudiante UCC y Estado — VER-USUARIOS -->
                         <!-- Opciones -->
                         <p
                             class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -342,6 +372,7 @@
                             </label>
                         </div>
 
+<!-- RF-005.3: Campos condicionales IdTarjeta e IdAutorización para modo Old — VER-USUARIOS -->
                         <template v-if="fCrear.Old">
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="flex flex-col gap-1">
@@ -361,6 +392,7 @@
                             </div>
                         </template>
 
+<!-- RF-005.3: Campo condicional código estudiante UCC — VER-USUARIOS -->
                         <div v-if="fCrear.EstudianteUcc" class="flex flex-col gap-1">
                             <label
                                 class="text-[0.68rem] font-extrabold text-gray-500 uppercase tracking-[0.05em]">Código
@@ -369,6 +401,7 @@
                                 class="crear-input" />
                         </div>
 
+<!-- RF-005.3: Mensaje de error en formulario crear — VER-USUARIOS -->
                         <div v-if="errCrear"
                             class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.72rem] font-semibold text-red-600">
                             ⚠ {{ errCrear }}
@@ -376,6 +409,7 @@
                     </div>
 
                     <!-- Foot -->
+<!-- RF-005.3: Botón crear cliente — VER-USUARIOS -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200 flex-shrink-0">
                         <button @click="modalCrearCliente = false"
                             class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
@@ -392,10 +426,12 @@
             </div>
         </Transition>
 
+<!-- RF-005.4: Panel lateral editar cliente — EDITAR-USUARIOS -->
         <!-- ASIDE EDITAR CLIENTE -->
         <AsideEditar v-model="modalEditar" :titulo="`${fE.Nombres} ${fE.Apellidos}`.trim() || 'Cliente'"
             subtitulo="Editando información" label-guardar="Guardar cambios" :loading="guardandoE" :error="errEditar"
             @guardar="editarCliente" @update:modelValue="v => { if (!v) { modalEditar = false; errEditar = '' } }">
+<!-- RF-005.4: Campo editar nombres — EDITAR-USUARIOS -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1.5">
                     <label
@@ -403,6 +439,7 @@
                         <span class="text-red-400">*</span></label>
                     <input v-model="fE.Nombres" type="text" placeholder="Jua..." class="aside-field-input" />
                 </div>
+<!-- RF-005.4: Campo editar apellidos — EDITAR-USUARIOS -->
                 <div class="flex flex-col gap-1.5">
                     <label
                         class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Apellidos
@@ -410,12 +447,14 @@
                     <input v-model="fE.Apellidos" type="text" placeholder="Gar..." class="aside-field-input" />
                 </div>
             </div>
+<!-- RF-005.4: Campo editar email — EDITAR-USUARIOS -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Correo
                     electrónico
                     <span class="text-red-400">*</span></label>
                 <input v-model="fE.Email" type="email" placeholder="cor@..." class="aside-field-input" />
             </div>
+<!-- RF-005.4: Campo editar teléfono — EDITAR-USUARIOS -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-[0.72rem] font-extrabold text-gray-600 uppercase tracking-[0.05em] pl-0.5">Teléfono
                     <span class="text-red-400">*</span></label>
@@ -423,6 +462,7 @@
                     @keypress="(e) => !/\d/.test(e.key) && e.preventDefault()" />
             </div>
 
+<!-- RF-005.4: Cambio opcional de documento del cliente — EDITAR-USUARIOS -->
             <div class="flex flex-col gap-2 pt-3 border-t border-gray-100">
                 <div class="flex flex-col gap-[3px] px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
                     <span class="text-[0.6rem] font-black uppercase tracking-wide text-gray-400">Documento actual</span>
@@ -450,12 +490,14 @@
 
         </AsideEditar>
 
+<!-- RF-005.5: Modal confirmación activar/inhabilitar cliente — INACTIVAR-USUARIOS -->
         <!-- MODAL INHABILITAR / ACTIVAR -->
         <ModalInhabilitar v-model="modalEstado" :cliente="clienteAccion" @confirmar="cambiarEstado" />
     </div>
 </template>
 
 <script setup>
+// RF-005: Imports y composables del módulo de clientes
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { showSuccess } from '@/utils/swal'
@@ -467,6 +509,7 @@ import TablePaginacion from '@/components/shared/Paginacion.vue'
 
 const { hasPermission } = useAuth()
 
+// RF-005.1 / RF-005.2: Estado reactivo para listado, filtros y paginación — VER-USUARIOS
 // ── Estado ─────────────────────────────────────────────────────────
 const clientes = ref([])
 const sedes = ref([])
@@ -480,6 +523,7 @@ const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
 
+// RF-005.3 / RF-005.4 / RF-005.5: Estado de modales crear/editar/estado — VER-USUARIOS / EDITAR-USUARIOS / INACTIVAR-USUARIOS
 // Modales
 const modalNuevo = ref(false)
 const modalEditar = ref(false)
@@ -487,12 +531,14 @@ const modalEstado = ref(false)
 const clienteAccion = ref(null)
 const verPass = ref(false)
 
+// RF-005.3 / RF-005.4: Estado de guardado y errores de formularios — VER-USUARIOS / EDITAR-USUARIOS
 // Guardado
 const guardandoN = ref(false)
 const guardandoE = ref(false)
 const errNuevo = ref('')
 const errEditar = ref('')
 
+// RF-005.4: Formularios reactivos legacy (fN) y editar cliente (fE) — EDITAR-USUARIOS
 // ── Formularios ────────────────────────────────────────────────────
 const fN = reactive({
     Documento: '', IdEstacionamiento: '', Nombres: '', Apellidos: '',
@@ -507,6 +553,7 @@ const fE = reactive({
     DocumentoNuevo: '',
 })
 
+// RF-005.1: Computed de filtrado local y búsqueda por #ID mensualidad — VER-USUARIOS
 // ── Computed ───────────────────────────────────────────────────────
 const listaClientes = computed(() => {
     const raw = Array.isArray(clientes.value) ? clientes.value : (clientes.value?.data ?? [])
@@ -524,10 +571,12 @@ const listaClientes = computed(() => {
 })
 
 
+// RF-005.1: Helper de iniciales para avatar — VER-USUARIOS
 // ── Helpers ────────────────────────────────────────────────────────
 const iniciales = (nombre = '') =>
     nombre ? nombre.split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase() : '??'
 
+// RF-005.1 / RF-005.2: Cargar clientes paginados con filtros de sede y estado — VER-USUARIOS
 // ── Carga ──────────────────────────────────────────────────────────
 const cargarClientes = async () => {
     loading.value = true
@@ -573,6 +622,7 @@ const cargarClientes = async () => {
     }
 }
 
+// RF-005.1: Carga inicial de clientes y sedes — VER-USUARIOS
 onMounted(async () => {
     await Promise.all([
         cargarClientes(),
@@ -580,6 +630,7 @@ onMounted(async () => {
     ])
 })
 
+// RF-005.1: Navegación de paginación — VER-USUARIOS
 // ── Paginación ─────────────────────────────────────────────────────
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
@@ -592,6 +643,7 @@ const onLimitChange = (val) => {
     paginaActual.value = 1
     cargarClientes()
 }
+// RF-005.1: Debounce de búsqueda por nombre, documento o #ID — VER-USUARIOS
 
 // ── Debounce búsqueda ──────────────────────────────────────────────
 let debTimer = null
@@ -605,6 +657,7 @@ watch(busqueda, val => {
 })
 
 
+// RF-005.2: Limpiar filtros de búsqueda, sede y estado — VER-USUARIOS
 // ── Limpiar filtros ────────────────────────────────────────────────
 const limpiarFiltros = () => {
     busqueda.value = ''
@@ -616,6 +669,7 @@ const limpiarFiltros = () => {
 }
 
 
+// RF-005.3: Estado y lógica para registrar nuevo cliente — VER-USUARIOS
 // ── Crear cliente ─────────────────────────────────────────────────
 const modalCrearCliente = ref(false)
 const guardandoCrear = ref(false)
@@ -628,6 +682,7 @@ const fCrear = ref({
     EstudianteUcc: false, CodigoEstudianteUCC: '',
 })
 
+// RF-005.3: Abrir modal de registro de nuevo cliente — VER-USUARIOS
 const abrirCrearCliente = () => {
     errCrear.value = ''
     verPassCrear.value = false
@@ -639,6 +694,7 @@ const abrirCrearCliente = () => {
     }
     modalCrearCliente.value = true
 }
+// RF-005.3: Guardar nuevo cliente con validaciones y campos condicionales — VER-USUARIOS
 
 const crearClienteNuevo = async () => {
     errCrear.value = ''
@@ -677,6 +733,7 @@ const crearClienteNuevo = async () => {
     } finally {
         guardandoCrear.value = false
     }
+// RF-005.4: Abrir panel y editar datos del cliente — EDITAR-USUARIOS
 }
 // ── Modal Editar ───────────────────────────────────────────────────
 
@@ -693,6 +750,7 @@ const abrirEditar = (c) => {
     errEditar.value = ''
     modalEditar.value = true
 }
+// RF-005.4: Guardar cambios de edición incluyendo cambio opcional de documento — EDITAR-USUARIOS
 
 const editarCliente = async () => {
     errEditar.value = ''
@@ -747,6 +805,7 @@ const editarCliente = async () => {
         guardandoE.value = false
     }
 }
+// RF-005.5: Abrir modal y confirmar cambio de estado activo/inactivo — INACTIVAR-USUARIOS
 
 // ── Modal Cambio de Estado ─────────────────────────────────────────
 const abrirCambioEstado = (c) => {
@@ -754,6 +813,7 @@ const abrirCambioEstado = (c) => {
     modalEstado.value = true
 }
 
+// RF-005.5: Ejecutar cambio de estado en el backend — INACTIVAR-USUARIOS
 const cambiarEstado = async ({ nuevoEstado }) => {
     try {
         const doc = clienteAccion.value?.Documento

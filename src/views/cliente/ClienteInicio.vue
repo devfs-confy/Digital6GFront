@@ -44,19 +44,15 @@ const bannerEnlaces = ref([])
 
 onMounted(async () => {
     const res = await publicidadService.getMiPublicidad()
-    console.log('[Banner] res crudo:', res)
 
     if (res?.error) return
 
     const items = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
-    console.log('[Banner] items:', items)
-    console.log('[Banner] keys de cada item:', items.map(i => Object.keys(i)))
     if (!items.length) return
 
     const urls = await Promise.all(
         items.map(async (item) => {
             const resultado = await publicidadService.getimgpublicidad(item.IdPublicidad)
-            console.log(`[Banner] getimgpublicidad(${item.IdPublicidad}):`, resultado)
 
             const base64 = resultado?.data?.data
             const contentType = resultado?.data?.contentType ?? 'image/webp'
@@ -71,8 +67,6 @@ onMounted(async () => {
     bannerUrl.value = filteredItems.map(item => item.Imagen)
     bannerEnlaces.value = filteredItems.map(item => item.Enlace ?? '')
 
-    console.log('[Banner] bannerUrl final:', bannerUrl.value)
-    console.log('[Banner] bannerEnlaces final:', bannerEnlaces.value)
 })
 
 const router = useRouter()

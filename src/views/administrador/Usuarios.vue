@@ -1,9 +1,10 @@
-<template>
+        <template>
     <div class="h-full flex flex-col gap-4">
 
         <!-- Header -->
         <AdminPageHeader title="Usuarios">
             <template #right>
+                <!-- RF-017.2: Botón para crear nuevo administrador — VER-ROLES -->
                 <button @click="abrirCrear"
                     class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
                     style="box-shadow: #595858 0px 2px 0">
@@ -13,7 +14,7 @@
             </template>
         </AdminPageHeader>
 
-        <!-- Buscador -->
+        <!-- RF-017.1: Buscador debounced en tabla de administradores — VER-ROLES -->
         <div class="bg-white rounded-2xl px-4 py-3 flex gap-2 items-center flex-shrink-0 shadow-sm">
             <input v-model="busqueda" type="text" placeholder="Buscar nombre o documento..."
                 class="flex-1 min-w-0 bg-[#EAEAEA] border-2 border-[#299261] rounded-full px-4 py-2 text-sm text-[#232B3A] outline-none focus:border-[#0D291C] focus:ring-2 focus:ring-[#299261]/20 transition-all" />
@@ -23,7 +24,7 @@
             </button>
         </div>
 
-        <!-- Tabla -->
+        <!-- RF-017.1: Tabla de administradores — VER-ROLES -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0">
             <div class="table-scroll-wrapper">
                 <table class="w-full border-collapse" style="min-width:300px">
@@ -85,11 +86,13 @@
                             </td>
                             <td class="td-cell td-cell--center">
                                 <div class="flex items-center justify-center gap-1">
+                                <!-- RF-017.3: Botón para editar administrador — EDITAR-ROLES -->
                                 <button @click="abrirEditar(u)"
                                     class="w-8 h-8 rounded-[10px] flex items-center justify-center border-none cursor-pointer transition-all bg-transparent hover:bg-[#e8f5e9] text-gray-400 hover:text-[#299261]"
                                     title="Editar información">
                                     <AppIcon name="person_edit" :size="30" style="color:black;" />
                                 </button>
+                                <!-- RF-017.4: Botón para activar/desactivar cuenta de administrador — INACTIVAR-ROLES / EDITAR-ROLES -->
                                 <button @click="darDeBaja(u)"
                                     class="w-8 h-8 rounded-[10px] flex items-center justify-center bg-transparent border-none cursor-pointer hover:bg-red-100 transition-all text-gray-400 hover:text-red-500"
                                     title="Inhabilitar">
@@ -106,7 +109,7 @@
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
-        <!-- Panel crear/editar -->
+        <!-- RF-017.2 / RF-017.3: Panel lateral para crear o editar administrador — VER-ROLES / EDITAR-ROLES -->
         <AsideEditar v-model="panelUsuario"
             :titulo="modoPanel === 'crear' ? 'Nuevo usuario' : (formUsuario.Nombres + ' ' + formUsuario.Apellidos).trim()"
             :subtitulo="modoPanel === 'crear' ? 'Completa los campos requeridos' : 'Doc. ' + formUsuario.Documento"
@@ -170,7 +173,7 @@
             </div>
         </AsideEditar>
 
-        <!-- Modal inhabilitar -->
+        <!-- RF-017.4: Modal para activar/desactivar cuenta de administrador — INACTIVAR-ROLES / EDITAR-ROLES -->
         <ModalInhabilitar v-model="modalInhabilitar" :cliente="clienteAccion" @confirmar="inhabilitarCliente" />
     </div>
 </template>
@@ -183,6 +186,7 @@ import adminServices from '@/api/services/admin.service'
 import RolService from '@/api/services/rol.service'
 import TablePagination from '@/components/shared/Paginacion.vue'
 
+// RF-017.1: Estado de tabla de administradores, búsqueda y paginación — VER-ROLES
 const loading = ref(false)
 const usuarios = ref([])
 const roles = ref([])
@@ -205,6 +209,7 @@ const formUsuario = ref({
 const modalInhabilitar = ref(false)
 const clienteAccion = ref({})
 
+// RF-017.1: Carga inicial de administradores y roles — VER-ROLES
 onMounted(async () => {
     loading.value = true
     try {
@@ -221,8 +226,9 @@ onMounted(async () => {
     }
 })
 
-// ── Tabla / paginación ─────────────────────────────────────────────
+// RF-017.1: Tabla / paginación — VER-ROLES
 let debounceTimer = null
+// RF-017.1: Búsqueda debounced para filtrar administradores — VER-ROLES
 watch(busqueda, val => {
     clearTimeout(debounceTimer)
     debounceTimer = setTimeout(() => { busquedaDebounced.value = val; paginaActual.value = 1 }, 300)
@@ -248,7 +254,7 @@ const usuariosPaginados = computed(() => {
 const irPagina = p => { if (p >= 1 && p <= totalPaginas.value) paginaActual.value = p }
 const onLimitChange = val => { limit.value = Number(val); paginaActual.value = 1 }
 
-// ── Panel crear/editar ─────────────────────────────────────────────
+// RF-017.2: Abrir panel de creación de administrador — VER-ROLES
 const abrirCrear = () => {
     modoPanel.value = 'crear'
     mostrarPassword.value = false
@@ -257,6 +263,7 @@ const abrirCrear = () => {
     panelUsuario.value = true
 }
 
+// RF-017.3: Abrir panel de edición de administrador — EDITAR-ROLES
 const abrirEditar = (u) => {
     modoPanel.value = 'editar'
     mostrarPassword.value = false
@@ -280,6 +287,7 @@ const cerrarPanelUsuario = () => {
     guardandoUsuario.value = false
 }
 
+// RF-017.2 / RF-017.3: Guardar creación o edición de administrador — VER-ROLES / EDITAR-ROLES
 const guardarUsuario = async () => {
     errPanelUsuario.value = ''
     const f = formUsuario.value
@@ -310,7 +318,7 @@ const guardarUsuario = async () => {
     }
 }
 
-// ── Inhabilitar ────────────────────────────────────────────────────
+// RF-017.4: Activar/desactivar cuenta de administrador — INACTIVAR-ROLES / EDITAR-ROLES
 const darDeBaja = u => { clienteAccion.value = { ...u }; modalInhabilitar.value = true }
 const inhabilitarCliente = async () => {
     try {

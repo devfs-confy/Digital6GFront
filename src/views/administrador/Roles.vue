@@ -16,7 +16,7 @@
         <!-- Layout -->
         <div class="flex flex-col lg:flex-row gap-3 flex-1 min-h-0">
 
-            <!-- ── Lista de roles ── -->
+            <!-- RF-014.1: Panel izquierdo con listado de roles; clic selecciona rol activo — EDITAR-ROLES -->
             <div v-if="!hasPermission('VER-ROLES')"
                 class="lg:w-[280px] flex-shrink-0 bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center gap-3 py-16 text-gray-300">
                 <AppIcon name="lock" :size="40" />
@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <!-- ── Panel permisos ── -->
+            <!-- RF-014.2: Panel derecho de permisos agrupados por prefijo — VER-PERMISOS -->
             <div class="flex-1 min-w-0 flex flex-col gap-3">
 
                 <!-- Sin selección -->
@@ -120,10 +120,12 @@
                             <button v-if="busquedaPerm" @click="busquedaPerm = ''"
                                 class="text-[0.6rem] font-black text-gray-400 hover:text-red-500 bg-none border-none cursor-pointer">✕</button>
                         </div>
+                        <!-- RF-014.4: Bulk "Seleccionar todo" — ASIGNAR-PERMISOS -->
                         <button v-permission="'ASIGNAR-PERMISOS'" @click="selectAll"
                             class="text-[0.65rem] font-black px-2.5 py-1.5 rounded-full border cursor-pointer bg-green-50 text-green-700 border-green-200 hover:bg-green-100 whitespace-nowrap flex-shrink-0">
                             Todos
                         </button>
+                        <!-- RF-014.5: Bulk "Quitar todo" — INACTIVAR-PERMISOS -->
                         <button v-permission="'INACTIVAR-PERMISOS'" @click="clearAll"
                             class="text-[0.65rem] font-black px-2.5 py-1.5 rounded-full border cursor-pointer bg-red-50 text-red-600 border-red-200 hover:bg-red-100 whitespace-nowrap flex-shrink-0">
                             Ninguno
@@ -167,7 +169,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                <!-- Items -->
+                                <!-- RF-014.3: Toggle individual de permiso ON/OFF — ASIGNAR-PERMISOS / INACTIVAR-PERMISOS -->
                                 <div class="p-1.5 flex flex-col gap-0.5">
                                     <div v-for="perm in grupo.permisos" :key="perm.value"
                                         class="flex items-center gap-2 px-2 py-2 sm:py-1.5 rounded-lg select-none transition-colors"
@@ -191,7 +193,7 @@
                         </div>
                     </div>
 
-                    <!-- Footer guardar -->
+                    <!-- RF-014.6: Guardar cambios de permisos del rol — ASIGNAR-PERMISOS -->
                     <div class="flex gap-2 pt-1 flex-shrink-0">
                         <button @click="rolSeleccionado = null"
                             class="flex-1 py-3 rounded-full text-xs font-black uppercase tracking-wide cursor-pointer bg-white text-[#232B3A] border-2 border-black hover:bg-gray-50 transition-colors"
@@ -221,7 +223,7 @@ import { cargarCatalogo, permisosCatalogo } from '@/constants/permisions'
 const { hasPermission, hasAnyPermission } = useAuth()
 const canTogglePerm = computed(() => hasAnyPermission(['ASIGNAR-PERMISOS', 'INACTIVAR-PERMISOS']))
 
-// ── Formato y agrupación dinámica ──────────────────────────────────
+// RF-014.2: Formato y agrupación dinámica de permisos por prefijo — VER-PERMISOS
 const formatLabel = (nombre) =>
     nombre.toLowerCase().replace(/-/g, ' ').replace(/^\w/, c => c.toUpperCase())
 
@@ -241,7 +243,7 @@ const totalPermisos = computed(() =>
     GRUPOS.value.reduce((acc, g) => acc + g.permisos.length, 0)
 )
 
-// ── Estado ─────────────────────────────────────────────────────────
+// RF-014.1: Estado del listado de roles y permisos disponibles — EDITAR-ROLES
 const loadingRoles = ref(false)
 const loadingPermisos = ref(false)
 const roles = ref([])
@@ -251,7 +253,7 @@ const seleccionados = ref(new Set())
 const busquedaPerm = ref('')
 const permisosCount = ref({})
 
-// ── Init ───────────────────────────────────────────────────────────
+// RF-014.1: Carga inicial de roles y permisos disponibles — EDITAR-ROLES
 onMounted(async () => {
     loadingRoles.value = true
     try {
@@ -278,7 +280,7 @@ onMounted(async () => {
     }
 })
 
-// ── Seleccionar rol ────────────────────────────────────────────────
+// RF-014.1: Seleccionar rol activo y cargar sus permisos asignados — EDITAR-ROLES
 const seleccionarRol = async (rol) => {
     if (rolSeleccionado.value?.Id === rol.Id) { rolSeleccionado.value = null; return }
     rolSeleccionado.value = rol
@@ -295,7 +297,7 @@ const seleccionarRol = async (rol) => {
     }
 }
 
-// ── Guardar ────────────────────────────────────────────────────────
+// RF-014.6: Guardar cambios de permisos del rol seleccionado — ASIGNAR-PERMISOS
 const guardarPermisos = async () => {
     if (!rolSeleccionado.value) return
 
@@ -315,6 +317,29 @@ const guardarPermisos = async () => {
     }
 }
 
+// RF-014.3: Toggle individual de permiso ON/OFF — ASIGNAR-PERMISOS / INACTIVAR-PERMISOS
+const togglePerm = v => {
+    const s = new Set(seleccionados.value)
+    s.has(v) ? s.delete(v) : s.add(v)
+    seleccionados.value = s
+}
+
+// RF-014.3 / RF-014.4 / RF-014.5: Toggle grupo (activar/desactivar todos los permisos del grupo) — ASIGNAR-PERMISOS / INACTIVAR-PERMISOS
+const toggleGrupo = g => {
+    const s = new Set(seleccionados.value)
+    const todosOn = g.permisos.every(p => s.has(p.value))
+    g.permisos.forEach(p => todosOn ? s.delete(p.value) : s.add(p.value))
+    seleccionados.value = s
+}
+
+// RF-014.4: Bulk "Seleccionar todo" global — ASIGNAR-PERMISOS
+const selectAll = () => {
+    seleccionados.value = new Set(GRUPOS.value.flatMap(g => g.permisos.map(p => p.value)))
+}
+
+// RF-014.5: Bulk "Quitar todo" global — INACTIVAR-PERMISOS
+const clearAll = () => { seleccionados.value = new Set() }
+
 // ── Helpers ────────────────────────────────────────────────────────
 const isSelected = v => seleccionados.value.has(v)
 const countActivos = g => g.permisos.filter(p => isSelected(p.value)).length
@@ -331,25 +356,6 @@ const gruposFiltrados = computed(() => {
         }))
         .filter(g => g.permisos.length > 0)
 })
-
-const togglePerm = v => {
-    const s = new Set(seleccionados.value)
-    s.has(v) ? s.delete(v) : s.add(v)
-    seleccionados.value = s
-}
-
-const toggleGrupo = g => {
-    const s = new Set(seleccionados.value)
-    const todosOn = g.permisos.every(p => s.has(p.value))
-    g.permisos.forEach(p => todosOn ? s.delete(p.value) : s.add(p.value))
-    seleccionados.value = s
-}
-
-const selectAll = () => {
-    seleccionados.value = new Set(GRUPOS.value.flatMap(g => g.permisos.map(p => p.value)))
-}
-
-const clearAll = () => { seleccionados.value = new Set() }
 </script>
 
 <style scoped>

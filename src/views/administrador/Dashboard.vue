@@ -2,7 +2,7 @@
     <div class="db-root">
 
 
-        <!-- ── Gráfica 1: Mensualidades vencidas ────────── -->
+        <!-- RF-001.2: Gráfica barras: mensualidades vencidas por sede — VER-MENSUALIDADES -->
         <div v-if="hasPermission('VER-MENSUALIDADES')" class="chart-card card-animation">
             <div class="chart-accent chart-accent--red" />
             <div class="chart-head">
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <!-- ── Gráfica 2: Ingresos mensuales ────────────── -->
+        <!-- RF-001.3: Gráfica líneas: ingresos mensuales — VER-MENSUALIDADES -->
         <div v-if="hasPermission('VER-MENSUALIDADES')" class="chart-card card-animation">
             <div class="chart-accent chart-accent--green" />
             <div class="chart-head">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- ── Gráfica 3: Disponibilidad por sede ───────── -->
+        <!-- RF-001.4: Gráfica barras apiladas: disponibilidad carros/motos por sede — VER-MENSUALIDADES -->
         <div v-if="hasPermission('VER-MENSUALIDADES')" class="chart-card card-animation">
             <div class="chart-accent chart-accent--blue" />
             <div class="chart-head">
@@ -96,7 +96,7 @@
             </div>
         </div>
 
-        <!-- ── Accesos rápidos ───────────────────────────── -->
+        <!-- RF-001.5: Tarjetas acceso rápido filtradas por permisos activos — PERMISOS -->
         <div v-for="(opcion, i) in opciones" :key="opcion.id" class="opcion-card card-animation"
             :style="{ animationDelay: `${i * 0.04}s` }" @click="router.push(opcion.route)">
             <div class="opcion-icon">
@@ -133,17 +133,24 @@ import MensualidadesService from '@/api/services/mensualidades.service'
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const router = useRouter()
+// RF-001.1: Fuente de datos para KPI total clientes — VER-USUARIOS
 const Usuarios = ref([])
+// RF-001.1: Fuente de datos para KPI disponibilidad por sede — VER-SEDES
 const Sedes = ref([])
+// RF-001.4: Fuente de datos de disponibilidad detallada — VER-MENSUALIDADES
 const Sedesdata = ref([])
 const { hasPermission } = useAuth()
 
+// RF-001.1: KPI total clientes — VER-USUARIOS
 const usuariostotales = computed(() => Usuarios.value?.total ?? '—')
+// RF-001.1: KPI total mensualidades — VER-MENSUALIDADES
 const mensualidadestotales = computed(() => Usuarios.value?.mensualidades ?? '—')
+// RF-001.1: KPI total sedes — VER-SEDES
 const sedestotal = computed(() => Sedes.value.length)
+// RF-001.2, RF-001.3: Etiquetas de sedes para gráficas — VER-MENSUALIDADES
 const sedesLabels = computed(() => Sedes.value.map(s => s.Nombre).slice(0, 6))
 
-// ── Gráfica 1 ─────────────────────────────────────────────────────
+// RF-001.2: Datos y opciones de gráfica de mensualidades vencidas — VER-MENSUALIDADES
 const vencidasRaw = ref([18, 24, 31, 27, 35, 42])
 const totalVencidas = computed(() => vencidasRaw.value.reduce((a, b) => a + b, 0))
 const vencidasData = computed(() => ({
@@ -156,7 +163,7 @@ const optsVencidas = {
     scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11 } } }, y: { grid: { color: '#f8fafc' }, ticks: { color: '#9ca3af', font: { size: 11 } } } }
 }
 
-// ── Gráfica 2 ─────────────────────────────────────────────────────
+// RF-001.3: Datos y opciones de gráfica de ingresos mensuales — VER-MENSUALIDADES
 const ingresosRaw = ref([4200000, 5100000, 5800000, 5900000, 6300000, 7200000])
 const totalIngresos = computed(() => {
     const total = ingresosRaw.value.reduce((a, b) => a + b, 0)
@@ -172,7 +179,7 @@ const optsIngresos = {
     scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 11 } } }, y: { grid: { color: '#f8fafc' }, ticks: { color: '#9ca3af', font: { size: 10 }, callback: (v) => `$${(v / 1000000).toFixed(1)}M` } } }
 }
 
-// ── Disponibilidad ─────────────────────────────────────────────────
+// RF-001.4: Lógica de selección y cálculo de disponibilidad por sede — VER-MENSUALIDADES
 const sedeSeleccionada = ref('')
 const sedesAgrupadas = computed(() => {
     if (!Array.isArray(Sedesdata.value) || !Sedesdata.value.length) return []
@@ -189,7 +196,7 @@ const sedeActual = computed(() =>
 )
 const pct = (v) => (!v.Total || v.Total === 0) ? 0 : Math.round((v.MensualidadesOcupadas / v.Total) * 100)
 
-// ── Menú rápido ────────────────────────────────────────────────────
+// RF-001.5: Configuración de tarjetas de acceso rápido filtradas por permisos — PERMISOS
 const opciones = computed(() => [
     // VER-USUARIOS
     { id: 1, icon: 'account_box_green', titulo: 'Clientes', sub: `${usuariostotales.value} usuarios`, route: '/admin/clientes', permission: 'VER-USUARIOS' },
@@ -218,7 +225,7 @@ const opciones = computed(() => [
 
 ].filter(item => hasPermission(item.permission)))
 
-// ── onMounted ──────────────────────────────────────────────────────
+// RF-001.6: Carga paralela de datos al montar mediante Promise.all — VER-SEDES / VER-USUARIOS / VER-MENSUALIDADES
 onMounted(async () => {
     try {
         const [sedesRes, usuariosRes, dispRes] = await Promise.all([

@@ -1,6 +1,7 @@
 <template>
     <div class="h-full flex flex-col gap-6 maincontainer">
 
+<!-- RF-003.2: Botón para crear nueva autorización — CREAR-CÓDIGOS -->
         <!-- Header -->
         <AdminPageHeader title="Autorizaciones">
             <template #right>
@@ -13,6 +14,7 @@
             </template>
         </AdminPageHeader>
 
+<!-- RF-003.1: Filtros de sede y tipo para listar autorizaciones — CREAR-CÓDIGOS -->
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
             <div class="flex flex-col gap-1 flex-1 min-w-[180px]">
@@ -39,6 +41,7 @@
             </div>
         </div>
 
+<!-- RF-003.1: Tabla paginada de autorizaciones — CREAR-CÓDIGOS -->
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="table-scroll-wrapper">
@@ -57,6 +60,7 @@
                     </thead>
                     <tbody>
 
+<!-- RF-003.1: Estado de carga del listado — CREAR-CÓDIGOS -->
                         <!-- Loading -->
                         <tr v-if="loading">
                             <td colspan="7" class="py-20 text-center">
@@ -68,6 +72,7 @@
                             </td>
                         </tr>
 
+<!-- RF-003.1: Estado vacío sin autorizaciones — CREAR-CÓDIGOS -->
                         <!-- Vacío -->
                         <tr v-else-if="autorizacionesPaginadas.length === 0">
                             <td colspan="7" class="py-20 text-center">
@@ -79,6 +84,7 @@
                             </td>
                         </tr>
 
+<!-- RF-003.1: Filas de autorizaciones con datos y acciones — CREAR-CÓDIGOS -->
                         <!-- Filas -->
                         <tr v-else v-for="a in autorizacionesPaginadas"
                             :key="a.IdAutorizacion + '_' + a.IdEstacionamiento"
@@ -132,6 +138,7 @@
                                 <span v-else class="text-red-500 font-extrabold text-[0.8rem]">● Inactiva</span>
                             </td>
 
+<!-- RF-003.3: Toggle estado activo/inactivo de quincena — EDITAR-AUTORIZACIONES -->
                             <!-- Toggle Quincena (solo IdTipo === 2) -->
                             <td class="px-5 py-3 text-center">
                                 <template v-if="a.IdTipo === 2">
@@ -149,6 +156,7 @@
                                 <span v-else class="text-gray-300 text-xs">—</span>
                             </td>
 
+<!-- RF-003.2: Botón editar autorización existente — EDITAR-AUTORIZACIONES -->
                             <td v-permission="'EDITAR-AUTORIZACIONES'" class="px-5 py-3 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <button @click="abrirEditar(a)"
@@ -171,17 +179,20 @@
 
     </div>
 
+<!-- RF-003.2: Panel lateral crear/editar autorización — CREAR-CÓDIGOS -->
     <AsideEditar v-model="panelAbierto" :titulo="modoEditar ? 'Editar autorización' : 'Nueva autorización'"
         :subtitulo="modoEditar ? autorizacionSeleccionada?.NombreAutorizacion : 'Completa los datos'"
         :label-guardar="modoEditar ? 'Guardar cambios' : 'Crear autorización'" :loading="guardando" :error="errGuardar"
         @guardar="guardar" @update:modelValue="cerrarPanel">
 
+<!-- RF-003.2: Campo ID Autorización (solo crear) — CREAR-CÓDIGOS -->
         <!-- ID Autorización (solo crear) -->
         <div v-if="!modoEditar" class="flex flex-col gap-1.5">
             <label class="aside-field-label">ID Autorización *</label>
             <input v-model="form.IdAutorizacion" type="number" class="aside-field-input" placeholder="Ej: 10" />
         </div>
 
+<!-- RF-003.2: Campo Sede destino (solo crear) — CREAR-CÓDIGOS -->
         <!-- Sede (solo crear) -->
         <div v-if="!modoEditar" class="flex flex-col gap-1.5">
             <label class="aside-field-label">Sede *</label>
@@ -193,6 +204,7 @@
             </select>
         </div>
 
+<!-- RF-003.2: Campo Nombre de la autorización — CREAR-CÓDIGOS -->
         <!-- Nombre -->
         <div class="flex flex-col gap-1.5">
             <label class="aside-field-label">Nombre *</label>
@@ -200,6 +212,7 @@
                 placeholder="Ej: MENSUALIDAD CARRO" />
         </div>
 
+<!-- RF-003.2: Campo Modalidad mensual/quincenal — CREAR-CÓDIGOS -->
         <!-- Tipo -->
         <div class="flex flex-col gap-1.5">
             <label class="aside-field-label">Tipo</label>
@@ -209,6 +222,7 @@
             </select>
         </div>
 
+<!-- RF-003.2: Campos Fecha inicial y Fecha final — CREAR-CÓDIGOS -->
         <!-- Fechas -->
         <div class="grid grid-cols-2 gap-3">
             <div class="flex flex-col gap-1.5">
@@ -221,6 +235,7 @@
             </div>
         </div>
 
+<!-- RF-003.2: Campos ID Regla e ID Complementaria — CREAR-CÓDIGOS -->
         <!-- Regla + Complementaria -->
         <div class="grid grid-cols-2 gap-3">
             <div class="flex flex-col gap-1.5">
@@ -236,6 +251,7 @@
         </div>
 
         <!-- Toggles -->
+<!-- RF-003.3: Toggle estado activo/inactivo en formulario — EDITAR-AUTORIZACIONES -->
         <div class="flex gap-3">
             <!-- Estado -->
             <label
@@ -257,6 +273,7 @@
                 </div>
             </label>
 
+<!-- RF-003.4: Toggle prioridad Alta/Normal — EDITAR-AUTORIZACIONES -->
             <!-- Prioridad -->
             <label
                 class="flex items-center gap-3 cursor-pointer select-none flex-1 p-3.5 bg-white rounded-xl border-2 transition-all"
@@ -279,6 +296,7 @@
             </label>
         </div>
 
+<!-- RF-003.5: Toggle sincronización activa/inactiva — EDITAR-AUTORIZACIONES -->
         <!-- Sincronización -->
         <label
             class="flex items-center gap-3 cursor-pointer select-none p-3.5 bg-white rounded-xl border-2 transition-all"
@@ -305,6 +323,7 @@
 </template>
 
 <script setup>
+// RF-003: Imports y dependencias del módulo Autorizaciones
 import { ref, computed, onMounted, reactive, watch } from 'vue'
 import AutorizacionesService from '@/api/services/autorizaciones.service'
 import SedesService from '@/api/services/sedes.service'
@@ -312,6 +331,7 @@ import { showConfirm, showSuccess, showError } from '@/utils/swal'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 
+// RF-003.1: Estado reactivo del listado, filtros y paginación — CREAR-CÓDIGOS
 // ── Estado ─────────────────────────────────────────────────────────
 const autorizaciones = ref([])       // datos raw del API
 const sedes = ref([])
@@ -322,6 +342,7 @@ const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
 
+// RF-003.2: Estado del panel lateral crear/editar — CREAR-CÓDIGOS
 // Panel
 const panelAbierto = ref(false)
 const guardando = ref(false)
@@ -329,6 +350,7 @@ const errGuardar = ref('')
 const modoEditar = ref(false)
 const autorizacionSeleccionada = ref(null)
 
+// RF-003.1: Computed de filtrado, paginación y totales — CREAR-CÓDIGOS
 // ── Computed ───────────────────────────────────────────────────────
 // Con sede: getBySede devuelve todo → filtrar tipo + paginar client-side
 // Sin sede: getAll pagina server-side → mostrar directo
@@ -352,6 +374,7 @@ const autorizacionesPaginadas = computed(() => {
     return autorizacionesFiltradas.value.slice(start, start + limit.value)
 })
 
+// RF-003.2: Formulario reactivo crear/editar autorización — CREAR-CÓDIGOS
 const form = reactive({
     IdAutorizacion: null,
     IdEstacionamiento: '',
@@ -365,6 +388,7 @@ const form = reactive({
     IdAutorizacionComplementaria: null,
     IdReglaAutorizacion: null,
 })
+// RF-003.1 / RF-003.2: Helpers de conversión de fechas y nombre de sede — CREAR-CÓDIGOS
 // ── Helpers ────────────────────────────────────────────────────────
 const sedeNombre = (idSede) =>
     sedes.value.find(s => String(s.IdEstacionamiento) === String(idSede))?.Nombre ?? `Sede ${idSede}`
@@ -383,6 +407,7 @@ const toApiDate = (f) => {
     return new Date(f).toISOString()
 }
 
+// RF-003.2: Abrir panel en modo crear autorización — CREAR-CÓDIGOS
 const abrirCrear = () => {
     modoEditar.value = false
     autorizacionSeleccionada.value = null
@@ -403,6 +428,7 @@ const abrirCrear = () => {
     panelAbierto.value = true
 }
 
+// RF-003.2: Abrir panel en modo editar autorización — EDITAR-AUTORIZACIONES
 const abrirEditar = (a) => {
     modoEditar.value = true
     autorizacionSeleccionada.value = a
@@ -423,12 +449,14 @@ const abrirEditar = (a) => {
     panelAbierto.value = true
 }
 
+// RF-003.2: Cerrar panel lateral — CREAR-CÓDIGOS
 const cerrarPanel = () => {
     panelAbierto.value = false
     autorizacionSeleccionada.value = null
     errGuardar.value = ''
 }
 
+// RF-003.2: Guardar autorización (crear o editar) — CREAR-CÓDIGOS
 const guardar = async () => {
     errGuardar.value = ''
     if (!form.NombreAutorizacion?.trim()) { errGuardar.value = 'El nombre es obligatorio.'; return }
@@ -473,6 +501,7 @@ const guardar = async () => {
 }
 
 
+// RF-003.1: Cargar listado de autorizaciones desde API — CREAR-CÓDIGOS
 // ── Carga ──────────────────────────────────────────────────────────
 const cargar = async () => {
     loading.value = true
@@ -503,6 +532,7 @@ const cargar = async () => {
     }
 }
 
+// RF-003.1: Handler cambio de filtro por sede — CREAR-CÓDIGOS
 // ── Filtros ────────────────────────────────────────────────────────
 const onSedeChange = () => {
     paginaActual.value = 1
@@ -511,6 +541,7 @@ const onSedeChange = () => {
     cargar()
 }
 
+// RF-003.1: Watch del filtro por tipo de autorización — CREAR-CÓDIGOS
 watch(() => filtros.value.tipo, () => {
     paginaActual.value = 1
     // Con sede activa: el filtro tipo es client-side, no recarga
@@ -518,18 +549,21 @@ watch(() => filtros.value.tipo, () => {
 })
 
 // ── Paginación ─────────────────────────────────────────────────────
+// RF-003.1: Navegación de paginación — CREAR-CÓDIGOS
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginasFiltradas.value) return
     paginaActual.value = p
     if (!filtros.value.sede) cargar()
 }
 
+// RF-003.1: Cambio de límite de registros por página — CREAR-CÓDIGOS
 const onLimitChange = (val) => {
     limit.value = Number(val)
     paginaActual.value = 1
     if (!filtros.value.sede) cargar()
 }
 
+// RF-003.3: Toggle estado activo/inactivo de quincena — EDITAR-AUTORIZACIONES
 // ── Toggle quincena ────────────────────────────────────────────────
 const toggleQuincena = async (a) => {
     const nuevoEstado = !a.Estado
@@ -554,6 +588,7 @@ const toggleQuincena = async (a) => {
     }
 }
 
+// RF-003.1: Carga inicial de sedes y autorizaciones — CREAR-CÓDIGOS
 // ── Mount ──────────────────────────────────────────────────────────
 onMounted(async () => {
     const [sedesRes] = await Promise.all([SedesService.getAll(), cargar()])

@@ -181,7 +181,7 @@
                     <div class="relative flex">
                         <!-- Indicador visual: acá puedes pagar -->
                         <div
-                            v-if="m.estado === 'vencida' || m.estado === 'por_vencer'"
+                            v-if="m.estado === 'activa' || m.estado === 'por_vencer'"
                             class="absolute -top-20 left-1/3 -translate-x-1/2 z-10 flex flex-col items-center animate-bounce pointer-events-none"
                         >
                             <!-- Flecha apuntando hacia abajo -->
@@ -1306,10 +1306,8 @@ const confirmarCambioPlacas = async () => {
             IdPersonaAutorizada: Number(mensualidadAccion.value.id),
             Placas: placasPayload,
         }
-        console.log({payload})
 
         const res = await MensualidadesService.cambiarAutorizacion(payload)
-        console.log({res})
         guardandoPlacas.value = false
 
         // 200 con requierePago: true → informativo, mostrar banner
@@ -1418,8 +1416,6 @@ const confirmarPagoExcedente = () => {
         avalpayinformacion.value.tipoDocumento = avalpayinformacion.value.tipoDocumento || 'CC'
     }
 
-    console.log('[confirmarPagoExcedente] avalpayinformacion precargada:', avalpayinformacion.value)
-
     modalPago.value = true
 }
 
@@ -1501,7 +1497,6 @@ const abrirPago = async (m) => {
         avalpayinformacion.value.tipoDocumento = avalpayinformacion.value.tipoDocumento || 'CC'
     }
 
-    console.log('[abrirPago] avalpayinformacion precargada:', avalpayinformacion.value)
 
     try {
         // ── 1. Verificar pago pendiente
@@ -1560,7 +1555,6 @@ const cargarSedes = async () => {
 
     }
     catch (e) {
-        console.log(e)
     }
 }
 
@@ -1571,7 +1565,6 @@ const getSedesAccess = async () => {
 
     }
     catch (e) {
-        console.log(e)
     }
 }
 
@@ -1735,7 +1728,6 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 Sede: Number(sedeInput.value),
                 IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             }
-            console.log('body', body)
 
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
@@ -1767,7 +1759,6 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             ...((!m.fechaFin || m.estado === 'vencida') && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
-        console.log('body', body)
 
 
         showInfo("Un momento", "Redirigiendo a la página de pago...")

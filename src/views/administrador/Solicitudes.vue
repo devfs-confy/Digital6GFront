@@ -4,6 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="PQRS">
             <template #right>
+                <!-- RF-016.6: Botón para gestionar catálogo de motivos PQRS — CREAR-PQRS-MOTIVO / EDITAR-PQRS-MOTIVO -->
                 <button v-permission="'CREAR-PQRS-MOTIVO'" @click="abrirMotivos"
                     class="flex items-center gap-1.5 bg-[#0D291C] text-[#7FD344] text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-full border border-black"
                     style="box-shadow: #595858 0px 2px 0">
@@ -13,7 +14,7 @@
             </template>
         </AdminPageHeader>
 
-        <!-- Filtros -->
+        <!-- RF-016.1: Filtros de tabla PQRS: búsqueda, tipo, estado, prioridad — VER-MENSUALIDADES -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
@@ -23,6 +24,7 @@
             <div class="flex flex-col gap-1 flex-1 min-w-[130px] max-[600px]:flex-none max-[600px]:w-full">
                 <label
                     class="text-[0.65rem] font-extrabold uppercase tracking-[0.08em] text-[#232B3A] pl-1">Tipo</label>
+                <!-- RF-016.2: Tipos de PQRS: Petición, Queja, Reclamo, Sugerencia — VER-MENSUALIDADES -->
                 <select v-model="filtroTipo" @change="() => { paginaActual = 1; cargarPqrs() }">
                     <option value="">Todos</option>
                     <option value="PETICION">Petición</option>
@@ -57,7 +59,7 @@
             </button>
         </div>
 
-        <!-- Tabla -->
+        <!-- RF-016.1: Tabla de solicitudes PQRS — VER-MENSUALIDADES -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col w-full max-w-[100%] ">
             <div class="table-scroll-wrapper">
                 <table class="border-collapse min-w-[800px] w-full">
@@ -155,6 +157,7 @@
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-amber-50 hover:text-amber-500 transition-all border-0">
                                         <AppIcon name="arrow_shape_up_stack" :size="30" />
                                     </button>
+                                    <!-- RF-016.3: Botón para asignar PQRS a administrador responsable — ASIGNAR-PQRS -->
                                     <button v-permission="'ASIGNAR-PQRS'" @click="abrirAsignar(pqrs)" title="Asignar"
                                         class="w-8 h-8 rounded-[10px] flex items-center justify-center cursor-pointer bg-transparent  hover:bg-purple-50 hover:text-purple-500 transition-all border-0">
                                         <AppIcon name="manage_accounts" :size="30" />
@@ -169,7 +172,7 @@
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
-        <!-- ───── MODAL: DETALLE + RESPONDER ───── -->
+        <!-- RF-016.4: Modal de detalle completo de PQRS: asunto, motivo, descripción, imágenes adjuntas — VER-MENSUALIDADES -->
         <Transition name="modal">
             <div v-if="modalDetalle"
                 class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
@@ -341,7 +344,7 @@
                                 pqrsAccion?.Descripcion ?? '—' }}</p>
                         </div>
 
-                        <!-- Imagen adjunta -->
+                        <!-- RF-016.4: Imagen adjunta de la PQRS — VER-MENSUALIDADES -->
                         <div v-if="detalleActivo.Imagen" class="flex flex-col gap-2">
                             <p
                                 class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
@@ -428,7 +431,7 @@
                             </div>
                         </div>
 
-                        <!-- Formulario responder -->
+                        <!-- RF-016.5: Formulario para responder PQRS con texto y cambio de estado — RESPONDER-PQRS -->
                         <div class="flex flex-col gap-3 mt-1">
                             <p
                                 class="text-[0.68rem] font-black uppercase tracking-[0.1em] text-[#0D291C] opacity-60 border-b border-[#e8f5e9] pb-[5px]">
@@ -556,7 +559,7 @@
             </div>
         </Transition>
 
-        <!-- ───── MODAL: GESTIÓN DE MOTIVOS ───── -->
+        <!-- RF-016.6: Modal de gestión de catálogo de motivos PQRS — CREAR-PQRS-MOTIVO / EDITAR-PQRS-MOTIVO -->
         <Transition name="modal">
             <div v-if="modalMotivos"
                 class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
@@ -758,7 +761,7 @@
             </div>
         </Transition>
 
-        <!-- ───── MODAL: ASIGNAR PQRS ───── -->
+        <!-- RF-016.3: Modal para asignar PQRS a administrador responsable — ASIGNAR-PQRS -->
         <Transition name="modal">
             <div v-if="modalAsignar"
                 class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]">
@@ -869,7 +872,7 @@ import PqrsService from '@/api/services/pqrs.service'
 import AdminServices from '@/api/services/admin.service'
 import TablePaginacion from '@/components/shared/Paginacion.vue'
 
-// ── Estado ─────────────────────────────────────────────────────────
+// RF-016.1: Estado de tabla PQRS, filtros y paginación — VER-MENSUALIDADES
 const pqrsList = ref([])
 const loading = ref(true)
 const busqueda = ref('')
@@ -936,7 +939,7 @@ const cargarImagenPqrs = async (id) => {
     }
 }
 
-// ── Carga ──────────────────────────────────────────────────────────
+// RF-016.1: Cargar listado de PQRS con filtros aplicados — VER-MENSUALIDADES
 const cargarPqrs = async () => {
     loading.value = true
     try {
@@ -962,11 +965,11 @@ const cargarPqrs = async () => {
 
 onMounted(cargarPqrs)
 
-// ── Paginación ─────────────────────────────────────────────────────
+// RF-016.1: Paginación de tabla PQRS — VER-MENSUALIDADES
 const irPagina = (p) => { if (p < 1 || p > totalPaginas.value) return; paginaActual.value = p; cargarPqrs() }
 const onLimitChange = (val) => { limit.value = val; paginaActual.value = 1; cargarPqrs() }
 
-// ── Debounce búsqueda ──────────────────────────────────────────────
+// RF-016.1: Búsqueda debounced en tabla de PQRS — VER-MENSUALIDADES
 let debTimer = null
 watch(busqueda, val => {
     clearTimeout(debTimer)
@@ -977,7 +980,6 @@ watch(busqueda, val => {
     }, 350)
 })
 
-// ── Limpiar filtros ────────────────────────────────────────────────
 const limpiarFiltros = () => {
     busqueda.value = ''
     busquedaDebounced.value = ''
@@ -991,7 +993,7 @@ const limpiarFiltros = () => {
 
 
 
-// ── Detalle / Responder ────────────────────────────────────────────
+// RF-016.4: Abrir detalle completo de PQRS y cargar imagen adjunta — VER-MENSUALIDADES
 const abrirDetalle = async (pqrs) => {
     pqrsAccion.value = pqrs           // datos inmediatos del listado
     detalleActivo.value = pqrs
@@ -1021,6 +1023,7 @@ const abrirDetalle = async (pqrs) => {
     }
 }
 
+// RF-016.5: Responder PQRS con texto y cambio de estado — RESPONDER-PQRS
 const responderPqrs = async () => {
     errResponder.value = ''
     if (!fR.Respuesta.trim()) { errResponder.value = 'Escribe una respuesta.'; return }
@@ -1091,7 +1094,7 @@ const cambiarPrioridad = async () => {
     }
 }
 
-// ── Motivos ────────────────────────────────────────────────────────
+// RF-016.6: Gestión de catálogo de motivos PQRS — CREAR-PQRS-MOTIVO / EDITAR-PQRS-MOTIVO
 const modalMotivos = ref(false)
 const motivos = ref([])
 const loadingMotivos = ref(false)
@@ -1164,7 +1167,7 @@ const guardarMotivo = async () => {
     }
 }
 
-// ── Asignación ─────────────────────────────────────────────────────
+// RF-016.3: Asignar PQRS a administrador responsable — ASIGNAR-PQRS
 const modalAsignar = ref(false)
 const guardandoAsignar = ref(false)
 const errAsignar = ref('')

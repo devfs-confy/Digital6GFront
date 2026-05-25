@@ -73,7 +73,6 @@ export const useAuthStore = defineStore(
 
         return roleRedirects[role.value] ?? "/login";
       } catch (err) {
-        console.log(err);
         const status = err.response?.status;
         const mensaje = err.response?.data?.message;
 
@@ -145,7 +144,6 @@ export const useAuthStore = defineStore(
           refreshToken: refreshToken.value,
         });
         const result = await response.data;
-        console.log({result})
         const newToken = result.data?.token ?? null;
         const newRefresh = result.data?.refreshToken ?? null;
 
@@ -188,7 +186,6 @@ export const useAuthStore = defineStore(
         }
         return data;
       } catch (err) {
-        console.log(err);
         const status = err.response?.status;
         const mensaje = err.response?.data?.message;
         if (status === 404)

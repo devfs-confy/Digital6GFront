@@ -4,6 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="Historial Cambio de Placas" />
 
+        <!-- RF-010.3: Filtro por sede y estado de solicitud — VER-MENSUALIDADES -->
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
             <div class="flex flex-col gap-1 flex-[2] min-w-[200px] max-[600px]:flex-none max-[600px]:w-full">
@@ -34,6 +35,7 @@
             </button>
         </div>
 
+        <!-- RF-010.1: Tabla de listado de solicitudes de cambio de placas — VER-MENSUALIDADES -->
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="table-scroll-wrapper">
@@ -140,6 +142,7 @@
                 :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
 
+        <!-- RF-010.2: Detalle de solicitud: placa anterior → nueva, estado (aplicado/pendiente), fecha de solicitud — VER-MENSUALIDADES -->
         <!-- Aside Detalle -->
         <AsideEditar v-model="asideDetalle" titulo="Cambio de Placas" subtitulo="Detalle de la solicitud"
             label-guardar="Cerrar" :loading="loadingDetalle" @guardar="asideDetalle = false">
@@ -151,6 +154,7 @@
 
             <template v-else-if="detalle">
 
+                <!-- RF-010.2: Sección persona del detalle — VER-MENSUALIDADES -->
                 <!-- Persona -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -179,6 +183,7 @@
                     </div>
                 </section>
 
+                <!-- RF-010.2: Sección autorización del detalle — VER-MENSUALIDADES -->
                 <!-- Autorización -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -201,6 +206,7 @@
                     </div>
                 </section>
 
+                <!-- RF-010.2: Sección placas cambiadas (anterior → nueva) — VER-MENSUALIDADES -->
                 <!-- Placas -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -234,6 +240,7 @@
                     </div>
                 </section>
 
+                <!-- RF-010.2: Sección info: estado (aplicado/pendiente) y fecha de solicitud — VER-MENSUALIDADES -->
                 <!-- Info -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -281,6 +288,7 @@ import MensualidadesService from '@/api/services/mensualidades.service'
 import SedesService from '@/api/services/sedes.service'
 import FormDate from '@/utils/formats.date'
 
+// RF-010.1: Estado del listado de solicitudes de cambio de placas — VER-MENSUALIDADES
 // ── Estado ────────────────────────────────────────────────────
 const loading = ref(false)
 const registros = ref([])
@@ -296,6 +304,7 @@ const detalle = ref(null)
 const filtros = ref({ search: '', sede: '' })
 let busquedaTimer = null
 
+// RF-010.1 / RF-010.3: Filtrado local de registros por búsqueda — VER-MENSUALIDADES
 // ── Computed ──────────────────────────────────────────────────
 const registrosFiltrados = computed(() => {
     const q = filtros.value.search.trim().toLowerCase()
@@ -310,6 +319,7 @@ const registrosFiltrados = computed(() => {
 
 const totalPaginas = computed(() => Math.max(1, Math.ceil(total.value / limit.value)))
 
+// RF-010.2: Helpers para formatear mes de aplicación y fecha de solicitud — VER-MENSUALIDADES
 // ── Helpers ───────────────────────────────────────────────────
 const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
 const nombreMes = (n) => MESES[(n ?? 1) - 1] ?? n
@@ -320,6 +330,7 @@ const formatFecha = (iso) => {
     return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
 }
 
+// RF-010.1: Carga paginada del historial de cambio de placas con filtros — VER-MENSUALIDADES
 // ── Data ──────────────────────────────────────────────────────
 const cargarHistorial = async (page = 1) => {
     loading.value = true
@@ -361,6 +372,7 @@ const limpiarFiltros = () => {
     cargarHistorial(1)
 }
 
+// RF-010.2: Carga y apertura del detalle de una solicitud de cambio de placas — VER-MENSUALIDADES
 const abrirDetalle = async (id) => {
     detalle.value = null
     asideDetalle.value = true
@@ -375,6 +387,7 @@ const abrirDetalle = async (id) => {
     }
 }
 
+// RF-010.3: Carga inicial de sedes para el filtro y listado de solicitudes — VER-MENSUALIDADES
 onMounted(() => {
     SedesService.getAll().then(r => { sedes.value = Array.isArray(r) ? r : (r?.data ?? []) })
     cargarHistorial()

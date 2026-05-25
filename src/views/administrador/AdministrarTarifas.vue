@@ -4,7 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="Tarifas" />
 
-        <!-- Filtros -->
+        <!-- RF-002.1: Filtros cascada Sede → Tipo vehículo → Autorización — VER-SEDES -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
 
 
@@ -49,7 +49,7 @@
             </button>
         </div>
 
-        <!-- Tabla -->
+        <!-- RF-002.2: Tabla de tarifas con paginación server-side — VER-SEDES -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="table-scroll-wrapper">
                 <table class="border-collapse min-w-[760px] w-full">
@@ -148,11 +148,13 @@
                                 </span>
                             </td>
 
+                            <!-- RF-002.4: Badge visual de estado Activa/Inactiva — VER-SEDES -->
                             <td class="td-cell">
                                 <span v-if="t.Estado" class="text-[#299261] font-extrabold text-[0.8rem]">●
                                     Activo</span>
                                 <span v-else class="text-red-600 font-extrabold text-[0.8rem]">● Inactivo</span>
                             </td>
+                            <!-- RF-002.3: Botón para editar tarifa — EDITAR-TARIFAS -->
                             <td class="td-cell td-cell--center">
                                 <button v-permission="'EDITAR-TARIFAS'" @click="abrirEditar(t)"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-bold text-[#0D291C]  transition-all">
@@ -166,13 +168,14 @@
                 </table>
             </div>
 
-            <!-- Paginación -->
+            <!-- RF-002.2: Paginación server-side de la tabla de tarifas — VER-SEDES -->
             <TablePagination :pagina-actual="paginaActual" :total-paginas="totalPaginas"
                 :total-registros="totalRegistros" :limit="limit" @pagina="irPagina" @limit="onLimitChange" />
         </div>
     </div>
 
 
+    <!-- RF-002.3: Panel lateral para editar valor de tarifa — EDITAR-TARIFAS -->
     <AsideEditar v-model="modalEditar" :titulo="`Tarifa #${tarifaActual?.IdTarifa ?? ''}`" subtitulo="Configurar valor"
         label-guardar="Guardar tarifa" :loading="guardando" :error="errEditar" @guardar="guardarTarifa"
         @update:modelValue="v => { if (!v) { modalEditar = false; errEditar = '' } }">
@@ -209,7 +212,7 @@
         </div>
 
     </AsideEditar>
-    <!-- ───── MODAL: CONFIRMAR ACTUALIZACIÓN ───── -->
+    <!-- RF-002.3: Modal de confirmación para actualizar tarifa — EDITAR-TARIFAS -->
     <Transition name="modal">
         <div v-if="modalConfirmar"
             class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[rgba(13,41,28,0.5)] backdrop-blur-[10px]"
@@ -306,24 +309,33 @@ import SedesService from '@/api/services/sedes.service'
 import TablePagination from '@/components/shared/Paginacion.vue'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 
+// RF-002.2: Lista de tarifas paginadas — VER-SEDES
 const tarifas = ref([])
+// RF-002.1: Catálogo completo de tarifas para filtros cascada — VER-SEDES
 const todasLasTarifas = ref([])
+// RF-002.2: Estado de carga de la tabla — VER-SEDES
 const loading = ref(true)
+// RF-002.2: Estado de paginación server-side — VER-SEDES
 const paginaActual = ref(1)
 const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
+// RF-002.1: Catálogo de sedes para filtro cascada — VER-SEDES
 const sedes = ref([])
 
+// RF-002.1: Catálogo de tipos de vehículo para filtro cascada — VER-SEDES
 const catTiposVehiculo = ref([])
+// RF-002.1: Catálogo de autorizaciones para filtro cascada — VER-SEDES
 const catAutorizaciones = ref([])
 
+// RF-002.1: Estado de filtros cascada — VER-SEDES
 const filtros = reactive({
     idSede: null,
     idTipoVehiculo: null,
     idAutorizacion: null,
 })
 
+// RF-002.3: Estado y formulario de edición de tarifa — EDITAR-TARIFAS
 const modalEditar = ref(false)
 const tarifaActual = ref(null)
 const guardando = ref(false)
@@ -331,12 +343,14 @@ const errEditar = ref('')
 const formEditar = reactive({ Valor: 0 })
 
 
+// RF-002.3: Estado del modal de confirmación de edición — EDITAR-TARIFAS
 const modalConfirmar = ref(false)
 
 // El AsideEditar ahora abre el modal de confirmación
 
 
 // Este es el que realmente llama a la API
+// RF-002.3: Confirmación y guardado de tarifa editada — EDITAR-TARIFAS
 const confirmarGuardarTarifa = async () => {
     guardando.value = true
     try {
@@ -351,6 +365,7 @@ const confirmarGuardarTarifa = async () => {
         guardando.value = false
     }
 }
+// RF-002.3: Apertura del panel de edición de tarifa — EDITAR-TARIFAS
 const abrirEditar = (tarifa) => {
     tarifaActual.value = tarifa
     formEditar.Valor = tarifa.Valor
@@ -359,6 +374,7 @@ const abrirEditar = (tarifa) => {
 }
 
 
+// RF-002.3: Validación previa al guardado de tarifa — EDITAR-TARIFAS
 const guardarTarifa = async () => {
     if (!formEditar.Valor || formEditar.Valor <= 0) {
         errEditar.value = 'El valor debe ser mayor a 0'
@@ -371,10 +387,12 @@ const guardarTarifa = async () => {
 
 
 
+// RF-002.1: Indicador de filtros activos — VER-SEDES
 const hayFiltros = computed(() =>
     filtros.idSede || filtros.idTipoVehiculo || filtros.idAutorizacion
 )
 
+// RF-002.1: Filtrado dinámico de autorizaciones según sede seleccionada — VER-SEDES
 const catAutorizacionesFiltradas = computed(() => {
     if (!filtros.idSede) return catAutorizaciones.value
     const authMap = new Map()
@@ -391,6 +409,7 @@ const catAutorizacionesFiltradas = computed(() => {
     return [...authMap.values()]
 })
 
+// RF-002.1: Reacción a cambio de sede en filtros cascada — VER-SEDES
 watch(() => filtros.idSede, () => {
     const sigueExistiendo = catAutorizacionesFiltradas.value
         .some(a => String(a.id) === String(filtros.idAutorizacion))
@@ -400,6 +419,7 @@ watch(() => filtros.idSede, () => {
 })
 
 // Carga TODOS los registros una sola vez para poblar catálogos
+// RF-002.1: Carga de catálogos para filtros cascada — VER-SEDES
 const cargarCatalogos = async () => {
     try {
         const res = await TarifasService.getAll({ limit: 500 })
@@ -430,6 +450,7 @@ const cargarCatalogos = async () => {
     }
 }
 
+// RF-002.2: Carga paginada de tarifas desde servidor — VER-SEDES
 const cargarTarifas = async () => {
     loading.value = true
     try {
@@ -454,6 +475,7 @@ const cargarTarifas = async () => {
 }
 
 let debTimer = null
+// RF-002.1: Debounce al cambiar filtros cascada — VER-SEDES
 const onFiltroChange = () => {
     clearTimeout(debTimer)
     debTimer = setTimeout(() => {
@@ -462,24 +484,28 @@ const onFiltroChange = () => {
     }, 350)
 }
 
+// RF-002.2: Navegación de página en paginación — VER-SEDES
 const irPagina = (p) => {
     if (p < 1 || p > totalPaginas.value) return
     paginaActual.value = p
     cargarTarifas()
 }
 
+// RF-002.2: Cambio de límite por página en paginación — VER-SEDES
 const onLimitChange = (val) => {
     limit.value = val
     paginaActual.value = 1
     cargarTarifas()
 }
 
+// RF-002.1: Limpieza de filtros cascada — VER-SEDES
 const limpiarFiltros = () => {
     Object.assign(filtros, { idSede: null, idTipoVehiculo: null, idAutorizacion: null })
     paginaActual.value = 1
     cargarTarifas()
 }
 
+// RF-002.1, RF-002.2: Carga inicial de catálogos y tarifas al montar — VER-SEDES
 onMounted(() => {
     Promise.all([
         cargarCatalogos(),

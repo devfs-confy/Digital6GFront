@@ -808,8 +808,6 @@ const buscarDocumento = async (doc) => {
             return
         }
         const d = res.data ?? res
-        console.log('[RegistroVista] usuario antiguo:', d)
-        console.log('[RegistroVista] fechaFin:', d.fechaFin, '| hoy:', new Date().toISOString(), '| vigente:', d.fechaFin ? new Date(d.fechaFin) > new Date() : false)
         mensualidadData.value = d
         usuarioEncontrado.value = true
         const partes = (d.nombreApellidos ?? '').trim().split(/\s+/)

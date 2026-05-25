@@ -1,9 +1,11 @@
 <template>
   <div class="h-full flex flex-col gap-6 maincontainer-mp ">
 
+    <!-- RF-013.1: Módulo de modalidades de pago por sede — VER-SEDES -->
     <!-- ── Header ── -->
     <AdminPageHeader title="Modalidades de Pago" />
 
+    <!-- RF-013.1: Selector de sede para listar modalidades asignadas a autorización — VER-SEDES -->
     <!-- ── Selector de sede ── -->
     <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
       <div class="flex flex-col gap-1 flex-1 min-w-[200px]">
@@ -24,6 +26,7 @@
         Cargando sedes…
       </div>
 
+      <!-- RF-013.3: Botón para habilitar/deshabilitar modalidad quincena — HABILITAR-QUINCENAS -->
       <!-- Botón abrir modal quincenas -->
       <Transition v-permission="'HABILITAR-QUINCENAS'" name="fade-up">
         <div v-if="idSedeSeleccionada" class="flex flex-col gap-1 flex-shrink-0">
@@ -49,9 +52,11 @@
       </Transition>
     </div>
 
+    <!-- RF-013.1 / RF-013.2: Layout de autorizaciones disponibles y asignación de modalidades — VER-SEDES -->
     <!-- ── Dos columnas ── -->
     <div v-if="idSedeSeleccionada" class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-shrink-0">
 
+      <!-- RF-013.1: Listado de autorizaciones disponibles para la sede seleccionada — VER-SEDES -->
       <!-- Columna izquierda: Autorizaciones disponibles -->
       <div class="bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
         <div class="px-5 py-4 border-b-2 border-[#7FD344] bg-[#0D291C] flex items-center justify-between">
@@ -130,6 +135,7 @@
         </ul>
       </div>
 
+      <!-- RF-013.2: Asignar/quitar modalidades de pago (mensual, quincena, recarga) a autorizaciones — VER-SEDES -->
       <!-- Columna derecha: Asignar modalidades -->
       <div ref="formRef" class="bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
         <div class="px-5 py-4 border-b-2 border-[#7FD344] bg-[#0D291C] flex items-center justify-between">
@@ -185,6 +191,7 @@
               ]">
                 {{ auth.NombreAutorizacion }}
               </span>
+              <!-- RF-013.2 / RF-013.4: Selector de modalidad: MENSUALIDAD, QUINCENA o RECARGA (sede 24) — VER-SEDES -->
               <!-- Select modalidad -->
               <select :disabled="!asignaciones[auth.IdAutorizacion]?.activo"
                 v-model="asignaciones[auth.IdAutorizacion].modalidad" @click.stop :class="[
@@ -201,6 +208,7 @@
             </li>
           </ul>
 
+          <!-- RF-013.2: Guardar cambios de asignación de modalidades — VER-SEDES -->
           <!-- Footer guardar -->
           <div
             class="px-5 py-4 border-t-2 border-[#f0faf4] bg-[#f9fffe] flex items-center justify-between gap-3 flex-shrink-0">
@@ -230,6 +238,7 @@
         pago</p>
     </div>
 
+    <!-- RF-013.1: Tabla de reglas actuales asignadas a la autorización base — VER-SEDES -->
     <!-- ── Tabla inferior: Reglas actuales ── -->
     <div v-if="idSedeSeleccionada && baseSeleccionada"
       class="bg-white rounded-2xl shadow-sm overflow-hidden flex-shrink-0 mb-5">
@@ -329,6 +338,7 @@
     </button>
   </Transition>
 
+  <!-- RF-013.3: Modal para habilitar o deshabilitar quincenas en la sede seleccionada — HABILITAR-QUINCENAS -->
   <!-- ── Modal Quincenas ── -->
   <Transition name="modal-fade">
     <div v-if="modalQuincena.visible" class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -409,6 +419,7 @@ import ModalidadesPagosService from '@/api/services/modalidades.pagos.js'
 import { showSuccess, showError } from '@/utils/swal'
 import { _limitValue } from 'chart.js/helpers'
 
+// RF-013.1: Estado global del módulo de modalidades de pago — VER-SEDES
 // ── Estado global ──────────────────────────────────────────────────
 const sedes = ref([])
 const loadingSedes = ref(true)
@@ -430,10 +441,12 @@ const asignaciones = reactive({})
 // Map: IdAutorizacion → conteo de modalidades asignadas (para el badge)
 const conteoModalidades = reactive({})
 
+// RF-013.3: Estado de habilitación de quincenas — HABILITAR-QUINCENAS
 // Quincenas
 const quincenaHabilitada = ref(null)   // null = desconocido, true = habilitada, false = deshabilitada
 const habilitandoQuincena = ref(false)
 
+// RF-013.3: Estado del modal de configuración de quincenas — HABILITAR-QUINCENAS
 // Modal quincenas
 const modalQuincena = reactive({ visible: false, nuevoEstado: null })
 
@@ -446,11 +459,13 @@ const scrollAlFormulario = () => {
   mostrarScrollHint.value = false
 }
 
+// RF-013.2: Computed de cantidad de modalidades activas asignadas — VER-SEDES
 // ── Computed ───────────────────────────────────────────────────────
 const cantidadActivos = computed(
   () => Object.values(asignaciones).filter(a => a.activo).length
 )
 
+// RF-013.1: Carga de sedes disponibles — VER-SEDES
 // ── Métodos ────────────────────────────────────────────────────────
 const cargarSedes = async () => {
   loadingSedes.value = true
@@ -464,6 +479,7 @@ const cargarSedes = async () => {
   }
 }
 
+// RF-013.1: Cambio de sede: resetear estado y cargar autorizaciones — VER-SEDES
 const onSedeChange = async () => {
   // Resetear estado
   baseSeleccionada.value = null
@@ -479,6 +495,7 @@ const onSedeChange = async () => {
   await Promise.all([cargarAutorizaciones(), cargarEstadoQuincena()])
 }
 
+// RF-013.3: Consulta el estado de habilitación de quincenas para la sede — HABILITAR-QUINCENAS
 const cargarEstadoQuincena = async () => {
   try {
     const res = await ModalidadesPagosService.getByIdStatus(idSedeSeleccionada.value)
@@ -488,6 +505,7 @@ const cargarEstadoQuincena = async () => {
   }
 }
 
+// RF-013.1: Carga las autorizaciones de la sede y sus conteos de modalidades — VER-SEDES
 const cargarAutorizaciones = async () => {
   loadingAutorizaciones.value = true
   try {
@@ -502,6 +520,7 @@ const cargarAutorizaciones = async () => {
   }
 }
 
+// RF-013.1: Carga el conteo de modalidades asignadas por autorización — VER-SEDES
 const cargarConteos = async () => {
   // Cargar en paralelo el conteo de cada autorización
   await Promise.allSettled(
@@ -519,6 +538,7 @@ const cargarConteos = async () => {
   )
 }
 
+// RF-013.1 / RF-013.2: Selecciona autorización base y carga sus modalidades asignadas — VER-SEDES
 const seleccionarBase = async (auth) => {
   if (baseSeleccionada.value?.IdAutorizacion === auth.IdAutorizacion) return
   baseSeleccionada.value = auth
@@ -530,6 +550,7 @@ const seleccionarBase = async (auth) => {
   await cargarModalidadesBase()
 }
 
+// RF-013.1 / RF-013.2: Carga las reglas/modalidades asignadas a la autorización base seleccionada — VER-SEDES
 const cargarModalidadesBase = async () => {
   loadingModalidades.value = true
   // Inicializar asignaciones con todas las autorizaciones desactivadas
@@ -561,12 +582,14 @@ const cargarModalidadesBase = async () => {
   }
 }
 
+// RF-013.2: Activa/desactiva la asignación de una modalidad a una autorización — VER-SEDES
 const toggleAsignacion = (idAutorizacion) => {
   if (asignaciones[idAutorizacion]) {
     asignaciones[idAutorizacion].activo = !asignaciones[idAutorizacion].activo
   }
 }
 
+// RF-013.2: Guarda las modalidades asignadas/quitar a la autorización base — VER-SEDES
 const guardarCambios = async () => {
   if (!idSedeSeleccionada.value || !baseSeleccionada.value) return
   guardando.value = true
@@ -597,11 +620,13 @@ const guardarCambios = async () => {
   }
 }
 
+// RF-013.3: Abre el modal para cambiar el estado de quincenas — HABILITAR-QUINCENAS
 const abrirModalQuincena = () => {
   modalQuincena.nuevoEstado = quincenaHabilitada.value  // pre-seleccionar el estado actual
   modalQuincena.visible = true
 }
 
+// RF-013.3: Envía la habilitación/deshabilitación de quincenas para la sede — HABILITAR-QUINCENAS
 const enviarQuincena = async () => {
   if (modalQuincena.nuevoEstado === null) return
   const nombreSede = sedes.value.find(s => s.IdEstacionamiento === idSedeSeleccionada.value)?.Nombre ?? 'esta sede'
@@ -621,6 +646,7 @@ const enviarQuincena = async () => {
   }
 }
 
+// RF-013.1: Carga inicial de sedes al montar el componente — VER-SEDES
 // ── Lifecycle ──────────────────────────────────────────────────────
 onMounted(() => {
   cargarSedes()

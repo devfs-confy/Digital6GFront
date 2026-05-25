@@ -10,6 +10,7 @@
                         '' }}
                 </p>
             </div>
+            <!-- RF-015.2: Botón para crear nueva sede — CREAR-SEDES -->
             <button v-permission="'CREAR-SEDES'" @click="abrirNueva"
                 class="flex items-center gap-1.5 bg-[#0D291C] text-white border-none rounded-xl px-5 py-2.5 text-[0.85rem] font-bold cursor-pointer transition-all hover:bg-[#299261] hover:-translate-y-px active:translate-y-px">
                 <AppIcon name="add" :size="18" />
@@ -18,12 +19,12 @@
             </button>
         </div>
 
-        <!-- ── Skeleton ──────────────────────────────────────────── -->
+        <!-- RF-015.1: Skeleton de carga para grid de sedes — VER-SEDES -->
         <div v-if="loading" class="grid grid-cols-3 gap-[18px] max-[1024px]:grid-cols-2 max-[600px]:grid-cols-1">
             <div v-for="n in 3" :key="n" class="h-[260px] rounded-[20px] skeleton-shimmer" />
         </div>
 
-        <!-- ── Grid de sedes ─────────────────────────────────────── -->
+        <!-- RF-015.1: Grid cards de sedes con disponibilidad carros/motos en tiempo real — VER-SEDES -->
         <div v-else class="grid grid-cols-3 gap-[18px] max-[1024px]:grid-cols-2 max-[600px]:grid-cols-1">
             <div v-for="(sede, i) in sedes" :key="sede.IdEstacionamiento"
                 class="rounded-[20px] p-5 flex flex-col gap-3.5 transition-all duration-200 hover:-translate-y-1 card-in cursor-default"
@@ -59,7 +60,7 @@
                     </span>
                 </div>
 
-                <!-- Disponibilidades -->
+                <!-- RF-015.1: Mostrar disponibilidad por tipo de vehículo — VER-SEDES -->
                 <div v-if="sede.T_Disponibilidades?.length" class="flex flex-col gap-2">
                     <div v-for="d in sede.T_Disponibilidades" :key="d.IdTipoVehiculo"
                         class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 border"
@@ -125,6 +126,7 @@
 
                 <!-- Acciones -->
                 <div class="flex gap-2 mt-auto pt-1">
+                    <!-- RF-015.3: Editar sede — EDITAR-SEDES -->
                     <button v-permission="'EDITAR-SEDES'" @click="abrirEdicion(sede)"
                         class="flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150 border-2"
                         :class="sede.Estado
@@ -134,6 +136,7 @@
 
                         Editar
                     </button>
+                    <!-- RF-015.4: Activar/desactivar sede — INACTIVAR-SEDES -->
                     <button v-permission="'INACTIVAR-SEDES'" @click="toggleEstado(sede)"
                         class="flex-1 flex items-center justify-center gap-1.5 border-2 rounded-xl py-2.5 px-3 text-[0.78rem] font-bold cursor-pointer transition-all duration-150"
                         :class="sede.Estado
@@ -147,7 +150,7 @@
             </div>
         </div>
 
-        <!-- ── Panel sede ───────────────────────────────────────── -->
+        <!-- RF-015.2 / RF-015.3: Panel lateral de creación o edición de sede — CREAR-SEDES / EDITAR-SEDES -->
         <AsideEditar v-model="sedeEditando" :titulo="esNueva ? 'Nueva sede' : (sedeEditando?.Nombre ?? 'Sede')"
             :subtitulo="esNueva ? 'Completa los datos requeridos' : `Editando #${sedeEditando?.IdEstacionamiento}`"
             :label-guardar="esNueva ? 'Crear sede' : 'Guardar cambios'" :loading="guardando" :error="errGuardar"
@@ -165,7 +168,7 @@
                 <input v-model="form.AppHost" type="text" placeholder="" class="aside-field-input" />
             </div>
 
-            <!-- ApiKey -->
+            <!-- RF-015.5: Mostrar/ocultar API key — VER-SEDES -->
             <div class="flex flex-col gap-1.5">
                 <label class="aside-field-label">API Key</label>
                 <div class="relative flex items-center">
@@ -338,7 +341,7 @@ import { ref, reactive, onMounted } from 'vue'
 import SedesService from '@/api/services/sedes.service'
 import AsideEditar from '@/components/aside/AsideEditar.vue'
 
-// ── Estado ─────────────────────────────────────────────────────────
+// RF-015.1: Estado de sedes y carga inicial — VER-SEDES
 const sedes = ref([])
 const loading = ref(true)
 const guardando = ref(false)
@@ -381,7 +384,7 @@ const dispDefaults = (existente = []) => {
     ]
 }
 
-// ── Carga ──────────────────────────────────────────────────────────
+// RF-015.1: Cargar listado de sedes con disponibilidad — VER-SEDES
 const cargarSedes = async () => {
     loading.value = true
     try {
@@ -395,7 +398,7 @@ const cargarSedes = async () => {
 
 onMounted(cargarSedes)
 
-// ── Panel ──────────────────────────────────────────────────────────
+// RF-015.3: Abrir panel de edición de sede — EDITAR-SEDES
 const abrirEdicion = (sede) => {
     esNueva.value = false
     sedeEditando.value = sede
@@ -407,6 +410,7 @@ const abrirEdicion = (sede) => {
     form.T_Disponibilidades = dispDefaults(sede.T_Disponibilidades)
 }
 
+// RF-015.2: Abrir panel de creación de sede — CREAR-SEDES
 const abrirNueva = () => {
     esNueva.value = true
     sedeEditando.value = { IdEstacionamiento: null }
@@ -432,7 +436,7 @@ const cerrarPanel = () => {
     errGuardar.value = ''
 }
 
-// ── Guardar ────────────────────────────────────────────────────────
+// RF-015.2 / RF-015.3: Guardar creación o edición de sede — CREAR-SEDES / EDITAR-SEDES
 const guardar = async () => {
     errGuardar.value = ''
 
@@ -515,7 +519,7 @@ const guardar = async () => {
     }
 }
 
-// ── Toggle estado ──────────────────────────────────────────────────
+// RF-015.4: Activar o desactivar sede — INACTIVAR-SEDES
 const toggleEstado = async (sede) => {
     try {
         await SedesService.update(sede.IdEstacionamiento, { Estado: !sede.Estado })

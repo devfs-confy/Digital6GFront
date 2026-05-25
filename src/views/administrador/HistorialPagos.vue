@@ -4,6 +4,7 @@
         <!-- Header -->
         <AdminPageHeader title="Historial de Pagos" />
 
+        <!-- RF-011.1 / RF-011.3: Filtros por sede, fecha de pago, número de factura y CUS/transacción — VER-MENSUALIDADES -->
         <!-- Filtros -->
         <div class="bg-white rounded-2xl shadow-sm p-4 flex flex-wrap items-end gap-3">
             <!-- Sede -->
@@ -55,6 +56,7 @@
             </button>
         </div>
 
+        <!-- RF-011.1: Tabla de pagos/facturas con filtros — VER-MENSUALIDADES -->
         <!-- Tabla -->
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex-1 flex flex-col">
             <div class="table-scroll-wrapper">
@@ -147,6 +149,7 @@
                 @limit="onLimitChange" />
         </div>
 
+        <!-- RF-011.2: Detalle de pago: subtotal, IVA, total, tipo pago y módulo — VER-MENSUALIDADES -->
         <!-- ───── ASIDE: DETALLE ───── -->
         <AsideEditar v-model="asideDetalle" :titulo="`Pago #${activo?.IdPago ?? ''}`"
             :subtitulo="(activo?.T_Estacionamientos?.Nombre ?? '').trim()" label-guardar="Cerrar" :loading="false"
@@ -154,6 +157,7 @@
 
             <template v-if="activo">
 
+                <!-- RF-011.2: Información general del pago (sede, fecha, transacción, módulo, factura, tipo y forma) — VER-MENSUALIDADES -->
                 <!-- Info general -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -205,6 +209,7 @@
                     </div>
                 </section>
 
+                <!-- RF-011.2: Estado del pago (mensual/anulada) — VER-MENSUALIDADES -->
                 <!-- Estado -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -226,6 +231,7 @@
                     </div>
                 </section>
 
+                <!-- RF-011.2: Valores del pago: subtotal, IVA y total — VER-MENSUALIDADES -->
                 <!-- Valores -->
                 <section class="flex flex-col gap-2">
                     <p
@@ -264,12 +270,14 @@ import TablePaginacion from '@/components/shared/Paginacion.vue'
 import AppIcon from '@/components/shared/AppIcon.vue'
 import DatePickerInput from '@/components/shared/DatePickerInput.vue'
 
+// RF-011.2: Helper para etiquetar la forma de pago — VER-MENSUALIDADES
 const FORMA_PAGO = { '47': 'Transferencia' }
 const formaPagoLabel = (id) => {
     const key = id?.trim()
     return FORMA_PAGO[key] ?? key ?? '—'
 }
 
+// RF-011.1: Estado de la tabla de pagos/facturas — VER-MENSUALIDADES
 const loading = ref(false)
 const registros = ref([])
 const total = ref(0)
@@ -282,6 +290,7 @@ let debounceTimer = null
 const asideDetalle = ref(false)
 const activo = ref(null)
 
+// RF-011.1 / RF-011.3: Computed de paginación y filtros activos — VER-MENSUALIDADES
 const totalPaginas = computed(() => Math.max(1, Math.ceil(total.value / limit.value)))
 const hayFiltros = computed(() =>
     filtros.value.sede || filtros.value.fecha || filtros.value.factura || filtros.value.transaccion
@@ -292,6 +301,7 @@ const registrosFiltrados = computed(() => {
     return registros.value.filter(p => p.FechaPago?.startsWith(filtros.value.fecha))
 })
 
+// RF-011.2: Helper de formateo de fecha para el detalle — VER-MENSUALIDADES
 const formatFecha = (f) => {
     if (!f) return '—'
     const d = new Date(f)
@@ -299,11 +309,13 @@ const formatFecha = (f) => {
     return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
 }
 
+// RF-011.2: Helper de formateo de precio (subtotal, IVA, total) — VER-MENSUALIDADES
 const formatPrecio = (v) =>
     (!v && v !== 0) ? '—' : new Intl.NumberFormat('es-CO', {
         style: 'currency', currency: 'COP', maximumFractionDigits: 0
     }).format(v)
 
+// RF-011.1 / RF-011.3: Carga de pagos/facturas con filtros por sede, fecha, factura y transacción — VER-MENSUALIDADES
 const cargar = async (page = 1) => {
     loading.value = true
     try {
@@ -350,11 +362,13 @@ const limpiarFiltros = () => {
     cargar(1)
 }
 
+// RF-011.2: Apertura del aside con detalle del pago seleccionado — VER-MENSUALIDADES
 const verDetalle = (p) => {
     activo.value = p
     asideDetalle.value = true
 }
 
+// RF-011.3: Carga inicial de sedes y listado de pagos — VER-MENSUALIDADES
 onMounted(() => {
     SedesService.getAll().then(r => { sedes.value = Array.isArray(r) ? r : (r?.data ?? []) })
     cargar()
