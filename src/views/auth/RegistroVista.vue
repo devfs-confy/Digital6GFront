@@ -156,23 +156,37 @@
                                 ¿Eres Comunidad UCC?
                             </div>
                             <div class="flex gap-2 mt-2.5">
-                                <button @click="esEstudiante = true" class="est-btn"
-                                    :class="{ 'est-btn--on': esEstudiante === true }">
-                                    Sí, soy comunidad UCC
+                        <button @click="esEstudiante = true" class="est-btn"
+                            :class="{ 'est-btn--on': esEstudiante === true }">
+                            Sí, soy comunidad UCC
+                        </button>
+                        <button @click="esEstudiante = false; form.CodigoEstudianteUCC = ''; tipoUcc = null" class="est-btn"
+                            :class="{ 'est-btn--on': esEstudiante === false }">
+                            No, continuar
+                        </button>
+                    </div>
+                    <Transition name="fade">
+                        <div v-if="esEstudiante === true" class="flex flex-col gap-1 mt-3">
+                            <label class="field-label-sm">¿Eres Estudiante o Empleado? <span class="text-red-400">*</span></label>
+                            <div class="flex gap-2 mt-1.5">
+                                <button @click="tipoUcc = 'Estudiante'" class="est-btn"
+                                    :class="{ 'est-btn--on': tipoUcc === 'Estudiante' }">
+                                    Estudiante
                                 </button>
-                                <button @click="esEstudiante = false; form.CodigoEstudianteUCC = ''" class="est-btn"
-                                    :class="{ 'est-btn--on': esEstudiante === false }">
-                                    No, continuar
+                                <button @click="tipoUcc = 'Empleado'" class="est-btn"
+                                    :class="{ 'est-btn--on': tipoUcc === 'Empleado' }">
+                                    Empleado
                                 </button>
                             </div>
                             <Transition name="fade">
-                                <div v-if="esEstudiante === true" class="flex flex-col gap-1 mt-3">
-                                    <label class="field-label-sm">Código estudiante UCC <span
-                                            class="text-red-400">*</span></label>
+                                <div v-if="tipoUcc" class="flex flex-col gap-1 mt-3">
+                                    <label class="field-label-sm">Código {{ tipoUcc === 'Estudiante' ? 'estudiante' : 'empleado' }} UCC <span class="text-red-400">*</span></label>
                                     <input v-model="form.CodigoEstudianteUCC" type="text" class="field-input"
                                         placeholder="" />
                                 </div>
                             </Transition>
+                        </div>
+                    </Transition>
                         </div>
                     </Transition>
 
@@ -737,6 +751,7 @@ const guardando = ref(false)
 const errSubmit = ref('')
 const msgDoc = ref('')
 const esEstudiante = ref(null)
+const tipoUcc = ref(null)
 const modalExito = ref(false)
 
 const LIMITE_BUSQUEDAS = 4
@@ -772,6 +787,7 @@ const habilitarEdicionDoc = () => {
     mensualidadData.value = null
     Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
+    tipoUcc.value = null
 }
 
 // RF-021.14: Debounce en input de documento — inicia búsqueda automática tras 900 ms cuando el documento tiene ≥7 dígitos.
@@ -867,6 +883,7 @@ const enfocarNombres = () => nextTick(() => inputNombres.value?.focus())
 const limpiarCampos = () => {
     Object.assign(form, { Nombres: '', IdTarjeta: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
+    tipoUcc.value = null
 }
 
 const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -882,8 +899,9 @@ const validarFormulario = () => {
         if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
         if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
     }
-    if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres estudiante UCC o no.'; return false }
-    if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = 'Ingresa tu código de estudiante UCC.'; return false }
+    if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres comunidad UCC o no.'; return false }
+    if (esSede24.value && esEstudiante.value === true && !tipoUcc.value) { errSubmit.value = 'Selecciona si eres Estudiante o Empleado UCC.'; return false }
+    if (esSede24.value && esEstudiante.value === true && !form.CodigoEstudianteUCC) { errSubmit.value = `Ingresa tu código de ${tipoUcc.value.toLowerCase()} UCC.`; return false }
     if (!aceptoTerminos.value) { errSubmit.value = 'Debes aceptar los términos y condiciones para continuar.'; return false }
     return true
 }
@@ -916,6 +934,7 @@ const buildPayload = (esOld) => {
         Placa5: placas[4] || null,
         EstudianteUcc: esSede24.value ? (esEstudiante.value === true) : false,
         CodigoEstudianteUCC: esSede24.value && esEstudiante.value === true ? CodigoEstudianteUCC : '',
+        TipoUcc: esSede24.value ? (tipoUcc.value ?? '') : '',
     }
 }
 
