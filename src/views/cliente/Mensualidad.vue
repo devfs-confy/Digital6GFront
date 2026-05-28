@@ -82,7 +82,7 @@
                             'text-blue-500': m.estado === 'congelada',
                             'text-[#b45309]': m.estado === 'pendiente',
                         }">
-                            {{ diasRestantes(m) }}
+                          {{ diasRestantes(m) }}
                         </span>
                         <span class="text-[0.58rem] font-bold uppercase tracking-[0.06em] opacity-50 text-black">
                             {{ m.estado === 'congelada' ? 'cong.' : 'días' }}
@@ -1206,9 +1206,14 @@ const diasRestantes = (m) => {
     if (!ff) return 0
     const fin = parseLocal(ff)
     if (!fin) return 0
-    const hoy = FormDate.getDateNow()
+    let hoy = FormDate.getDateNow()
     hoy.setHours(0, 0, 0, 0)
-    return Math.max(0, Math.ceil((fin - hoy) / 86400000))
+    if (m?.estado === 'congelada' && m?.fechaInicio) {
+        hoy = parseLocal(m.fechaInicio)
+        if (!hoy) return 0
+        hoy.setHours(0, 0, 0, 0)
+    }
+    return Math.max(0, Math.floor((fin - hoy) / 86400000))
 }
 
 // RF-024: Cálculo del porcentaje de vigencia transcurrida para la barra de progreso visual de cada mensualidad

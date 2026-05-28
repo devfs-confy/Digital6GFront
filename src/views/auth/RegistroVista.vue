@@ -145,7 +145,7 @@
 
                     <!-- RF-021.5: Sección condicional para sede 24 — solicita código de estudiante UCC cuando aplica. -->
                     <Transition name="fade">
-                        <div v-if="esSede24 && formularioListo"
+                        <div v-if="esSede24 && formularioListo && !usuarioEncontrado"
                             class="bg-green-50 border-[1.5px] border-green-300 rounded-2xl p-4">
                             <div class="flex items-center gap-2 text-[0.82rem] font-black text-[#0D291C]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#0D291C"
@@ -832,6 +832,8 @@ const buscarDocumento = async (doc) => {
         const d = res.data ?? res
         mensualidadData.value = d
         usuarioEncontrado.value = true
+        esEstudiante.value = false
+        tipoUcc.value = null
         const partes = (d.nombreApellidos ?? '').trim().split(/\s+/)
         const mitad = Math.ceil(partes.length / 2)
         Object.assign(form, {
