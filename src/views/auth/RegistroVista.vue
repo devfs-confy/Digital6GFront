@@ -473,23 +473,14 @@
                                         </svg>
                                     </div>
                                     <div class="text-center">
-                                        <p class="text-[1rem] font-black text-white">¡Registro exitoso!</p>
-                                        <p class="text-[0.68rem] font-semibold mt-1 text-white/50">Tu cuenta ha sido
-                                            creada correctamente</p>
+                                        <p class="text-[1rem] font-black text-white">{{ redirecting ? '¡Registro exitoso!' : 'Iniciando sesión...' }}</p>
+                                        <p class="text-[0.68rem] font-semibold mt-1 text-white/50">{{ redirecting ? 'Tu cuenta ha sido creada correctamente' : 'Accediendo a tu cuenta' }}</p>
                                     </div>
                                 </div>
                                 <div class="px-6 py-5">
                                     <p class="text-[0.82rem] font-semibold text-gray-700 text-center leading-relaxed">
-                                        Ya puedes iniciar sesión con tu documento y contraseña en la sede
-                                        <strong class="text-[#0D291C]">{{ sedeNombre }}</strong>.
+                                        {{ redirecting ? 'Accediendo automáticamente a tu cuenta...' : 'Tu cuenta ha sido creada. Redirigiendo...' }}
                                     </p>
-                                </div>
-                                <div class="px-6 pb-6">
-                                    <button @click="router.push({ name: 'login' })"
-                                        class="w-full py-3 rounded-full text-[0.82rem] font-black uppercase tracking-[0.06em] cursor-pointer bg-[#0D291C] text-[#7FD344] border-2 border-black transition-colors hover:bg-[#1a4a2e]"
-                                        style="box-shadow:0 4px 0 #000">
-                                        Ir al inicio de sesión
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -723,12 +714,14 @@ import { showError, showSuccess, showConfirm } from '@/utils/swal'
 import { useRoute, useRouter } from 'vue-router'
 import ClientService from '@/api/services/client.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
+import { useAuthStore } from '@/stores/auth'
 
 const showTutorial = ref(false)
 const inputNombres = ref(null)
 const aceptoTerminos = ref(false)
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 function volver() {
     if (window.history.length > 1) {
@@ -753,6 +746,7 @@ const msgDoc = ref('')
 const esEstudiante = ref(null)
 const tipoUcc = ref(null)
 const modalExito = ref(false)
+const redirecting = ref(false)
 
 const LIMITE_BUSQUEDAS = 4
 const busquedasRealizadas = ref(0)
@@ -974,6 +968,18 @@ const submit = async () => {
     }
 
     modalExito.value = true
+    redirecting.value = false
+
+    await new Promise(r => setTimeout(r, 1500))
+
+    const destino = await authStore.login(form.Documento, form.Password)
+    if (destino) {
+        redirecting.value = true
+        await new Promise(r => setTimeout(r, 600))
+        router.push(destino)
+    } else {
+        redirecting.value = true
+    }
 }
 </script>
 
