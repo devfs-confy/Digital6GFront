@@ -2297,6 +2297,10 @@ input[type="range"]::-ms-fill-lower {
   justify-content: space-between;
 }
 
+.gap-0 {
+  gap: 0px;
+}
+
 .gap-0\.5 {
   gap: 0.125rem;
 }

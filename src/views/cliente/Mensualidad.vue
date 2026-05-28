@@ -34,7 +34,6 @@
                         ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 shadow-[0_4px_0_#93c5fd,0_2px_16px_rgba(59,130,246,0.10)] hover:shadow-[0_6px_0_#7db8f7,0_4px_20px_rgba(59,130,246,0.15)]'
                         : 'border-[#e8f5e9] shadow-[0_4px_0_#e2ede7,0_2px_16px_rgba(13,41,28,0.06)] hover:shadow-[0_6px_0_#c8ddd1,0_4px_20px_rgba(13,41,28,0.10)] '
                 ]" :style="{ animationDelay: `${i * 0.08}s`, }">
-
                 <!-- RF-024: Banda superior de color que indica visualmente el estado de la mensualidad (activa, por_vencer, vencida, congelada, pendiente) -->
                 <!-- Top band -->
                 <div class="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" :class="{
@@ -104,6 +103,8 @@
                         {{ formatPrecio(m.valorConIva) }}
                         <span class="text-[0.62rem] font-semibold text-gray-400 ml-1">/ mes (IVA inc.)</span>
                     </p>
+                    <!-- UCC: Bloque de última recarga de días -->
+                
                     <!-- RF-028: Listado de placas registradas para esta mensualidad (hasta 5 placas) -->
                     <div v-if="m.placas.length" class="flex flex-wrap gap-1.5">
                         <span v-for="placa in m.placas" :key="placa"
@@ -134,7 +135,8 @@
                             </svg>
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Inicia</span>
-                            <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaInicio)
+                            <span class="text-[0.82rem] font-bold text-[#0D291C]"> {{ 
+                            formatFecha(m.fechaInicio)
                             }}</span>
                         </div>
                         <div class="flex items-center gap-2">
@@ -146,6 +148,16 @@
                             <span
                                 class="text-[0.72rem] font-bold text-gray-400 uppercase tracking-[0.05em] min-w-[44px]">Vence</span>
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaFin) }}</span>
+                        </div>
+                    </div>
+                     <div v-if="m.mensualidad == 'RECARGAS PARQUEADEROS' && Object.keys(m.ultimaRecarga).length > 0"
+                        class="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#d97706" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                        </svg>
+                        <div class="flex flex-col gap-0">
+                            <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.06em] text-amber-600">Recarga de días</span>
+                            <span class="text-[1.1rem] font-black text-amber-700">{{ m.ultimaRecarga.CantidadDias }} <span class="text-[0.75rem] font-semibold">días</span></span>
                         </div>
                     </div>
                     <!-- RF-024: Barra de progreso visual del periodo de vigencia transcurrido -->
@@ -176,6 +188,8 @@
                     </button>
                 </template>
 
+                   
+
                 <!-- RF-024: Aviso de pago pendiente cuando la mensualidad aún no tiene fechas de vigencia asignadas -->
                 <!-- Pending payment notice -->
                 <div v-else class="flex items-center gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
@@ -199,7 +213,7 @@
                         <!-- RF-024: Indicador visual animado que guía al usuario para renovar su mensualidad antes del vencimiento -->
                         <!-- Indicador visual: acá puedes pagar -->
                         <div
-                            v-if="m.estado === 'activa' || m.estado === 'por_vencer'"
+                            v-if="m.estado === 'por_vencer'"
                             class="absolute -top-20 left-1/3 -translate-x-1/2 z-10 flex flex-col items-center animate-bounce pointer-events-none"
                         >
                             <!-- Flecha apuntando hacia abajo -->
@@ -504,7 +518,7 @@
 
                             <!-- RF-024: Selector de cantidad de meses a renovar (1 o 2 meses máximo en un solo pago); el segundo periodo inicia automáticamente cuando vence el primero -->
                             <!-- Month selector -->
-                            <div v-if="!infoExcedente && opcionSeleccionada && !esQuincena && !esSoloTarjeta"
+                            <div v-if="!infoExcedente && opcionSeleccionada && !esQuincena && !esSoloTarjeta && !esRecarga"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
@@ -1033,6 +1047,17 @@ import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
 import FormDate from '@/utils/formats.date'
 import SedesService from '@/api/services/sedes.service'
 
+const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null
+
+const formatFecha = (f) => {
+    if (!f) return '—'
+    const parts = f.split('T')[0].split('-')
+    if (parts.length !== 3) return '—'
+    const day = String(parseInt(parts[2], 10)).padStart(2, '0')
+    const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+    return `${day} ${months[parseInt(parts[1], 10) - 1]} ${parts[0]}`
+}
+
 // RF-038: Store de autenticación para obtener los datos del usuario logueado que gestiona sus mensualidades
 // ── Stores ────────────────────────────────────────────────────
 const authStore = useAuthStore()
@@ -1153,6 +1178,7 @@ const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 // ── Computeds ─────────────────────────────────────────────────
 const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINCENA')
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
+const esRecarga = computed(() => opcionSeleccionada.value?.modalidad === 'RECARGA')
 
 // RF-024: Lógica de visibilidad del botón Congelar: solo mensualidades mensuales (no quincenales ni motos) con pago al día y fuera de vigencia activa
 const mostrarCongelar = (m) =>
@@ -1161,14 +1187,6 @@ const mostrarCongelar = (m) =>
 
 // RF-024: Helpers de fecha para calcular vigencia, días restantes y porcentaje transcurrido del periodo de mensualidad
 // ── Helpers de fecha ──────────────────────────────────────────
-const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null
-
-const formatFecha = (f) => {
-    if (!f) return '—'
-    const d = parseLocal(f)
-    return d ? d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
-
-}
 
 // ── Helpers de UI ─────────────────────────────────────────────
 const iniciales = (n = '') =>
@@ -1266,6 +1284,7 @@ const cargarMisMensualidades = async () => {
     loading.value = true
     try {
         const res = await MensualidadesService.getMisMensualidades()
+        console.log(res)
         const raw = Array.isArray(res) ? res : (res?.data ?? [])
         // RF-024, RF-033, RF-034: Normalización de campos clave desde backend: estado resuelto, flag de tarjeta requerida, identificación de quincena y tipo de vehículo (moto por regex de placa)
         mensualidades.value = raw.map(m => ({
@@ -1283,6 +1302,7 @@ const cargarMisMensualidades = async () => {
             valorConIva: m.T_Autorizaciones?.Valor ? Math.round(m.T_Autorizaciones.Valor * 1.19) : null,
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),
+            ultimaRecarga: m?.UltimaRecarga,
             conPago: !!(m.FechaFin && parseLocal(m.FechaFin) > new Date()),
             esQuincena: !!(m.T_Autorizaciones?.NombreAutorizacion?.toUpperCase().includes('QUINCENA')
                 || m.T_Autorizaciones?.Modalidad?.toUpperCase() === 'QUINCENA'),
