@@ -157,7 +157,7 @@
                         </svg>
                         <div class="flex flex-col gap-0">
                             <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.06em] text-amber-600">Recarga de días</span>
-                            <span class="text-[1.1rem] font-black text-amber-700">{{ m.ultimaRecarga.CantidadDias }} <span class="text-[0.75rem] font-semibold">días</span></span>
+                            <span class="text-[1.1rem] font-black text-amber-700">{{ m.ultimaRecarga.cantidadDias }} <span class="text-[0.75rem] font-semibold">días</span></span>
                         </div>
                     </div>
                     <!-- RF-024: Barra de progreso visual del periodo de vigencia transcurrido -->
