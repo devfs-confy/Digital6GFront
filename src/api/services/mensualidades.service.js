@@ -209,6 +209,16 @@ class MensualidadesService {
       return handleError(error);
     }
   }
+
+  async getUltimaRecarga(documento){
+    try{
+       const response = await api.get(`${BASE_CLIENT}/registro-recarga/${documento}`);
+       return response.data
+    }
+    catch(error){
+      return handleError(error);
+    }
+  }
 }
 
 export default new MensualidadesService();

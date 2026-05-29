@@ -150,14 +150,20 @@
                             <span class="text-[0.82rem] font-bold text-[#0D291C]">{{ formatFecha(m.fechaFin) }}</span>
                         </div>
                     </div>
-                     <div v-if="m.mensualidad == 'RECARGAS PARQUEADEROS' && Object.keys(m.ultimaRecarga).length > 0"
+                     <div v-if="m.mensualidad == 'RECARGAS PARQUEADEROS' "
                         class="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#d97706" viewBox="0 0 24 24">
                             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
                         </svg>
                         <div class="flex flex-col gap-0">
-                            <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.06em] text-amber-600">Recarga de días</span>
-                            <span class="text-[1.1rem] font-black text-amber-700">{{ m.ultimaRecarga.cantidadDias }} <span class="text-[0.75rem] font-semibold">días</span></span>
+                            <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.06em] text-amber-600">
+                                Recarga de días
+                            </span>
+                            <span v-if="recargasData[m.documento]" class="text-[1.1rem] font-black text-amber-700">
+                                {{ recargasData[m.documento].cantidadDias ?? recargasData[m.documento] }}
+                                <span class="text-[0.75rem] font-semibold">días</span>
+                            </span>
+                            <span v-else class="text-[0.7rem] font-semibold text-amber-500">Cargando...</span>
                         </div>
                     </div>
                     <!-- RF-024: Barra de progreso visual del periodo de vigencia transcurrido -->
@@ -1066,6 +1072,7 @@ const authStore = useAuthStore()
 // ── Estado global ─────────────────────────────────────────────
 const loading = ref(false)
 const mensualidades = ref([])
+const recargasData = ref({})
 
 // RF-024: Referencias para el scroll automático hacia el formulario de facturación dentro del modal de pago
 // ── Scroll hint formulario pago ───────────────────────────────
@@ -1316,6 +1323,11 @@ const cargarMisMensualidades = async () => {
                 return /^[A-Z]{3}\d{2}[A-Z]$/.test(placa)
             })(),
         }))
+        mensualidades.value.forEach(m => {
+            if (m.mensualidad === 'RECARGAS PARQUEADEROS') {
+                getRecargaUcc(m.documento)
+            }
+        })
     } catch {
         mensualidades.value = []
     } finally {
@@ -1323,6 +1335,17 @@ const cargarMisMensualidades = async () => {
     }
 }
 onMounted(cargarMisMensualidades)
+
+const getRecargaUcc = async (documento) => {
+    try {
+        const res = await MensualidadesService.getUltimaRecarga(documento)
+        recargasData.value[documento] = res.data ?? res
+    } catch {
+        recargasData.value[documento] = null
+    }
+}
+
+
 
 // RF-038: Abre el modal de detalle cargando información completa de la mensualidad seleccionada desde el backend
 // ── Detalle ───────────────────────────────────────────────────
