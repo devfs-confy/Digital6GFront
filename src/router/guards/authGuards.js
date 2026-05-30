@@ -5,6 +5,8 @@ const rutasPublicas = [
   "/forgot-password",
   "/registro",
   "/seleccionsede",
+  "/terminos",
+  "/privacidad",
   "/unauthorized",
 ];
 
