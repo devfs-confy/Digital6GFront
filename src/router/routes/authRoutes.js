@@ -19,4 +19,14 @@ export const authRoutes = [
     name: "seleccionsede",
     component: () => import("@/views/auth/SeleccionSede.vue"),
   },
+  {
+    path: "/terminos",
+    name: "terminos",
+    component: () => import("@/views/auth/TerminosVista.vue"),
+  },
+  {
+    path: "/privacidad",
+    name: "privacidad",
+    component: () => import("@/views/auth/PrivacyVista.vue"),
+  },
 ];
