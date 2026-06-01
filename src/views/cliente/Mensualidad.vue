@@ -1813,7 +1813,7 @@ const confirmarPago = async () => {
     // RF-033: Si el pago incluye cobro de tarjeta de acceso, muestra recordatorio para reclamarla físicamente en la sede antes de continuar
     if (mensualidadAccion.value?.cobroTarjetaPermitido) {
         const { isConfirmed } = await showConfirm({
-            title: '¿Recuerdas reclamar tu tarjeta?',
+            title: '¡Recuerda reclamar tu tarjeta!',
             text: `Después de completar el pago, dirígete al punto de atención de ${mensualidadAccion.value?.sede ?? 'tu sede'} para reclamar tu tarjeta de acceso.`,
             confirmText: 'Entendido, continuar',
             cancelText: 'Volver',
