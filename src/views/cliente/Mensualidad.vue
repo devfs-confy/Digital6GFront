@@ -502,7 +502,7 @@
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
                                                 <span>{{ op.modalidad }}</span><span>{{
-                                                    formatPrecio(op.desglose.total) }}</span>
+                                                    formatPrecio(op.valorUnitario) }}</span>
                                             </div>
                                             <div v-if="op.tarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
@@ -1667,6 +1667,7 @@ const abrirPago = async (m) => {
         // RF-024, RF-034: Paso 2 — sin pagos pendientes, carga las opciones de pago disponibles (mensual, quincenal, tarjeta) según la sede seleccionada
         // ── 2. Sin pendiente — cargar opciones normalmente
         const res = await PagoService.getOpcionesPago(m.id, sedeInput.value, 1)
+        console.log(res.data)
         const data = res?.data ?? res
         if (res?.success === false) {
             errPago.value = res?.message ?? 'Error al cargar opciones.'
