@@ -304,9 +304,9 @@ const registrosFiltrados = computed(() => {
 // RF-011.2: Helper de formateo de fecha para el detalle — VER-MENSUALIDADES
 const formatFecha = (f) => {
     if (!f) return '—'
-    const d = new Date(f)
-    const p = n => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
+    // Se parsea directamente del string ISO sin instanciar Date,
+    // para evitar conversiones de zona horaria que restan horas.
+    return f.slice(0, 16).replace('T', ' ')
 }
 
 // RF-011.2: Helper de formateo de precio (subtotal, IVA, total) — VER-MENSUALIDADES
@@ -327,6 +327,7 @@ const cargar = async (page = 1) => {
             IdTransaccion: filtros.value.transaccion,
         })
         const d = res?.data
+        console.log(d)
         registros.value = Array.isArray(d?.data) ? d.data : (Array.isArray(d) ? d : [])
         total.value = d?.meta?.total ?? registros.value.length
         paginaActual.value = filtros.value.fecha ? 1 : (d?.meta?.page ?? page)
