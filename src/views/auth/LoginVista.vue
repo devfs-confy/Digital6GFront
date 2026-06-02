@@ -11,7 +11,7 @@
                     <!-- <img src="@/assets/img/confy-blanco.png" alt="Confy" class="brand-logo" /> -->
                     <div class="brand-copy">
                         <h2>Bienvenido<br />de vuelta</h2>
-                        <p>Plataforma de gestión<br />Digital 6G</p>
+                        <p>Plataforma de gestión<br />Punto de Pago Web <br> (PPW)</p>
                     </div>
                 </div>
                 <img src="@/assets/img/locoshort.png" alt="" class="brand-illustration" />
