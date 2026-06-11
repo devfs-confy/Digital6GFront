@@ -588,7 +588,7 @@
                                         <path
                                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                                     </svg>
-                                    <p>Al confirmar serás redirigido a la página de pago.</p>
+                                    <p>Estos datos serán enviados a la pasarela de pagos</p>
                                 </div>
                                 <div v-if="errPago"
                                     class="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-[0.72rem] font-semibold text-red-600">
@@ -600,7 +600,7 @@
                                     <p class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2
               after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r
               after:from-[#c8e6c9] after:to-transparent after:rounded-full">
-                                        Datos personales
+                                        Datos Pasarela de pagos
                                     </p>
                                     <div class="flex flex-col gap-2.5">
 
@@ -721,7 +721,7 @@
                                     viewBox="0 0 24 24">
                                     <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" />
                                 </svg>
-                                Completar datos de facturación
+                                Completar datos de pasarela
                             </button>
                         </div>
                     </div>
