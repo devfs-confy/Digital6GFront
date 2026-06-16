@@ -784,7 +784,7 @@ const habilitarEdicionDoc = () => {
     tipoUcc.value = null
 }
 
-// RF-021.14: Debounce en input de documento — inicia búsqueda automática tras 900 ms cuando el documento tiene ≥7 dígitos.
+// RF-021.14: Debounce en input de documento — inicia búsqueda automática tras 1600 ms cuando el documento tiene ≥7 dígitos.
 let docTimer = null
 const onDocumentoInput = () => {
     if (bloqueado.value) return
@@ -795,7 +795,7 @@ const onDocumentoInput = () => {
     errSubmit.value = ''
     const doc = form.Documento.replace(/\D/g, '')
     form.Documento = doc
-    if (doc.length >= 7) docTimer = setTimeout(() => buscarDocumento(doc), 900)
+    if (doc.length >= 7) docTimer = setTimeout(() => buscarDocumento(doc), 1600)
 }
 
 // RF-021.15: Búsqueda de documento en API de mensualidades — pre-llena datos si existe mensualidad activa o habilita formulario manual.
