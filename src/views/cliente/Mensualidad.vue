@@ -93,11 +93,13 @@
                 <!-- RF-025, RF-028: Bloque de sede asociada, tipo de mensualidad y placas registradas del vehículo -->
                 <!-- Sede · Mensualidad + Placas -->
                 <div class="flex flex-col gap-2">
-                    <p class="text-[0.7rem] font-bold text-gray-500 truncate">
-                        <span class="text-[#0D291C]">{{ m.sede }}</span>
-                        <span class="mx-1 opacity-40">·</span>
-                        <span>{{ m.mensualidad }}</span>
-                    </p>
+                    <div class="flex flex-col gap-0.5">
+                        <p class="text-[0.7rem] font-bold text-[#0D291C] truncate">{{ m.sede }}</p>
+                        <p v-if="m.Apertura && m.Cierre" class="text-[0.65rem] font-semibold text-gray-400 truncate">
+                          Horario:  {{ m.Apertura }} - {{ m.Cierre }}
+                        </p>
+                        <p class="text-[0.7rem] font-bold text-gray-500 truncate">{{ m.mensualidad }}</p>
+                    </div>
                 <!-- RF-024: Precio con IVA incluido del plan de mensualidad vigente -->
                     <p v-if="m.valorConIva" class="text-[0.72rem] font-black text-[#299261]">
                         {{ formatPrecio(m.valorConIva) }}
@@ -1311,6 +1313,8 @@ const cargarMisMensualidades = async () => {
             fechaFin: m.FechaFin ? m.FechaFin : null,
             sede: m.T_Estacionamiento?.Nombre?.trim() ?? '—',
             mensualidad: m.T_Autorizaciones?.NombreAutorizacion ?? '—',
+            Apertura: m.T_Estacionamiento?.HoraApertura,
+            Cierre: m.T_Estacionamiento?.HoraCierre,
             valorConIva: m.T_Autorizaciones?.Valor ? Math.round(m.T_Autorizaciones.Valor * 1.19) : null,
             placas: PLACA_KEYS.map(k => m[k]).filter(Boolean),
             estado: resolverEstado(m),

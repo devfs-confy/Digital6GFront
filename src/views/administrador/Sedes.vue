@@ -168,6 +168,18 @@
                 <input v-model="form.AppHost" type="text" placeholder="" class="aside-field-input" />
             </div>
 
+            <!-- Horario -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1.5">
+                    <label class="aside-field-label">Hora apertura</label>
+                    <input v-model="form.HoraApertura" type="text" placeholder="Ej: 08:00" class="aside-field-input" />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="aside-field-label">Hora cierre</label>
+                    <input v-model="form.HoraCierre" type="text" placeholder="Ej: 18:00" class="aside-field-input" />
+                </div>
+            </div>
+
             <!-- RF-015.5: Mostrar/ocultar API key — VER-SEDES -->
             <div class="flex flex-col gap-1.5">
                 <label class="aside-field-label">API Key</label>
@@ -355,6 +367,8 @@ const form = reactive({
     Nombre: '',
     AppHost: '',
     ApiKey: '',
+    HoraApertura: '',
+    HoraCierre: '',
     T_Disponibilidades: [],
     // Solo nueva sede (POST)
     IdEstacionamiento: null,
@@ -407,6 +421,8 @@ const abrirEdicion = (sede) => {
     form.Nombre = sede.Nombre ?? ''
     form.AppHost = sede.AppHost ?? ''
     form.ApiKey = sede.ApiKey ?? ''
+    form.HoraApertura = sede.HoraApertura ?? ''
+    form.HoraCierre = sede.HoraCierre ?? ''
     form.T_Disponibilidades = dispDefaults(sede.T_Disponibilidades)
 }
 
@@ -417,7 +433,7 @@ const abrirNueva = () => {
     mostrarApiKey.value = true
     errGuardar.value = ''
     Object.assign(form, {
-        Nombre: '', AppHost: '', ApiKey: '',
+        Nombre: '', AppHost: '', ApiKey: '', HoraApertura: '', HoraCierre: '',
         T_Disponibilidades: dispDefaults(),
         IdEstacionamiento: null,
         Direccion: '',
@@ -467,6 +483,8 @@ const guardar = async () => {
                 ...(form.Email && { Email: form.Email }),
                 ...(form.PersonaContacto && { PersonaContacto: form.PersonaContacto }),
                 ...(form.Telefono && { Telefono: form.Telefono }),
+                ...(form.HoraApertura && { HoraApertura: form.HoraApertura }),
+                ...(form.HoraCierre && { HoraCierre: form.HoraCierre }),
             }
             await SedesService.create(dtoNueva)
 
@@ -488,6 +506,8 @@ const guardar = async () => {
             Nombre: form.Nombre,
             AppHost: form.AppHost,
             ApiKey: form.ApiKey,
+            HoraApertura: form.HoraApertura,
+            HoraCierre: form.HoraCierre,
         })
 
         for (const d of form.T_Disponibilidades) {
@@ -505,6 +525,8 @@ const guardar = async () => {
                 Nombre: form.Nombre,
                 AppHost: form.AppHost,
                 ApiKey: form.ApiKey,
+                HoraApertura: form.HoraApertura,
+                HoraCierre: form.HoraCierre,
                 T_Disponibilidades: form.T_Disponibilidades.map(d => ({ ...d })),
             }
         }
