@@ -31,7 +31,34 @@
                     <span v-if="isActive(item)" class="menu-dot" />
                 </li>
             </ul>
+            <div></div>
         </nav>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <button class="terminos-btn" @click="showTerminos = true">
+                Términos y condiciones
+            </button>
+        </div>
+
+        <!-- Modal Términos -->
+        <BaseModal
+            v-model="showTerminos"
+            title="Términos y Condiciones"
+            size="xl"
+            :show-footer="false"
+            :close-on-backdrop="true"
+            body-class="p-0"
+        >
+            <div class="w-full h-[60vh] md:h-[75vh] bg-gray-50">
+                <iframe
+                    src="/pdfs/TERMINOS_Y_CONDICIONES_MENSUALIDADES.pdf"
+                    class="w-full h-full border-none block"
+                    title="Términos y Condiciones"
+                    loading="lazy"
+                />
+            </div>
+        </BaseModal>
 
     </aside>
 </template>
@@ -39,10 +66,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import BaseModal from '@/components/modals/BaseModal.vue'
 import icoconfynormal from '@/assets/img/confyaside.svg?raw'
 
 
 const logoRef = ref(null)
+const showTerminos = ref(false)
 
 
 const props = defineProps({
@@ -292,6 +321,38 @@ const colorearSVG = (svgRaw, color) =>
 
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Footer ───────────────────────────────────── */
+.sidebar-footer {
+    width: 100%;
+    padding: 12px 12.5% 20px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+.terminos-btn {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: inherit;
+}
+
+.terminos-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 /* ── Reduced motion ───────────────────────────── */

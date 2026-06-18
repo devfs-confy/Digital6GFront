@@ -1216,11 +1216,6 @@ input[type="range"]::-ms-fill-lower {
   margin: 0px;
 }
 
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -1582,6 +1577,10 @@ input[type="range"]::-ms-fill-lower {
 
 .h-\[5px\] {
   height: 5px;
+}
+
+.h-\[60vh\] {
+  height: 60vh;
 }
 
 .h-\[68px\] {
@@ -5881,6 +5880,10 @@ input[type="range"]::-ms-fill-lower {
 
   .md\:hidden {
     display: none;
+  }
+
+  .md\:h-\[75vh\] {
+    height: 75vh;
   }
 
   .md\:px-12 {
