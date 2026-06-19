@@ -734,6 +734,7 @@ function volver() {
 const idSede = computed(() => Number(route.query.sede))
 const sedeNombre = computed(() => route.query.sedeNombre ?? 'Sede')
 const esSede24 = computed(() => idSede.value === 24)
+const esSedeRestringida = computed(() => idSede.value === 22 || idSede.value === 29)
 
 const buscandoDoc = ref(false)
 const formularioListo = ref(false)
@@ -814,15 +815,22 @@ const buscarDocumento = async (doc) => {
     try {
         const res = await MensualidadesService.getDesdeApiSede(idSede.value, doc)
         const esError = res?.error === true || res?.success === false || res?.statusCode >= 400
+
         if (esError) {
             usuarioEncontrado.value = false
             mensualidadData.value = null
             limpiarCampos()
-            msgDoc.value = 'No se encontró mensualidad activa — completa el formulario'
-            formularioListo.value = true
-            enfocarNombres()
+            if (esSedeRestringida.value) {
+                msgDoc.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor elige otra.'
+                formularioListo.value = false
+            } else {
+                msgDoc.value = 'No se encontró mensualidad activa — completa el formulario'
+                formularioListo.value = true
+                enfocarNombres()
+            }
             return
         }
+        
         const d = res.data ?? res
         mensualidadData.value = d
         usuarioEncontrado.value = true
@@ -857,9 +865,14 @@ const buscarDocumento = async (doc) => {
         mensualidadData.value = null
         usuarioEncontrado.value = false
         limpiarCampos()
-        msgDoc.value = 'No se pudo verificar — completa el formulario manualmente'
-        formularioListo.value = true
-        enfocarNombres()
+        if (esSedeRestringida.value) {
+            msgDoc.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor elige otra.'
+            formularioListo.value = false
+        } else {
+            msgDoc.value = 'No se pudo verificar — completa el formulario manualmente'
+            formularioListo.value = true
+            enfocarNombres()
+        }
     } finally {
         buscandoDoc.value = false
     }
@@ -937,6 +950,10 @@ const buildPayload = (esOld) => {
 // RF-021.19: Handler de registro — valida, construye payload, invoca ClientService.createClient y gestiona errores 409 (documento/correo duplicado).
 const submit = async () => {
     if (!validarFormulario()) return
+    if (esSedeRestringida.value && !mensualidadData.value) {
+        errSubmit.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor elige otra.'
+        return
+    }
     guardando.value = true
     errSubmit.value = ''
 
