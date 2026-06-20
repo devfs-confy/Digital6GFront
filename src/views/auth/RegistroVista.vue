@@ -734,7 +734,7 @@ function volver() {
 const idSede = computed(() => Number(route.query.sede))
 const sedeNombre = computed(() => route.query.sedeNombre ?? 'Sede')
 const esSede24 = computed(() => idSede.value === 24)
-const esSedeRestringida = computed(() => idSede.value === 22 || idSede.value === 29)
+const esSedeRestringida = computed(() => idSede.value === 22 || idSede.value === 29 || idSede.value === 28)
 
 const buscandoDoc = ref(false)
 const formularioListo = ref(false)

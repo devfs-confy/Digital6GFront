@@ -96,7 +96,7 @@
                     <div class="flex flex-col gap-0.5">
                         <p class="text-[0.7rem] font-bold text-[#0D291C] truncate">{{ m.sede }}</p>
                         <p v-if="m.Apertura && m.Cierre" class="text-[0.65rem] font-semibold text-gray-400 truncate">
-                          Horario:  {{ m.Apertura }} - {{ m.Cierre }}
+                          <!-- Horario:  {{ m.Apertura }} - {{ m.Cierre }} -->
                         </p>
                         <p class="text-[0.7rem] font-bold text-gray-500 truncate">{{ m.mensualidad }}</p>
                     </div>
