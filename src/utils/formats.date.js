@@ -74,7 +74,7 @@ function DateOfString(f) {
   }
 
   return DateTime.fromISO(f, { zone: "utc" }) // viene en UTC     // lo pasas a local
-    .toFormat("yyyy-MM-dd'T'HH:mm");
+    .toFormat("yyyy-MM-dd'T'HH:mm:ss");
 }
 
 export default {

@@ -391,11 +391,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1.5">
                         <label class="aside-field-label">Fecha inicio</label>
-                        <input v-model="form.FechaInicio" type="datetime-local" class="aside-field-input" />
+                        <input v-model="form.FechaInicio" type="datetime-local" step="1" class="aside-field-input" />
                     </div>
                     <div class="flex flex-col gap-1.5">
                         <label class="aside-field-label">Fecha fin</label>
-                        <input v-model="form.FechaFin" type="datetime-local" class="aside-field-input" />
+                        <input v-model="form.FechaFin" type="datetime-local" step="1" class="aside-field-input" />
                     </div>
                 </div>
 
