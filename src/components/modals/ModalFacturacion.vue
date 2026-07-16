@@ -86,10 +86,14 @@
                                     placeholder="Ej: 1020304050" @input="onDocInput"
                                     :disabled="buscando || clienteEncontrado" />
                                 <div v-if="buscando" class="factura-spinner" />
-                                <svg v-else-if="clienteEncontrado" xmlns="http://www.w3.org/2000/svg" width="16"
-                                    height="16" fill="#299261" viewBox="0 0 24 24">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                </svg>
+                                <button v-else-if="clienteEncontrado" @click="limpiarBusqueda" type="button"
+                                    class="factura-clear-search" title="Limpiar y buscar otro cliente">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                    </svg>
+                                </button>
                             </div>
                             <p v-if="msgBusqueda" class="factura-msg"
                                 :class="clienteEncontrado ? 'factura-msg--ok' : 'factura-msg--hint'">
@@ -358,9 +362,24 @@ const onDocInput = () => {
     clearTimeout(searchTimer)
     const val = docBusqueda.value.replace(/\D/g, '')
     docBusqueda.value = val
-    if (val.length >= 8) {
-        searchTimer = setTimeout(() => buscarCliente(val), 900)
+    if (val.length >= 6) {
+        searchTimer = setTimeout(() => buscarCliente(val), 4000)
     }
+}
+
+const limpiarBusqueda = () => {
+    docBusqueda.value = ''
+    clienteEncontrado.value = false
+    noEncontrado.value = false
+    clienteData.value = null
+    msgBusqueda.value = ''
+    errBusqueda.value = ''
+    clearTimeout(searchTimer)
+    // Enfocar el input tras el siguiente tick
+    setTimeout(() => {
+        const input = document.querySelector('.factura-input-wrap input')
+        if (input) input.focus()
+    }, 0)
 }
 
 const buscarCliente = async (id) => {
@@ -995,6 +1014,31 @@ const iniciales = (nombre = '') =>
     border-top-color: #7FD344;
     border-radius: 50%;
     animation: factSpin 0.7s linear infinite;
+}
+
+.factura-clear-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: #dc2626;
+    color: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.12s, background 0.12s;
+    padding: 0;
+}
+
+.factura-clear-search:hover {
+    background: #b91c1c;
+    transform: scale(1.1);
+}
+
+.factura-clear-search:active {
+    transform: scale(0.95);
 }
 
 /* ── Transiciones ── */
