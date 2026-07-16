@@ -58,6 +58,11 @@ export const adminRoutes = {
       meta: { permission: "VER-ROLES" },
     },
     {
+      path: "correos-masivos",
+      component: () => import("@/views/administrador/CorreosMasivos.vue"),
+      meta: { permission: "ENVIAR-CORREOS" },
+    },
+    {
       path: "roles",
       component: () => import("@/views/administrador/Roles.vue"),
       meta: { permission: "VER-ROLES" },
