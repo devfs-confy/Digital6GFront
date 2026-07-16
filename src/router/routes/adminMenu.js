@@ -11,6 +11,7 @@ import icoTarjetas from "@/assets/img/credit_card_gear.svg?raw";
 import icoRoles from "@/assets/img/dashboard_customize_white.svg?raw";
 import icoUCC from "@/assets/img/how_to_reg.svg?raw";
 import icoAuth from "@/assets/img/fact_check.svg?raw";
+import icoCorreos from "@/assets/img/stacked_email.svg?raw";
 import icoPlacas from "@/assets/img/flowsheet.svg?raw";
 import icoFacturacion from "@/assets/img/receipt_long.svg?raw";
 import icoPagos from "@/assets/img/garage_money.svg?raw";
@@ -82,6 +83,12 @@ export const adminMenuItems = [
     icon: icoUsuarios,
     route: "/admin/usuarios",
     permission: "VER-ROLES",
+  },
+  {
+    label: "Correos<br>Masivos",
+    icon: icoCorreos,
+    route: "/admin/correos-masivos",
+    permission: "ENVIAR-CORREOS",
   },
   {
     label: "Roles",
