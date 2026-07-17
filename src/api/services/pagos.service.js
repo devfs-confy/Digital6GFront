@@ -37,6 +37,7 @@ class PagosService {
       Nombre,
       Apellidos,
       Sede,
+      NombreOpcion,
     } = body;
 
     try {
@@ -55,6 +56,7 @@ class PagosService {
         ...(Nombre && { Nombre }),
         ...(Apellidos && { Apellidos }),
         ...(Sede && { Sede }),
+        ...(NombreOpcion && { NombreOpcion }),
       };
 
       const { data } = await api.post(

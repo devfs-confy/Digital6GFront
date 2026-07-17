@@ -468,10 +468,10 @@
                                 </p>
                                 <!-- RF-024, RF-033, RF-034, RF-035: Listado de planes disponibles: mensual, quincenal, solo tarjeta o recarga 20 días según lo habilite el admin -->
                                 <div class="flex flex-col gap-2">
-                                    <button v-for="op in opcionesPago" :key="op.modalidad + op.cantidadMeses"
+                                    <button v-for="op in opcionesPago" :key="op.nombre"
                                         @click="seleccionarOpcion(op)"
                                         class="flex flex-col gap-2.5 p-3.5 px-4 rounded-2xl border-2 bg-gray-50 cursor-pointer text-left w-full transition-all shadow-[0_2px_0_#e2e8f0] hover:border-[#c8e6c9] hover:bg-[#f0fdf4]"
-                                        :class="opcionSeleccionada?.modalidad === op.modalidad
+                                        :class="opcionSeleccionada?.nombre === op.nombre
                                             ? 'border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9]'
                                             : 'border-gray-200'">
 
@@ -481,12 +481,18 @@
                                                 }}</span>
                                                 <span
                                                     class="text-[0.62rem] font-semibold text-gray-400 uppercase tracking-wide">
-                                                    {{ op.modalidad }} <span v-if="op.tarjeta"> + TARJETA</span>
+                                                    {{ op.modalidad }}
                                                     <template v-if="op.cantidadMeses > 0">
                                                         · <template v-if="op.modalidad === 'QUINCENA'">15
                                                             días</template>
                                                         <template v-else>{{ op.cantidadMeses }} {{ op.cantidadMeses ===
                                                             1 ? 'mes' : 'meses' }}</template>
+                                                    </template>
+                                                    <template v-if="op.incluyeTarjeta">
+                                                        · <span class="inline-flex items-center gap-[3px] text-[#299261]">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                                                            Incluye tarjeta
+                                                        </span>
                                                     </template>
                                                 </span>
                                             </div>
@@ -499,25 +505,30 @@
                                             </div>
                                         </div>
                                         <!-- Desglose -->
-                                        <div v-if="opcionSeleccionada?.modalidad === op.modalidad"
+                                        <div v-if="opcionSeleccionada?.nombre === op.nombre"
                                             class="flex flex-col gap-[5px] pt-2.5 border-t border-gray-200">
                                             <div
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
-                                                <span>{{ op.modalidad }}</span><span>{{
-                                                    formatPrecio(op.valorUnitario) }}</span>
+                                                <span>{{ op.nombre }}</span><span>{{
+                                                    formatPrecio(op.desglose?.total ?? op.valorUnitario) }}</span>
                                             </div>
-                                            <div v-if="op.tarjeta"
+                                            <div v-if="op.tarjeta && op.incluyeTarjeta"
                                                 class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
-                                                <span>TARJETA</span>
-                                                <span> {{ formatPrecio(op.tarjeta.total) }}</span>
-
+                                                <span>Tarjeta de acceso</span>
+                                                <span>{{ formatPrecio(op.tarjeta.total) }}</span>
                                             </div>
-
+                                            <div
+                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                                <span>Subtotal</span><span>{{ formatPrecio(op.desglose?.subtotal ?? 0) }}</span>
+                                            </div>
+                                            <div
+                                                class="flex justify-between text-[0.82rem] font-semibold text-gray-500">
+                                                <span>IVA (19%)</span><span>{{ formatPrecio(op.desglose?.iva ?? 0) }}</span>
+                                            </div>
                                             <div
                                                 class="flex justify-between text-[0.92rem] font-black text-[#0D291C] pt-[5px] border-t border-gray-200 mt-0.5">
                                                 <span>Total a pagar</span><span class="text-[#299261]">{{
                                                     formatPrecio(op.totalFinal) }}</span>
-
                                             </div>
                                         </div>
                                     </button>
@@ -1757,7 +1768,7 @@ const seleccionarOpcion = async (op) => {
         }
     }
 
-    opcionSeleccionada.value = opcionesPago.value.find(o => o.modalidad === op.modalidad) ?? op
+    opcionSeleccionada.value = op
 }
 
 // RF-024: Permite seleccionar 1 o 2 meses de renovación y recalcula las opciones de pago en backend (máximo 2 períodos mensuales en un solo pago)
@@ -1772,7 +1783,7 @@ const seleccionarMesesExtra = async (n) => {
         if (res?.success === false) { errPago.value = res?.message ?? 'Error al recalcular.'; return }
         opcionesPago.value = Array.isArray(data) ? data : []
         opcionSeleccionada.value =
-            opcionesPago.value.find(op => op.modalidad === opcionSeleccionada.value?.modalidad)
+            opcionesPago.value.find(op => op.nombre === opcionSeleccionada.value?.nombre)
             ?? opcionesPago.value[0]
             ?? null
     } catch (e) {
@@ -1908,6 +1919,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             Apellidos: avalpayinformacion.value.apellido,
             CantidadMeses: cantidadMeses,
             ModalidadPago: opcionSeleccionada.value.modalidad,
+            NombreOpcion: opcionSeleccionada.value?.nombre,
             Sede: Number(sedeInput.value),
             IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             ...((!m.fechaFin || m.estado === 'vencida') && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
