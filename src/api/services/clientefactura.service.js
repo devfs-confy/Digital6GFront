@@ -1,5 +1,5 @@
 // src/api/services/clientBill.service.js
-import { handleError } from "@/utils/error.handler";
+import { handleError, handleErrorNoAlert } from "@/utils/error.handler";
 import { api } from "../axios";
 
 class ClientBillService {
@@ -13,7 +13,7 @@ class ClientBillService {
       const response = await api.get(this.baseRoute + id);
       return response.data;
     } catch (error) {
-      return handleError(error);
+      return handleErrorNoAlert(error);
     }
   }
 
