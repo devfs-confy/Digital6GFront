@@ -169,11 +169,11 @@
                         <div v-if="esEstudiante === true" class="flex flex-col gap-1 mt-3">
                             <label class="field-label-sm">¿Eres Estudiante o Empleado? <span class="text-red-400">*</span></label>
                             <div class="flex gap-2 mt-1.5">
-                                <button @click="tipoUcc = 'Estudiante'" class="est-btn"
+                                <button @click="seleccionarTipoUcc('Estudiante')" class="est-btn"
                                     :class="{ 'est-btn--on': tipoUcc === 'Estudiante' }">
                                     Estudiante
                                 </button>
-                                <button @click="tipoUcc = 'Empleado'" class="est-btn"
+                                <button @click="seleccionarTipoUcc('Empleado')" class="est-btn"
                                     :class="{ 'est-btn--on': tipoUcc === 'Empleado' }">
                                     Empleado
                                 </button>
@@ -181,8 +181,23 @@
                             <Transition name="fade">
                                 <div v-if="tipoUcc" class="flex flex-col gap-1 mt-3">
                                     <label class="field-label-sm">Código {{ tipoUcc === 'Estudiante' ? 'estudiante' : 'empleado' }} UCC <span class="text-red-400">*</span></label>
-                                    <input v-model="form.CodigoEstudianteUCC" type="text" class="field-input"
-                                        placeholder="" />
+                                    <div class="relative">
+                                        <input v-model="form.CodigoEstudianteUCC" type="text" class="field-input"
+                                            placeholder="" @input="onCodigoUccInput" @keydown.enter.prevent maxlength="20" />
+                                        <div v-if="buscandoCodigoUcc" class="absolute right-3 top-1/2 -translate-y-1/2 flex">
+                                            <span class="spinner-sm" />
+                                        </div>
+                                        <div v-else-if="uccEncontrado"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-[#299261] flex">
+                                            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <p v-if="msgCodigoUcc" class="text-[0.7rem] font-semibold pl-0.5 mt-0.5"
+                                        :class="uccEncontrado ? 'text-[#299261]' : 'text-gray-400'">
+                                        {{ msgCodigoUcc }}
+                                    </p>
                                 </div>
                             </Transition>
                         </div>
@@ -715,6 +730,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ClientService from '@/api/services/client.service'
 import MensualidadesService from '@/api/services/mensualidades.service'
 import { useAuthStore } from '@/stores/auth'
+import ComunidadUccService from '@/api/services/comunidadUcc.service'
 
 const showTutorial = ref(false)
 const inputNombres = ref(null)
@@ -746,6 +762,11 @@ const errSubmit = ref('')
 const msgDoc = ref('')
 const esEstudiante = ref(null)
 const tipoUcc = ref(null)
+const buscandoCodigoUcc = ref(false)
+const msgCodigoUcc = ref('')
+const uccEncontrado = ref(false)
+
+let codigoUccTimer = null
 const modalExito = ref(false)
 const redirecting = ref(false)
 
@@ -783,6 +804,10 @@ const habilitarEdicionDoc = () => {
     Object.assign(form, { Nombres: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
     tipoUcc.value = null
+    buscandoCodigoUcc.value = false
+    msgCodigoUcc.value = ''
+    uccEncontrado.value = false
+    clearTimeout(codigoUccTimer)
 }
 
 // RF-021.14: Debounce en input de documento — inicia búsqueda automática tras 1600 ms cuando el documento tiene ≥7 dígitos.
@@ -893,6 +918,86 @@ const limpiarCampos = () => {
     Object.assign(form, { Nombres: '', IdTarjeta: '', Apellidos: '', Telefono: '', Email: '', Password: '', CodigoEstudianteUCC: '', EstudianteUcc: false, placas: [''] })
     esEstudiante.value = null
     tipoUcc.value = null
+    buscandoCodigoUcc.value = false
+    msgCodigoUcc.value = ''
+    uccEncontrado.value = false
+    clearTimeout(codigoUccTimer)
+}
+
+const limpiarCamposUcc = () => {
+    form.Nombres = ''
+    form.Apellidos = ''
+    form.Email = ''
+}
+
+const seleccionarTipoUcc = (tipo) => {
+    tipoUcc.value = tipo
+    form.CodigoEstudianteUCC = ''
+    uccEncontrado.value = false
+    msgCodigoUcc.value = ''
+    buscandoCodigoUcc.value = false
+    clearTimeout(codigoUccTimer)
+}
+
+const onCodigoUccInput = () => {
+    clearTimeout(codigoUccTimer)
+    uccEncontrado.value = false
+    msgCodigoUcc.value = ''
+    buscandoCodigoUcc.value = false
+    
+    const codigo = (form.CodigoEstudianteUCC ?? '').trim()
+    if (!codigo || codigo.length < 3) {
+        limpiarCamposUcc()
+        return
+    }
+    if (!tipoUcc.value || !esSede24.value || esEstudiante.value !== true) return
+    
+    codigoUccTimer = setTimeout(() => buscarCodigoUcc(codigo), 800)
+}
+
+const buscarCodigoUcc = async (codigo) => {
+    buscandoCodigoUcc.value = true
+    uccEncontrado.value = false
+    msgCodigoUcc.value = ''
+    
+    try {
+        const tipo = tipoUcc.value === 'Estudiante' ? 'estudiante' : 'empleado'
+        const res = await ComunidadUccService.getDetalle(codigo, tipo)
+        
+        const esError = res?.error === true || res?.success === false || res?.statusCode >= 400
+        if (esError || !res) {
+            msgCodigoUcc.value = 'No se encontró información con este código.'
+            limpiarCamposUcc()
+            return
+        }
+        
+        const d = res.data ?? res
+        const nombreApellidos = d.NombreApellidos ?? d.nombreApellidos ?? ''
+        const partes = nombreApellidos.trim().split(/\s+/)
+        
+        if (partes.length === 0 || !partes[0]) {
+            msgCodigoUcc.value = 'No se encontró información con este código.'
+            limpiarCamposUcc()
+            return
+        }
+        
+        const mitad = Math.ceil(partes.length / 2)
+        form.Nombres = partes.slice(0, mitad).join(' ')
+        form.Apellidos = partes.slice(mitad).join(' ')
+        
+        const correo = d.Correo ?? d.correo ?? d.Email ?? d.email ?? ''
+        if (correo) {
+            form.Email = correo
+        }
+        
+        uccEncontrado.value = true
+        msgCodigoUcc.value = '✓ Datos encontrados — revisa y completa tu registro.'
+    } catch (error) {
+        msgCodigoUcc.value = 'No se pudo verificar el código. Intenta de nuevo.'
+        limpiarCamposUcc()
+    } finally {
+        buscandoCodigoUcc.value = false
+    }
 }
 
 const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)

@@ -126,6 +126,15 @@ class ComunidadUccService {
       return handleError(error);
     }
   }
+
+  async getDetalle(id, tipo){
+    try {
+      const response = await api.get(`${this.nameRoute}/detalle/${id}?tipo=${tipo}`)
+      return response.data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
 }
 
 export default new ComunidadUccService();
