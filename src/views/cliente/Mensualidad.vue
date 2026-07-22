@@ -73,7 +73,7 @@
                     </div>
                     <!-- RF-024: Contador de días restantes; cuando restan 6 días o menos la tarjeta pasa a estado 'por_vencer' para alertar al usuario -->
                     <!-- Days counter -->
-                    <div
+                    <div v-if="m.mensualidad != 'RECARGAS PARQUEADEROS' "
                         class="flex flex-col items-center flex-shrink-0 bg-gray-50 rounded-xl px-3 py-2 border-[1.5px] border-gray-200">
                         <span class="text-[1.4rem] font-black leading-none" :class="{
                             'text-[#299261]': m.estado === 'activa',
@@ -82,6 +82,7 @@
                             'text-blue-500': m.estado === 'congelada',
                             'text-[#b45309]': m.estado === 'pendiente',
                         }">
+                        
                           {{ diasRestantes(m) }}
                         </span>
                         <span class="text-[0.58rem] font-bold uppercase tracking-[0.06em] opacity-50 text-black">
@@ -159,7 +160,7 @@
                         </svg>
                         <div class="flex flex-col gap-0">
                             <span class="text-[0.6rem] font-extrabold uppercase tracking-[0.06em] text-amber-600">
-                                Recarga de días
+                                Total días vigentes de recarga
                             </span>
                             <span v-if="recargasData[m.documento]" class="text-[1.1rem] font-black text-amber-700">
                                 {{ recargasData[m.documento].cantidadDias ?? recargasData[m.documento] }}
