@@ -1866,7 +1866,7 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                     return placa ? [{ ColumnaPlaca: PLACA_KEYS[i], PlacaNueva: placa }] : []
                 })
                 .filter(arr => arr.length > 0)
-
+            const sedeFinal = Number(sedeInput.value) || Number(m.idEstacionamiento) || null
             const body = {
                 Email: avalpayinformacion.value.correo,
                 Telefono: avalpayinformacion.value.telefono,
@@ -1878,10 +1878,10 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 ModalidadPago: 'CAMBIO_AUTORIZACION',
                 IdAutorizacionNueva: Number(excedentePendiente.IdAutorizacionNueva),
                 Placas: placasPayload,
-                Sede: Number(sedeInput.value),
+                Sede: sedeFinal,
                 IdentificacionCliente: IdentificacionCliente ?? '222222222222',
             }
-
+            console.log({body})
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
             const url = data?.urlPago ?? null

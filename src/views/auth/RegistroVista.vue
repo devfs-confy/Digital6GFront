@@ -952,7 +952,7 @@ const onCodigoUccInput = () => {
     }
     if (!tipoUcc.value || !esSede24.value || esEstudiante.value !== true) return
     
-    codigoUccTimer = setTimeout(() => buscarCodigoUcc(codigo), 800)
+    codigoUccTimer = setTimeout(() => buscarCodigoUcc(codigo), 2200)
 }
 
 const buscarCodigoUcc = async (codigo) => {
