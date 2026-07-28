@@ -846,7 +846,7 @@ const buscarDocumento = async (doc) => {
             mensualidadData.value = null
             limpiarCampos()
             if (esSedeRestringida.value) {
-                msgDoc.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor elige otra.'
+                msgDoc.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor, dirígete con el operador del parqueadero'
                 formularioListo.value = false
             } else {
                 msgDoc.value = 'No se encontró mensualidad activa — completa el formulario'
@@ -891,7 +891,7 @@ const buscarDocumento = async (doc) => {
         usuarioEncontrado.value = false
         limpiarCampos()
         if (esSedeRestringida.value) {
-            msgDoc.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor elige otra.'
+            msgDoc.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor, dirígete con el operador del parqueadero'
             formularioListo.value = false
         } else {
             msgDoc.value = 'No se pudo verificar — completa el formulario manualmente'
@@ -1056,7 +1056,7 @@ const buildPayload = (esOld) => {
 const submit = async () => {
     if (!validarFormulario()) return
     if (esSedeRestringida.value && !mensualidadData.value) {
-        errSubmit.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor elige otra.'
+        errSubmit.value = 'Disculpa, no tienes mensualidad vigente en esta sede. Por favor, dirígete con el operador del parqueadero'
         return
     }
     guardando.value = true
