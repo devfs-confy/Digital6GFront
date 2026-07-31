@@ -411,7 +411,7 @@ const subirExcel = async () => {
         if (tabActiva.value === 'estudiantes-universidad') {
             res = await comunidadUccService.uploadExcelEstudiantes(archivoExcel.value)
         } else if (tabActiva.value === 'personal-universidad') {
-            res = await comunidadUccService.uploadExcelPersonal(archivoExcel.value)
+            res = await comunidadUccService.    en(archivoExcel.value)
         }
 
         modalExcel.value = false
