@@ -670,7 +670,7 @@
                                 <p class="tutorial-step-title">
                                     Vehículos / Placas</p>
                                 <p class="tutorial-step-desc">Registra la placa de tu vehículo (ej: ABC123 carro ·
-                                    ABC12D moto). Puedes agregar hasta 2 placas.</p>
+                                    ABC12D o ABC12 moto). Puedes agregar hasta 2 placas.</p>
                             </div>
                         </div>
 
@@ -784,12 +784,13 @@ const form = reactive({
     placas: [''],
 })
 
-// RF-021.13: Helper para detectar tipo de vehículo según formato de placa (carro: ABC123, moto: ABC12D).
+// RF-021.13: Helper para detectar tipo de vehículo según formato de placa (carro: ABC123, moto: ABC12D, moto antigua: ABC12).
 const detectarTipoVehiculo = (placa) => {
     if (!placa) return null
     const p = placa.trim().toUpperCase()
     if (/^[A-Z]{3}[0-9]{3}$/.test(p)) return 1
     if (/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(p)) return 2
+    if (/^[A-Z]{3}[0-9]{2}$/.test(p)) return 2
     return null
 }
 
@@ -1011,7 +1012,7 @@ const validarFormulario = () => {
     if (!form.Password || form.Password.length < 8) { errSubmit.value = 'La contraseña debe tener mínimo 8 caracteres.'; return false }
     if (!placasBloqueadas.value) {
         if (!form.placas[0]?.trim()) { errSubmit.value = 'Ingresa al menos la placa principal del vehículo.'; return false }
-        if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 para carro, ABC12D para moto).'; return false }
+        if (detectarTipoVehiculo(form.placas[0]) === null) { errSubmit.value = 'El formato de la placa principal no es válido (ej: ABC123 carro · ABC12D o ABC12 moto).'; return false }
     }
     if (esSede24.value && esEstudiante.value === null) { errSubmit.value = 'Indica si eres comunidad UCC o no.'; return false }
     if (esSede24.value && esEstudiante.value === true && !tipoUcc.value) { errSubmit.value = 'Selecciona si eres Estudiante o Empleado UCC.'; return false }

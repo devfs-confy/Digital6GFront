@@ -185,16 +185,6 @@
                         </span>
                     </div>
 
-                    <!-- RF-033, RF-028: Botón "Perdí mi tarjeta" que habilita el cobro de reposición de tarjeta de acceso cuando la sede lo requiere (btnTarjeta flag) -->
-                    <button v-if="m.btnTarjeta" @click="abrirModalTarjeta(m)"
-                        class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                        </svg>
-                        Perdí mi tarjeta
-                    </button>
                 </template>
 
                    
@@ -211,6 +201,17 @@
                         Pago pendiente — sin fechas de vigencia aún
                     </span>
                 </div>
+
+                <!-- RF-033, RF-028: Botón "Perdí mi tarjeta" que habilita el cobro de reposición de tarjeta de acceso cuando la sede lo requiere (btnTarjeta flag). Visible en todos los estados de la mensualidad -->
+                <button @click="abrirModalTarjeta(m)"
+                    class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                    </svg>
+                    Requiero tarjeta
+                </button>
 
                 <!-- RF-024, RF-038: Acciones principales de la tarjeta: pagar, ver detalle y congelar mensualidad -->
                 <!-- Card actions -->
@@ -262,15 +263,7 @@
                     </button>
                     <!-- RF-024: Botón de congelamiento disponible solo para mensualidades mensuales (no quincenales ni motos) con pago al día y fuera de vigencia activa -->
                     <!-- Freeze — fila completa si existe -->
-                    <button v-if="mostrarCongelar(m)" @click="abrirCongelar(m)"
-                        class=" col-span-2 flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-blue-500 border-blue-200 shadow-[0_3px_0_#bfdbfe] hover:bg-blue-50">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z" />
-                        </svg>
-                        Congelar mensualidad
-                    </button>
+                   
                 </div>
             </div>
         </div>
@@ -609,7 +602,7 @@
 
                                         <!-- RF-026: Selector de tipo de documento para facturación electrónica (CC, CE, TI, NIT, RUT) -->
                                         <!-- Tipo documento -->
-                                        <div class="flex flex-col gap-1">
+                                        <div class="hidden flex-col gap-1">
                                             <label
                                                 class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
                                                 Tipo de documento
@@ -628,7 +621,7 @@
 
                                         <!-- RF-026: Número de documento del pagador con validación de formato según el tipo seleccionado -->
                                         <!-- Documento -->
-                                        <div class="flex flex-col gap-1">
+                                        <div class="hidden flex-col gap-1">
                                             <label
                                                 class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
                                                 Número de documento
@@ -650,7 +643,7 @@
 
                                         <!-- RF-026: Nombres y apellidos del pagador para la facturación electrónica -->
                                         <!-- Nombre + Apellido -->
-                                        <div class="grid grid-cols-2 gap-2">
+                                        <div class="hidden grid-cols-2 gap-2">
                                             <div class="flex flex-col gap-1">
                                                 <label
                                                     class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
@@ -679,7 +672,7 @@
 
                                         <!-- RF-026: Teléfono de contacto del pagador para notificaciones de la pasarela -->
                                         <!-- Teléfono -->
-                                        <div class="flex flex-col gap-1">
+                                        <div class="hidden flex-col gap-1">
                                             <label
                                                 class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-500 pl-0.5">
                                                 Teléfono

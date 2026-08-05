@@ -441,10 +441,10 @@
                                 <div class="flex items-center justify-between">
                                     <label class="field-label">Respuesta *</label>
                                     <span class="text-[0.65rem] font-semibold text-[#0D291C] opacity-35">{{
-                                        fR.Respuesta.length }}/250</span>
+                                        fR.Respuesta.length }}/500</span>
                                 </div>
                                 <textarea v-model="fR.Respuesta" class="field-input resize-y min-h-[110px]"
-                                    placeholder="Escribe la respuesta para el cliente..." maxlength="250" />
+                                    placeholder="Escribe la respuesta para el cliente..." maxlength="500" />
                             </div>
                             <div class="flex flex-col gap-[5px]">
                                 <div class="flex items-center justify-between">
