@@ -173,6 +173,32 @@
             </div>
         </Transition>
 
+        <!-- ── Modal confirmación sede ── -->
+        <Transition name="tut">
+            <div v-if="showConfirmModal" class="tutorial-overlay" @click.self="showConfirmModal = false">
+                <div class="confirm-card">
+                    <div class="confirm-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#299261" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <p class="confirm-title">¿Estás seguro?</p>
+                    <p class="confirm-desc">
+                        Has seleccionado la sede <strong>{{ sedeSeleccionada?.Nombre }}</strong>.<br>Continuarás al registro de mensualidad.
+                    </p>
+                    <div class="confirm-actions">
+                        <button @click="showConfirmModal = false" class="confirm-btn-cancel">Cancelar</button>
+                        <button @click="confirmarContinuar" class="confirm-btn-ok">
+                            <span>Continuar</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
     </div>
 </template>
 
@@ -184,6 +210,7 @@ import SedesService from '@/api/services/sedes.service'
 
 const router = useRouter()
 const showTutorial = ref(false)
+const showConfirmModal = ref(false)
 const sedes = ref([])
 const loading = ref(true)
 const sedeSeleccionada = ref(null)
@@ -208,9 +235,16 @@ onMounted(cargarSedes)
 // RF-025.9: Handler de selección — actualiza la sede elegida para activar estilos de selección y habilitar el botón Continuar.
 const seleccionarSede = (sede) => { sedeSeleccionada.value = sede }
 
-// RF-025.10: Navegación al registro — redirige a la vista de registro incluyendo el Id y Nombre de la sede seleccionada como query params.
+// RF-025.10: Abrir modal de confirmación antes de navegar.
 const continuar = () => {
     if (!sedeSeleccionada.value) return
+    showConfirmModal.value = true
+}
+
+// RF-025.10b: Navegación al registro — redirige a la vista de registro incluyendo el Id y Nombre de la sede seleccionada como query params.
+const confirmarContinuar = () => {
+    if (!sedeSeleccionada.value) return
+    showConfirmModal.value = false
     router.push({
         name: 'registro',
         query: {
@@ -579,6 +613,99 @@ const continuar = () => {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* ── Confirm modal ────────────────────────────── */
+.confirm-card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 380px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 32px 28px 28px;
+    box-sizing: border-box;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.confirm-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: #f0fdf4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.confirm-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #232B3A;
+    margin: 0 0 8px;
+}
+
+.confirm-desc {
+    font-size: 0.82rem;
+    color: #a0aec0;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+.confirm-desc strong {
+    color: #299261;
+    font-weight: 700;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-btn-cancel {
+    flex: 1;
+    padding: 11px 16px;
+    border-radius: 12px;
+    border: 1.5px solid #e8ecf0;
+    background: #fff;
+    color: #232B3A;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: "Funnel Display", sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.confirm-btn-cancel:hover {
+    background: #f7f8fa;
+    border-color: #d0d5dd;
+}
+
+.confirm-btn-ok {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    border: none;
+    background: #232B3A;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: "Funnel Display", sans-serif;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+}
+
+.confirm-btn-ok:hover {
+    background: #299261;
+    box-shadow: 0 6px 18px rgba(41, 146, 97, 0.35);
+    transform: translateY(-1px);
 }
 
 /* ── Responsive ───────────────────────────────── */
