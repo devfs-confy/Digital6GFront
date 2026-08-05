@@ -1049,7 +1049,13 @@ import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
 import FormDate from '@/utils/formats.date'
 import SedesService from '@/api/services/sedes.service'
 
-const parseLocal = (f) => f ? new Date(f.length === 10 ? f + 'T00:00:00' : f) : null
+const parseLocal = (f) => {
+    if (!f) return null
+    const d = new Date(f.length === 10 ? f + 'T00:00:00' : f)
+    if (isNaN(d)) return null
+    d.setHours(0, 0, 0, 0)
+    return d
+}
 
 const formatFecha = (f) => {
     if (!f) return '—'
