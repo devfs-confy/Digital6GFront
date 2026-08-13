@@ -48,6 +48,7 @@
                 <table class="border-collapse min-w-[700px] w-full">
                     <thead>
                         <tr>
+                            <th class="th-cell">ID</th>
                             <th class="th-cell">Nombre</th>
                             <th class="th-cell">Sede</th>
                             <th class="th-cell">Tipo</th>
@@ -63,7 +64,7 @@
 <!-- RF-003.1: Estado de carga del listado — CREAR-CÓDIGOS -->
                         <!-- Loading -->
                         <tr v-if="loading">
-                            <td colspan="7" class="py-20 text-center">
+                            <td colspan="8" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <div
                                         class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
@@ -75,7 +76,7 @@
 <!-- RF-003.1: Estado vacío sin autorizaciones — CREAR-CÓDIGOS -->
                         <!-- Vacío -->
                         <tr v-else-if="autorizacionesPaginadas.length === 0">
-                            <td colspan="7" class="py-20 text-center">
+                            <td colspan="8" class="py-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <AppIcon name="key_off" :size="48" class="text-gray-300" />
                                     <span class="text-sm font-medium text-gray-300">No se encontraron
@@ -89,6 +90,11 @@
                         <tr v-else v-for="a in autorizacionesPaginadas"
                             :key="a.IdAutorizacion + '_' + a.IdEstacionamiento"
                             class="border-b border-[#e8f5e9] last:border-0 hover:bg-[#f0faf4] transition-colors">
+
+                            <!-- ID -->
+                            <td class="px-5 py-3">
+                                <span class="font-mono text-xs text-gray-500">#{{ a.IdAutorizacion }}</span>
+                            </td>
 
                             <!-- Nombre -->
                             <td class="px-5 py-3">

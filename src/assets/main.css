@@ -5260,6 +5260,11 @@ input[type="range"]::-ms-fill-lower {
   border-color: rgb(255 255 255 / 0.45);
 }
 
+.hover\:border-blue-300:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(147 197 253 / var(--tw-border-opacity, 1));
+}
+
 .hover\:bg-\[\#132e21\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(19 46 33 / var(--tw-bg-opacity, 1));
@@ -5417,6 +5422,11 @@ input[type="range"]::-ms-fill-lower {
 .hover\:text-gray-600:hover {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-gray-700:hover {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-purple-500:hover {
@@ -5588,6 +5598,16 @@ input[type="range"]::-ms-fill-lower {
 
 .disabled\:cursor-not-allowed:disabled {
   cursor: not-allowed;
+}
+
+.disabled\:bg-gray-100:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+}
+
+.disabled\:text-gray-400:disabled {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
 }
 
 .disabled\:text-gray-500:disabled {
@@ -5841,6 +5861,10 @@ input[type="range"]::-ms-fill-lower {
 
   .sm\:w-9 {
     width: 2.25rem;
+  }
+
+  .sm\:max-w-\[520px\] {
+    max-width: 520px;
   }
 
   .sm\:max-w-\[860px\] {

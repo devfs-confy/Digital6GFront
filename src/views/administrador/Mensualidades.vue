@@ -429,6 +429,26 @@
                     </p>
                 </div>
 
+                <!-- Cambiar estacionamiento -->
+                <div class="flex flex-col gap-1.5 pt-1">
+                    <label class="aside-field-label">Cambiar estacionamiento</label>
+                    <button @click="abrirModalCambioEst"
+                        class="aside-field-input cursor-pointer flex items-center justify-between bg-white hover:bg-[#f0faf4] transition-colors text-left">
+                        <span class="text-sm font-semibold text-[#0D291C]">Cambiar estacionamiento</span>
+                        <AppIcon name="swap_horiz" :size="20" class="text-[#299261]" />
+                    </button>
+                </div>
+
+                <!-- Enviar tarjeta -->
+                <div class="flex flex-col gap-1.5 pt-1">
+                    <label class="aside-field-label">Tarjeta</label>
+                    <button @click="enviarTarjetaCliente"
+                        class="aside-field-input cursor-pointer flex items-center justify-between bg-white hover:bg-blue-50 transition-colors text-left border-2 border-blue-200 hover:border-blue-300">
+                        <span class="text-sm font-semibold text-blue-700">Enviar tarjeta</span>
+                        <AppIcon name="credit_card" :size="20" class="text-blue-500" />
+                    </button>
+                </div>
+
             </template>
 
         </AsideEditar>
@@ -690,7 +710,110 @@
             </Transition>
         </Teleport>
 
-        
+        <!-- ── Modal Cambiar Estacionamiento ──────────────────────────────── -->
+        <Teleport to="body">
+            <Transition name="modal-fade">
+                <div v-if="modalCambioEst"
+                    class="fixed inset-0 z-[1000] bg-black/55 backdrop-blur-sm flex sm:items-center items-end sm:p-4"
+                    @click.self="modalCambioEst = false">
+                    <div
+                        class="w-full sm:max-w-[520px] sm:mx-auto flex flex-col overflow-hidden bg-white border-2 border-[#0D291C] rounded-t-3xl sm:rounded-3xl sm:max-h-[88vh] max-h-[85vh]"
+                        style="box-shadow: 0 6px 0 #000">
+
+                        <!-- Header -->
+                        <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] flex-shrink-0">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-white/10 border border-[#7FD344]/30 flex items-center justify-center flex-shrink-0">
+                                    <AppIcon name="swap_horiz" :size="18" class="text-[#7FD344]" />
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[0.9rem] font-extrabold text-white truncate">Cambiar estacionamiento
+                                    </p>
+                                    <p class="text-[0.65rem] text-white/50 font-semibold truncate mt-[1px]">
+                                        {{ detalle?.NombreApellidos }} · #{{ detalle?.IdPersonaAutorizada }}
+                                    </p>
+                                </div>
+                            </div>
+                            <button @click="modalCambioEst = false"
+                                class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white transition-all flex-shrink-0">
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+                            <div v-if="guardandoCambioEst" class="flex flex-col items-center py-10 gap-3">
+                                <div
+                                    class="w-8 h-8 border-4 border-[#0D291C] border-t-[#7FD344] rounded-full animate-spin" />
+                                <span class="text-sm text-gray-400">Procesando cambio...</span>
+                            </div>
+
+                            <template v-else>
+                                <!-- Estacionamiento actual -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="aside-field-label">Estacionamiento actual</label>
+                                    <input type="text"
+                                        :value="detalle?.T_Estacionamiento?.Nombre ?? '—'"
+                                        disabled
+                                        class="aside-field-input bg-gray-100 text-gray-500 cursor-not-allowed" />
+                                </div>
+
+                                <!-- Nuevo estacionamiento -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="aside-field-label">Nuevo estacionamiento <span
+                                            class="text-red-400">*</span></label>
+                                    <select v-model="cambioEstacionamientoNuevo"
+                                        @change="onCambioEstacionamientoChange"
+                                        class="aside-field-input cursor-pointer">
+                                        <option value="" disabled>Selecciona una sede</option>
+                                        <option v-for="s in sedesFiltradasCambioEst" :key="s.IdEstacionamiento"
+                                            :value="String(s.IdEstacionamiento)">
+                                            {{ s.Nombre }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Autorización -->
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="aside-field-label">Autorización <span
+                                            class="text-red-400">*</span></label>
+                                    <select v-model="cambioAutorizacion"
+                                        :disabled="!autorizacionesNuevoEst.length"
+                                        class="aside-field-input cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed">
+                                        <option :value="null" disabled>
+                                            {{ autorizacionesNuevoEst.length ? 'Selecciona una autorización' :
+                                                'Selecciona primero un estacionamiento' }}
+                                        </option>
+                                        <option v-for="a in autorizacionesNuevoEst" :key="a.IdAutorizacion"
+                                            :value="Number(a.IdAutorizacion)">
+                                            {{ a.NombreAutorizacion }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <p v-if="errCambioEst" class="text-red-500 text-sm font-semibold">{{ errCambioEst
+                                    }}</p>
+                            </template>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100 flex-shrink-0">
+                            <button @click="modalCambioEst = false"
+                                class="px-4 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-all cursor-pointer">
+                                Cancelar
+                            </button>
+                            <button @click="guardarCambioEstacionamiento"
+                                :disabled="!cambioEstacionamientoNuevo || !cambioAutorizacion || guardandoCambioEst"
+                                class="px-4 py-2 rounded-xl bg-[#0D291C] text-white text-sm font-bold disabled:opacity-40 hover:bg-[#1a3d2b] transition-all cursor-pointer">
+                                Guardar cambio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
+
     </div>
 </template>
 
@@ -717,6 +840,15 @@ const totalPaginas = ref(1)
 const totalRegistros = ref(0)
 const limit = ref(10)
 const autorizaciones = ref([])
+
+// ── Cambio de estacionamiento ──────────────────────────────────────
+const modalCambioEst = ref(false)
+const cambioEstacionamientoNuevo = ref('')
+const cambioAutorizacion = ref(null)
+const autorizacionesNuevoEst = ref([])
+const guardandoCambioEst = ref(false)
+const errCambioEst = ref('')
+
 // RF-012.3: Estado del panel de edición de mensualidad — EDITAR-MENSUALIDADES
 // Panel
 const panelAbierto = ref(false)
@@ -1165,6 +1297,109 @@ const guardar = async () => {
         errGuardar.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al guardar.')
     } finally {
         guardando.value = false
+    }
+}
+
+// ── Cambio de estacionamiento ──────────────────────────────────────
+const sedesFiltradasCambioEst = computed(() => {
+    const idActual = String(detalle.value?.T_Estacionamiento?.IdEstacionamiento ?? '')
+    return sedes.value.filter(s => String(s.IdEstacionamiento) !== idActual)
+})
+
+const abrirModalCambioEst = () => {
+    if (!detalle.value) return
+    cambioEstacionamientoNuevo.value = ''
+    cambioAutorizacion.value = null
+    autorizacionesNuevoEst.value = []
+    errCambioEst.value = ''
+    guardandoCambioEst.value = false
+    modalCambioEst.value = true
+}
+
+const onCambioEstacionamientoChange = async () => {
+    cambioAutorizacion.value = null
+    autorizacionesNuevoEst.value = []
+    errCambioEst.value = ''
+    if (!cambioEstacionamientoNuevo.value) return
+
+    try {
+        const res = await AutorizacionesService.listarPorSede(cambioEstacionamientoNuevo.value)
+        const data = Array.isArray(res) ? res : (res?.data ?? [])
+        autorizacionesNuevoEst.value = data
+    } catch (e) {
+        console.error('[Autorizaciones nuevo est]', e)
+        autorizacionesNuevoEst.value = []
+    }
+}
+
+const guardarCambioEstacionamiento = async () => {
+    if (!cambioEstacionamientoNuevo.value || !cambioAutorizacion.value) {
+        errCambioEst.value = 'Selecciona el nuevo estacionamiento y una autorización.'
+        return
+    }
+
+    const { isConfirmed } = await showConfirm({
+        title: '¿Está seguro de realizar esto?',
+        text: 'Esta acción hará inhabilitar la mensualidad en el estacionamiento actual y actualizará en el nuevo.',
+        confirmText: 'Sí, cambiar',
+        cancelText: 'Cancelar',
+        icon: 'warning',
+    })
+    if (!isConfirmed) return
+
+    errCambioEst.value = ''
+    guardandoCambioEst.value = true
+    try {
+        const id = detalle.value?.IdPersonaAutorizada
+        const dto = {
+            IdEstacionamientoNuevo: Number(cambioEstacionamientoNuevo.value),
+            IdAutorizacion: Number(cambioAutorizacion.value),
+        }
+        const response = await MensualidadesService.cambiarEstacionamiento(id, dto)
+        if (response?.error) {
+            return showError({ data: response })
+        }
+        showSuccess('Cambio realizado', response.message)
+        modalCambioEst.value = false
+        await cargarMensualidades()
+        cerrarPanel()
+    } catch (e) {
+        console.error('[Cambio estacionamiento]', e.response?.data ?? e.message)
+        const msg = e.response?.data?.message
+        errCambioEst.value = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al cambiar estacionamiento.')
+    } finally {
+        guardandoCambioEst.value = false
+    }
+}
+
+// ── Enviar tarjeta ─────────────────────────────────────────────────
+const enviarTarjetaCliente = async () => {
+    if (!detalle.value) return
+
+    const { isConfirmed } = await showConfirm({
+        title: '¿Está seguro de enviar la tarjeta?',
+        text: `Se enviará la tarjeta a ${detalle.value.NombreApellidos}.`,
+        confirmText: 'Sí, enviar',
+        cancelText: 'Cancelar',
+        icon: 'question',
+    })
+    if (!isConfirmed) return
+
+    try {
+        const dto = {
+            IdEstacionamiento: Number(detalle.value.T_Estacionamiento?.IdEstacionamiento ?? detalle.value.IdEstacionamiento),
+            Documento: detalle.value.Documento,
+        }
+        const response = await MensualidadesService.enviarTarjeta(dto)
+        if (response?.error) {
+            return showError({ data: response })
+        }
+        showSuccess('Tarjeta enviada', response.message)
+    } catch (e) {
+        console.error('[Enviar tarjeta]', e.response?.data ?? e.message)
+        const msg = e.response?.data?.message
+        const errText = Array.isArray(msg) ? msg.join(', ') : (msg ?? 'Error al enviar tarjeta.')
+        showError({ title: 'Error', text: errText })
     }
 }
 </script>

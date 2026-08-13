@@ -219,6 +219,28 @@ class MensualidadesService {
       return handleError(error);
     }
   }
+
+  // PUT /v1/cambio-estacionamiento/{IdPersonaAutorizada}
+  // Body: { IdEstacionamientoNuevo, IdAutorizacion }
+  async cambiarEstacionamiento(id, dto) {
+    try {
+      const { data } = await api.put(`v1/cambio-estacionamiento/${id}`, dto);
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // POST /v1/mensualidades/admin/enviar-tarjeta
+  // Body: { IdEstacionamiento, Documento }
+  async enviarTarjeta(dto) {
+    try {
+      const { data } = await api.post(`${BASE_ADMIN}/enviar-tarjeta`, dto);
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
 }
 
 export default new MensualidadesService();
