@@ -21,19 +21,18 @@
             <!-- RF-038: Skeleton loader del grid de mensualidades mientras se carga la información desde el backend -->
             <!-- Skeleton -->
             <template v-if="loading">
-                <div v-for="n in 2" :key="n" class="h-80 rounded-3xl animate-pulse"
-                    style="background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%" />
+                <div v-for="n in 2" :key="n" class="h-80 rounded-3xl shimmer" />
             </template>
 
             <!-- RF-038: Tarjeta individual de mensualidad con toda la información resumida del pagador/suscriptor -->
             <!-- Card -->
             <div v-for="(m, i) in mensualidades" :key="m.id"
-                class="bg-white rounded-3xl p-[22px] flex flex-col gap-4 relative overflow-hidden border-2 transition-all duration-200 hover:-translate-y-0.5 max-h-max"
+                class="bg-white rounded-3xl p-[22px] flex flex-col gap-4 relative overflow-hidden border-2 transition-transform duration-200 hover:-translate-y-0.5 max-h-max card-enter will-change-[transform]"
                 :class="[
                     m.estado === 'congelada'
                         ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 shadow-[0_4px_0_#93c5fd,0_2px_16px_rgba(59,130,246,0.10)] hover:shadow-[0_6px_0_#7db8f7,0_4px_20px_rgba(59,130,246,0.15)]'
                         : 'border-[#e8f5e9] shadow-[0_4px_0_#e2ede7,0_2px_16px_rgba(13,41,28,0.06)] hover:shadow-[0_6px_0_#c8ddd1,0_4px_20px_rgba(13,41,28,0.10)] '
-                ]" :style="{ animationDelay: `${i * 0.08}s`, }">
+                ]" :style="{ animationDelay: `${i * 0.08}s` }">
                 <!-- RF-024: Banda superior de color que indica visualmente el estado de la mensualidad (activa, por_vencer, vencida, congelada, pendiente) -->
                 <!-- Top band -->
                 <div class="absolute top-0 left-0 right-0 h-1 rounded-t-3xl" :class="{
@@ -204,13 +203,13 @@
 
                 <!-- RF-033, RF-028: Botón "Perdí mi tarjeta" que habilita el cobro de reposición de tarjeta de acceso cuando la sede lo requiere (btnTarjeta flag). Visible en todos los estados de la mensualidad -->
                 <button @click="abrirModalTarjeta(m)"
-                    class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-all">
+                    class="w-full flex items-center justify-center gap-1.5 py-[7px] px-3 rounded-[12px] text-[0.7rem] font-black cursor-pointer border border-dashed border-red-200 text-red-400 bg-red-50/50 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
                         viewBox="0 0 24 24">
                         <path
                             d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                     </svg>
-                    Requiero tarjeta
+                    Requiero tarjeta fisica de acceso
                 </button>
 
                 <!-- RF-024, RF-038: Acciones principales de la tarjeta: pagar, ver detalle y congelar mensualidad -->
@@ -241,7 +240,7 @@
                             :class="pagarDeshabilitado(m)
                                 ? 'bg-gray-100 text-gray-400 border-gray-200 shadow-none cursor-not-allowed'
                                 : 'bg-[#0D291C] text-[#7FD344] border-[#0D291C] shadow-[0_3px_0_#051510] hover:bg-[#132e21] cursor-pointer active:translate-y-[2px]'"
-                            class="w-full flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-all">
+                            class="w-full flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black border-2 transition-transform duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                                 viewBox="0 0 24 24">
                                 <path
@@ -253,7 +252,7 @@
                     <!-- RF-038: Botón para ver el detalle completo de la mensualidad seleccionada -->
                     <!-- View -->
                     <button @click="abrirDetalle(m)"
-                        class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-all active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
+                        class="flex items-center justify-center gap-1.5 py-[10px] px-3 rounded-[14px] text-[0.78rem] font-black cursor-pointer border-2 transition-transform transition-colors duration-200 active:translate-y-[2px] bg-white text-[#299261] border-[#c8e6c9] shadow-[0_3px_0_#c8e6c9] hover:bg-[#f0faf4]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
                             viewBox="0 0 24 24">
                             <path
@@ -276,9 +275,9 @@
         <!-- ───────────────── MODAL: PAGO ───────────────── -->
         <Transition name="modal">
             <div v-if="modalPago"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[70] p-4">
+                class="fixed inset-0 bg-black/55 flex items-center justify-center z-[70] p-4">
                 <div
-                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)] max-[720px]:max-h-[95%]">
+                    class="modal-card bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[420px] flex flex-col overflow-hidden max-h-[calc(100vh-32px)] max-[720px]:max-h-[95%]">
                     <!-- RF-038: Cabecera del modal con nombre del suscriptor y sede para confirmar la mensualidad que se va a pagar -->
                     <!-- Head -->
                     <div
@@ -297,7 +296,7 @@
                             </div>
                         </div>
                         <button @click="cerrarModales"
-                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-colors duration-200">✕</button>
                     </div>
 
                     <!-- Body (scrollable) -->
@@ -360,7 +359,7 @@
 
                                     <!-- CTA -->
                                     <a :href="pagoPendiente.urlPago"
-                                        class="flex items-center justify-center gap-2 py-[11px] px-4 rounded-[14px] text-[0.78rem] font-black border-2 text-white active:translate-y-[2px] transition-all cursor-pointer no-underline"
+                                        class="flex items-center justify-center gap-2 py-[11px] px-4 rounded-[14px] text-[0.78rem] font-black border-2 text-white active:translate-y-[2px] transition-colors transition-transform duration-200 cursor-pointer no-underline"
                                         style="background:#f59e0b;border-color:#d97706;box-shadow:0 3px 0 #b45309">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                                             fill="currentColor" viewBox="0 0 24 24">
@@ -434,7 +433,7 @@
 
                                 <!-- RF-025: Selector de sede principal para el pago; al cambiar se recalculan las opciones disponibles -->
                                 <select v-model="sedeInput" @change="cambiarSede"
-                                    class="p-3.5 px-4 rounded-2xl border-2 text-black border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9] cursor-pointer text-left w-full transition-all  hover:border-[#c8e6c9] hover:bg-[#f0fdf4] ">
+                                    class="p-3.5 px-4 rounded-2xl border-2 text-black border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9] cursor-pointer text-left w-full transition-colors duration-200 hover:border-[#c8e6c9] hover:bg-[#f0fdf4] ">
                                     <option v-for="sede in sedes" :key="sede.IdEstacionamiento"
                                         :value="sede.IdEstacionamiento">
                                         {{ sede.Nombre }}
@@ -446,7 +445,7 @@
                                         Puede ingresar a las siguientes sedes
                                     </h2>
                                     <div v-for="sedeInfo in infoSedes"
-                                        class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-2 hover:bg-gray-100 transition">
+                                        class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-2 hover:bg-gray-100 transition-colors duration-200">
 
                                         <p class="text-sm text-gray-500">Sede</p>
                                         <p class="font-semibold text-gray-800">
@@ -464,7 +463,7 @@
                                 <div class="flex flex-col gap-2">
                                     <button v-for="op in opcionesPago" :key="op.modalidad + op.cantidadMeses"
                                         @click="seleccionarOpcion(op)"
-                                        class="flex flex-col gap-2.5 p-3.5 px-4 rounded-2xl border-2 bg-gray-50 cursor-pointer text-left w-full transition-all shadow-[0_2px_0_#e2e8f0] hover:border-[#c8e6c9] hover:bg-[#f0fdf4]"
+                                        class="flex flex-col gap-2.5 p-3.5 px-4 rounded-2xl border-2 bg-gray-50 cursor-pointer text-left w-full transition-transform transition-shadow transition-colors duration-200 shadow-[0_2px_0_#e2e8f0] hover:border-[#c8e6c9] hover:bg-[#f0fdf4]"
                                         :class="opcionSeleccionada?.modalidad === op.modalidad
                                             ? 'border-[#299261] bg-[#f0fdf4] shadow-[0_2px_0_#c8e6c9]'
                                             : 'border-gray-200'">
@@ -528,7 +527,7 @@
                                 </p>
                                 <div class="flex gap-2.5">
                                     <button v-for="n in [1, 2]" :key="n" @click="seleccionarMesesExtra(n)"
-                                        class="flex-1 flex flex-col items-center gap-0.5 py-3 px-2.5 rounded-[14px] border-2 cursor-pointer transition-all"
+                                        class="flex-1 flex flex-col items-center gap-0.5 py-3 px-2.5 rounded-[14px] border-2 cursor-pointer transition-transform transition-shadow transition-colors duration-200"
                                         :class="mesesExtra === n
                                             ? 'border-[#299261] bg-[#0D291C] shadow-[0_3px_0_#051510]'
                                             : 'border-gray-200 bg-gray-50 shadow-[0_2px_0_#e2e8f0] hover:border-[#c8e6c9] hover:bg-[#f0fdf4]'">
@@ -566,7 +565,7 @@
                                         cuándo
                                         inicia tu mensualidad?</label>
                                     <input v-model="fechaInicioManual" type="date"
-                                        class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-all w-full"
+                                        class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-colors duration-200 w-full"
                                         :min="hoyISO" />
                                     <p class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">Selecciona la fecha en
                                         que deseas activar tu
@@ -609,7 +608,7 @@
                                             </label>
                                             <select v-model="avalpayinformacion.tipoDocumento" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
                        outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                       transition-all w-full appearance-none cursor-pointer">
+                       transition-colors duration-200 w-full appearance-none cursor-pointer">
                                                 <option value="" disabled>Selecciona...</option>
                                                 <option value="CC">Cédula de Ciudadanía</option>
                                                 <option value="CE">Cédula de Extranjería</option>
@@ -630,7 +629,7 @@
                                                 placeholder="Ej: 1234567890"
                                                 @input="avalpayinformacion.documento = avalpayinformacion.documento.replace(/[^0-9]/g, '')"
                                                 class="bg-white border-2 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
-           outline-none focus:ring-2 transition-all w-full placeholder:text-gray-300" :class="avalpayinformacion.documento && avalpayinformacion.tipoDocumento && !REGEX_DOCUMENTO[avalpayinformacion.tipoDocumento]?.test(avalpayinformacion.documento)
+           outline-none focus:ring-2 transition-colors duration-200 w-full placeholder:text-gray-300" :class="avalpayinformacion.documento && avalpayinformacion.tipoDocumento && !REGEX_DOCUMENTO[avalpayinformacion.tipoDocumento]?.test(avalpayinformacion.documento)
             ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
             : 'border-gray-300 focus:border-[#299261] focus:ring-[#299261]/15'" />
 
@@ -654,7 +653,7 @@
                                                     @input="avalpayinformacion.nombre = avalpayinformacion.nombre.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '')"
                                                     class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
                    outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                   transition-all w-full placeholder:text-gray-300" />
+                   transition-colors duration-200 w-full placeholder:text-gray-300" />
                                             </div>
                                             <div class="flex flex-col gap-1">
                                                 <label
@@ -665,8 +664,8 @@
                                                     placeholder="Ej: Pérez"
                                                     @input="avalpayinformacion.apellido = avalpayinformacion.apellido.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '')"
                                                     class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
-                   outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                   transition-all w-full placeholder:text-gray-300" />
+                    outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
+                    transition-colors duration-200 w-full placeholder:text-gray-300" />
                                             </div>
                                         </div>
 
@@ -681,7 +680,7 @@
                                                 @input="avalpayinformacion.telefono = avalpayinformacion.telefono.replace(/[^0-9]/g, '')"
                                                 placeholder="Ej: 3001234567" class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
                        outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15
-                       transition-all w-full placeholder:text-gray-300" />
+                       transition-colors duration-200 w-full placeholder:text-gray-300" />
                                         </div>
 
                                         <!-- RF-026: Correo electrónico del pagador donde se enviará la factura electrónica y los comprobantes de pago -->
@@ -693,7 +692,7 @@
                                             </label>
                                             <input v-model="avalpayinformacion.correo" type="email"
                                                 placeholder="Ej: juan@correo.com" class="bg-white border-2 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C]
-               outline-none focus:ring-2 transition-all w-full placeholder:text-gray-300" :class="avalpayinformacion.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(avalpayinformacion.correo)
+               outline-none focus:ring-2 transition-colors duration-200 w-full placeholder:text-gray-300" :class="avalpayinformacion.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(avalpayinformacion.correo)
                 ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
                 : 'border-gray-300 focus:border-[#299261] focus:ring-[#299261]/15'" />
                                             <p v-if="avalpayinformacion.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(avalpayinformacion.correo)"
@@ -712,7 +711,7 @@
                         <div v-show="!enFondoScroll"
                             class="sticky bottom-0 left-0 right-0 px-4 py-2.5 bg-white/95 backdrop-blur-sm border-t border-[#c8e6c9] flex-shrink-0">
                             <button @click="scrollAlFormularioPago"
-                                class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-black border border-[#1a4a2e] transition-all active:translate-y-px">
+                                class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#0D291C] text-[#7FD344] text-[0.75rem] font-black border border-[#1a4a2e] transition-transform transition-colors duration-200 active:translate-y-px">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                     viewBox="0 0 24 24">
                                     <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" />
@@ -726,7 +725,7 @@
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200 flex-shrink-0">
                         <button @click="cerrarModales"
-                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-transform transition-shadow transition-colors duration-200">
                             Cancelar
                         </button>
                         <button @click="confirmarPago" :disabled="(!infoExcedente && !opcionSeleccionada) || loadingOpciones || iniciandoPago
@@ -734,7 +733,7 @@
                             || !avalpayinformacion.tipoDocumento || !avalpayinformacion.documento
                             || !avalpayinformacion.nombre || !avalpayinformacion.apellido
                             || !avalpayinformacion.telefono || !avalpayinformacion.correo"
-                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-transform transition-shadow transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="iniciandoPago"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
                             {{ iniciandoPago ? 'Redirigiendo...' : infoExcedente ? 'Pagar excedente (' +
@@ -760,8 +759,8 @@
         <!-- ───────────────── MODAL: CAMBIO DE PLACAS ───────────────── -->
         <Transition name="modal">
             <div v-if="modalPlacas"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-[60] p-4 ">
-                <div class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px]  flex flex-col overflow-y-auto"
+                class="fixed inset-0 bg-black/55 flex items-center justify-center z-[60] p-4 ">
+                <div class="modal-card bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[460px]  flex flex-col overflow-y-auto"
                     style="max-height: 100%;">
                     <!-- Head -->
                     <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
@@ -778,7 +777,7 @@
                             </div>
                         </div>
                         <button @click="modalPlacas = false"
-                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-colors duration-200">✕</button>
                     </div>
                     <!-- Body -->
                     <div class="flex flex-col bg-white overflow-y-auto">
@@ -816,7 +815,7 @@
 
                                     <div class="flex items-center gap-2">
                                         <div
-                                            class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-all focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
+                                            class="flex items-center gap-2 flex-1 bg-white border-2 border-gray-300 rounded-[10px] px-3 py-2 transition-colors duration-200 focus-within:border-[#299261] focus-within:shadow-[0_0_0_3px_rgba(41,146,97,0.12)]">
                                             <AppIcon :name="mensualidadAccion?.esMoto ? 'two_wheeler' : 'car-side'"
                                                 :size="14" :style="{ color: idx === 0 ? '#299261' : '#9ca3af' }" />
                                             <input v-model="nuevasPlacas[idx]" type="text" maxlength="6"
@@ -926,17 +925,17 @@
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
                         <button @click="infoExcedente ? (infoExcedente = null) : (modalPlacas = false)"
-                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-colors transition-transform duration-200">
                             {{ infoExcedente ? 'Volver' : 'Cancelar' }}
                         </button>
                         <button v-if="!infoExcedente" @click="confirmarCambioPlacas"
-                            class="flex-1 flex items-center justify-center gap-2 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            class="flex-1 flex items-center justify-center gap-2 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-colors transition-transform duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="guardandoPlacas"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-[#7FD344]/30 border-t-[#7FD344] rounded-full animate-spin" />
                             Confirmar cambio
                         </button>
                         <button v-else @click="confirmarPagoExcedente"
-                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-all">
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-colors transition-transform duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 viewBox="0 0 24 24">
                                 <path
@@ -953,9 +952,9 @@
         <!-- ───────────────── MODAL: TARJETA PERDIDA ───────────────── -->
         <Transition name="modal">
             <div v-if="modalTarjeta"
-                class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                class="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-4">
                 <div
-                    class="bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[400px] flex flex-col overflow-hidden">
+                    class="modal-card bg-white border-2 border-[#0D291C] rounded-3xl shadow-[0_6px_0_#000] w-full max-w-[400px] flex flex-col overflow-hidden">
 
                     <!-- Head -->
                     <div class="flex items-center justify-between px-5 py-4 bg-[#0D291C] border-b-2 border-[#0a1f15]">
@@ -974,7 +973,7 @@
                             </div>
                         </div>
                         <button @click="modalTarjeta = false"
-                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-all">✕</button>
+                            class="w-7 h-7 rounded-lg flex items-center justify-center text-[0.82rem] font-black cursor-pointer border-2 border-white/25 bg-white/10 text-white/70 hover:bg-white/22 hover:text-white transition-colors duration-200">✕</button>
                     </div>
 
                     <!-- Body -->
@@ -1008,11 +1007,11 @@
                     <!-- Foot -->
                     <div class="flex gap-2.5 px-5 py-3 pb-[18px] bg-white border-t-2 border-gray-200">
                         <button @click="modalTarjeta = false"
-                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-all">
+                            class="flex-1 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-black bg-white text-[#232B3A] shadow-[0_1px_0_#000] active:translate-y-0.5 transition-colors transition-transform duration-200">
                             Cancelar
                         </button>
                         <button @click="confirmarTarjetaPerdida()" :disabled="guardandoTarjeta"
-                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-red-600 bg-red-600 text-white shadow-[0_1px_0_#991b1b] hover:bg-red-700 active:translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                            class="flex-1 flex items-center justify-center gap-1.5 py-[11px] px-3.5 rounded-full text-[0.78rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-red-600 bg-red-600 text-white shadow-[0_1px_0_#991b1b] hover:bg-red-700 active:translate-y-0.5 transition-colors transition-transform duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
                             <div v-if="guardandoTarjeta"
                                 class="w-[13px] h-[13px] flex-shrink-0 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             {{ guardandoTarjeta ? 'Procesando...' : 'Sí, perdí mi tarjeta' }}
@@ -1990,12 +1989,34 @@ const cerrarModales = () => {
 
 <style scoped>
 @keyframes shimmer {
-    0% {
-        background-position: 200% 0
-    }
+    0% { transform: translateX(-100%) }
+    100% { transform: translateX(100%) }
+}
 
-    100% {
-        background-position: -200% 0
+.card-enter {
+    animation: cardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: transform, opacity;
+}
+
+.shimmer {
+    position: relative;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,.55) 50%, transparent 75%);
+    transform: translateX(-100%);
+    animation: shimmer 1.2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-enter,
+    .shimmer::after {
+        animation: none;
     }
 }
 
@@ -2106,6 +2127,11 @@ const cerrarModales = () => {
         to {
             opacity: 0;
         }
+    }
+
+    .card-enter {
+        animation: none;
+        will-change: auto;
     }
 
     .hint-slide-enter-active,
