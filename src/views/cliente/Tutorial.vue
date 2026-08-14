@@ -137,6 +137,18 @@
                             playsinline />
                     </div>
 
+                    <!-- Video de YouTube -->
+                    <div v-else-if="pasoActualObj.youtube" class="relative overflow-hidden bg-[#0A1F13]" style="height: 290px">
+                        <iframe
+                            :key="pasoActualObj.youtube"
+                            :src="pasoActualObj.youtube"
+                            title="Video tutorial"
+                            class="w-full h-full"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen />
+                    </div>
+
                     <!-- Carousel de imágenes -->
                     <div v-else-if="pasoActualObj.imgs?.length" class="relative overflow-hidden select-none bg-[#0A1F13]"
                         style="height: 290px" @touchstart.passive="swipeStart" @touchend.passive="swipeEnd">
@@ -373,6 +385,20 @@ const categorias = [
     {
         id: 'inicio', label: 'Inicio Tutorial', icon: 'home',
         pasos: [
+            {
+                titulo: 'Gestiona tu mensualidad',
+                subtitulo: 'Aprende a consultar y administrar tu mensualidad',
+                icon: 'event_available', imgs: [],
+                youtube: 'https://www.youtube.com/embed/ZyTJ3MxgKto',
+                desc: 'En este video te mostramos cómo revisar el estado de tu mensualidad, la fecha de vencimiento y las opciones disponibles desde el inicio.',
+            },
+            {
+                titulo: 'Cómo pagar',
+                subtitulo: 'Realiza el pago de tu mensualidad paso a paso',
+                icon: 'payment_card', imgs: [],
+                youtube: 'https://www.youtube.com/embed/bNfVeVpFfAs',
+                desc: 'Aquí explicamos el flujo completo para pagar tu mensualidad a través de la pasarela AvalPay de forma rápida y segura.',
+            },
             {
                 titulo: 'Tu pantalla de inicio o en tu menú de navegación',
                 subtitulo: 'Lo primero que ves al entrar',
