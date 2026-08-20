@@ -35,7 +35,7 @@
                     <div class="fields">
                         <!-- RF-022.4: Campo de documento — identificador único del cliente para el proceso de login. -->
                         <div class="field-group">
-                            <label for="document">Documento</label>
+                            <label for="document">Documento o correo electrónico</label>
                             <div class="input-wrap" :class="{ error: auth.errorMsg }">
                                 <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -43,7 +43,7 @@
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
-                                <input v-model="documento" id="document" type="text" placeholder="Número de documento"
+                                <input v-model="documento" id="document" type="text" placeholder="Número de documento o correo electrónico"
                                     @keyup.enter="handleLogin" autocomplete="username" />
                             </div>
                         </div>
