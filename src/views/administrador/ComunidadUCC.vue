@@ -411,7 +411,7 @@ const subirExcel = async () => {
         if (tabActiva.value === 'estudiantes-universidad') {
             res = await comunidadUccService.uploadExcelEstudiantes(archivoExcel.value)
         } else if (tabActiva.value === 'personal-universidad') {
-            res = await comunidadUccService.    en(archivoExcel.value)
+            res = await comunidadUccService.uploadExcelPersonal(archivoExcel.value)
         }
 
         modalExcel.value = false
@@ -425,6 +425,7 @@ const subirExcel = async () => {
             await cargar()
         }
     } catch (e) {
+    console.log(e)
         if (e?.code === 'ECONNABORTED' || e?.message?.toLowerCase().includes('timeout')) {
             errExcel.value = 'El archivo está siendo procesado. Por favor espera un momento y refresca la tabla.'
         } else {
