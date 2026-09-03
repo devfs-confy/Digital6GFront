@@ -1030,6 +1030,11 @@
             :nombre-usuario="avalpayinformacion.nombre + ' ' + avalpayinformacion.apellido"
             :email-usuario="avalpayinformacion.correo" :telefono-usuario="avalpayinformacion.telefono"
             @confirmar="ejecutarPago" />
+
+
+           <!-- Componente de banners/publicidad — carga imágenes promocionales del backend y las muestra en modal automático al ingresar. -->
+    <ModalBanner :imagenes="bannerUrl" :enlaces="bannerEnlaces" :autoshow="true" />
+
     </div>
 </template>
 
@@ -1047,6 +1052,39 @@ import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
 import FormDate from '@/utils/formats.date'
 import SedesService from '@/api/services/sedes.service'
+import ModalBanner from '@/components/modals/ModalBanner.vue'
+import publicidadService from '@/api/services/banner.service'
+
+const bannerUrl = ref([])
+const bannerEnlaces = ref([])
+
+// Carga asíncrona de publicidad/banners al montar el componente — obtiene lista de publicidad y sus imágenes en base64.
+onMounted(async () => {
+    const res = await publicidadService.getMiPublicidad()
+
+    if (res?.error) return
+
+    const items = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+    if (!items.length) return
+
+    const urls = await Promise.all(
+        items.map(async (item) => {
+            const resultado = await publicidadService.getimgpublicidad(item.IdPublicidad)
+
+            const base64 = resultado?.data?.data
+            const contentType = resultado?.data?.contentType ?? 'image/webp'
+
+            if (base64) return `data:${contentType};base64,${base64}`
+
+            return null
+        })
+    )
+
+    const filteredItems = items.filter(item => item.Imagen)
+    bannerUrl.value = filteredItems.map(item => item.Imagen)
+    bannerEnlaces.value = filteredItems.map(item => item.Enlace ?? '')
+
+})
 
 const parseLocal = (f) => {
     if (!f) return null
@@ -1080,6 +1118,8 @@ const recargasData = ref({})
 const modalBodyRef = ref(null)
 const formBillingRef = ref(null)
 const enFondoScroll = ref(false)
+
+
 
 const onModalBodyScroll = (e) => {
     const el = e.target
