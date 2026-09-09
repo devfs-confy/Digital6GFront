@@ -105,6 +105,44 @@
                 </div>
             </div>
 
+            <!-- Imagen adjunta -->
+            <div class="flex flex-col gap-2">
+                <label class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700">
+                    Imagen adjunta <span class="text-gray-400 font-normal normal-case tracking-normal">(opcional)</span>
+                </label>
+                <p class="text-[0.72rem] font-semibold text-gray-400 -mt-1">PNG, JPG, JPEG, WEBP. Máx. 5 MB.</p>
+
+                <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/jpg,image/webp"
+                    class="sr-only" @change="onFileChange" />
+
+                <!-- Estado sin archivo -->
+                <button v-if="!imagenFile" type="button" @click="$refs.fileInput.click()"
+                    class="flex items-center justify-center gap-2 w-full py-6 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 text-gray-500 hover:border-[#299261] hover:bg-[#f0fdf4] hover:text-[#299261] transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                    </svg>
+                    <span class="text-[0.8rem] font-bold">Haz clic para subir una imagen</span>
+                </button>
+
+                <!-- Estado con archivo -->
+                <div v-else class="flex items-center gap-3 p-3 rounded-xl border-2 border-[#299261] bg-[#f0fdf4]">
+                    <img :src="imagenPreview" alt="Preview" class="w-16 h-16 object-cover rounded-lg border border-[#299261]/30 flex-shrink-0" />
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[0.8rem] font-bold text-[#0D291C] truncate">{{ imagenFile.name }}</p>
+                        <p class="text-[0.7rem] font-semibold text-[#299261]">{{ (imagenFile.size / 1024 / 1024).toFixed(2) }} MB</p>
+                    </div>
+                    <button type="button" @click="removerImagen"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-all cursor-pointer flex-shrink-0"
+                        title="Quitar imagen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <p v-if="errImagen" class="text-[0.72rem] font-bold text-red-600">⚠ {{ errImagen }}</p>
+            </div>
+
             <!-- Error general -->
             <div v-if="errGeneral"
                 class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-[0.76rem] font-bold text-red-700">
@@ -201,6 +239,12 @@
                                 v-html="mensajeSanitizado || '<p class=\'text-gray-400 italic\'>Sin contenido</p>'" />
                         </div>
 
+                        <!-- Imagen adjunta -->
+                        <div v-if="imagenPreview" class="px-5 pb-5">
+                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wide mb-2">Imagen adjunta</p>
+                            <img :src="imagenPreview" alt="Imagen adjunta" class="w-full max-h-64 object-contain rounded-xl border border-gray-200" />
+                        </div>
+
                         <!-- Footer branding -->
                         <div class="px-5 py-4 bg-gray-50 border-t border-gray-200">
                             <div class="flex items-center gap-2">
@@ -244,6 +288,10 @@ const sedes = ref([])
 const loadingSedes = ref(false)
 const enviando = ref(false)
 const modalPreview = ref(false)
+const imagenFile = ref(null)
+const imagenPreview = ref('')
+const errImagen = ref('')
+const fileInput = ref(null)
 
 const formData = ref({
     Asunto: '',
@@ -292,6 +340,37 @@ onMounted(async () => {
     }
 })
 
+// ── Imagen ────────────────────────────────────────────────────────
+const onFileChange = (e) => {
+    errImagen.value = ''
+    const file = e.target.files[0]
+    if (!file) return
+
+    const tiposPermitidos = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
+    if (!tiposPermitidos.includes(file.type)) {
+        errImagen.value = 'Tipo de archivo no válido. Usa PNG, JPG, JPEG o WEBP.'
+        if (fileInput.value) fileInput.value.value = ''
+        return
+    }
+
+    const maxSize = 5 * 1024 * 1024 // 5 MB
+    if (file.size > maxSize) {
+        errImagen.value = 'La imagen excede el tamaño máximo de 5 MB.'
+        if (fileInput.value) fileInput.value.value = ''
+        return
+    }
+
+    imagenFile.value = file
+    imagenPreview.value = URL.createObjectURL(file)
+}
+
+const removerImagen = () => {
+    imagenFile.value = null
+    imagenPreview.value = ''
+    errImagen.value = ''
+    if (fileInput.value) fileInput.value.value = ''
+}
+
 // ── Validación ────────────────────────────────────────────────────
 const validarFormulario = () => {
     errEstacionamientos.value = ''
@@ -329,13 +408,17 @@ const enviarCorreo = async () => {
 
     enviando.value = true
     try {
-        const payload = {
-            Asunto: formData.value.Asunto.trim(),
-            Mensaje: formData.value.Mensaje.trim(),
-            IdEstacionamientos: formData.value.IdEstacionamientos,
+        const fd = new FormData()
+        fd.append('Asunto', formData.value.Asunto.trim())
+        fd.append('Mensaje', formData.value.Mensaje.trim())
+        formData.value.IdEstacionamientos.forEach(id => {
+            fd.append('IdEstacionamientos', id)
+        })
+        if (imagenFile.value) {
+            fd.append('imagen', imagenFile.value)
         }
 
-        const res = await CorreosService.enviarMasivo(payload)
+        const res = await CorreosService.enviarMasivo(fd)
 
         if (res?.error) {
             showError({ status: res.status, data: res.data })
@@ -363,6 +446,7 @@ const enviarCorreo = async () => {
             Mensaje: '',
             IdEstacionamientos: [],
         }
+        removerImagen()
         modalPreview.value = false
     } catch (e) {
         errGeneral.value = 'Error inesperado al enviar el correo. Intenta nuevamente.'

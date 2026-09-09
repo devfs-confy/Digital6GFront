@@ -9,7 +9,10 @@ class CorreosService {
 
   async enviarMasivo(dto) {
     try {
-      const response = await api.post(this.nameRoute, dto);
+      const isFormData = dto instanceof FormData;
+      const response = await api.post(this.nameRoute, dto, {
+        headers: isFormData ? { "Content-Type": undefined } : {},
+      });
       return response.data;
     } catch (error) {
       handleError(error, "CorreosService.enviarMasivo");
