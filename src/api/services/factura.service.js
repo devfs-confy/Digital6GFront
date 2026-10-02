@@ -66,6 +66,7 @@ class FacturaService {
     }
   }
 
+
   async getUltimosPagos(documento){
     try{
       const response = await api.get(`/v1/facturas/admin/ultimos/${documento}`);

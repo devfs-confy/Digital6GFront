@@ -565,9 +565,25 @@
                                         cuándo
                                         inicia tu mensualidad?</label>
                                     <input v-model="fechaInicioManual" type="date"
-                                        class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-colors duration-200 w-full"
+                                        :readonly="bloquearFechaInicio"
+                                        class="border-2 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none transition-colors duration-200 w-full"
+                                        :class="bloquearFechaInicio
+                                            ? 'bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500'
+                                            : 'bg-white border-gray-300 focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15'"
                                         :min="hoyISO" />
-                                    <p class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">Selecciona la fecha en
+                                    <!-- Hint cuando la fecha está bloqueada -->
+                                    <p v-if="bloquearFechaInicio" class="text-[0.7rem] text-amber-600 leading-relaxed pl-0.5 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24" class="shrink-0">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                        </svg>
+                                        <span v-if="mensualidadAccion?.estado === 'pendiente'">
+                                            La fecha se asigna automáticamente porque tu mensualidad está pendiente.
+                                        </span>
+                                        <span v-else>
+                                            La fecha de inicio solo puede modificarse los domingos.
+                                        </span>
+                                    </p>
+                                    <p v-else class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">Selecciona la fecha en
                                         que deseas activar tu
                                         mensualidad.</p>
                                 </div>
@@ -1228,6 +1244,13 @@ const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINC
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
 const esRecarga = computed(() => opcionSeleccionada.value?.modalidad === 'RECARGA')
 
+// RF-024: Computed que determina si hoy es domingo (0 = domingo) para bloquear la fecha de inicio manual
+const esDomingoHoy = computed(() => new Date().getDay() === 0)
+
+// RF-024: Computed que determina si se debe bloquear la fecha de inicio manual:
+// se bloquea cuando NO es domingo O cuando la mensualidad está en estado 'pendiente'
+const bloquearFechaInicio = computed(() => !esDomingoHoy.value || mensualidadAccion.value?.estado === 'pendiente')
+
 // RF-024: Lógica de visibilidad del botón Congelar: solo mensualidades mensuales (no quincenales ni motos) con pago al día y fuera de vigencia activa
 const mostrarCongelar = (m) =>
     m.conPago && m.estado !== 'congelada' && !m.esQuincena && !m.esMoto && m.estado !== 'activa' && m.estado !== 'pendiente' && m.estado !== 'por_vencer'
@@ -1648,7 +1671,10 @@ const abrirPago = async (m) => {
     errPago.value = ''
     pagoPendiente.value = null
     mesesExtra.value = 1
-    fechaInicioManual.value = (m.estado === 'vencida' || !m.fechaFin) ? hoyISO : ''
+    // RF-024: Si la fecha está bloqueada (no es domingo o estado pendiente), forzar hoyISO;
+    // si está libre y la mensualidad está vencida o sin fecha fin, usar hoyISO; de lo contrario vacío
+    const debeBloquear = !esDomingoHoy.value || m.estado === 'pendiente'
+    fechaInicioManual.value = debeBloquear ? hoyISO : ((m.estado === 'vencida' || !m.fechaFin) ? hoyISO : '')
     loadingOpciones.value = true
     modalPago.value = true
 
