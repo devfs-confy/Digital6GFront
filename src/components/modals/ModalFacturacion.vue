@@ -269,7 +269,6 @@
 <script setup>
 import { ref, reactive, watch } from 'vue'
 import ClientBillService from '@/api/services/clientefactura.service'
-import { showConfirm } from '@/utils/swal'
 
 const props = defineProps({
     modelValue: Boolean,
@@ -334,14 +333,7 @@ const reset = () => {
 }
 
 // ── Paso 0: Elección ─────────────────────────────────────────────
-const elegirNo = async () => {
-    const { isConfirmed } = await showConfirm({
-        title: 'Serás redirigido a la pasarela de pagos para completar tu pago de forma segura.',
-        confirmText: 'Continuar',
-        cancelText: 'Cancelar',
-        icon: 'info',
-    })
-    if (!isConfirmed) return
+const elegirNo = () => {
     // Sin factura: IdentificacionCliente estándar 222222222222
     emit('confirmar', { IdentificacionCliente: '222222222222' })
     emit('update:modelValue', false)
@@ -408,15 +400,8 @@ const buscarCliente = async (id) => {
     }
 }
 
-const confirmarConCliente = async () => {
+const confirmarConCliente = () => {
     if (!clienteData.value) return
-    const { isConfirmed } = await showConfirm({
-        title: 'Serás redirigido a la pasarela de pagos para completar tu pago de forma segura.',
-        confirmText: 'Continuar',
-        cancelText: 'Cancelar',
-        icon: 'info',
-    })
-    if (!isConfirmed) return
     const idCliente = clienteData.value.Identificacion
         ?? clienteData.value.identificacion
         ?? clienteData.value.id
@@ -438,14 +423,6 @@ const confirmarCrear = async () => {
     if (!form.Email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.Email)) {
         errCrear.value = 'Ingresa un correo electrónico válido.'; return
     }
-
-    const { isConfirmed } = await showConfirm({
-        title: 'Serás redirigido a la pasarela de pagos para completar tu pago de forma segura.',
-        confirmText: 'Continuar',
-        cancelText: 'Cancelar',
-        icon: 'info',
-    })
-    if (!isConfirmed) return
 
     creando.value = true
     try {

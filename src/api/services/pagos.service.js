@@ -37,6 +37,7 @@ class PagosService {
       Nombre,
       Apellidos,
       Sede,
+      MetodoPago,
     } = body;
 
     try {
@@ -55,6 +56,7 @@ class PagosService {
         ...(Nombre && { Nombre }),
         ...(Apellidos && { Apellidos }),
         ...(Sede && { Sede }),
+        ...(MetodoPago && { MetodoPago }),
       };
 
       const { data } = await api.post(
@@ -106,6 +108,30 @@ class PagosService {
     try {
       const { data } = await api.get(
         `${BASE}/mensualidad/consultar-estado/${requestId}`,
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  // ── BREB ──────────────────────────────────────────────────
+
+  async consultarEstadoBreb(referencia) {
+    try {
+      const { data } = await api.get(
+        `v1/breb/payments/detail/status/${referencia}`,
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
+
+  async consultarPagoBreb(IdTransaccion) {
+    try {
+      const { data } = await api.get(
+        `${BASE_MENSUALIDAD}/consultar-pago/${IdTransaccion}`,
       );
       return data;
     } catch (error) {

@@ -1029,7 +1029,16 @@
             :tipo-documento-usuario="avalpayinformacion.tipoDocumento"
             :nombre-usuario="avalpayinformacion.nombre + ' ' + avalpayinformacion.apellido"
             :email-usuario="avalpayinformacion.correo" :telefono-usuario="avalpayinformacion.telefono"
-            @confirmar="ejecutarPago" />
+            @confirmar="abrirSelectorMetodoPago" />
+
+        <!-- Selector de método de pago (PlaceToPay / BREB) -->
+        <ModalMetodoPago v-model="modalMetodoPago" @seleccionar="seleccionarMetodoPago" />
+
+        <!-- Pantalla de QR para pago BREB -->
+        <ModalBrebQr v-model="modalBrebQr" :qr-image="brebData?.qrImage" :referencia="brebData?.referencia"
+            :invoice-num="brebData?.invoiceNum" :id-transaccion="brebData?.idTransaccion" :monto="brebData?.monto"
+            :concepto="brebData?.concepto"
+            @regenerar="regenerarQrBreb" />
 
 
            <!-- Componente de banners/publicidad — carga imágenes promocionales del backend y las muestra en modal automático al ingresar. -->
@@ -1050,6 +1059,8 @@ import ModalConsentimiento from '@/components/modals/ModalConsentimiento.vue'
 import ModalDetalleMensualidad from '@/components/modals/ModalDetalleMensualidad.vue'
 import ModalCongelar from '@/components/modals/ModalCongelar.vue'
 import ModalFacturacion from '@/components/modals/ModalFacturacion.vue'
+import ModalMetodoPago from '@/components/modals/ModalMetodoPago.vue'
+import ModalBrebQr from '@/components/modals/ModalBrebQr.vue'
 import FormDate from '@/utils/formats.date'
 import SedesService from '@/api/services/sedes.service'
 import ModalBanner from '@/components/modals/ModalBanner.vue'
@@ -1141,6 +1152,11 @@ const modalDetalle = ref(false)
 const modalPlacas = ref(false)
 const modalConsentimiento = ref(false)
 const modalFacturacion = ref(false)
+const modalMetodoPago = ref(false)
+const modalBrebQr = ref(false)
+const metodoPagoSeleccionado = ref(null)
+const brebData = ref(null)
+const identificacionClienteFacturacion = ref(null)
 const consentimientoAceptado = ref(false)
 // RF-038: Mensualidad seleccionada sobre la cual se ejecuta una acción (pagar, ver detalle, cambiar placas, congelar, reportar tarjeta)
 // ── Mensualidad en acción ─────────────────────────────────────
@@ -1846,10 +1862,10 @@ const confirmarPago = async () => {
     }
     errPago.value = ''
 
-    // Excedente: mismo flujo que renovación normal (consent → facturación)
+    // Excedente: mismo flujo que renovación normal (facturación → tipo de pago)
     if (infoExcedente.value) {
         modalPago.value = false
-        modalConsentimiento.value = true
+        modalFacturacion.value = true
         return
     }
 
@@ -1866,18 +1882,57 @@ const confirmarPago = async () => {
     }
 
     modalPago.value = false
-    modalConsentimiento.value = true
-}
-
-
-// RF-026: Transición del consentimiento a la facturación electrónica (FE) donde el usuario marca/desmarca la emisión de factura
-const confirmarConsentimiento = () => {
-    modalConsentimiento.value = false
     modalFacturacion.value = true
 }
 
+
+// RF-026: Una vez aceptadas las políticas de tratamiento de datos, confirma redirección y ejecuta el pago final
+const confirmarConsentimiento = async () => {
+    modalConsentimiento.value = false
+    const { isConfirmed } = await showConfirm({
+        title: 'Serás redirigido a la pasarela de pagos para completar tu pago de forma segura.',
+        confirmText: 'Continuar',
+        cancelText: 'Cancelar',
+        icon: 'info',
+    })
+    if (!isConfirmed) return
+    ejecutarPago({
+        IdentificacionCliente: identificacionClienteFacturacion.value,
+        MetodoPago: metodoPagoSeleccionado.value,
+    })
+}
+
+// Abre el selector de método de pago una vez completada la facturación electrónica
+const abrirSelectorMetodoPago = ({ IdentificacionCliente }) => {
+    identificacionClienteFacturacion.value = IdentificacionCliente ?? '222222222222'
+    modalFacturacion.value = false
+    modalMetodoPago.value = true
+}
+
+// Guarda el método de pago seleccionado y decide si mostrar políticas (solo PlaceToPay) o pagar directamente
+const seleccionarMetodoPago = (metodo) => {
+    metodoPagoSeleccionado.value = metodo
+    if (metodo === 'PLACETOPAY') {
+        modalConsentimiento.value = true
+    } else {
+        ejecutarPago({
+            IdentificacionCliente: identificacionClienteFacturacion.value,
+            MetodoPago: metodo,
+        })
+    }
+}
+
+// Vuelve a generar el QR BREB usando los mismos datos del pago actual
+const regenerarQrBreb = () => {
+    modalBrebQr.value = false
+    ejecutarPago({
+        IdentificacionCliente: identificacionClienteFacturacion.value,
+        MetodoPago: 'BREB',
+    })
+}
+
 // RF-024, RF-026, RF-028: Ejecuta el pago final redirigiendo a la pasarela; soporta pago normal, excedente por cambio de autorización y recuperación ante errores de transacción pendiente
-const ejecutarPago = async ({ IdentificacionCliente }) => {
+const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
     errPago.value = ''
     iniciandoPago.value = true
 
@@ -1918,19 +1973,38 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
                 Placas: placasPayload,
                 Sede: sedeFinal,
                 IdentificacionCliente: IdentificacionCliente ?? '222222222222',
+                MetodoPago: MetodoPago ?? 'PLACETOPAY',
             }
             console.log({body})
             const res = await PagoService.iniciarPago(m.id, body)
             const data = res?.data ?? res
-            const url = data?.urlPago ?? null
-            if (url) {
-                showInfo("Un momento", "Redirigiendo a la página de pago...")
-                window.location.href = url; return
+
+            if (MetodoPago === 'BREB') {
+                const qrImage = data?.qrImage ?? null
+                if (qrImage) {
+                    brebData.value = {
+                        qrImage,
+                        referencia: data?.referencia ?? null,
+                        invoiceNum: data?.invoiceNum ?? null,
+                        idTransaccion: data?.transactionId ?? null,
+                        monto: excedentePendiente?.excedente?.total ?? null,
+                        concepto: 'Cambio de autorización',
+                    }
+                    modalBrebQr.value = true
+                    return
+                }
+                errPago.value = 'No se recibió el código QR de pago BREB. Intenta de nuevo.'
+            } else {
+                const url = data?.urlPago ?? null
+                if (url) {
+                    showInfo("Un momento", "Redirigiendo a la página de pago...")
+                    window.location.href = url; return
+                }
+                errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
             }
 
             infoExcedente.value = excedentePendiente
             nuevasPlacas.value = placasSnapshot
-            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
             modalPlacas.value = true
             return
         }
@@ -1949,22 +2023,39 @@ const ejecutarPago = async ({ IdentificacionCliente }) => {
             ModalidadPago: opcionSeleccionada.value.modalidad,
             Sede: Number(sedeInput.value),
             IdentificacionCliente: IdentificacionCliente ?? '222222222222',
+            MetodoPago: MetodoPago ?? 'PLACETOPAY',
             ...((!m.fechaFin || m.estado === 'vencida') && fechaInicioManual.value ? { FechaInicio: fechaInicioManual.value } : {}),
         }
 
 
-        showInfo("Un momento", "Redirigiendo a la página de pago...")
-
         const res = await PagoService.iniciarPago(m.id, body)
         const data = res?.data ?? res
-        const url = data?.urlPago ?? null
-        if (url) {
 
-            window.location.href = url; return
+        if (MetodoPago === 'BREB') {
+            const qrImage = data?.qrImage ?? null
+            if (qrImage) {
+                brebData.value = {
+                    qrImage,
+                    referencia: data?.referencia ?? null,
+                    invoiceNum: data?.invoiceNum ?? null,
+                    idTransaccion: data?.transactionId ?? null,
+                    monto: opcionSeleccionada.value?.totalFinal ?? null,
+                    concepto: opcionSeleccionada.value?.nombre ?? m?.mensualidad ?? 'Mensualidad',
+                }
+                modalBrebQr.value = true
+                return
+            }
+            errPago.value = 'No se recibió el código QR de pago BREB. Intenta de nuevo.'
+            modalPago.value = true
+        } else {
+            showInfo("Un momento", "Redirigiendo a la página de pago...")
+            const url = data?.urlPago ?? null
+            if (url) {
+                window.location.href = url; return
+            }
+            errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
+            modalPago.value = true
         }
-        errPago.value = 'No se recibió la URL de pago. Intenta de nuevo.'
-        modalFacturacion.value = false
-        modalPago.value = true
 
     } catch (e) {
         // RF-024: Si el backend responde 409 con una URL de pago pendiente, se recupera la transacción previa para evitar duplicados
@@ -2002,6 +2093,8 @@ const cerrarModales = () => {
     modalCongelar.value = false
     modalConsentimiento.value = false
     modalFacturacion.value = false
+    modalMetodoPago.value = false
+    modalBrebQr.value = false
     modalPlacas.value = false
     pagoPendiente.value = null
     codigoInput.value = ''
@@ -2022,6 +2115,9 @@ const cerrarModales = () => {
     modalTarjeta.value = false
     errTarjeta.value = ''
     guardandoTarjeta.value = false
+    metodoPagoSeleccionado.value = null
+    brebData.value = null
+    identificacionClienteFacturacion.value = null
     avalpayinformacion.value = { tipoDocumento: '', documento: '', nombre: '', apellido: '', telefono: '', correo: '' }
 }
 

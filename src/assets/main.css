@@ -4150,6 +4150,10 @@ input[type="range"]::-ms-fill-lower {
   letter-spacing: 0.1em;
 }
 
+.tracking-normal {
+  letter-spacing: 0em;
+}
+
 .tracking-tight {
   letter-spacing: -0.025em;
 }
