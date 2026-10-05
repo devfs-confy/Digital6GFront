@@ -44,12 +44,23 @@
                         {{ consultando ? 'Consultando...' : 'Consultar pago' }}
                     </button>
 
+<<<<<<< HEAD
                     <div v-if="mensajeEstado" class="breb-estado" :class="`breb-estado--${tipoEstado}`">
                         {{ mensajeEstado }}
                     </div>
 
                     <div v-if="tiempoRestante > 0" class="breb-timer">
                         Este QR expira en: <strong>{{ formatearTiempo(tiempoRestante) }}</strong>
+=======
+                    <div v-if="estadoPago" class="breb-estado"
+                        :class="estadoPago === 'APROBADO' ? 'breb-estado--aprobado' : 'breb-estado--pendiente'">
+                        El estado de su pago es: <strong>{{ estadoPago }}</strong>
+                    </div>
+
+                    <div v-if="socketMensaje" class="breb-estado"
+                        :class="socketConectado ? 'breb-estado--socket' : 'breb-estado--pendiente'">
+                        {{ socketMensaje }}
+>>>>>>> 6f54a70 (save change)
                     </div>
 
                     <!-- Instructions -->
@@ -110,12 +121,16 @@ const props = defineProps({
     qrImage: { type: String, default: '' },
     referencia: { type: String, default: '' },
     invoiceNum: { type: String, default: '' },
+<<<<<<< HEAD
     fechaExpiracion: { type: String, default: '' },
+=======
+>>>>>>> 6f54a70 (save change)
     idTransaccion: { type: String, default: '' },
     monto: { type: Number, default: null },
     concepto: { type: String, default: '' },
 })
 
+<<<<<<< HEAD
 const emit = defineEmits(['update:modelValue', 'regenerar', 'expirado'])
 
 const mostrarConsultar = ref(false)
@@ -127,10 +142,25 @@ const tipoEstado = ref('') // 'aprobado' | 'pendiente' | 'socket' | 'expirado' |
 const tiempoRestante = ref(0)
 const expirado = ref(false)
 const intervalExpiracion = ref(null)
+=======
+const emit = defineEmits(['update:modelValue', 'regenerar'])
+
+const mostrarConsultar = ref(false)
+const consultando = ref(false)
+const estadoPago = ref('')
+const timerConsultar = ref(null)
+const socket = ref(null)
+const socketConectado = ref(false)
+const socketMensaje = ref('')
+>>>>>>> 6f54a70 (save change)
 
 const iniciarTimer = () => {
     limpiarTimer()
     mostrarConsultar.value = false
+<<<<<<< HEAD
+=======
+    estadoPago.value = ''
+>>>>>>> 6f54a70 (save change)
     timerConsultar.value = setTimeout(() => {
         mostrarConsultar.value = true
     }, 60000)
@@ -143,6 +173,7 @@ const limpiarTimer = () => {
     }
 }
 
+<<<<<<< HEAD
 const calcularSegundosRestantes = (fechaIso) => {
     if (!fechaIso) return 0
 
@@ -203,11 +234,17 @@ const expirarQr = () => {
     emit('update:modelValue', false)
 }
 
+=======
+>>>>>>> 6f54a70 (save change)
 const desconectarSocket = () => {
     if (socket.value) {
         socket.value.disconnect()
         socket.value = null
     }
+<<<<<<< HEAD
+=======
+    socketConectado.value = false
+>>>>>>> 6f54a70 (save change)
 }
 
 const redirigirAConfirmacion = (requestId) => {
@@ -223,16 +260,23 @@ const conectarSocket = () => {
     if (!authStore.token) return
 
     desconectarSocket()
+<<<<<<< HEAD
     mensajeEstado.value = 'Conectando a notificaciones...'
     tipoEstado.value = 'socket'
 
     const wsUrl = import.meta.env.VITE_WS_URL
+=======
+    socketMensaje.value = 'Conectando a notificaciones...'
+
+    const wsUrl = import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL
+>>>>>>> 6f54a70 (save change)
     socket.value = io(`${wsUrl}/pagos-breb`, {
         auth: { token: authStore.token },
         query: { requestId: props.invoiceNum },
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: 3,
+<<<<<<< HEAD
         
     })
 
@@ -273,10 +317,27 @@ const conectarSocket = () => {
             const requestId = data?.requestId ?? props.invoiceNum
             redirigirAConfirmacion(requestId)
         }
+=======
+    })
+
+    socket.value.on('connect', () => {
+        socketConectado.value = true
+        socketMensaje.value = 'Conectado. Esperando confirmación del banco...'
+    })
+
+    socket.value.on('disconnect', () => {
+        socketConectado.value = false
+    })
+
+    socket.value.on('connect_error', (err) => {
+        socketConectado.value = false
+        socketMensaje.value = 'No se pudo conectar a las notificaciones. Usa el botón "Consultar pago".'
+>>>>>>> 6f54a70 (save change)
     })
 
     socket.value.on('pago-actualizado', (data) => {
         const estado = data?.estado ?? null
+<<<<<<< HEAD
 
         if (estado === 'APROBADO') {
             mensajeEstado.value = 'Pago APROBADO. Redirigiendo...'
@@ -291,6 +352,15 @@ const conectarSocket = () => {
         if (estado === 'APROBADO') {
             const requestId = data?.requestId ?? props.invoiceNum
             redirigirAConfirmacion(requestId)
+=======
+        estadoPago.value = estado
+        socketMensaje.value = `Notificación recibida: ${estado || 'Desconocido'}`
+        showInfo('Notificación de pago BREB', `Estado recibido: ${estado || 'Desconocido'}`)
+
+        if (estado === 'APROBADO') {
+            const IdTransaccion = data?.IdTransaccion ?? props.idTransaccion
+            redirigirAConfirmacion(IdTransaccion)
+>>>>>>> 6f54a70 (save change)
         }
     })
 }
@@ -298,6 +368,7 @@ const conectarSocket = () => {
 watch(() => props.modelValue, (val) => {
     if (val) {
         iniciarTimer()
+<<<<<<< HEAD
         iniciarCuentaRegresiva()
         conectarSocket()
     } else {
@@ -307,11 +378,19 @@ watch(() => props.modelValue, (val) => {
         mensajeEstado.value = ''
         tipoEstado.value = ''
         expirado.value = false
+=======
+        conectarSocket()
+    } else {
+        limpiarTimer()
+        desconectarSocket()
+        socketMensaje.value = ''
+>>>>>>> 6f54a70 (save change)
     }
 })
 
 onUnmounted(() => {
     limpiarTimer()
+<<<<<<< HEAD
     detenerCuentaRegresiva()
     desconectarSocket()
 })
@@ -325,6 +404,12 @@ const cerrar = async () => {
         }
     }
     desconectarSocket()
+=======
+    desconectarSocket()
+})
+
+const cerrar = () => {
+>>>>>>> 6f54a70 (save change)
     emit('update:modelValue', false)
 }
 
@@ -351,6 +436,7 @@ const descargarQr = () => {
 }
 
 const consultarPago = async () => {
+<<<<<<< HEAD
     if (!props.invoiceNum) return
 
     consultando.value = true
@@ -359,6 +445,27 @@ const consultarPago = async () => {
 
     try {
         redirigirAConfirmacion(props.invoiceNum)
+=======
+    if (!props.referencia) return
+
+    consultando.value = true
+    estadoPago.value = ''
+
+    try {
+        const res = await PagosService.consultarEstadoBreb(props.referencia)
+        console.log(res)
+        const data = res?.data ?? res
+        const estado = data?.estado ?? null
+
+        estadoPago.value = estado
+        showInfo('Estado del pago', `El estado de su pago es: ${estado || 'Desconocido'}`)
+
+        if (estado === 'APROBADO') {
+            const requestId = data?.requestId ?? props.requestId
+            redirigirAConfirmacion(requestId)
+            return
+        }
+>>>>>>> 6f54a70 (save change)
     } catch (e) {
         showError({ status: e?.response?.status, data: e?.response?.data })
     } finally {
@@ -679,6 +786,7 @@ const consultarPago = async () => {
     border: 1.5px solid #bfdbfe;
 }
 
+<<<<<<< HEAD
 .breb-estado--error {
     background: #fef2f2;
     color: #991b1b;
@@ -776,6 +884,8 @@ const consultarPago = async () => {
     }
 }
 
+=======
+>>>>>>> 6f54a70 (save change)
 /* Transitions */
 .modal-enter-active {
     transition: opacity 0.2s ease;
