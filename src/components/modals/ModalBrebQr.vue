@@ -44,14 +44,12 @@
                         {{ consultando ? 'Consultando...' : 'Consultar pago' }}
                     </button>
 
-                    <div v-if="estadoPago" class="breb-estado"
-                        :class="estadoPago === 'APROBADO' ? 'breb-estado--aprobado' : 'breb-estado--pendiente'">
-                        El estado de su pago es: <strong>{{ estadoPago }}</strong>
+                    <div v-if="mensajeEstado" class="breb-estado" :class="`breb-estado--${tipoEstado}`">
+                        {{ mensajeEstado }}
                     </div>
 
-                    <div v-if="socketMensaje" class="breb-estado"
-                        :class="socketConectado ? 'breb-estado--socket' : 'breb-estado--pendiente'">
-                        {{ socketMensaje }}
+                    <div v-if="tiempoRestante > 0" class="breb-timer">
+                        Este QR expira en: <strong>{{ formatearTiempo(tiempoRestante) }}</strong>
                     </div>
 
                     <!-- Instructions -->
@@ -112,25 +110,27 @@ const props = defineProps({
     qrImage: { type: String, default: '' },
     referencia: { type: String, default: '' },
     invoiceNum: { type: String, default: '' },
+    fechaExpiracion: { type: String, default: '' },
     idTransaccion: { type: String, default: '' },
     monto: { type: Number, default: null },
     concepto: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'regenerar'])
+const emit = defineEmits(['update:modelValue', 'regenerar', 'expirado'])
 
 const mostrarConsultar = ref(false)
 const consultando = ref(false)
-const estadoPago = ref('')
 const timerConsultar = ref(null)
 const socket = ref(null)
-const socketConectado = ref(false)
-const socketMensaje = ref('')
+const mensajeEstado = ref('')
+const tipoEstado = ref('') // 'aprobado' | 'pendiente' | 'socket' | 'expirado' | 'error'
+const tiempoRestante = ref(0)
+const expirado = ref(false)
+const intervalExpiracion = ref(null)
 
 const iniciarTimer = () => {
     limpiarTimer()
     mostrarConsultar.value = false
-    estadoPago.value = ''
     timerConsultar.value = setTimeout(() => {
         mostrarConsultar.value = true
     }, 60000)
@@ -143,12 +143,71 @@ const limpiarTimer = () => {
     }
 }
 
+const calcularSegundosRestantes = (fechaIso) => {
+    if (!fechaIso) return 0
+
+    const fin = new Date(fechaIso).getTime()
+    const ahora = Date.now()
+    const diffMs = fin - ahora
+
+    // Fallback: si la fecha ya pasó, asumir que el backend envió hora Colombia con Z incorrecta
+    if (diffMs < 0) {
+        const ajusteColombia = 5 * 60 * 60 * 1000
+        return Math.max(0, Math.floor((fin + ajusteColombia - ahora) / 1000))
+    }
+
+    return Math.max(0, Math.floor(diffMs / 1000))
+}
+
+const formatearTiempo = (segundos) => {
+    const m = Math.floor(segundos / 60)
+    const s = segundos % 60
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
+const iniciarCuentaRegresiva = (fechaIso = null) => {
+    detenerCuentaRegresiva()
+    expirado.value = false
+    const fecha = fechaIso ?? props.fechaExpiracion
+    const segundos = calcularSegundosRestantes(fecha)
+    tiempoRestante.value = segundos
+
+    if (segundos <= 0) {
+        expirarQr()
+        return
+    }
+
+    intervalExpiracion.value = setInterval(() => {
+        tiempoRestante.value = calcularSegundosRestantes(fecha)
+        if (tiempoRestante.value <= 0) {
+            expirarQr()
+        }
+    }, 1000)
+}
+
+const detenerCuentaRegresiva = () => {
+    if (intervalExpiracion.value) {
+        clearInterval(intervalExpiracion.value)
+        intervalExpiracion.value = null
+    }
+}
+
+const expirarQr = () => {
+    detenerCuentaRegresiva()
+    if (expirado.value) return
+    expirado.value = true
+    mensajeEstado.value = 'El QR ha expirado. Genera uno nuevo.'
+    tipoEstado.value = 'expirado'
+    desconectarSocket()
+    emit('expirado')
+    emit('update:modelValue', false)
+}
+
 const desconectarSocket = () => {
     if (socket.value) {
         socket.value.disconnect()
         socket.value = null
     }
-    socketConectado.value = false
 }
 
 const redirigirAConfirmacion = (requestId) => {
@@ -164,40 +223,74 @@ const conectarSocket = () => {
     if (!authStore.token) return
 
     desconectarSocket()
-    socketMensaje.value = 'Conectando a notificaciones...'
+    mensajeEstado.value = 'Conectando a notificaciones...'
+    tipoEstado.value = 'socket'
 
-    const wsUrl = import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL
+    const wsUrl = import.meta.env.VITE_WS_URL
     socket.value = io(`${wsUrl}/pagos-breb`, {
         auth: { token: authStore.token },
         query: { requestId: props.invoiceNum },
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: 3,
+        
     })
 
     socket.value.on('connect', () => {
-        socketConectado.value = true
-        socketMensaje.value = 'Conectado. Esperando confirmación del banco...'
+        mensajeEstado.value = 'Conectado. Esperando confirmación del banco...'
+        tipoEstado.value = 'socket'
     })
 
     socket.value.on('disconnect', () => {
-        socketConectado.value = false
+        if (!expirado.value) {
+            mensajeEstado.value = 'Desconectado de las notificaciones.'
+            tipoEstado.value = 'pendiente'
+        }
     })
 
     socket.value.on('connect_error', (err) => {
-        socketConectado.value = false
-        socketMensaje.value = 'No se pudo conectar a las notificaciones. Usa el botón "Consultar pago".'
+        mensajeEstado.value = 'No se pudo conectar a las notificaciones. Usa el botón "Consultar pago".'
+        tipoEstado.value = 'error'
+    })
+
+    socket.value.on('estado-actual', (data) => {
+        const estado = data?.estado ?? null
+        const fechaExp = data?.fechaExpiracion ?? null
+
+        if (estado === 'APROBADO') {
+            mensajeEstado.value = 'Pago APROBADO. Redirigiendo...'
+            tipoEstado.value = 'aprobado'
+        } else {
+            mensajeEstado.value = `Estado actual: ${estado || 'Desconocido'}`
+            tipoEstado.value = 'socket'
+        }
+
+        if (fechaExp) {
+            iniciarCuentaRegresiva(fechaExp)
+        }
+
+        if (estado === 'APROBADO') {
+            const requestId = data?.requestId ?? props.invoiceNum
+            redirigirAConfirmacion(requestId)
+        }
     })
 
     socket.value.on('pago-actualizado', (data) => {
         const estado = data?.estado ?? null
-        estadoPago.value = estado
-        socketMensaje.value = `Notificación recibida: ${estado || 'Desconocido'}`
+
+        if (estado === 'APROBADO') {
+            mensajeEstado.value = 'Pago APROBADO. Redirigiendo...'
+            tipoEstado.value = 'aprobado'
+        } else {
+            mensajeEstado.value = `Notificación recibida: ${estado || 'Desconocido'}`
+            tipoEstado.value = estado === 'RECHAZADO' || estado === 'CANCELADO' || estado === 'ERROR' ? 'error' : 'pendiente'
+        }
+
         showInfo('Notificación de pago BREB', `Estado recibido: ${estado || 'Desconocido'}`)
 
         if (estado === 'APROBADO') {
-            const IdTransaccion = data?.IdTransaccion ?? props.idTransaccion
-            redirigirAConfirmacion(IdTransaccion)
+            const requestId = data?.requestId ?? props.invoiceNum
+            redirigirAConfirmacion(requestId)
         }
     })
 }
@@ -205,20 +298,33 @@ const conectarSocket = () => {
 watch(() => props.modelValue, (val) => {
     if (val) {
         iniciarTimer()
+        iniciarCuentaRegresiva()
         conectarSocket()
     } else {
         limpiarTimer()
+        detenerCuentaRegresiva()
         desconectarSocket()
-        socketMensaje.value = ''
+        mensajeEstado.value = ''
+        tipoEstado.value = ''
+        expirado.value = false
     }
 })
 
 onUnmounted(() => {
     limpiarTimer()
+    detenerCuentaRegresiva()
     desconectarSocket()
 })
 
-const cerrar = () => {
+const cerrar = async () => {
+    if (props.invoiceNum && !expirado.value && tipoEstado.value !== 'aprobado') {
+        try {
+            await PagosService.abandonarPagoBreb(props.invoiceNum)
+        } catch (e) {
+            console.error('Error al abandonar pago BREB:', e)
+        }
+    }
+    desconectarSocket()
     emit('update:modelValue', false)
 }
 
@@ -245,25 +351,14 @@ const descargarQr = () => {
 }
 
 const consultarPago = async () => {
-    if (!props.referencia) return
+    if (!props.invoiceNum) return
 
     consultando.value = true
-    estadoPago.value = ''
+    mensajeEstado.value = 'Consultando estado del pago...'
+    tipoEstado.value = 'socket'
 
     try {
-        const res = await PagosService.consultarEstadoBreb(props.referencia)
-        console.log(res)
-        const data = res?.data ?? res
-        const estado = data?.estado ?? null
-
-        estadoPago.value = estado
-        showInfo('Estado del pago', `El estado de su pago es: ${estado || 'Desconocido'}`)
-
-        if (estado === 'APROBADO') {
-            const requestId = data?.requestId ?? props.requestId
-            redirigirAConfirmacion(requestId)
-            return
-        }
+        redirigirAConfirmacion(props.invoiceNum)
     } catch (e) {
         showError({ status: e?.response?.status, data: e?.response?.data })
     } finally {
@@ -582,6 +677,103 @@ const consultarPago = async () => {
     background: #eff6ff;
     color: #1e40af;
     border: 1.5px solid #bfdbfe;
+}
+
+.breb-estado--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1.5px solid #fecaca;
+}
+
+.breb-timer {
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1.5px solid #fecaca;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .breb-overlay {
+        padding: 8px;
+    }
+
+    .breb-card {
+        max-width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 4px 0 #000;
+    }
+
+    .breb-head {
+        padding: 12px 16px;
+    }
+
+    .breb-head__title {
+        font-size: 0.82rem;
+    }
+
+    .breb-head__sub {
+        font-size: 0.6rem;
+    }
+
+    .breb-body {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .breb-qr-wrap {
+        padding: 10px;
+        border-radius: 16px;
+    }
+
+    .breb-qr {
+        max-width: 170px;
+    }
+
+    .breb-instrucciones {
+        padding: 10px 12px;
+    }
+
+    .breb-instrucciones__text {
+        font-size: 0.7rem;
+    }
+
+    .breb-info {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .breb-info__label {
+        font-size: 0.6rem;
+    }
+
+    .breb-info__val {
+        font-size: 0.75rem;
+    }
+
+    .breb-info__val--monto {
+        font-size: 0.85rem;
+    }
+
+    .breb-foot {
+        padding: 12px 16px 16px;
+        gap: 8px;
+    }
+
+    .breb-btn {
+        padding: 10px 14px;
+        font-size: 0.72rem;
+    }
+
+    .breb-estado,
+    .breb-timer {
+        padding: 8px 12px;
+        font-size: 0.72rem;
+    }
 }
 
 /* Transitions */

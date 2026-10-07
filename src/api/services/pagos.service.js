@@ -138,6 +138,17 @@ class PagosService {
       return handleError(error);
     }
   }
+
+  async abandonarPagoBreb(requestId) {
+    try {
+      const { data } = await api.post(
+        `v1/breb/payments/abandonar/${requestId}`,
+      );
+      return data;
+    } catch (error) {
+      return handleError(error);
+    }
+  }
 }
 
 export default new PagosService();

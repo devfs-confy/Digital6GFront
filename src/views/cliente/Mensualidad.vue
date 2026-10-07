@@ -1036,9 +1036,9 @@
 
         <!-- Pantalla de QR para pago BREB -->
         <ModalBrebQr v-model="modalBrebQr" :qr-image="brebData?.qrImage" :referencia="brebData?.referencia"
-            :invoice-num="brebData?.invoiceNum" :id-transaccion="brebData?.idTransaccion" :monto="brebData?.monto"
-            :concepto="brebData?.concepto"
-            @regenerar="regenerarQrBreb" />
+            :invoice-num="brebData?.invoiceNum" :fecha-expiracion="brebData?.fechaExpiracion"
+            :id-transaccion="brebData?.idTransaccion" :monto="brebData?.monto" :concepto="brebData?.concepto"
+            @regenerar="regenerarQrBreb" @expirado="onBrebExpirado" />
 
 
            <!-- Componente de banners/publicidad — carga imágenes promocionales del backend y las muestra en modal automático al ingresar. -->
@@ -1931,6 +1931,13 @@ const regenerarQrBreb = () => {
     })
 }
 
+// Se ejecuta cuando el QR BREB expira antes de que el usuario pague
+const onBrebExpirado = () => {
+    modalBrebQr.value = false
+    brebData.value = null
+    showInfo('QR expirado', 'El código QR ha expirado. Por favor genera uno nuevo para continuar con el pago.')
+}
+
 // RF-024, RF-026, RF-028: Ejecuta el pago final redirigiendo a la pasarela; soporta pago normal, excedente por cambio de autorización y recuperación ante errores de transacción pendiente
 const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
     errPago.value = ''
@@ -1986,6 +1993,7 @@ const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
                         qrImage,
                         referencia: data?.referencia ?? null,
                         invoiceNum: data?.invoiceNum ?? null,
+                        fechaExpiracion: data?.fechaExpiracion ?? null,
                         idTransaccion: data?.transactionId ?? null,
                         monto: excedentePendiente?.excedente?.total ?? null,
                         concepto: 'Cambio de autorización',
@@ -2032,12 +2040,14 @@ const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
         const data = res?.data ?? res
 
         if (MetodoPago === 'BREB') {
+            console.log('BREB data:', data)
             const qrImage = data?.qrImage ?? null
             if (qrImage) {
                 brebData.value = {
                     qrImage,
                     referencia: data?.referencia ?? null,
                     invoiceNum: data?.invoiceNum ?? null,
+                    fechaExpiracion: data?.fechaExpiracion ?? null,
                     idTransaccion: data?.transactionId ?? null,
                     monto: opcionSeleccionada.value?.totalFinal ?? null,
                     concepto: opcionSeleccionada.value?.nombre ?? m?.mensualidad ?? 'Mensualidad',
