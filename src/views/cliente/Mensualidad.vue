@@ -553,23 +553,49 @@
 
                             <!-- RF-024: Fecha de inicio manual disponible solo cuando la mensualidad está vencida o no tiene fecha fin; si está activa el sistema usa automáticamente el día siguiente al vencimiento -->
                             <!-- Manual start date -->
-                            <div v-if="!infoExcedente && (!mensualidadAccion?.fechaFin || mensualidadAccion?.estado === 'vencida') && !esSoloTarjeta"
+                            <div v-if="mostrarBloqueFechaInicio"
                                 class="px-5 py-4 border-b border-gray-100 flex flex-col gap-2.5">
                                 <p
                                     class="text-[0.6rem] font-black uppercase tracking-[0.1em] text-[#299261] flex items-center gap-2 after:content-[''] after:flex-1 after:h-[1.5px] after:bg-gradient-to-r after:from-[#c8e6c9] after:to-transparent after:rounded-full">
                                     Fecha de inicio
                                 </p>
-                                <div class="flex flex-col gap-1.5">
+
+                                <!-- Alerta inicial: fecha por defecto -->
+                                <div v-if="mostrarAlertaModificarFecha"
+                                    class="flex flex-col gap-3 rounded-2xl border-2 border-[#c8e6c9] bg-[#f0fdf4] p-4">
+                                    <p class="text-[0.78rem] font-semibold text-[#166534] leading-relaxed">
+                                        Tu mensualidad iniciará el <strong>{{ formatFecha(hoyISO) }}</strong>. ¿Deseas
+                                        modificar la fecha de inicio?
+                                    </p>
+                                    <button @click="habilitarModificarFecha"
+                                        class="self-center py-2 px-4 rounded-full text-[0.72rem] font-extrabold uppercase tracking-[0.05em] cursor-pointer border-2 border-[#0D291C] bg-[#0D291C] text-[#7FD344] shadow-[0_1px_0_#051510] hover:bg-[#132e21] active:translate-y-0.5 transition-transform transition-shadow transition-colors duration-200">
+                                        Sí, modificar
+                                    </button>
+                                </div>
+
+                                <!-- Input de fecha -->
+                                <div v-if="mostrarInputFechaInicio" class="flex flex-col gap-1.5">
                                     <label
                                         class="text-[0.63rem] font-black uppercase tracking-[0.08em] text-gray-700 pl-0.5">¿Desde
-                                        cuándo
-                                        inicia tu mensualidad?</label>
+                                        cuándo inicia tu mensualidad?</label>
                                     <input v-model="fechaInicioManual" type="date"
                                         class="bg-white border-2 border-gray-300 rounded-xl px-3.5 py-2.5 text-sm text-[#0D291C] outline-none focus:border-[#299261] focus:ring-2 focus:ring-[#299261]/15 transition-colors duration-200 w-full"
                                         :min="hoyISO" />
                                     <p class="text-[0.7rem] text-gray-500 leading-relaxed pl-0.5">Selecciona la fecha en
-                                        que deseas activar tu
-                                        mensualidad.</p>
+                                        que deseas activar tu mensualidad.</p>
+                                </div>
+
+                                <!-- Advertencia informativa: cobro por horas -->
+                                <div v-if="mostrarAdvertenciaCobroHoras"
+                                    class="flex items-start gap-2 rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#d97706"
+                                        viewBox="0 0 24 24" class="shrink-0 mt-0.5">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                                    </svg>
+                                    <p class="text-[0.72rem] font-bold text-amber-700 leading-snug">
+                                        Si está en el parqueadero, se le cobrará por horas el día de hoy.
+                                    </p>
                                 </div>
                             </div>
 
@@ -1183,6 +1209,7 @@ const loadingOpciones = ref(false)
 const iniciandoPago = ref(false)
 const errPago = ref('')
 const fechaInicioManual = ref('')
+const mostrarInputFechaInicio = ref(false)
 const mesesExtra = ref(1)
 const pagoPendiente = ref(null)
 const sedeInput = ref(null)
@@ -1227,6 +1254,26 @@ const PLACA_KEYS = ['Placa1', 'Placa2', 'Placa3', 'Placa4', 'Placa5']
 const esQuincena = computed(() => opcionSeleccionada.value?.modalidad === 'QUINCENA')
 const esSoloTarjeta = computed(() => opcionSeleccionada.value?.modalidad === 'SOLO_TARJETA')
 const esRecarga = computed(() => opcionSeleccionada.value?.modalidad === 'RECARGA')
+
+// RF-024: Control de visibilidad del input de fecha de inicio para mensualidades nuevas o vencidas
+const esEstadoNuevoOVencido = computed(() => {
+    const e = mensualidadAccion.value?.estado
+    return e === 'pendiente' || e === 'vencida'
+})
+
+const mostrarBloqueFechaInicio = computed(() =>
+    !infoExcedente.value &&
+    (!mensualidadAccion.value?.fechaFin || mensualidadAccion.value?.estado === 'vencida') &&
+    !esSoloTarjeta.value
+)
+
+const mostrarAlertaModificarFecha = computed(() =>
+    mostrarBloqueFechaInicio.value && esEstadoNuevoOVencido.value && !mostrarInputFechaInicio.value
+)
+
+const mostrarAdvertenciaCobroHoras = computed(() =>
+    mostrarInputFechaInicio.value && fechaInicioManual.value && fechaInicioManual.value !== hoyISO
+)
 
 // RF-024: Lógica de visibilidad del botón Congelar: solo mensualidades mensuales (no quincenales ni motos) con pago al día y fuera de vigencia activa
 const mostrarCongelar = (m) =>
@@ -1635,6 +1682,11 @@ const confirmarCongelar = async ({ FechaInicioPeriodoNvo, Observacion }) => {
     showSuccess('¡Congelado!', 'Tu mensualidad ha sido congelada exitosamente.')
 }
 
+// RF-024: Muestra el input de fecha de inicio cuando el usuario decide modificarla en mensualidades nuevas o vencidas
+const habilitarModificarFecha = () => {
+    mostrarInputFechaInicio.value = true
+}
+
 // RF-024, RF-025, RF-026, RF-033: Inicializa el modal de pago cargando sedes, opciones de plan y precargando los datos de facturación del usuario
 // ── Pago ──────────────────────────────────────────────────────
 const abrirPago = async (m) => {
@@ -1648,7 +1700,13 @@ const abrirPago = async (m) => {
     errPago.value = ''
     pagoPendiente.value = null
     mesesExtra.value = 1
-    fechaInicioManual.value = (m.estado === 'vencida' || !m.fechaFin) ? hoyISO : ''
+    if (m.estado === 'pendiente' || m.estado === 'vencida') {
+        fechaInicioManual.value = hoyISO
+        mostrarInputFechaInicio.value = false
+    } else {
+        fechaInicioManual.value = ''
+        mostrarInputFechaInicio.value = false
+    }
     loadingOpciones.value = true
     modalPago.value = true
 
@@ -2009,6 +2067,7 @@ const cerrarModales = () => {
     opcionesPago.value = []
     opcionSeleccionada.value = null
     fechaInicioManual.value = ''
+    mostrarInputFechaInicio.value = false
     mesesExtra.value = 1
     errPago.value = ''
     errCongelar.value = ''
