@@ -679,7 +679,6 @@ const consultarPago = async () => {
     border: 1.5px solid #bfdbfe;
 }
 
-<<<<<<< HEAD
 .breb-estado--error {
     background: #fef2f2;
     color: #991b1b;
@@ -777,8 +776,6 @@ const consultarPago = async () => {
     }
 }
 
-=======
->>>>>>> 6f54a70 (save change)
 /* Transitions */
 .modal-enter-active {
     transition: opacity 0.2s ease;
