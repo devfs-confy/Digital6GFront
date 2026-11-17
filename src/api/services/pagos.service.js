@@ -138,7 +138,6 @@ class PagosService {
       return handleError(error);
     }
   }
-<<<<<<< HEAD
 
   async abandonarPagoBreb(requestId) {
     try {
@@ -150,8 +149,6 @@ class PagosService {
       return handleError(error);
     }
   }
-=======
->>>>>>> 6f54a70 (save change)
 }
 
 export default new PagosService();

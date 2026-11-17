@@ -1062,15 +1062,9 @@
 
         <!-- Pantalla de QR para pago BREB -->
         <ModalBrebQr v-model="modalBrebQr" :qr-image="brebData?.qrImage" :referencia="brebData?.referencia"
-<<<<<<< HEAD
             :invoice-num="brebData?.invoiceNum" :fecha-expiracion="brebData?.fechaExpiracion"
             :id-transaccion="brebData?.idTransaccion" :monto="brebData?.monto" :concepto="brebData?.concepto"
             @regenerar="regenerarQrBreb" @expirado="onBrebExpirado" />
-=======
-            :invoice-num="brebData?.invoiceNum" :id-transaccion="brebData?.idTransaccion" :monto="brebData?.monto"
-            :concepto="brebData?.concepto"
-            @regenerar="regenerarQrBreb" />
->>>>>>> 6f54a70 (save change)
 
 
            <!-- Componente de banners/publicidad — carga imágenes promocionales del backend y las muestra en modal automático al ingresar. -->
@@ -1995,7 +1989,6 @@ const regenerarQrBreb = () => {
     })
 }
 
-<<<<<<< HEAD
 // Se ejecuta cuando el QR BREB expira antes de que el usuario pague
 const onBrebExpirado = () => {
     modalBrebQr.value = false
@@ -2003,8 +1996,6 @@ const onBrebExpirado = () => {
     showInfo('QR expirado', 'El código QR ha expirado. Por favor genera uno nuevo para continuar con el pago.')
 }
 
-=======
->>>>>>> 6f54a70 (save change)
 // RF-024, RF-026, RF-028: Ejecuta el pago final redirigiendo a la pasarela; soporta pago normal, excedente por cambio de autorización y recuperación ante errores de transacción pendiente
 const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
     errPago.value = ''
@@ -2060,10 +2051,7 @@ const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
                         qrImage,
                         referencia: data?.referencia ?? null,
                         invoiceNum: data?.invoiceNum ?? null,
-<<<<<<< HEAD
                         fechaExpiracion: data?.fechaExpiracion ?? null,
-=======
->>>>>>> 6f54a70 (save change)
                         idTransaccion: data?.transactionId ?? null,
                         monto: excedentePendiente?.excedente?.total ?? null,
                         concepto: 'Cambio de autorización',
@@ -2110,20 +2098,14 @@ const ejecutarPago = async ({ IdentificacionCliente, MetodoPago }) => {
         const data = res?.data ?? res
 
         if (MetodoPago === 'BREB') {
-<<<<<<< HEAD
             console.log('BREB data:', data)
-=======
->>>>>>> 6f54a70 (save change)
             const qrImage = data?.qrImage ?? null
             if (qrImage) {
                 brebData.value = {
                     qrImage,
                     referencia: data?.referencia ?? null,
                     invoiceNum: data?.invoiceNum ?? null,
-<<<<<<< HEAD
                     fechaExpiracion: data?.fechaExpiracion ?? null,
-=======
->>>>>>> 6f54a70 (save change)
                     idTransaccion: data?.transactionId ?? null,
                     monto: opcionSeleccionada.value?.totalFinal ?? null,
                     concepto: opcionSeleccionada.value?.nombre ?? m?.mensualidad ?? 'Mensualidad',
